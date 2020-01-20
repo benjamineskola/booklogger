@@ -1,6 +1,6 @@
 from django.db.models.functions import Lower
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.template import loader
 
 from .models import Author, Book, BookAuthor
@@ -13,24 +13,17 @@ def index(request):
 
 
 def books_index(request):
-    books = Book.objects.order_by(Lower("authors__surname"), "title")
-
-    template = loader.get_template("books/index.html")
-    context = {"books": books}
-    return HttpResponse(template.render(context, request))
+    books = Book.objects.order_by(
+        Lower("authors__surname"), Lower("authors__forenames"), "title",
+    )
+    return render(request, "books/index.html", {"books": books})
 
 
 def author_details(request, author_id):
-    try:
-        author = Author.objects.get(pk=author_id)
-    except Author.DoesNotExist:
-        raise Http404("Author does not exist")
+    author = get_object_or_404(Author, pk=author_id)
     return render(request, "authors/details.html", {"author": author})
 
 
 def book_details(request, book_id):
-    try:
-        book = Book.objects.get(pk=book_id)
-    except Book.DoesNotExist:
-        raise Http404("Book does not exist")
+    book = get_object_or_404(Book, pk=book_id)
     return render(request, "books/details.html", {"book": book})
