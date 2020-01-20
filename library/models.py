@@ -1,3 +1,5 @@
+import string
+
 from django.db import models
 
 # Create your models here.
@@ -16,10 +18,23 @@ class Author(models.Model):
     gender = models.IntegerField(choices=Gender.choices, default=0)
 
     def __str__(self):
-        return f"{self.surname}, {self.forenames}"
+        return f"{self.surname}{', ' + self.initials if self.initials else ''}"
+
+    def attribution_for(self, book):
+        role = self._role_for_book(book)
+        return str(self) + (f" ({role})" if role else "")
+
+    def _role_for_book(self, book):
+        if (rel := self.bookauthor_set.get(book=book.id)) and rel.role:
+            role = "ed." if rel.role == "editor" else rel.role
+            return role
 
     @property
     def initials(self):
+        if not self.forenames:
+            return ""
+        if self.forenames[1] not in string.ascii_lowercase:
+            return self.forenames
         return ".".join([name[0] for name in self.forenames.split(" ")]) + "."
 
 
@@ -62,6 +77,21 @@ class Book(models.Model):
 
     image_url = models.URLField(blank=True)
     publisher_url = models.URLField(blank=True)
+
+    def __str__(self):
+        return self.all_authors + ", " + self.display_title
+
+    @property
+    def all_authors(self):
+        return " and ".join([a.attribution_for(self) for a in self.authors.all()])
+
+    @property
+    def display_title(self):
+        return self.edition_title if self.edition_title else self.title
+
+    @property
+    def authors_with_roles(self):
+        return [(a.attribution_for(self), a.id) for a in self.authors.all()]
 
 
 class BookAuthor(models.Model):

@@ -1,0 +1,16 @@
+<h1>{{ author }}</h1>
+<h2>Books</h2>
+<ul>
+  {% for book in author.books.all %}
+  <li>
+    {% for book_author, id in book.authors_with_roles %}
+    {% if id == author.id %}
+    {{ book_author }}
+    {% else %}
+    <a href="/library/author/{{ id }}">{{ book_author }}</a>,
+    {% endif %}
+    {% endfor %}
+    <a href="/library/book/{{ book.id }}"<i>{{ book.display_title }}</i></a>
+  </li>
+  {% endfor %}
+</ul>
