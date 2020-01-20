@@ -3,14 +3,16 @@
 <ul>
   {% for book in author.books.all %}
   <li>
-    {% for book_author, id in book.authors_with_roles %}
-    {% if id == author.id %}
+    {% for book_author, id in book.authors_with_roles %} {% if id == author.id %}
     {{ book_author }}
     {% else %}
     <a href="/library/author/{{ id }}">{{ book_author }}</a>,
     {% endif %}
     {% endfor %}
-    <a href="/library/book/{{ book.id }}"<i>{{ book.display_title }}</i></a>
+    <i><a href="/library/book/{{ book.id }}">{{ book.display_title }}</a></i>
+    {% if book.series %}
+    ({{book.series}}{% if book.series_order %},&nbsp;#{{book.series_order}}{% endif %})
+    {% endif %}
   </li>
   {% endfor %}
 </ul>

@@ -90,7 +90,12 @@ class Book(models.Model):
     publisher_url = models.URLField(blank=True)
 
     def __str__(self):
-        return self.all_authors + ", " + self.display_title
+        return (
+            self.all_authors
+            + ", "
+            + self.display_title
+            + (f" ({self.series}, #{self.series_order})" if self.series else "")
+        )
 
     @property
     def all_authors(self):
