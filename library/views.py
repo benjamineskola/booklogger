@@ -19,6 +19,20 @@ def books_index(request):
     return render(request, "books/index.html", {"books": books})
 
 
+def owned_books(request):
+    books = Book.objects.filter(owned=True).order_by(
+        Lower("authors__surname"), Lower("authors__forenames"), "title",
+    )
+    return render(request, "books/index.html", {"books": books})
+
+
+def unowned_books(request):
+    books = Book.objects.filter(owned=False).order_by(
+        Lower("authors__surname"), Lower("authors__forenames"), "title",
+    )
+    return render(request, "books/index.html", {"books": books})
+
+
 def author_details(request, author_id):
     author = get_object_or_404(Author, pk=author_id)
     return render(request, "authors/details.html", {"author": author})
