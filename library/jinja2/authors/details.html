@@ -1,18 +1,11 @@
 <h1>{{ author }}</h1>
 <h2>Books</h2>
 <ul>
-  {% for book in author.books.all %}
+  {% for book in author.books.all() %}
   <li>
-    {% for book_author, id in book.authors_with_roles %} {% if id == author.id %}
-    {{ book_author }}
-    {% else %}
-    <a href="/library/author/{{ id }}">{{ book_author }}</a>,
-    {% endif %}
-    {% endfor %}
-    <i><a href="/library/book/{{ book.id }}">{{ book.display_title }}</a></i>
-    {% if book.series %}
-    ({{book.series}}{% if book.series_order %},&nbsp;#{{book.series_order}}{% endif %})
-    {% endif %}
+    {% include "books/authors_snippet.html" -%},
+    {% include "books/title_snippet.html" -%}
+    {% include "books/series_snippet.html" -%}
   </li>
   {% endfor %}
 </ul>
