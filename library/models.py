@@ -69,7 +69,7 @@ class Book(models.Model):
     # edition could be a separate models but it would almost always be one-to-one
     edition_published = models.PositiveSmallIntegerField(blank=True, null=True)
     publisher = models.CharField(max_length=255, blank=True)
-    edition_format = models.IntegerField(choices=Format.choices, blank=True)
+    edition_format = models.IntegerField(choices=Format.choices, blank=True, null=True)
     edition_number = models.PositiveSmallIntegerField(blank=True, null=True)
     page_count = models.PositiveSmallIntegerField(blank=True, null=True)
     goodreads_id = models.CharField(max_length=255, blank=True)
