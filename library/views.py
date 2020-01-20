@@ -14,21 +14,33 @@ def index(request):
 
 def books_index(request):
     books = Book.objects.order_by(
-        Lower("authors__surname"), Lower("authors__forenames"), "title",
+        Lower("authors__surname"),
+        Lower("authors__forenames"),
+        "series",
+        "series_order",
+        "title",
     )
     return render(request, "books/index.html", {"books": books})
 
 
 def owned_books(request):
     books = Book.objects.filter(owned=True).order_by(
-        Lower("authors__surname"), Lower("authors__forenames"), "title",
+        Lower("authors__surname"),
+        Lower("authors__forenames"),
+        "series",
+        "series_order",
+        "title",
     )
     return render(request, "books/index.html", {"books": books})
 
 
 def unowned_books(request):
     books = Book.objects.filter(owned=False).order_by(
-        Lower("authors__surname"), Lower("authors__forenames"), "title",
+        Lower("authors__surname"),
+        Lower("authors__forenames"),
+        "series",
+        "series_order",
+        "title",
     )
     return render(request, "books/index.html", {"books": books})
 
