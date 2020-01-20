@@ -1,6 +1,7 @@
 import string
 
 from django.db import models
+from django.db.models.functions import Lower
 
 # Create your models here.
 
@@ -39,6 +40,15 @@ class Author(models.Model):
 
 
 class Book(models.Model):
+    class Meta:
+        ordering = [
+            Lower("authors__surname"),
+            Lower("authors__forenames"),
+            "series",
+            "series_order",
+            "title",
+        ]
+
     title = models.CharField(max_length=255)
     subtitle = models.CharField(max_length=255, blank=True)
     authors = models.ManyToManyField(Author, through="BookAuthor", related_name="books")

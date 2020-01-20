@@ -1,4 +1,3 @@
-from django.db.models.functions import Lower
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.template import loader
@@ -13,35 +12,17 @@ def index(request):
 
 
 def books_index(request):
-    books = Book.objects.order_by(
-        Lower("authors__surname"),
-        Lower("authors__forenames"),
-        "series",
-        "series_order",
-        "title",
-    )
+    books = Book.objects.all()
     return render(request, "books/index.html", {"books": books})
 
 
 def owned_books(request):
-    books = Book.objects.filter(owned=True).order_by(
-        Lower("authors__surname"),
-        Lower("authors__forenames"),
-        "series",
-        "series_order",
-        "title",
-    )
+    books = Book.objects.filter(owned=True)
     return render(request, "books/index.html", {"books": books})
 
 
 def unowned_books(request):
-    books = Book.objects.filter(owned=False).order_by(
-        Lower("authors__surname"),
-        Lower("authors__forenames"),
-        "series",
-        "series_order",
-        "title",
-    )
+    books = Book.objects.filter(owned=False)
     return render(request, "books/index.html", {"books": books})
 
 
