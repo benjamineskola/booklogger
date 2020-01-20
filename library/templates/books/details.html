@@ -1,0 +1,31 @@
+<dt>Authors</dt><dd>{% for author, id in book.authors_with_roles %}
+<a href="/library/author/{{ id }}">{{ author }}</a>, {% endfor %}</dd>
+<dt>Title</dt><dd>{{ book.display_title }}</dd>
+<dt>Subtitle</dt><dd>{{ book.subtitle }}</dd>
+{% if book.edition_title %}
+<dt>Original Title</dt><dd>{{ book.title }}</br>
+{% endif %}
+<dt>First Published</dt><dd>{{ book.first_published }}</dd>
+<dt>Edition Published</dt><dd>{{ book.edition_published }}</dd>
+
+<dt>Publisher</dt><dd>{{ book.publisher }}</dd>
+<dt>Format</dt><dd>{{ book.edition_format }}</dd>
+<dt>Edition</dt><dd>{{ book.edition_number }}</dd>
+<dt>Pages</dt><dd>{{ book.page_count }}</dd>
+<dt>Goodreads</dt><dd><a href="https://goodreads.com/book/show/{{ book.goodreads_id }}">{{ book.goodreads_id }}</a></dd>
+{% if book.google_books_id %}
+<dt>Google</dt><dd><a href="https://books.google.co.uk/books?id={{ book.google_books_id }}">{{ book.google_books_id }}</a></dd>
+{% endif %}
+{% if book.asin %}
+<dt>Amazon</dt><dd><a href="https://amazon.co.uk/dp/{{ book.asin }}">{{ book.asin }}</a></dd>
+{% endif %}
+<dt>Publisher Link</dt><dd><a href="{{ book.publisher_url }}">{{ book.publisher }}</a></dd>
+<dt>ISBN</dt><dd>{{ book.isbn }}</dd>
+<dt>Language</dt><dd>{{ book.edition_language }}</dd>
+<dt>Original language</dt><dd>{{ book.language }}</dd>
+<dt>Owned</dt><dd>{{ book.owned }}</dd>
+<dt>Acquired</dt><dd>{{ book.acquired_date }}</dd>
+<dt>Sold/Donated</dt><dd>{{ book.alienated_date }}</dd>
+<dt>Borrowed From</dt><dd>{{ book.borrowed_from }}</dd>
+<dt>Image</dt><dd><img src="{{ book.image_url }}"/></dd>
+

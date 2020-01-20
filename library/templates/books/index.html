@@ -3,7 +3,7 @@
   <li>
     {% for author, id in book.authors_with_roles %}
     <a href="/library/author/{{ id }}">{{ author }}</a>, {% endfor %}
-    <i>{{ book.display_title }}</i>
+    <i><a href="/library/book/{{ book.id  }}">{{ book.display_title }}</a></i>
   </li>
   {% endfor %}
 </ul>
