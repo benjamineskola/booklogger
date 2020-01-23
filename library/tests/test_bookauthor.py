@@ -17,10 +17,25 @@ class TestBookAuthor:
         mock_author.save()
         return mock_author
 
+    @pytest.fixture
+    def mock_authors(self):
+        author1 = Author(surname="Smithee", forenames="Alan")
+        author2 = Author(surname="Smithee", forenames="Alan")
+        author1.save()
+        author2.save()
+        return [author1, author2]
+
     def test_add_author(self, mock_book, mock_author):
         assert mock_book.authors.count() == 0
         mock_book.add_author(mock_author)
         assert mock_book.bookauthor_set.count() == 1
+
+    def test_add_two_authors(self, mock_book, mock_authors):
+        author1, author2 = mock_authors
+        assert mock_book.authors.count() == 0
+        mock_book.add_author(author1)
+        mock_book.add_author(author2)
+        assert mock_book.bookauthor_set.count() == 2
 
     def test_add_same_author_twice(self, mock_book, mock_author):
         assert mock_book.authors.count() == 0
