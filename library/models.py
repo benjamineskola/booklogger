@@ -109,11 +109,15 @@ class Book(models.Model):
         return [(a.attribution_for(self), a.id) for a in self.authors.all()]
 
     def add_author(self, author, role="", order=None):
-        authorship = BookAuthor(book=self, author=author, role=role, order=order)
-        authorship.save()
+        if author not in self.authors.all():
+            authorship = BookAuthor(book=self, author=author, role=role, order=order)
+            authorship.save()
 
 
 class BookAuthor(models.Model):
+    class Meta:
+        unique_together = ("author", "book")
+
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     role = models.CharField(max_length=255)

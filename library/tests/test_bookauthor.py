@@ -17,6 +17,17 @@ class TestBookAuthor:
         mock_author.save()
         return mock_author
 
+    def test_add_author(self, mock_book, mock_author):
+        assert mock_book.authors.count() == 0
+        mock_book.add_author(mock_author)
+        assert mock_book.bookauthor_set.count() == 1
+
+    def test_add_same_author_twice(self, mock_book, mock_author):
+        assert mock_book.authors.count() == 0
+        mock_book.add_author(mock_author)
+        mock_book.add_author(mock_author)
+        assert mock_book.bookauthor_set.count() == 1
+
     def test_author_role_none(self, mock_book, mock_author):
         mock_book.add_author(mock_author)
         assert mock_author._role_for_book(mock_book) == ""
