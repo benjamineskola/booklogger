@@ -43,6 +43,14 @@ class TestBookAuthor:
         mock_book.add_author(mock_author)
         assert mock_book.bookauthor_set.count() == 1
 
+    def test_add_author_and_role(self, mock_book, mock_authors):
+        author1, author2 = mock_authors
+        mock_book.add_author(author1)
+        mock_book.add_author(author2, role="translator")
+        assert (
+            str(mock_book) == "Smithee, A. and Smithee, A. (translator), Autobiography"
+        )
+
     def test_author_role_none(self, mock_book, mock_author):
         mock_book.add_author(mock_author)
         assert mock_author._role_for_book(mock_book) == ""
