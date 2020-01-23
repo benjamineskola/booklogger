@@ -89,16 +89,21 @@ class Book(models.Model):
     publisher_url = models.URLField(blank=True)
 
     def __str__(self):
-        return (
-            self.all_authors
-            + ", "
-            + self.display_title
-            + (f" ({self.series}, #{self.series_order})" if self.series else "")
-        )
+        return self.citation
 
     @property
     def all_authors(self):
-        return " and ".join([a.attribution_for(self) for a in self.authors.all()])
+        return [a.attribution_for(self) for a in self.authors.all()]
+
+    @property
+    def display_authors(self):
+        authors = self.all_authors
+
+        if len(authors) > 2:
+            authors[-1] = "and " + authors[-1]
+            return ", ".join(authors)
+        else:
+            return " and ".join(authors)
 
     @property
     def display_title(self):
@@ -107,6 +112,24 @@ class Book(models.Model):
     @property
     def authors_with_roles(self):
         return [(a.attribution_for(self), a.id) for a in self.authors.all()]
+
+    @property
+    def display_date(self):
+        return (
+            self.edition_published if self.edition_published else self.first_published
+        )
+
+    @property
+    def citation(self):
+        publication_data = [str(i) for i in [self.publisher, self.display_date] if i]
+
+        return " ".join(
+            [
+                self.display_authors + ",",
+                self.display_title,
+                (f"({', '.join(publication_data)})" if publication_data else ""),
+            ]
+        ).strip()
 
     def add_author(self, author, role="", order=None):
         if author not in self.authors.all():
