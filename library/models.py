@@ -109,6 +109,10 @@ class Book(models.Model):
     def authors_with_roles(self):
         return [(a.attribution_for(self), a.id) for a in self.authors.all()]
 
+    def add_author(self, author, role="", order=None):
+        authorship = BookAuthor(book=self, author=author, role=role, order=order)
+        authorship.save()
+
 
 class BookAuthor(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE)

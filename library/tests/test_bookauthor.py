@@ -18,18 +18,13 @@ class TestBookAuthor:
         return mock_author
 
     def test_author_role_none(self, mock_book, mock_author):
-        authorship = BookAuthor(book=mock_book, author=mock_author)
-        authorship.save()
+        mock_book.add_author(mock_author)
         assert mock_author._role_for_book(mock_book) is None
 
     def test_author_role_simple(self, mock_book, mock_author):
-        authorship = BookAuthor(book=mock_book, author=mock_author)
-        authorship.role = "introduction"
-        authorship.save()
+        mock_book.add_author(mock_author, role="introduction")
         assert mock_author._role_for_book(mock_book) == "introduction"
 
     def test_author_role_editor_abbr(self, mock_book, mock_author):
-        authorship = BookAuthor(book=mock_book, author=mock_author)
-        authorship.role = "editor"
-        authorship.save()
+        mock_book.add_author(mock_author, role="editor")
         assert mock_author._role_for_book(mock_book) == "ed."
