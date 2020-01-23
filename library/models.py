@@ -1,3 +1,4 @@
+import re
 import string
 
 from django.db import models
@@ -34,9 +35,8 @@ class Author(models.Model):
     def initials(self):
         if not self.forenames:
             return ""
-        if self.forenames[1] not in string.ascii_lowercase:
-            return self.forenames
-        return ".".join([name[0] for name in self.forenames.split(" ")]) + "."
+        all_forenames = re.split(r"[. ]+", self.forenames)
+        return ".".join([name[0] for name in all_forenames if name]) + "."
 
 
 class Book(models.Model):
