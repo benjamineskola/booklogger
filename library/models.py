@@ -27,9 +27,8 @@ class Author(models.Model):
         return str(self) + (f" ({role})" if role else "")
 
     def _role_for_book(self, book):
-        if (rel := self.bookauthor_set.get(book=book.id)) and rel.role:
-            role = "ed." if rel.role == "editor" else rel.role
-            return role
+        if rel := self.bookauthor_set.get(book=book.id):
+            return rel.display_role
 
     @property
     def initials(self):
@@ -119,3 +118,7 @@ class BookAuthor(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     role = models.CharField(max_length=255)
     order = models.PositiveSmallIntegerField(blank=True, null=True)
+
+    @property
+    def display_role(self):
+        return "ed." if self.role == "editor" else self.role
