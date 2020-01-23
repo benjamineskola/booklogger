@@ -1,6 +1,3 @@
 language: python
 python: 3.8
-jobs:
-  include:
-    - stage: test
-      script: pytest
+script: pytest
