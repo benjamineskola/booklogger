@@ -110,10 +110,6 @@ class Book(models.Model):
         return self.edition_title if self.edition_title else self.title
 
     @property
-    def authors_with_roles(self):
-        return [(a.attribution_for(self), a.id) for a in self.authors.all()]
-
-    @property
     def display_date(self):
         return (
             self.edition_published if self.edition_published else self.first_published

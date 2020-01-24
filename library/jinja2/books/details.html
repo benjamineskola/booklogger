@@ -1,5 +1,4 @@
-<dt>Authors</dt><dd>{% for author, id in book.authors_with_roles %}
-<a href="/library/author/{{ id }}">{{ author }}</a>, {% endfor %}</dd>
+<dt>Authors</dt><dd>{% include "books/authors_snippet.html" -%}</dd>
 <dt>Title</dt><dd>{{ book.display_title }}</dd>
 <dt>Subtitle</dt><dd>{{ book.subtitle }}</dd>
 {% if book.edition_title %}

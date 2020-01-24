@@ -1,9 +1,9 @@
-{%- for book_author, id in book.authors_with_roles -%}
+{%- for book_author in book.authors.all() -%}
 {% if loop.last and not loop.first %} and {% endif %}
-{%- if author and id == author.id -%}
+{%- if author and book_author.id == author.id -%}
 {{ book_author }}
 {%- else -%}
-<a href="/library/author/{{ id }}">{{ book_author }}</a>
+<a href="/library/author/{{ book_author.id }}">{{ book_author.attribution_for(book) }}</a>
 {%- endif -%}
 {% if not loop.last %}, {% endif %}
 {%- endfor -%}
