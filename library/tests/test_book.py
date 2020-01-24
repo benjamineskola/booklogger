@@ -7,12 +7,21 @@ from library.models import *
 @pytest.mark.django_db
 class TestBook:
     @pytest.fixture
-    def mock_book(self, book_factory, author_factory, book_author_factory):
+    def mock_authors(self, author_factory):
+        authors = [
+            author_factory(surname="God"),
+            author_factory(surname="Jesus"),
+            author_factory(surname="Holy Spirit"),
+        ]
+        for author in authors:
+            author.save()
+        return authors
+
+    @pytest.fixture
+    def mock_book(self, book_factory, mock_authors, book_author_factory):
         mock_book = book_factory(title="The Bible")
-        mock_author = author_factory(surname="God")
         mock_book.save()
-        mock_author.save()
-        mock_book.add_author(mock_author)
+        mock_book.add_author(mock_authors[0])
         return mock_book
 
     def test_book_display(self, mock_book):
@@ -32,17 +41,11 @@ class TestBook:
         mock_book.edition_published = 1965
         assert mock_book.citation == "God, The Bible (Vatican Books, 1965)"
 
-    def test_two_authors(self, mock_book, author_factory):
-        second_author = author_factory(surname="Jesus")
-        second_author.save()
-        mock_book.add_author(second_author)
+    def test_two_authors(self, mock_book, mock_authors):
+        mock_book.add_author(mock_authors[1])
         assert mock_book.citation == "God and Jesus, The Bible"
 
-    def test_three_authors(self, mock_book, author_factory):
-        second_author = author_factory(surname="Jesus")
-        third_author = author_factory(surname="Holy Spirit")
-        second_author.save()
-        third_author.save()
-        mock_book.add_author(second_author)
-        mock_book.add_author(third_author)
+    def test_three_authors(self, mock_book, mock_authors):
+        mock_book.add_author(mock_authors[1])
+        mock_book.add_author(mock_authors[2])
         assert mock_book.citation == "God, Jesus, and Holy Spirit, The Bible"
