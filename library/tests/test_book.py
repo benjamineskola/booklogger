@@ -1,21 +1,18 @@
-from unittest.mock import PropertyMock, patch
-
 import pytest
 
+from library.factories import *
 from library.models import *
 
 
 @pytest.mark.django_db
 class TestBook:
     @pytest.fixture
-    def mock_book(self):
-        mock_book = Book(title="The Bible")
-        mock_author = Author(surname="God")
+    def mock_book(self, book_factory, author_factory, book_author_factory):
+        mock_book = book_factory(title="The Bible")
+        mock_author = author_factory(surname="God")
         mock_book.save()
         mock_author.save()
-        authorship = BookAuthor(book=mock_book, author=mock_author)
-        authorship.save()
-
+        mock_book.add_author(mock_author)
         return mock_book
 
     def test_book_display(self, mock_book):
@@ -35,18 +32,17 @@ class TestBook:
         mock_book.edition_published = 1965
         assert mock_book.citation == "God, The Bible (Vatican Books, 1965)"
 
-    @patch(
-        "library.models.Book.all_authors",
-        new=PropertyMock(return_value=["Smithee, A.", "Other, A.N."]),
-    )
-    def test_two_authors(self, mock_book):
-        assert mock_book.citation == "Smithee, A. and Other, A.N., The Bible"
+    def test_two_authors(self, mock_book, author_factory):
+        second_author = author_factory(surname="Jesus")
+        second_author.save()
+        mock_book.add_author(second_author)
+        assert mock_book.citation == "God and Jesus, The Bible"
 
-    @patch(
-        "library.models.Book.all_authors",
-        new=PropertyMock(return_value=["Smithee, A.", "Other, A.N.", "Smoth, B."]),
-    )
-    def test_three_authors(self, mock_book):
-        assert (
-            mock_book.citation == "Smithee, A., Other, A.N., and Smoth, B., The Bible"
-        )
+    def test_three_authors(self, mock_book, author_factory):
+        second_author = author_factory(surname="Jesus")
+        third_author = author_factory(surname="Holy Spirit")
+        second_author.save()
+        third_author.save()
+        mock_book.add_author(second_author)
+        mock_book.add_author(third_author)
+        assert mock_book.citation == "God, Jesus, and Holy Spirit, The Bible"

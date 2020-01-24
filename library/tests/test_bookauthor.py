@@ -1,26 +1,27 @@
 import pytest
 
+from library.factories import *
 from library.models import *
 
 
 @pytest.mark.django_db
 class TestBookAuthor:
     @pytest.fixture
-    def mock_book(self):
-        mock_book = Book(title="Autobiography")
+    def mock_book(self, book_factory):
+        mock_book = book_factory(title="Autobiography")
         mock_book.save()
         return mock_book
 
     @pytest.fixture
-    def mock_author(self):
-        mock_author = Author(surname="Smithee", forenames="Alan")
+    def mock_author(self, author_factory):
+        mock_author = author_factory(surname="Smithee", forenames="Alan")
         mock_author.save()
         return mock_author
 
     @pytest.fixture
-    def mock_authors(self):
-        author1 = Author(surname="Smithee", forenames="Alan")
-        author2 = Author(surname="Smithee", forenames="Alan")
+    def mock_authors(self, author_factory):
+        author1 = author_factory(surname="Smithee", forenames="Alan")
+        author2 = author_factory(surname="Smithee", forenames="Alan")
         author1.save()
         author2.save()
         return [author1, author2]
