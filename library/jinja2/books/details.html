@@ -1,3 +1,5 @@
+{% extends "base.html" %}
+{% block content %}
 <dt>Authors</dt><dd>{% include "books/authors_snippet.html" -%}</dd>
 <dt>Title</dt><dd>{{ book.display_title }}</dd>
 <dt>Subtitle</dt><dd>{{ book.subtitle }}</dd>
@@ -29,3 +31,4 @@
 <dt>Image</dt><dd><img src="{{ book.image_url }}"/></dd>
 
 <a href="/admin/library/book/{{book.id}}/change">edit</a>
+{% endblock content %}

@@ -1,3 +1,5 @@
+{% extends "base.html" %}
+{% block content %}
 <h1>{{ author }}</h1>
 <h2>Books</h2>
 <ul>
@@ -10,3 +12,4 @@
   {% endfor %}
 </ul>
 <a href="/admin/library/author/{{author.id}}/change">edit</a>
+{% endblock content %}
