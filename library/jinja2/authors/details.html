@@ -1,6 +1,6 @@
 {% extends "base.html" %}
+{% set title %}{{ author }} — Booklogger{% endset %}
 {% block content %}
-<h1>{{ author }}</h1>
 <h2>Books</h2>
 <ul>
   {% for book in author.books.all() %}
