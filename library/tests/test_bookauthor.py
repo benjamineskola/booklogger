@@ -13,18 +13,18 @@ class TestBookAuthor:
         return mock_book
 
     @pytest.fixture
-    def mock_author(self, author_factory):
-        mock_author = author_factory(surname="Smithee", forenames="Alan")
-        mock_author.save()
-        return mock_author
+    def mock_author(self, mock_authors):
+        return mock_authors[0]
 
     @pytest.fixture
     def mock_authors(self, author_factory):
-        author1 = author_factory(surname="Smithee", forenames="Alan")
-        author2 = author_factory(surname="Smithee", forenames="Alan")
-        author1.save()
-        author2.save()
-        return [author1, author2]
+        authors = [
+            author_factory(surname="Smithee", forenames="Alan"),
+            author_factory(surname="Smithee", forenames="Alan"),
+        ]
+        authors[0].save()
+        authors[1].save()
+        return authors
 
     def test_add_author(self, mock_book, mock_author):
         assert mock_book.authors.count() == 0
@@ -32,10 +32,9 @@ class TestBookAuthor:
         assert mock_book.bookauthor_set.count() == 1
 
     def test_add_two_authors(self, mock_book, mock_authors):
-        author1, author2 = mock_authors
         assert mock_book.authors.count() == 0
-        mock_book.add_author(author1)
-        mock_book.add_author(author2)
+        mock_book.add_author(mock_authors[0])
+        mock_book.add_author(mock_authors[1])
         assert mock_book.bookauthor_set.count() == 2
 
     def test_add_same_author_twice(self, mock_book, mock_author):
@@ -45,9 +44,8 @@ class TestBookAuthor:
         assert mock_book.bookauthor_set.count() == 1
 
     def test_add_author_and_role(self, mock_book, mock_authors):
-        author1, author2 = mock_authors
-        mock_book.add_author(author1)
-        mock_book.add_author(author2, role="translator")
+        mock_book.add_author(mock_authors[0])
+        mock_book.add_author(mock_authors[1], role="translator")
         assert (
             str(mock_book) == "Smithee, A. and Smithee, A. (translator), Autobiography"
         )
