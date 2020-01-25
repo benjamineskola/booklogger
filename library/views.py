@@ -30,9 +30,7 @@ def owned_books(request):
 def unowned_books(request):
     books = Book.objects.filter(owned=False)
     return render(
-        request,
-        "books/list_by_format.html",
-        {"page_title": "Unowned Books", "books": books},
+        request, "books/list.html", {"page_title": "Unowned Books", "books": books},
     )
 
 
