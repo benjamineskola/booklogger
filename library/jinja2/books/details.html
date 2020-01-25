@@ -31,5 +31,5 @@
 <dt>Borrowed From</dt><dd>{{ book.borrowed_from }}</dd>
 <dt>Image</dt><dd><img src="{{ book.image_url }}"/></dd>
 
-<a href="/admin/library/book/{{book.id}}/change">edit</a>
+<a href="{{ url('admin:library_book_change', args=[book.id]) }}">edit</a>
 {% endblock content %}

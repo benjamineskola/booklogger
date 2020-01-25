@@ -11,5 +11,5 @@
   </li>
   {% endfor %}
 </ul>
-<a href="/admin/library/author/{{author.id}}/change">edit</a>
+<a href="{{ url('admin:library_author_change', args=[author.id]) }}">edit</a>
 {% endblock content %}
