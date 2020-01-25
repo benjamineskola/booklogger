@@ -26,16 +26,18 @@ class Command(BaseCommand):
                 books.append(book)
 
                 author_names = self._normalize(book["Author"])
-                key = author_names[1] + ", " + author_names[0]
+                author_name = author_names[0] + (
+                    (", " + author_names[1]) if author_names[1] else ""
+                )
 
-                if key not in authors:
+                if author_name not in authors:
                     author_data = {
                         "surname": author_names[0],
                         "forenames": author_names[1],
                         "books": [],
                         "pk": None,
                     }
-                    authors[key] = author_data
+                    authors[author_name] = author_data
 
                 shelves = book["Bookshelves"].split(", ")
                 book_format = 0
@@ -50,7 +52,16 @@ class Command(BaseCommand):
                 series_name = ""
                 series_order = 0
 
-                if title[-1] == ")":
+                if title.startswith("New Left Review"):
+                    series_name = "New Left Review"
+                    series_order = float(title.split(" ")[-1])
+                elif title.startswith("Tribune"):
+                    series_name = "Tribune"
+                    series_order = float(title[-2:-1])
+                    title = "Tribune"
+                elif author_name == "Jacobin":
+                    series_name = "Jacobin"
+                elif title[-1] == ")":
                     title, rest = title.split(" (", 2)
                     first_series = rest.split(";")[0]
                     series_name, *rest = first_series.split("#")
@@ -84,7 +95,7 @@ class Command(BaseCommand):
                         book["Number of Pages"] if book["Number of Pages"] else 0
                     ),
                 }
-                authors[key]["books"].append(book_data)
+                authors[author_name]["books"].append(book_data)
 
         for key, author in authors.items():
             a = Author(surname=author["surname"], forenames=author["forenames"])
