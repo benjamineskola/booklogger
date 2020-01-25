@@ -21,7 +21,9 @@ def books_index(request):
 def owned_books(request):
     books = Book.objects.filter(owned=True)
     return render(
-        request, "books/index.html", {"page_title": "Owned Books", "books": books}
+        request,
+        "books/index.html",
+        {"page_title": "Owned Books", "books": books, "groupby_format":True},
     )
 
 

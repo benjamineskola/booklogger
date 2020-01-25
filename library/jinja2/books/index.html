@@ -1,7 +1,20 @@
 {% extends "base.html" %}
-{% set title %}{{ page_title }} — Booklogger{% endset %}
 {% block content %}
 <ul>
+{% if groupby_format %}
+  {% for group in books|groupby('edition_format') %}
+    <li><b>{{ group.list[0].get_edition_format_display() }}</b></li>
+    <ul>
+    {% for book in group.list %}
+    <li>
+      {% include "books/authors_snippet.html" %},
+      {% include "books/title_snippet.html" %}
+      {% include "books/series_snippet.html" %}
+    </li>
+    {% endfor %}
+    </ul>
+  {% endfor%}
+{% else %}
   {% for book in books %}
   <li>
     {% include "books/authors_snippet.html" %},
@@ -9,5 +22,6 @@
     {% include "books/series_snippet.html" %}
   </li>
   {% endfor %}
+{% endif %}
 </ul>
 {% endblock content %}
