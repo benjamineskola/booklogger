@@ -36,6 +36,13 @@ def unowned_books(request):
     )
 
 
+def borrowed_books(request):
+    books = Book.objects.filter(was_borrowed=True)
+    return render(
+        request, "books/list.html", {"page_title": "Borrowed Books", "books": books}
+    )
+
+
 def author_details(request, author_id):
     author = get_object_or_404(Author, pk=author_id)
     return render(request, "authors/details.html", {"author": author})
