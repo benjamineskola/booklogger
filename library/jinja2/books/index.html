@@ -6,21 +6,13 @@
     <li><b>{{ group.list[0].get_edition_format_display() }}</b></li>
     <ul>
     {% for book in group.list %}
-    <li>
-      {% include "books/authors_snippet.html" %},
-      {% include "books/title_snippet.html" %}
-      {% include "books/series_snippet.html" %}
-    </li>
+      {% include "books/list_item_snippet.html" -%}
     {% endfor %}
     </ul>
   {% endfor%}
 {% else %}
   {% for book in books %}
-  <li>
-    {% include "books/authors_snippet.html" %},
-    {% include "books/title_snippet.html" %}
-    {% include "books/series_snippet.html" %}
-  </li>
+      {% include "books/list_item_snippet.html" -%}
   {% endfor %}
 {% endif %}
 </ul>
