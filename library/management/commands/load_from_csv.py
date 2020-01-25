@@ -66,6 +66,8 @@ class Command(BaseCommand):
                     "series": series_name,
                     "series_order": series_order,
                     "owned": any(["owned-books" in shelves, "owned-ebooks" in shelves]),
+                    "was_borrowed": "shared-books" in shelves,
+                    "borrowed_from": "Sara" if "shared-books" in shelves else "",
                     "edition_format": book_format,
                     "goodreads_id": book["Book Id"],
                     "isbn": book["ISBN13"][2:-1],
