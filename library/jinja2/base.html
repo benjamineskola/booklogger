@@ -1,3 +1,4 @@
+{% set pages = [('Home', '/library/'), ('Owned', '/library/owned'),('Unowned','/library/unowned'),('Borrowed','/library/borrowed')] %}
 <!doctype html>
 <html lang="en">
   <head>
@@ -14,10 +15,9 @@
   </button>
   <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
     <div class="navbar-nav">
-      <a class="nav-item nav-link active" href="/library">Home <span class="sr-only">(current)</span></a>
-      <a class="nav-item nav-link" href="/library/owned">Owned</a>
-      <a class="nav-item nav-link" href="/library/unowned">Unowned</a>
-      <a class="nav-item nav-link" href="/library/borrowed">Borrowed</a>
+    {% for page in pages %}
+    <a class="nav-item nav-link{% if page[1] == request.path%} active{% endif %}" href="{{page[1]}}">{{ page[0] }}{% if page[1] == request.path%}<span class="sr-only">(current)</span></a>{% endif %}</a>
+    {% endfor %}
     </div>
   </div>
 </nav>
