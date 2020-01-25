@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<ul>
+{% for group in books|groupby('edition_format') %}
+  <li><b>{{ group.list[0].get_edition_format_display() }}</b></li>
+  <ul>
+  {% for book in group.list %}
+    {% include "books/list_item_snippet.html" -%}
+  {% endfor %}
+  </ul>
+{% endfor%}
+</ul>
+{% endblock content %}

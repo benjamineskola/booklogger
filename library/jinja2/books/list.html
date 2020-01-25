@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% set title %}{{ page_title }} — Booklogger{% endset %}
+{% block content %}
+<ul>
+  {% for book in books %}
+    {% include "books/list_item_snippet.html" %}
+  {% endfor %}
+</ul>
+{% endblock content %}
