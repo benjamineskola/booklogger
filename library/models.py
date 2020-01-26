@@ -1,5 +1,6 @@
 import re
 import string
+from datetime import date
 
 from django.db import models
 from django.db.models.functions import Lower
@@ -132,6 +133,23 @@ class Book(models.Model):
             authorship = BookAuthor(book=self, author=author, role=role, order=order)
             authorship.save()
 
+    def start_reading(self):
+        if not self.log_entries.filter(end_date=None):
+            self.log_entries.create()
+
+    def finish_reading(self):
+        entry = self.log_entries.get(end_date=None)
+        entry.end_date = date.today()
+        entry.save()
+
+    @property
+    def currently_reading(self):
+        entries = self.log_entries.filter(end_date=None).order_by("-start_date")
+        if not entries:
+            return False
+        else:
+            return entries[0].currently_reading
+
 
 class BookAuthor(models.Model):
     class Meta:
@@ -145,3 +163,28 @@ class BookAuthor(models.Model):
     @property
     def display_role(self):
         return "ed." if self.role == "editor" else self.role
+
+
+class LogEntry(models.Model):
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="log_entries")
+    start_date = models.DateField(default=date.today, blank=True, null=True)
+    end_date = models.DateField(blank=True, null=True)
+
+    class DatePrecision(models.IntegerChoices):
+        DAY = 0
+        MONTH = 1
+        YEAR = 2
+
+    start_precision = models.PositiveSmallIntegerField(
+        choices=DatePrecision.choices, default=0
+    )
+    end_precision = models.PositiveSmallIntegerField(
+        choices=DatePrecision.choices, default=0
+    )
+
+    @property
+    def currently_reading(self):
+        if self.start_date and not self.end_date:
+            return True
+        else:
+            return False
