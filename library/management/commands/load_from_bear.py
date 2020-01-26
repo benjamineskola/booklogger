@@ -124,7 +124,9 @@ class Command(BaseCommand):
                     start_precision=entry["start_date_precision"],
                     end_precision=entry["end_date_precision"],
                 )
+                book.want_to_read = False
                 if options["force"]:
+                    book.save()
                     log.save()
             # book = books[0]
             # print(book)

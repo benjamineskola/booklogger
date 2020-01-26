@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+{% for group in books|groupby('owned')|reverse%}
+  <ul class="list-unstyled">
+  {% if group.grouper %}
+    <h2>Owned Books</h2>
+    {% for format in group.list|groupby('edition_format') %}
+      <h3>{{ format.list[0].get_edition_format_display() }}</h3>
+      <ul class="list-unstyled">
+        {% for book in format.list %}
+        {% include "books/list_item_snippet.html" -%}
+        {% endfor %}
+      </ul>
+    {% endfor %}
+  {% else %}
+    <h2>Unowned Books</h2>
+  <ul class="list-unstyled">
+    {% for book in group.list %}
+      {% include "books/list_item_snippet.html" -%}
+    {% endfor %}
+  </ul>
+  {% endif %}
+{% endfor%}
+{% endblock content %}

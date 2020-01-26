@@ -89,6 +89,8 @@ class Book(models.Model):
     image_url = models.URLField(blank=True)
     publisher_url = models.URLField(blank=True)
 
+    want_to_read = models.BooleanField(default=True)
+
     def __str__(self):
         return self.citation
 

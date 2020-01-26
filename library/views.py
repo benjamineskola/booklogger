@@ -65,3 +65,8 @@ def read_books(request):
             "currently_reading": currently_reading,
         },
     )
+
+
+def unread_books(request):
+    want_to_read = Book.objects.filter(want_to_read=True)
+    return render(request, "books/toread.html", {"books": want_to_read})
