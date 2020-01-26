@@ -73,7 +73,7 @@ class Command(BaseCommand):
                             pass
 
                 book_data = {
-                    "title": title,
+                    "title": title.strip(),
                     "series": series_name,
                     "series_order": series_order,
                     "owned": any(["owned-books" in shelves, "owned-ebooks" in shelves]),
@@ -113,7 +113,7 @@ class Command(BaseCommand):
         words = raw_name.split(" ")
         surname = words.pop()
 
-        while words and words[-1].lower() in ["von", "van", "der", "le"]:
+        while words and words[-1].lower() in ["von", "van", "der", "le", "de"]:
             surname = words.pop() + " " + surname
 
         forenames = " ".join(words)
