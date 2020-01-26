@@ -1,3 +1,4 @@
+from django.db.models.functions import Lower
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.template import loader
@@ -70,3 +71,8 @@ def read_books(request):
 def unread_books(request):
     want_to_read = Book.objects.filter(want_to_read=True)
     return render(request, "books/toread.html", {"books": want_to_read})
+
+
+def all_authors(request):
+    authors = Author.objects.order_by(Lower("surname"), Lower("forenames"))
+    return render(request, "authors/list.html", {"authors": authors})

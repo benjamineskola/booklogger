@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% set title %}{{ page_title }} — Booklogger{% endset %}
+{% block content %}
+<ul class="list-unstyled">
+  {% for author in authors %}
+    <li><a href="{{ url("author_details", args=[author.id]) }}">{{ author }}</a> <span class="text-muted">(Author of {{ author.books.order_by('title')[0].title }}{% if author.books.count() > 1 %}, et al.{% endif %})</span></li>
+  {% endfor %}
+</ul>
+{% endblock content %}
