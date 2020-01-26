@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+{% for group in entries|groupby('end_date.year')|reverse %}
+<h2>{{ group.grouper }}</h2>
+<ul class="list-unstyled">
+  {% for entry in group.list %}
+    {% set book = entry.book %}
+    <li>
+      <span class="text-muted">
+      <time datetime="{{entry.start_date}}"> {{ entry.start_date }}</time>
+      &ndash;
+      <time datetime="{{entry.end_date}}"> {{ entry.end_date }}</time>:
+      </span>
+      {% include "books/authors_snippet.html" %},
+      {% include "books/title_snippet.html" %}
+      {% include "books/series_snippet.html" %}
+    </li>
+  {% endfor %}
+</ul>
+{% endfor%} {% endblock content %}

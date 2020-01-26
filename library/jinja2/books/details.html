@@ -31,5 +31,22 @@
 <dt>Borrowed From</dt><dd>{{ book.borrowed_from }}</dd>
 <dt>Image</dt><dd><img src="{{ book.image_url }}"/></dd>
 
+<h3>Reading History</h3>
+<ul class="list-unstyled">
+{% for entry in book.log_entries.all() %}
+  {% if entry.start_date %}
+    {% if entry.end_date %}
+      <li>{{ entry.start_date }} to {{ entry.end_date }}</li>
+    {% else %}
+      <li>Reading since {{ entry.start_date }}</li>
+    {% endif %}
+  {% else %}
+    <li>Finished on {{ entry.end_date }}</li>
+  {% endif %}
+{% else %}
+<li>No reading history</li>
+{% endfor %}
+</ul>
+
 <a href="{{ url('admin:library_book_change', args=[book.id]) }}">edit</a>
 {% endblock content %}

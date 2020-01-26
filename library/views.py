@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.template import loader
 
-from .models import Author, Book, BookAuthor
+from .models import Author, Book, BookAuthor, LogEntry
 
 # Create your views here.
 
@@ -49,3 +49,12 @@ def author_details(request, author_id):
 def book_details(request, book_id):
     book = get_object_or_404(Book, pk=book_id)
     return render(request, "books/details.html", {"book": book})
+
+
+def read_books(request):
+    entries = LogEntry.objects.filter(end_date__isnull=False).order_by("end_date")
+    return render(
+        request,
+        "logentries/list.html",
+        {"page_title": "Read Books", "entries": entries},
+    )
