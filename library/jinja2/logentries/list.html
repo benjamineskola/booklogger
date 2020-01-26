@@ -6,7 +6,7 @@
   {% set book = entry.book %}
   <li>
     <span class="text-muted">
-    Reading since <time datetime="{{entry.start_date}}"> {{ entry.start_date }}</time>:
+    Reading since <time datetime="{{entry.start_date}}"> {{ entry.start_date_display }}</time>:
     </span>
     {% include "books/authors_snippet.html" %},
     {% include "books/title_snippet.html" %}
@@ -22,9 +22,9 @@
     {% set book = entry.book %}
     <li>
       <span class="text-muted">
-      <time datetime="{{entry.start_date}}"> {{ entry.start_date }}</time>
+      <time datetime="{{entry.start_date}}"> {{ entry.start_date_display }}</time>
       &ndash;
-      <time datetime="{{entry.end_date}}"> {{ entry.end_date }}</time>:
+      <time datetime="{{entry.end_date}}"> {{ entry.end_date_display }}</time>:
       </span>
       {% include "books/authors_snippet.html" %},
       {% include "books/title_snippet.html" %}

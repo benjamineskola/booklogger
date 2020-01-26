@@ -188,3 +188,19 @@ class LogEntry(models.Model):
             return True
         else:
             return False
+
+    @property
+    def start_date_display(self):
+        return self._date_with_precision(self.start_date, self.start_precision)
+
+    @property
+    def end_date_display(self):
+        return self._date_with_precision(self.end_date, self.end_precision)
+
+    def _date_with_precision(self, date, precision):
+        if precision == 2:
+            return date.strftime("%Y")
+        elif precision == 1:
+            return date.strftime("%B %Y")
+        else:
+            return date.strftime("%d %B, %Y")

@@ -53,7 +53,9 @@ def book_details(request, book_id):
 
 def read_books(request):
     currently_reading = LogEntry.objects.filter(end_date__isnull=True)
-    read = LogEntry.objects.filter(end_date__isnull=False).order_by("end_date")
+    read = LogEntry.objects.filter(end_date__isnull=False).order_by(
+        "end_date", "start_date"
+    )
     return render(
         request,
         "logentries/list.html",
