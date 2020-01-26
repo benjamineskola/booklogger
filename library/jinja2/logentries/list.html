@@ -6,7 +6,7 @@
   {% set book = entry.book %}
   <li>
     <span class="text-muted">
-    Reading since <time datetime="{{entry.start_date}}"> {{ entry.start_date_display }}</time>:
+    {%- include "logentries/date_snippet.html" -%}:
     </span>
     {% include "books/authors_snippet.html" %},
     {% include "books/title_snippet.html" %}
@@ -22,19 +22,7 @@
     {% set book = entry.book %}
     <li>
       <span class="text-muted">
-      {% if not entry.start_date or (entry.start_precision == 2 and entry.start_date.year == entry.end_date.year) %}
-        Finished
-        {% if entry.end_precision > 0 %} in {% else %} on {% endif %}
-        <time datetime="{{entry.end}}"> {{ entry.end_date_display }}</time>
-      {% elif entry.start_date_display == entry.end_date_display %}
-        Read
-        {% if entry.start_precision > 0 %} in {% else %} on {% endif %}
-        <time datetime="{{entry.start_date}}"> {{ entry.start_date_display }}</time>
-      {% else %}
-      <time datetime="{{entry.start_date}}"> {{ entry.start_date_display }}</time>
-      &ndash;
-      <time datetime="{{entry.end_date}}"> {{ entry.end_date_display }}</time>:
-      {% endif %}
+      {%- include "logentries/date_snippet.html" -%}:
       </span>
       {% include "books/authors_snippet.html" %},
       {% include "books/title_snippet.html" %}

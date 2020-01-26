@@ -34,15 +34,7 @@
 <h3>Reading History</h3>
 <ul class="list-unstyled">
 {% for entry in book.log_entries.all() %}
-  {% if entry.start_date %}
-    {% if entry.end_date %}
-      <li>{{ entry.start_date }} to {{ entry.end_date }}</li>
-    {% else %}
-      <li>Reading since {{ entry.start_date }}</li>
-    {% endif %}
-  {% else %}
-    <li>Finished on {{ entry.end_date }}</li>
-  {% endif %}
+  <li>{% include "logentries/date_snippet.html" %}<li>
 {% else %}
 <li>No reading history</li>
 {% endfor %}
