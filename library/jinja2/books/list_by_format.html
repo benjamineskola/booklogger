@@ -2,10 +2,7 @@
 {% block content %}
 {% for group in books|groupby('edition_format') %}
   <h2>{{ group.list[0].get_edition_format_display() }}</h2>
-  <ul class="list-unstyled">
-  {% for book in group.list %}
-    {% include "books/list_item_snippet.html" -%}
-  {% endfor %}
-  </ul>
+  {% set items = group.list %}
+  {% include "books/multiline_loop_snippet.html" -%}
 {% endfor%}
 {% endblock content %}

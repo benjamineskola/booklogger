@@ -15,7 +15,7 @@ def index(request):
 def books_index(request):
     books = Book.objects.all()
     return render(
-        request, "books/list.html", {"page_title": "All Books", "books": books}
+        request, "books/list.html", {"page_title": "All Books", "items": books}
     )
 
 
@@ -31,14 +31,14 @@ def owned_books(request):
 def unowned_books(request):
     books = Book.objects.filter(owned=False)
     return render(
-        request, "books/list.html", {"page_title": "Unowned Books", "books": books},
+        request, "books/list.html", {"page_title": "Unowned Books", "items": books},
     )
 
 
 def borrowed_books(request):
     books = Book.objects.filter(was_borrowed=True)
     return render(
-        request, "books/list.html", {"page_title": "Borrowed Books", "books": books}
+        request, "books/list.html", {"page_title": "Borrowed Books", "items": books}
     )
 
 

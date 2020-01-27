@@ -6,19 +6,13 @@
     <h2>Owned Books</h2>
     {% for format in group.list|groupby('edition_format') %}
       <h3>{{ format.list[0].get_edition_format_display() }}</h3>
-      <ul class="list-unstyled">
-        {% for book in format.list %}
-        {% include "books/list_item_snippet.html" -%}
-        {% endfor %}
-      </ul>
+      {% set items = group.list %}
+      {% include "books/multiline_loop_snippet.html" -%}
     {% endfor %}
   {% else %}
     <h2>Unowned Books</h2>
-  <ul class="list-unstyled">
-    {% for book in group.list %}
-      {% include "books/list_item_snippet.html" -%}
-    {% endfor %}
-  </ul>
+    {% set items = group.list %}
+    {% include "books/multiline_loop_snippet.html" -%}
   {% endif %}
 {% endfor%}
 {% endblock content %}

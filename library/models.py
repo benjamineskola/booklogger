@@ -21,7 +21,7 @@ class Author(models.Model):
     gender = models.IntegerField(choices=Gender.choices, default=0)
 
     def __str__(self):
-        return f"{self.surname}{', ' + self.initials if self.initials else ''}"
+        return " ".join([self.forenames, self.surname]).strip()
 
     def attribution_for(self, book):
         role = self._role_for_book(book)
@@ -120,15 +120,17 @@ class Book(models.Model):
 
     @property
     def citation(self):
-        publication_data = [str(i) for i in [self.publisher, self.display_date] if i]
-
         return " ".join(
             [
                 self.display_authors + ",",
                 self.display_title,
-                (f"({', '.join(publication_data)})" if publication_data else ""),
+                (f"({self.publication_data})" if self.publication_data else ""),
             ]
         ).strip()
+
+    @property
+    def publication_data(self):
+        return ", ".join([str(i) for i in [self.publisher, self.display_date] if i])
 
     def add_author(self, author, role="", order=None):
         if author not in self.authors.all():

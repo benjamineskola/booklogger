@@ -1,0 +1,11 @@
+<div style="" class="border col-12 col-md mx-1 my-1">
+  <span style="font-size: 1.2rem">{% include "books/title_snippet.html" %}</span> <span class="text-muted">{% include "books/series_snippet.html" %}</span><br>
+  by {% include "books/authors_snippet.html" %}<br>
+  {% if book.publication_data %}{{ book.publication_data }}. {% endif %}{% if book.page_count > 0 %}{{ book.page_count }} pages.{% endif %}
+  {% if entry %}
+    <br>{% include "logentries/date_snippet.html" %}.
+  {% elif book.log_entries.count() > 0 %}
+    {% set entry = book.log_entries.last() %}
+    <br>{% include "logentries/date_snippet.html" %}.
+  {% endif %}
+</div>

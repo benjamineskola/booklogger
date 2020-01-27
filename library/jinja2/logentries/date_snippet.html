@@ -9,6 +9,7 @@
 {%- elif not entry.end_date -%}
 Reading since <time datetime="{{entry.start_date}}"> {{ entry.start_date_display }}</time>
 {%- else -%}
+Read
 <time datetime="{{entry.start_date}}"> {{ entry.start_date_display }}</time>
 &ndash;
 <time datetime="{{entry.end_date}}"> {{ entry.end_date_display }}</time>

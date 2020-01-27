@@ -2,32 +2,12 @@
 {% block content %}
 <h2>Currently Reading</h2>
 <ul class="list-unstyled">
-{% for entry in currently_reading %}
-  {% set book = entry.book %}
-  <li>
-    <span class="text-muted">
-    {%- include "logentries/date_snippet.html" -%}:
-    </span>
-    {% include "books/authors_snippet.html" %},
-    {% include "books/title_snippet.html" %}
-    {% include "books/series_snippet.html" %}
-  </li>
-{% endfor %}
+{% set items = currently_reading %}
+{% include "books/multiline_loop_snippet.html" %}
 </ul>
 
 {% for group in read|groupby('end_date.year')|reverse %}
-<h2>Read in {{ group.grouper }}</h2>
-<ul class="list-unstyled">
-  {% for entry in group.list %}
-    {% set book = entry.book %}
-    <li>
-      <span class="text-muted">
-      {%- include "logentries/date_snippet.html" -%}:
-      </span>
-      {% include "books/authors_snippet.html" %},
-      {% include "books/title_snippet.html" %}
-      {% include "books/series_snippet.html" %}
-    </li>
-  {% endfor %}
-</ul>
+<h2 class="mt-4">Read in {{ group.grouper }}</h2>
+{% set items = group.list %}
+{% include "books/multiline_loop_snippet.html" %}
 {% endfor%} {% endblock content %}
