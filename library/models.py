@@ -23,9 +23,13 @@ class Author(models.Model):
     def __str__(self):
         return " ".join([self.forenames, self.surname]).strip()
 
-    def attribution_for(self, book):
+    def attribution_for(self, book, initials=True):
         role = self._role_for_book(book)
-        return str(self) + (f" ({role})" if role else "")
+        if initials:
+            name = f"{self.surname}{', ' + self.initials if self.initials else ''}"
+        else:
+            name = str(self)
+        return name + (f" ({role})" if role else "")
 
     def _role_for_book(self, book):
         if rel := self.bookauthor_set.get(book=book.id):
