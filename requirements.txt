@@ -1,4 +1,7 @@
 Django >=3.0.2,<4.0
+django_heroku
+gunicorn
 jinja2
+psycopg2
 pytest-django
 pytest-factoryboy
