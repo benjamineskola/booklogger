@@ -1,5 +1,6 @@
 import datetime
 import re
+import sys
 
 import yaml
 from django.core.management.base import BaseCommand
@@ -27,7 +28,7 @@ class Command(BaseCommand):
         return (surname.strip(), forenames.strip())
 
     def add_arguments(self, parser):
-        parser.add_argument("file")
+        parser.add_argument("file", nargs="?")
         parser.add_argument("-f", "--force", action="store_true", default=False)
 
     def handle(self, **options):
@@ -35,7 +36,12 @@ class Command(BaseCommand):
             LogEntry.objects.all().delete()
 
         self.processed_entries = []
-        data = yaml.safe_load(bear_list_to_yaml(open(options["file"]).read()))
+        if options["file"]:
+            input_data = open(options["file"]).read()
+        else:
+            input_data = sys.stdin.read()
+        data = yaml.safe_load(bear_list_to_yaml(input_data))
+
         for year, books in data.items():
             for book in books:
                 dates, rest = book.split(": ", 1)
