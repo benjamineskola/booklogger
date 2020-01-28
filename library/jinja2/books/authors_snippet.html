@@ -3,7 +3,7 @@
 {%- if author and book_author.id == author.id -%}
 {{ book_author }}
 {%- else -%}
-<a href="{{ url('author_details', args=[book_author.id]) }}">{{ book_author.attribution_for(book) }}</a>
+<a href="{{ url('author_details', args=[book_author.id]) }}">{{ book_author.attribution_for(book, initials=False) }}</a>
 {%- endif -%}
 {% if not loop.last %}, {% endif %}
 {%- endfor -%}
