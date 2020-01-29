@@ -169,7 +169,7 @@ class BookAuthor(models.Model):
     order = models.PositiveSmallIntegerField(blank=True, null=True)
 
     def __str__(self):
-        return ": ".join([str(self.author), str(self.role), str(self.book)])
+        return ": ".join([str(self.author), str(self.role), self.book.title])
 
     @property
     def display_role(self):
