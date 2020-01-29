@@ -9,6 +9,12 @@ from django.db.models.functions import Lower
 
 
 class Author(models.Model):
+    class Meta:
+        ordering = [
+            Lower("surname"),
+            Lower("forenames"),
+        ]
+
     surname = models.CharField(max_length=255)
     forenames = models.CharField(max_length=255)
 

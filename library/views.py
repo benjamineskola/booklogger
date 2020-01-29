@@ -75,7 +75,7 @@ def unread_books(request):
 
 
 def all_authors(request):
-    authors = Author.objects.order_by(Lower("surname"), Lower("forenames"))
+    authors = Author.objects.all()
     return render(request, "authors/list.html", {"authors": authors})
 
 
