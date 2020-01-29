@@ -168,6 +168,9 @@ class BookAuthor(models.Model):
     role = models.CharField(max_length=255, blank=True, null=True)
     order = models.PositiveSmallIntegerField(blank=True, null=True)
 
+    def __str__(self):
+        return ": ".join([str(self.author), str(self.role), str(self.book)])
+
     @property
     def display_role(self):
         return "ed." if self.role == "editor" else self.role
@@ -189,6 +192,9 @@ class LogEntry(models.Model):
     end_precision = models.PositiveSmallIntegerField(
         choices=DatePrecision.choices, default=0
     )
+
+    def __str__(self):
+        return f"{self.book} from {self.start_date} to {self.end_date}"
 
     @property
     def currently_reading(self):
