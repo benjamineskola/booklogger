@@ -40,5 +40,21 @@
 {% endfor %}
 </ul>
 
+{% if user.is_authenticated %}
+{% if book.currently_reading %}
+<form action="{{url('book_finish_reading', args=[book.id])}}" method="post">
+  <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+  <input type="submit" name="Finish Reading" value="Finish Reading" />
+</form>
+{% else %}
+<form action="{{url('book_start_reading', args=[book.id])}}" method="post">
+  <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+  <input type="submit" name="Start Reading" value="Start Reading" />
+</form>
+{% endif %}
+
 <a href="{{ url('admin:library_book_change', args=[book.id]) }}">edit</a>
+{% else %}
+<a href="{{ url('admin:login') }}">log in</a>
+{% endif %}
 {% endblock content %}

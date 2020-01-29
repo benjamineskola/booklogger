@@ -1,6 +1,7 @@
+from django.core.exceptions import PermissionDenied
 from django.db.models.functions import Lower
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template import loader
 
 from .models import Author, Book, BookAuthor, LogEntry
@@ -76,3 +77,21 @@ def unread_books(request):
 def all_authors(request):
     authors = Author.objects.order_by(Lower("surname"), Lower("forenames"))
     return render(request, "authors/list.html", {"authors": authors})
+
+
+def start_reading(request, book_id):
+    if not request.user.is_authenticated:
+        raise PermissionDenied
+    if request.method == "POST":
+        book = get_object_or_404(Book, pk=book_id)
+        book.start_reading()
+    return redirect("book_details", book_id=book_id)
+
+
+def finish_reading(request, book_id):
+    if not request.user.is_authenticated:
+        raise PermissionDenied
+    if request.method == "POST":
+        book = get_object_or_404(Book, pk=book_id)
+        book.finish_reading()
+    return redirect("book_details", book_id=book_id)

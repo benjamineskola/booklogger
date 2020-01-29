@@ -12,4 +12,6 @@ urlpatterns = [
     path("authors", views.all_authors, name="all_authors"),
     path("author/<int:author_id>", views.author_details, name="author_details"),
     path("book/<int:book_id>", views.book_details, name="book_details"),
+    path("book/<int:book_id>/start", views.start_reading, name="book_start_reading"),
+    path("book/<int:book_id>/finish", views.finish_reading, name="book_finish_reading"),
 ]
