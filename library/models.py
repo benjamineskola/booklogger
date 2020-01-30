@@ -74,8 +74,8 @@ class Book(models.Model):
     first_published = models.PositiveSmallIntegerField(blank=True, null=True)
     language = models.CharField(max_length=2, default="en")
 
-    series = models.CharField(max_length=255, blank=True)
-    series_order = models.FloatField(blank=True, null=True)
+    series = models.CharField(db_index=True, max_length=255, blank=True)
+    series_order = models.FloatField(db_index=True, blank=True, null=True)
 
     # these at least in theory relate only to an edition, not every edition
     # edition could be a separate models but it would almost always be one-to-one
