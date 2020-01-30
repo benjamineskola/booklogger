@@ -13,7 +13,7 @@ class BookAuthorInline(admin.TabularInline):
 
 class LogEntryInline(admin.TabularInline):
     model = LogEntry
-    extra = 1
+    extra = 0
 
 
 class BookAdmin(admin.ModelAdmin):
