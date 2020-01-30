@@ -5,5 +5,5 @@
 {%- else -%}
 <a href="{{ url('author_details', args=[book_author.id]) }}">{{ book_author.attribution_for(book, initials=False) }}</a>
 {%- endif -%}
-{% if loop.index > 1 and not loop.last %}, {% endif %}
+{% if loop.length > 2 and not loop.last %}, {%else%} {% endif %}
 {%- endfor -%}
