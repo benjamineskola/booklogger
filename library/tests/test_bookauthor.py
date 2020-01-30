@@ -20,7 +20,7 @@ class TestBookAuthor:
     def mock_authors(self, author_factory):
         authors = [
             author_factory(surname="Smithee", forenames="Alan"),
-            author_factory(surname="Smithee", forenames="Alan"),
+            author_factory(surname="Smithee", forenames="Boris"),
         ]
         authors[0].save()
         authors[1].save()
@@ -45,10 +45,8 @@ class TestBookAuthor:
 
     def test_add_author_and_role(self, mock_book, mock_authors):
         mock_book.add_author(mock_authors[0])
-        mock_book.add_author(mock_authors[1], role="translator")
-        assert (
-            str(mock_book) == "Smithee, A. and Smithee, A. (translator), Autobiography"
-        )
+        mock_book.add_author(mock_authors[1])
+        assert str(mock_book) == "Smithee, A. and Smithee, B., Autobiography"
 
     def test_author_role_none(self, mock_book, mock_author):
         mock_book.add_author(mock_author)

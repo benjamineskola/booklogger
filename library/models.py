@@ -3,6 +3,7 @@ import string
 from datetime import date
 
 from django.db import models
+from django.db.models import Q
 from django.db.models.functions import Lower
 from django.db.models.indexes import Index
 
@@ -110,7 +111,7 @@ class Book(models.Model):
 
     @property
     def all_authors(self):
-        return [a.attribution_for(self) for a in self.authors.all()]
+        return [a.attribution_for(self) for a in self.default_authors]
 
     @property
     def display_authors(self):
@@ -167,6 +168,36 @@ class Book(models.Model):
             return False
         else:
             return entries[0].currently_reading
+
+    @property
+    def normal_authors(self):
+        return self.bookauthor_set.filter(
+            Q(role__isnull=True) | Q(role="") | Q(role="author")
+        )
+
+    @property
+    def editors(self):
+        return self.bookauthor_set.filter(role="editor")
+
+    @property
+    def contributors(self):
+        return self.bookauthor_set.filter(role="contributor")
+
+    @property
+    def default_authors(self):
+        book_authors = []
+        if self.normal_authors.count():
+            book_authors = self.normal_authors
+        elif self.editors.count():
+            book_authors = self.editors
+
+        return [book_author.author for book_author in book_authors.order_by("order")]
+
+    @property
+    def full_authors(self):
+        return [
+            book_author.author for book_author in self.bookauthor_set.order_by("order")
+        ]
 
 
 class BookAuthor(models.Model):
