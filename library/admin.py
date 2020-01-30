@@ -11,8 +11,13 @@ class BookAuthorInline(admin.TabularInline):
     extra = 1
 
 
+class LogEntryInline(admin.TabularInline):
+    model = LogEntry
+    extra = 1
+
+
 class BookAdmin(admin.ModelAdmin):
-    inlines = (BookAuthorInline,)
+    inlines = (BookAuthorInline, LogEntryInline)
 
 
 admin.site.register(Author)
