@@ -1,4 +1,4 @@
-{%- for book_author in book.full_authors -%}
+{%- for book_author in book.default_authors -%}
 {% if loop.last and not loop.first %} and {% endif %}
 {%- if author and book_author.id == author.id -%}
 {{ book_author }}

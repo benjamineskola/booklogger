@@ -1,8 +1,18 @@
 {% extends "base.html" %}
 {% set page_title %}{{ book.display_title }} by {{ book.display_authors }}{% endset %}
 {% block content %}
-<dt>Authors</dt><dd>{% include "books/authors_snippet.html" -%}</dd>
-<dt>Title</dt><dd>{{ book.display_title }}</dd>
+<div class="row">
+{% include "books/multiline_entry_snippet.html" %}
+</div>
+
+<dl>
+{% if book.default_authors != book.full_authors %}
+<dt>Full Authors</dt><dd>
+{% for author in book.full_authors %}
+<a href="{{ url('author_details', args=[author.id]) }}">{{ author.attribution_for(book, initials=False) }}</a>
+{%- if not loop.last %}, {% endif -%}
+{%- endfor -%}
+{% endif %}
 <dt>Subtitle</dt><dd>{{ book.subtitle }}</dd>
 {% if book.edition_title %}
 <dt>Original Title</dt><dd>{{ book.title }}</br>
@@ -29,7 +39,7 @@
 <dt>Acquired</dt><dd>{{ book.acquired_date }}</dd>
 <dt>Sold/Donated</dt><dd>{{ book.alienated_date }}</dd>
 <dt>Borrowed From</dt><dd>{{ book.borrowed_from }}</dd>
-<dt>Image</dt><dd><img src="{{ book.image_url }}"/></dd>
+</dl>
 
 <h3>Reading History</h3>
 <ul class="list-unstyled">
