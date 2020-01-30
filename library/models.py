@@ -54,6 +54,7 @@ class Author(models.Model):
 
 class Book(models.Model):
     class Meta:
+        indexes = [Index(fields=["series", "series_order", "title"])]
         ordering = [
             Lower("authors__surname"),
             Lower("authors__forenames"),
