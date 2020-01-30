@@ -11,7 +11,7 @@
 <dt>Edition Published</dt><dd>{{ book.edition_published }}</dd>
 
 <dt>Publisher</dt><dd>{{ book.publisher }}</dd>
-<dt>Format</dt><dd>{{ book.edition_format }}</dd>
+<dt>Format</dt><dd>{{ book.get_edition_format_display() }}</dd>
 <dt>Edition</dt><dd>{{ book.edition_number }}</dd>
 <dt>Pages</dt><dd>{{ book.page_count }}</dd>
 <dt>Goodreads</dt><dd><a href="https://goodreads.com/book/show/{{ book.goodreads_id }}">{{ book.goodreads_id }}</a></dd>
