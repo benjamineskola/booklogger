@@ -45,12 +45,18 @@ def borrowed_books(request):
 
 def author_details(request, author_id):
     author = get_object_or_404(Author, pk=author_id)
-    return render(request, "authors/details.html", {"author": author})
+    return render(
+        request, "authors/details.html", {"author": author, "page_title": author}
+    )
 
 
 def book_details(request, book_id):
     book = get_object_or_404(Book, pk=book_id)
-    return render(request, "books/details.html", {"book": book})
+    return render(
+        request,
+        "books/details.html",
+        {"book": book, "page_title": f"{book.title} by {book.display_authors}"},
+    )
 
 
 def read_books(request):
@@ -71,12 +77,18 @@ def read_books(request):
 
 def unread_books(request):
     want_to_read = Book.objects.filter(want_to_read=True)
-    return render(request, "books/toread.html", {"books": want_to_read})
+    return render(
+        request,
+        "books/toread.html",
+        {"books": want_to_read, "page_title": "Reading List"},
+    )
 
 
 def all_authors(request):
     authors = Author.objects.all()
-    return render(request, "authors/list.html", {"authors": authors})
+    return render(
+        request, "authors/list.html", {"authors": authors, "page_title": "Authors"}
+    )
 
 
 def start_reading(request, book_id):
