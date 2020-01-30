@@ -4,12 +4,14 @@ from datetime import date
 
 from django.db import models
 from django.db.models.functions import Lower
+from django.db.models.indexes import Index
 
 # Create your models here.
 
 
 class Author(models.Model):
     class Meta:
+        indexes = [Index(fields=["surname", "forenames"])]
         ordering = [
             Lower("surname"),
             Lower("forenames"),
