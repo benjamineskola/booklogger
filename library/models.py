@@ -81,7 +81,9 @@ class Book(models.Model):
     # edition could be a separate models but it would almost always be one-to-one
     edition_published = models.PositiveSmallIntegerField(blank=True, null=True)
     publisher = models.CharField(max_length=255, blank=True)
-    edition_format = models.IntegerField(choices=Format.choices, blank=True, null=True)
+    edition_format = models.IntegerField(
+        db_index=True, choices=Format.choices, blank=True, null=True
+    )
     edition_number = models.PositiveSmallIntegerField(blank=True, null=True)
     page_count = models.PositiveSmallIntegerField(blank=True, null=True)
     goodreads_id = models.CharField(max_length=255, blank=True)
@@ -92,16 +94,16 @@ class Book(models.Model):
     edition_title = models.CharField(max_length=255, blank=True)  # if translated
     edition_subtitle = models.CharField(max_length=255, blank=True)  # if translated
 
-    owned = models.BooleanField(default=False)
+    owned = models.BooleanField(db_index=True, default=False)
     acquired_date = models.DateField(blank=True, null=True)
     alienated_date = models.DateField(blank=True, null=True)
-    was_borrowed = models.BooleanField(default=False)
+    was_borrowed = models.BooleanField(db_index=True, default=False)
     borrowed_from = models.CharField(max_length=255, blank=True)
 
     image_url = models.URLField(blank=True)
     publisher_url = models.URLField(blank=True)
 
-    want_to_read = models.BooleanField(default=True)
+    want_to_read = models.BooleanField(db_index=True, default=True)
 
     def __str__(self):
         return self.citation
