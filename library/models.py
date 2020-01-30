@@ -7,6 +7,8 @@ from django.db.models import Q
 from django.db.models.functions import Lower
 from django.db.models.indexes import Index
 
+from library.utils import oxford_comma
+
 # Create your models here.
 
 
@@ -116,13 +118,7 @@ class Book(models.Model):
 
     @property
     def display_authors(self):
-        authors = self.all_authors
-
-        if len(authors) > 2:
-            authors[-1] = "and " + authors[-1]
-            return ", ".join(authors)
-        else:
-            return " and ".join(authors)
+        return oxford_comma(self.all_authors)
 
     @property
     def display_title(self):
