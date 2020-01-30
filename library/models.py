@@ -15,8 +15,8 @@ class Author(models.Model):
             Lower("forenames"),
         ]
 
-    surname = models.CharField(max_length=255)
-    forenames = models.CharField(max_length=255)
+    surname = models.CharField(db_index=True, max_length=255)
+    forenames = models.CharField(db_index=True, max_length=255)
 
     class Gender(models.IntegerChoices):
         UNKNOWN = 0
@@ -59,7 +59,7 @@ class Book(models.Model):
             "title",
         ]
 
-    title = models.CharField(max_length=255)
+    title = models.CharField(db_index=True, max_length=255)
     subtitle = models.CharField(max_length=255, blank=True)
     authors = models.ManyToManyField(Author, through="BookAuthor", related_name="books")
 
@@ -185,7 +185,7 @@ class BookAuthor(models.Model):
 class LogEntry(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="log_entries")
     start_date = models.DateField(default=date.today, blank=True, null=True)
-    end_date = models.DateField(blank=True, null=True)
+    end_date = models.DateField(db_index=True, blank=True, null=True)
 
     class DatePrecision(models.IntegerChoices):
         DAY = 0
