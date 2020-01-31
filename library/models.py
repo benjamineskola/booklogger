@@ -175,6 +175,14 @@ class Book(models.Model):
     def finish_reading(self):
         entry = self.log_entries.get(end_date=None)
         entry.end_date = date.today()
+        entry.progress_date = date.today()
+        entry.progress = 100
+        entry.save()
+
+    def update_progress(self, progress):
+        entry = self.log_entries.get(end_date=None)
+        entry.progress_date = date.today()
+        entry.progress = progress
         entry.save()
 
     @property
@@ -236,6 +244,8 @@ class LogEntry(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="log_entries")
     start_date = models.DateField(default=date.today, blank=True, null=True)
     end_date = models.DateField(db_index=True, blank=True, null=True)
+    progress = models.PositiveSmallIntegerField(default=0)
+    progress_date = models.DateField(db_index=True, default=date.today)
 
     class DatePrecision(models.IntegerChoices):
         DAY = 0

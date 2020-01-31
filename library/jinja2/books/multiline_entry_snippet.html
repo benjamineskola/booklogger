@@ -1,17 +1,53 @@
+{% if not entry and book.log_entries and book.log_entries.count() > 0 %}
+  {% set entry = book.log_entries.last() %}
+{% endif %}
 <div class="card mx-md-1 my-1">
   <div class="card-body">
-  {% if book.image_url %}
-  <img src="{{ book.image_url }}" class="img-fluid img-thumbnail float-left mr-2" style="max-height: 8em;"/>
-  {% endif %}
+    {% if book.image_url %}
+    <img src="{{ book.image_url }}" class="img-fluid img-thumbnail float-left mr-2" style="max-height: 8em;"/>
+    {% endif %}
 
-  <h4 style="font-size: 1.2rem">{% include "books/title_snippet.html" %}<span class="text-muted small">{% include "books/series_snippet.html" %}</span></h4>
-  <p class="card-text">by {% include "books/authors_snippet.html" %}<br/>
-  {% if book.publication_data %}{{ book.publication_data }}. {% endif %}{% if book.page_count and book.page_count > 0 %}{{ book.page_count }} pages.{% endif %}
-  {% if entry %}
-    <br>{% include "logentries/date_snippet.html" %}.
-  {% elif book.log_entries and book.log_entries.count() > 0 %}
-    {% set entry = book.log_entries.last() %}
-    <br>{% include "logentries/date_snippet.html" %}.
-  {% endif %}</p>
+    <h4 style="font-size: 1.2rem">{% include "books/title_snippet.html" %}<span class="text-muted small">{% include "books/series_snippet.html" %}</span></h4>
+    <div class="card-text">by {% include "books/authors_snippet.html" %}<br/>
+      {% if book.publication_data %}{{ book.publication_data }}. {% endif %}{% if book.page_count and book.page_count > 0 %}{{ book.page_count }} pages.{% endif %}
+
+      {% if entry %}
+        <br>{% include "logentries/date_snippet.html" %}.
+
+        {% if entry.currently_reading %}
+          <div class="progress" style="height: 5px">
+            <div class="progress-bar" role="progressbar" style="width: {{entry.progress}}%" aria-valuenow="{{ entry.progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+            {{ entry.progress }}% on {{entry.progress_date}}
+        {% endif %}
+      {% endif %}
+
+      {% if user.is_authenticated %}
+        <a class="small" data-toggle="collapse" data-target="#collapse-logupdate-{{ book.id}}{% if entry %}-{{ entry.start_date }}{% endif %}" role="button">❯</a>
+        <div class="collapse" id="collapse-logupdate-{{book.id}}{% if entry %}-{{ entry.start_date }}{% endif %}">
+        <div class="form-group">
+        {% if book.currently_reading %}
+          <form class="form-inline mb-2" action="{{url('book_update_progress', args=[book.id])}}" method="post">
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+            <input class="form-control-sm col-sm-2 mx-2" type="text" name="pages" placeholder="pages"/>
+            <input class="form-control-sm col-sm-2 mx-2" type="text" name="percentage" placeholder="%"/>
+            <input class="form-control-sm btn btn-primary mx-2" type="submit" name="Update Progress" value="Update Progress" />
+          </form>
+          <form action="{{url('book_finish_reading', args=[book.id])}}" method="post">
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+            <input class="form-control-sm btn btn-primary mx-2" type="submit" name="Finish Reading" value="Finish Reading" />
+          </form>
+        {% else %}
+          <form class="form-inline" action="{{url('book_start_reading', args=[book.id])}}" method="post">
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+            <input class="form-control-sm btn btn-primary mx-2" type="submit" name="Start Reading" value="Start Reading" />
+          </form>
+        {% endif %}
+        </div>
+
+        <a href="{{ url('admin:library_book_change', args=[book.id]) }}">edit</a>
+      {% endif %}
+      </div>
+    </div>
   </div>
 </div>

@@ -107,3 +107,18 @@ def finish_reading(request, book_id):
         book = get_object_or_404(Book, pk=book_id)
         book.finish_reading()
     return redirect("book_details", book_id=book_id)
+
+
+def update_progress(request, book_id):
+    if not request.user.is_authenticated:
+        raise PermissionDenied
+    if request.method == "POST":
+        book = get_object_or_404(Book, pk=book_id)
+        progress = 0
+        if request.POST["pages"] and book.page_count:
+            progress = int(int(request.POST["pages"]) / book.page_count * 100)
+        elif request.POST["percentage"]:
+            progress = int(request.POST["percentage"])
+        if progress:
+            book.update_progress(progress)
+    return redirect("book_details", book_id=book_id)
