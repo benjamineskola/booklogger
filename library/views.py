@@ -60,7 +60,9 @@ def book_details(request, book_id):
 
 
 def read_books(request):
-    currently_reading = LogEntry.objects.filter(end_date__isnull=True)
+    currently_reading = LogEntry.objects.filter(end_date__isnull=True).order_by(
+        "-progress_date", "start_date"
+    )
     read = LogEntry.objects.filter(end_date__isnull=False).order_by(
         "end_date", "start_date"
     )
