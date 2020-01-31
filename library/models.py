@@ -221,8 +221,8 @@ class BookAuthor(models.Model):
 
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
-    role = models.CharField(max_length=255, blank=True, null=True)
-    order = models.PositiveSmallIntegerField(blank=True, null=True)
+    role = models.CharField(db_index=True, max_length=255, blank=True, null=True)
+    order = models.PositiveSmallIntegerField(db_index=True, blank=True, null=True)
 
     def __str__(self):
         return ": ".join([str(self.author), str(self.role), self.book.title])
