@@ -1,15 +1,17 @@
-<div style="" class="border col-12 col-md mx-1 my-1 rounded py-2">
+<div class="card mx-md-1 my-1">
+  <div class="card-body">
   {% if book.image_url %}
   <img src="{{ book.image_url }}" class="img-fluid img-thumbnail float-left mr-2" style="max-height: 8em;"/>
   {% endif %}
 
-  <span style="font-size: 1.2rem">{% include "books/title_snippet.html" %}</span> <span class="text-muted">{% include "books/series_snippet.html" %}</span><br>
-  by {% include "books/authors_snippet.html" %}<br>
+  <h4 style="font-size: 1.2rem">{% include "books/title_snippet.html" %}<span class="text-muted small">{% include "books/series_snippet.html" %}</span></h4>
+  <p class="card-text">by {% include "books/authors_snippet.html" %}<br/>
   {% if book.publication_data %}{{ book.publication_data }}. {% endif %}{% if book.page_count and book.page_count > 0 %}{{ book.page_count }} pages.{% endif %}
   {% if entry %}
     <br>{% include "logentries/date_snippet.html" %}.
   {% elif book.log_entries and book.log_entries.count() > 0 %}
     {% set entry = book.log_entries.last() %}
     <br>{% include "logentries/date_snippet.html" %}.
-  {% endif %}
+  {% endif %}</p>
+  </div>
 </div>

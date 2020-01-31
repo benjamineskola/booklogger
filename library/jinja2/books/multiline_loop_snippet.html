@@ -1,3 +1,4 @@
+<div class="row row-cols-1 row-cols-md-2">
 {% for item in items %}
   {% if item.book %}
     {% set entry = item %}
@@ -6,8 +7,8 @@
     {% set book = item %}
   {% endif %}
 
-  {% if loop.index is not divisibleby 2 %}<div class="row">{% endif %}
+  <div class="col">
   {% include "books/multiline_entry_snippet.html" %}
-  {% if loop.index is not divisibleby 2 and loop.last %}<div class="col mx-1"></div>{% endif %}
-  {% if loop.index is divisibleby 2 or loop.last %}</div>{% endif %}
+  </div>
 {% endfor %}
+</div>
