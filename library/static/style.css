@@ -1,0 +1,9 @@
+@media (prefers-color-scheme: dark) {
+  body, .card-body {
+      background-color: var(--dark);
+      color: var(--light);
+  }
+  .card {
+    border-color: var(--gray);
+  }
+}
