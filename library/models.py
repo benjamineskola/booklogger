@@ -53,6 +53,25 @@ class Author(models.Model):
         all_forenames = re.split(r"[. ]+", self.forenames)
         return ".".join([name[0] for name in all_forenames if name]) + "."
 
+    @property
+    def authored_books(self):
+        books = self.books.filter(
+            id__in=[
+                ba.book.id
+                for ba in self.bookauthor_set.filter(
+                    Q(role__isnull=True) | Q(role="") | Q(role="author")
+                )
+            ]
+        )
+        return books
+
+    @property
+    def edited_books(self):
+        books = self.books.filter(
+            id__in=[ba.book.id for ba in self.bookauthor_set.filter(role="editor")]
+        )
+        return books
+
 
 class Book(models.Model):
     class Meta:

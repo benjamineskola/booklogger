@@ -3,7 +3,24 @@
 <p>There are a total of {{ authors.count() }} authors.</p>
 <ul class="list-unstyled">
   {% for author in authors %}
-    <li><a href="{{ url("author_details", args=[author.id]) }}">{{ author }}</a>{% if author.books.count() > 0 %} <span class="text-muted">(Author of {{ author.books.order_by('title').first().title }}{% if author.books.count() > 1 %}, et al.{% endif %})</span>{% endif %}</li>
+    <li><a href="{{ url("author_details", args=[author.id]) }}">{{ author }}</a>
+    {% if author.authored_books.count() > 0 %}
+      <span class="text-muted">(Author of {{ author.authored_books.first().title }}
+      {%- if author.authored_books.count() > 1 -%}
+        , et al.
+      {%- endif %})</span>
+    {% elif author.edited_books.count() > 0 %}
+      <span class="text-muted">(Editor of {{ author.edited_books.first().title }}
+      {%- if author.edited_books.count() > 1 -%}
+        , et al.
+      {%- endif %})</span>
+    {% else %}
+      <span class="text-muted">(Contributor to {{ author.books.first().title }}
+      {%- if author.books.count() > 1 -%}
+        , et al.
+      {%- endif %})</span>
+    {% endif %}
+    </li>
   {% endfor %}
 </ul>
 {% endblock content %}
