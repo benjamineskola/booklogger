@@ -211,7 +211,7 @@ class Book(models.Model):
 
     @property
     def full_authors(self):
-        return [book_author.author for book_author in self.bookauthor_set]
+        return [book_author.author for book_author in self.bookauthor_set.all()]
 
 
 class BookAuthor(models.Model):
