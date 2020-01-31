@@ -207,17 +207,16 @@ class Book(models.Model):
         elif self.editors.count():
             book_authors = self.editors
 
-        return [book_author.author for book_author in book_authors.order_by("order")]
+        return [book_author.author for book_author in book_authors]
 
     @property
     def full_authors(self):
-        return [
-            book_author.author for book_author in self.bookauthor_set.order_by("order")
-        ]
+        return [book_author.author for book_author in self.bookauthor_set]
 
 
 class BookAuthor(models.Model):
     class Meta:
+        ordering = ["order"]
         unique_together = ("author", "book")
 
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
