@@ -4,11 +4,11 @@
 <div class="card mb-3" style="">
   <div class="row no-gutters">
     {% if book.image_url %}
-    <div class="col-md-4">
+    <div class="col-4">
       <img src="{{ book.image_url }}" class="card-img"/>
     </div>
     {% endif %}
-    <div class="col-md-{% if book.image_url %}8{% else %}12{% endif %}">
+    <div class="col-{% if book.image_url %}8{% else %}12{% endif %}">
       <div class="card-body">
         <h5 class="card-title">{% include "books/title_snippet.html" %}<span class="text-muted small">{% include "books/series_snippet.html" %}</span></h5>
         <h6 class="card-subtitle">by {% include "books/authors_snippet.html" %}</h6>
