@@ -32,8 +32,8 @@
       </div>
     </main>
 
-    {% if page_obj %}
-    <nav class="pagination container">
+    {% if page_obj  and page_obj.paginator.num_pages > 1 %}
+    <nav class="pagination container justify-content-center">
         <ul class="pagination">
           {% if page_obj.has_previous() %}
           <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number() }}">First</a></li>
