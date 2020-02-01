@@ -43,9 +43,7 @@ def unowned_books(request):
         page_number = 1
     page_obj = paginator.get_page(page_number)
     return render(
-        request,
-        "books/list.html",
-        {"page_title": "Unowned Books", "page_obj": page_obj},
+        request, "books/list.html", {"page_title": "Wishlist", "page_obj": page_obj},
     )
 
 
