@@ -79,11 +79,24 @@ def read_books(request):
 
 
 def unread_books(request):
-    want_to_read = Book.objects.filter(want_to_read=True, owned=True)
+    want_to_read = Book.objects.filter(want_to_read=True, owned=True).order_by(
+        "edition_format",
+        Lower("authors__surname"),
+        Lower("authors__forenames"),
+        "series",
+        "series_order",
+        "title",
+    )
+    paginator = Paginator(want_to_read, 100)
+    page_number = request.GET.get("page")
+    if not page_number:
+        page_number = 1
+    page_obj = paginator.get_page(page_number)
+
     return render(
         request,
         "books/toread.html",
-        {"books": want_to_read, "page_title": "Reading List"},
+        {"page_obj": page_obj, "page_title": "Reading List"},
     )
 
 
