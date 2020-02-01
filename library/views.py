@@ -79,7 +79,7 @@ def read_books(request):
 
 
 def unread_books(request):
-    want_to_read = Book.objects.filter(want_to_read=True)
+    want_to_read = Book.objects.filter(want_to_read=True, owned=True)
     return render(
         request,
         "books/toread.html",
