@@ -16,8 +16,13 @@ def index(request):
 
 def books_index(request):
     books = Book.objects.all()
+    paginator = Paginator(books, 100)
+    page_number = request.GET.get("page")
+    if not page_number:
+        page_number = 1
+    page_obj = paginator.get_page(page_number)
     return render(
-        request, "books/list.html", {"page_title": "All Books", "items": books}
+        request, "books/list.html", {"page_title": "All Books", "page_obj": page_obj}
     )
 
 
@@ -31,16 +36,30 @@ def owned_books(request):
 
 
 def unowned_books(request):
-    books = Book.objects.filter(owned=False)
+    books = Book.objects.filter(want_to_read=True, owned=False)
+    paginator = Paginator(books, 100)
+    page_number = request.GET.get("page")
+    if not page_number:
+        page_number = 1
+    page_obj = paginator.get_page(page_number)
     return render(
-        request, "books/list.html", {"page_title": "Unowned Books", "items": books},
+        request,
+        "books/list.html",
+        {"page_title": "Unowned Books", "page_obj": page_obj},
     )
 
 
 def borrowed_books(request):
     books = Book.objects.filter(was_borrowed=True)
+    paginator = Paginator(books, 100)
+    page_number = request.GET.get("page")
+    if not page_number:
+        page_number = 1
+    page_obj = paginator.get_page(page_number)
     return render(
-        request, "books/list.html", {"page_title": "Borrowed Books", "items": books}
+        request,
+        "books/list.html",
+        {"page_title": "Borrowed Books", "page_obj": page_obj},
     )
 
 
