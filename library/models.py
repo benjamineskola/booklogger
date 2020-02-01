@@ -221,6 +221,15 @@ class Book(models.Model):
     def full_authors(self):
         return [book_author.author for book_author in self.bookauthor_set.all()]
 
+    @property
+    def display_series(self):
+        if not self.series:
+            return
+        elif self.series_order:
+            return f"{self.series}, #{str(self.series_order).strip('.0')}"
+        else:
+            return self.series
+
 
 class BookAuthor(models.Model):
     class Meta:
