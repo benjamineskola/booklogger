@@ -1,4 +1,5 @@
 from django.core.exceptions import PermissionDenied
+from django.core.paginator import Paginator
 from django.db.models.functions import Lower
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -88,8 +89,19 @@ def unread_books(request):
 
 def all_authors(request):
     authors = Author.objects.all()
+    paginator = Paginator(authors, 100)
+    page_number = request.GET.get("page")
+    if not page_number:
+        page_number = 1
+    page_obj = paginator.get_page(page_number)
     return render(
-        request, "authors/list.html", {"authors": authors, "page_title": "Authors"}
+        request,
+        "authors/list.html",
+        {
+            "page_obj": page_obj,
+            "page_title": "Authors",
+            "total_authors": authors.count(),
+        },
     )
 
 

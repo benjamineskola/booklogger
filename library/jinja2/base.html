@@ -31,6 +31,25 @@
 	{% endblock %}
       </div>
     </main>
+
+    {% if page_obj %}
+    <nav class="pagination container">
+        <ul class="pagination">
+          {% if page_obj.has_previous() %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number() }}">First</a></li>
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number() }}">Previous</a></li>
+          {% endif %}
+          {% for pageno in page_obj.paginator.page_range %}
+          <li class="page-item{% if pageno == page_obj.number %} active{% endif %}"><a class="page-link" href="?page={{ pageno }}">{{pageno}}</a></li>
+          {% endfor %}
+          {% if page_obj.has_next() %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number() }}">Next</a></li>
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number() }}">Last</a></li>
+          {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js" integrity="sha384-6khuMg9gaYr5AxOqhkVIODVIvm9ynTT5J4V1cfthmT+emCG6yVmEZsRHdxlotUnm" crossorigin="anonymous"></script>
   </body>
