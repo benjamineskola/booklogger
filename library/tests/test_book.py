@@ -21,7 +21,7 @@ class TestBook:
     def mock_book(self, book_factory, mock_authors, book_author_factory):
         mock_book = book_factory(title="The Bible")
         mock_book.save()
-        mock_book.add_author(mock_authors[0])
+        mock_book.add_author(mock_authors[0], order=1)
         return mock_book
 
     def test_book_display(self, mock_book):
@@ -42,10 +42,10 @@ class TestBook:
         assert mock_book.citation == "God, The Bible (Vatican Books, 1965)"
 
     def test_two_authors(self, mock_book, mock_authors):
-        mock_book.add_author(mock_authors[1])
+        mock_book.add_author(mock_authors[1], order=2)
         assert mock_book.citation == "God and Jesus, The Bible"
 
     def test_three_authors(self, mock_book, mock_authors):
-        mock_book.add_author(mock_authors[1])
-        mock_book.add_author(mock_authors[2])
+        mock_book.add_author(mock_authors[1], order=2)
+        mock_book.add_author(mock_authors[2], order=3)
         assert mock_book.citation == "God, Jesus, and Holy Spirit, The Bible"
