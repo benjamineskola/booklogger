@@ -166,3 +166,22 @@ def update_progress(request, book_id):
         if progress:
             book.update_progress(progress)
     return redirect("book_details", book_id=book_id)
+
+
+def basic_search(request):
+    print(repr(request.GET.get("query")))
+    query = request.GET.get("query")
+    # query = "".join(request.GET.get("query"))
+
+    results = []
+    if query:
+        authors = [(a.distance, a) for a in Author.objects.search(query)[0:20]]
+        books = [(b.distance, b) for b in Book.objects.search(query)[0:20]]
+        results = authors + books
+        results.sort(key=lambda x: x[0])
+
+    return render(
+        request,
+        "search.html",
+        {"page_title": f"Search{': ' + query if query else ''}", "results": results},
+    )

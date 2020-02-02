@@ -17,4 +17,5 @@ urlpatterns = [
     path(
         "book/<int:book_id>/update", views.update_progress, name="book_update_progress"
     ),
+    path("search", views.basic_search, name="basic_search"),
 ]

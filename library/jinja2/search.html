@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+  {% if results|count > 0 %}
+<div class="row row-cols-1 row-cols-md-2">
+    {% for result in results %}
+      {% if result[1].surname %}
+        <div class="col">
+          <div class="card mb-3">
+            <div class="card-body">
+              <p class="card-text">
+                Author: <a class="card-link" href="{{ url("author_details", args=[result[1].id]) }}">{{ result[1] }}</a> ({{ result[1].books.count() }} book{% if result[1].books.count() > 1 %}s{% endif %})
+              </p>
+            </div>
+          </div>
+        </div>
+      {% else %}
+        {% set book = result[1] %}
+        <div class="col">
+          {% include "books/multiline_entry_snippet.html" %}
+        </div>
+      {% endif %}
+    {% endfor %}
+    </div>
+  {% else %}
+    <form class="form-inline my-2 my-lg-0" action="{{url('basic_search')}}">
+      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="query">
+      <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
+    </form>
+  {% endif %}
+{% endblock content %}

@@ -2,8 +2,9 @@ import re
 import string
 from datetime import date
 
+from django.contrib.postgres.search import TrigramDistance
 from django.db import models
-from django.db.models import Q
+from django.db.models import F, Q
 from django.db.models.functions import Lower
 from django.db.models.indexes import Index
 
@@ -12,7 +13,18 @@ from library.utils import oxford_comma
 # Create your models here.
 
 
+class AuthorManager(models.Manager):
+    def search(self, pattern):
+        return Author.objects.annotate(
+            sn_distance=TrigramDistance("surname", pattern),
+            fn_distance=TrigramDistance("forenames", pattern),
+            distance=F("sn_distance") * F("fn_distance"),
+        ).order_by("distance")
+
+
 class Author(models.Model):
+    objects = AuthorManager()
+
     class Meta:
         indexes = [Index(fields=["surname", "forenames"])]
         ordering = [
@@ -73,7 +85,18 @@ class Author(models.Model):
         return books
 
 
+class BookManager(models.Manager):
+    def search(self, pattern):
+        return Book.objects.annotate(
+            title_distance=TrigramDistance("title", pattern),
+            series_distance=TrigramDistance("series", pattern),
+            distance=F("title_distance") * F("series_distance"),
+        ).order_by("distance")
+
+
 class Book(models.Model):
+    objects = BookManager()
+
     class Meta:
         indexes = [Index(fields=["series", "series_order", "title"])]
         ordering = [

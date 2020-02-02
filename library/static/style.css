@@ -2,7 +2,9 @@
   body,
   .card,
   .card-body,
-  .page-link {
+  .page-link,
+  .list-group-item,
+  .list-group-item:hover {
     background-color: var(--dark);
     color: var(--light);
   }

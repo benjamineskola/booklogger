@@ -15,11 +15,14 @@
     <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-    <div class="navbar-nav">
+    <div class="navbar-nav mr-auto">
     {% for page in pages %}
     <a class="nav-item nav-link{% if page[1] == request.resolver_match.url_name %} active{% endif %}" href="{{url(page[1])}}">{{ page[0] }}{% if page[1] == request.resolver_match.url_name %}<span class="sr-only">(current)</span></a>{% endif %}</a>
     {% endfor %}
     </div>
+    <form class="form-inline my-2 my-lg-0" action="{{url('basic_search')}}">
+      <input class="form-control-sm mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="query">
+    </form>
   </div>
 </nav>
     <main role="main" class="flex-shrink-0">
