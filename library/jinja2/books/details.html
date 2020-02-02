@@ -69,32 +69,20 @@
     {% endif %}
     </dl>
   </div>
+
+  <div class="col">
+  <h3>Reading History</h3>
+  <ul class="list-unstyled">
+  {% for entry in book.log_entries.all() %}
+    <li>{% include "logentries/date_snippet.html" %}<li>
+  {% else %}
+  <li>No reading history</li>
+  {% endfor %}
+  </ul>
+  </div>
+
+  <div class="col">
+    {% include "books/update_form_snippet.html" %}
+  </div>
 </div>
-
-<h3>Reading History</h3>
-<ul class="list-unstyled">
-{% for entry in book.log_entries.all() %}
-  <li>{% include "logentries/date_snippet.html" %}<li>
-{% else %}
-<li>No reading history</li>
-{% endfor %}
-</ul>
-
-{% if user.is_authenticated %}
-{% if book.currently_reading %}
-<form action="{{url('book_finish_reading', args=[book.id])}}" method="post">
-  <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-  <input type="submit" name="Finish Reading" value="Finish Reading" />
-</form>
-{% else %}
-<form action="{{url('book_start_reading', args=[book.id])}}" method="post">
-  <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-  <input type="submit" name="Start Reading" value="Start Reading" />
-</form>
-{% endif %}
-
-<a href="{{ url('admin:library_book_change', args=[book.id]) }}">edit</a>
-{% else %}
-<a href="{{ url('admin:login') }}?next={{ url('book_details', args=[book.id]) }}">log in</a>
-{% endif %}
 {% endblock content %}

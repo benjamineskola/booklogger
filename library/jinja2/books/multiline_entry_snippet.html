@@ -28,28 +28,10 @@
           <a class="small" data-toggle="collapse" data-target="#collapse-logupdate-{{ book.id}}{% if entry %}-{{ entry.start_date }}{% endif %}" role="button">❯</a>
           </p>
           <div class="collapse" id="collapse-logupdate-{{book.id}}{% if entry %}-{{ entry.start_date }}{% endif %}">
-          {% if book.currently_reading %}
-            <form class="form-inline mb-2 " action="{{url('book_update_progress', args=[book.id])}}" method="post">
-              <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-              <input class="form-control-sm col-2 mx-2" type="text" name="pages" placeholder="pages"/>
-              <input class="form-control-sm col-2 mx-2" type="text" name="percentage" placeholder="%"/>
-              <input class="form-control-sm btn btn-primary mx-2" type="submit" name="Update Progress" value="Update Progress" />
-            </form>
-            <form class="form-inline " action="{{url('book_finish_reading', args=[book.id])}}" method="post">
-              <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-              <input class="form-control-sm btn btn-primary mx-2" type="submit" name="Finish Reading" value="Finish Reading" />
-            </form>
-          {% else %}
-            <form class="form-inline " action="{{url('book_start_reading', args=[book.id])}}" method="post">
-              <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-              <input class="form-control-sm btn btn-primary mx-2" type="submit" name="Start Reading" value="Start Reading" />
-            </form>
-          {% endif %}
-
-            <a href="{{ url('admin:library_book_change', args=[book.id]) }}">edit</a>
+            {% include "books/update_form_snippet.html" %}
           </div>
         {% else %}
-        </p>
+          </p>
         {% endif %}
       </div>
     </div>
