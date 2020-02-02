@@ -8,7 +8,8 @@
           <div class="card mb-3">
             <div class="card-body">
               <p class="card-text">
-                Author: <a class="card-link" href="{{ url("author_details", args=[result[1].id]) }}">{{ result[1] }}</a> ({{ result[1].books.count() }} book{% if result[1].books.count() > 1 %}s{% endif %})
+                {% set author = result[1] %}
+                {% include "authors/list_snippet.html" %}
               </p>
             </div>
           </div>
