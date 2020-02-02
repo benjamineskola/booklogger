@@ -95,6 +95,6 @@
 
 <a href="{{ url('admin:library_book_change', args=[book.id]) }}">edit</a>
 {% else %}
-<a href="{{ url('admin:login') }}">log in</a>
+<a href="{{ url('admin:login') }}?next={{ url('book_details', args=[book.id]) }}">log in</a>
 {% endif %}
 {% endblock content %}
