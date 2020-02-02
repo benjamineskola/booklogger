@@ -27,9 +27,11 @@
 </nav>
     <main role="main" class="flex-shrink-0">
       <div class="container mb-4">
-        <h1 class="mt-5">
-          {% if page_title %}{{ page_title }}{% endif %}
-        </h1>
+        {% if page_title and request.resolver_match.url_name != 'book_details' %}
+          <h1 class="mt-5">
+          {{ page_title }}
+          </h1>
+        {% endif %}
         {% block content %}
 	{% endblock %}
       </div>
