@@ -98,8 +98,8 @@ def read_books(request):
 def unread_books(request):
     want_to_read = Book.objects.filter(want_to_read=True, owned=True).order_by(
         "edition_format",
-        Lower("authors__surname"),
-        Lower("authors__forenames"),
+        Lower("first_author__surname"),
+        Lower("first_author__forenames"),
         "series",
         "series_order",
         "title",
