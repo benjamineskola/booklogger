@@ -108,11 +108,10 @@ class Command(BaseCommand):
                 a.save()
 
             for book in author["books"]:
+                book["first_author"] = a
                 b = Book(**book)
                 if options["force"]:
                     b.save()
-                    ba = BookAuthor(book=b, author=a)
-                    ba.save()
 
     def _normalize(self, raw_name):
         words = raw_name.split(" ")

@@ -74,10 +74,9 @@ class Command(BaseCommand):
                     if books.count():
                         print(f"  {books[0]} already exists")
                     else:
+                        book["first_author"] = a
                         b = Book(**book)
                         b.save()
-                        ba = BookAuthor(book=b, author=a)
-                        ba.save()
                         print(f"  creating {b}")
 
     def _normalize(self, raw_name):

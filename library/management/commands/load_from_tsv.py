@@ -57,10 +57,8 @@ class Command(BaseCommand):
                     authors[0].save()
                 else:
                     print(f"can use {surname}, {forenames}")
-                    book = Book(title=title)
+                    book = Book(title=title, first_author=authors[0])
                     book.save()
-                    ba = BookAuthor(book=book, author=authors[0])
-                    ba.save()
             elif books.count() > 1:
                 print(f"more than one book matches {title}")
             else:
