@@ -1,10 +1,9 @@
-from datetime import date
-
 from django.contrib.postgres.search import TrigramDistance
 from django.db import models
 from django.db.models import F, Q
 from django.db.models.functions import Lower
 from django.db.models.indexes import Index
+from django.utils import timezone
 
 from library.utils import oxford_comma
 
@@ -147,14 +146,14 @@ class Book(models.Model):
 
     def finish_reading(self):
         entry = self.log_entries.get(end_date=None)
-        entry.end_date = date.today()
-        entry.progress_date = date.today()
+        entry.end_date = timezone.now()
+        entry.progress_date = timezone.now()
         entry.progress = 100
         entry.save()
 
     def update_progress(self, progress):
         entry = self.log_entries.get(end_date=None)
-        entry.progress_date = date.today()
+        entry.progress_date = timezone.now()
         entry.progress = progress
         entry.save()
 

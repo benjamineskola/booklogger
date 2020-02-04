@@ -1,16 +1,15 @@
-from datetime import date
-
 from django.db import models
+from django.utils import timezone
 
 from .book import Book
 
 
 class LogEntry(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="log_entries")
-    start_date = models.DateField(default=date.today, blank=True, null=True)
-    end_date = models.DateField(db_index=True, blank=True, null=True)
+    start_date = models.DateTimeField(default=timezone.now, blank=True, null=True)
+    end_date = models.DateTimeField(db_index=True, blank=True, null=True)
     progress = models.PositiveSmallIntegerField(default=0)
-    progress_date = models.DateField(db_index=True, default=date.today)
+    progress_date = models.DateTimeField(db_index=True, default=timezone.now)
 
     class DatePrecision(models.IntegerChoices):
         DAY = 0
@@ -41,6 +40,10 @@ class LogEntry(models.Model):
     @property
     def end_date_display(self):
         return self._date_with_precision(self.end_date, self.end_precision)
+
+    @property
+    def progress_date_display(self):
+        return self._date_with_precision(self.progress_date, 0)
 
     def _date_with_precision(self, date, precision):
         if precision == 2:

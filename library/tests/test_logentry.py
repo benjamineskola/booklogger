@@ -1,6 +1,5 @@
-from datetime import datetime
-
 import pytest
+from django.utils import timezone
 
 from library.factories import *
 from library.models import *
@@ -18,10 +17,10 @@ class TestLogEntry:
         assert mock_book.log_entries.count() == 0
 
     def test_currently_reading(self, mock_book):
-        today = datetime.now().date()
+        today = timezone.now().date()
         mock_book.start_reading()
         assert mock_book.log_entries.count() == 1
-        assert mock_book.log_entries.all()[0].start_date == today
+        assert mock_book.log_entries.all()[0].start_date.date() == today
         assert not mock_book.log_entries.all()[0].end_date
 
     def test_currently_reading_method(self, mock_book):
@@ -32,12 +31,12 @@ class TestLogEntry:
         assert not mock_book.currently_reading
 
     def test_stop_reading(self, mock_book):
-        today = datetime.now().date()
+        today = timezone.now().date()
         mock_book.start_reading()
         mock_book.finish_reading()
         assert mock_book.log_entries.count() == 1
-        assert mock_book.log_entries.all()[0].start_date == today
-        assert mock_book.log_entries.all()[0].end_date == today
+        assert mock_book.log_entries.all()[0].start_date.date() == today
+        assert mock_book.log_entries.all()[0].end_date.date() == today
 
     def test_cannot_start_twice(self, mock_book):
         mock_book.start_reading()
