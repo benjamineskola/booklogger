@@ -49,7 +49,11 @@ class Author(models.Model):
         return name + (f" ({role})" if role else "")
 
     def _role_for_book(self, book):
-        if rel := self.bookauthor_set.get(book=book.id):
+        if book.first_author == self:
+            return (
+                "ed." if book.first_author_role == "editor" else book.first_author_role
+            )
+        elif rel := self.bookauthor_set.get(book=book.id):
             return rel.display_role
 
     @property

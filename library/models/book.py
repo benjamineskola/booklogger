@@ -87,12 +87,21 @@ class Book(models.Model):
         return self.citation
 
     @property
-    def all_authors(self):
-        return [a.attribution_for(self) for a in self.default_authors]
+    def authors(self):
+        authors = []
+        if self.first_author:
+            authors.append(self.first_author)
+        if self.additional_authors.count():
+            authors += self.additional_authors.all()
+        return authors
+
+    @property
+    def all_authors_attributed(self):
+        return [a.attribution_for(self) for a in self.authors]
 
     @property
     def display_authors(self):
-        return oxford_comma(self.all_authors)
+        return oxford_comma(self.all_authors_attributed)
 
     @property
     def display_title(self):
@@ -119,9 +128,16 @@ class Book(models.Model):
         return ", ".join([str(i) for i in [self.publisher, self.display_date] if i])
 
     def add_author(self, author, role="", order=None):
-        if author not in self.authors.all():
-            authorship = BookAuthor(book=self, author=author, role=role, order=order)
-            authorship.save()
+        if author.id is not self.first_author_id and author not in self.authors:
+            if not self.first_author:
+                self.first_author = author
+                self.first_author_role = role
+                self.save()
+            else:
+                authorship = BookAuthor(
+                    book=self, author=author, role=role, order=order
+                )
+                authorship.save()
 
     def start_reading(self):
         if not self.log_entries.filter(end_date=None):
@@ -147,34 +163,6 @@ class Book(models.Model):
             return False
         else:
             return entries[0].currently_reading
-
-    @property
-    def normal_authors(self):
-        return self.bookauthor_set.filter(
-            Q(role__isnull=True) | Q(role="") | Q(role="author")
-        )
-
-    @property
-    def editors(self):
-        return self.bookauthor_set.filter(role="editor")
-
-    @property
-    def contributors(self):
-        return self.bookauthor_set.filter(role="contributor")
-
-    @property
-    def default_authors(self):
-        book_authors = []
-        if self.normal_authors.count():
-            book_authors = self.normal_authors
-        elif self.editors.count():
-            book_authors = self.editors
-
-        return [book_author.author for book_author in book_authors]
-
-    @property
-    def full_authors(self):
-        return [book_author.author for book_author in self.bookauthor_set.all()]
 
     @property
     def display_series(self):

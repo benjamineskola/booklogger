@@ -27,25 +27,25 @@ class TestBookAuthor:
         return authors
 
     def test_add_author(self, mock_book, mock_author):
-        assert mock_book.authors.count() == 0
+        assert len(mock_book.authors) == 0
         mock_book.add_author(mock_author)
-        assert mock_book.bookauthor_set.count() == 1
+        assert len(mock_book.authors) == 1
 
     def test_add_two_authors(self, mock_book, mock_authors):
-        assert mock_book.authors.count() == 0
+        assert len(mock_book.authors) == 0
         mock_book.add_author(mock_authors[0])
         mock_book.add_author(mock_authors[1])
-        assert mock_book.bookauthor_set.count() == 2
+        assert len(mock_book.authors) == 2
 
     def test_add_same_author_twice(self, mock_book, mock_author):
-        assert mock_book.authors.count() == 0
+        assert len(mock_book.authors) == 0
         mock_book.add_author(mock_author)
         mock_book.add_author(mock_author)
-        assert mock_book.bookauthor_set.count() == 1
+        assert len(mock_book.authors) == 1
 
     def test_add_author_and_role(self, mock_book, mock_authors):
-        mock_book.add_author(mock_authors[0], order=1)
-        mock_book.add_author(mock_authors[1], order=2)
+        mock_book.add_author(mock_authors[0])
+        mock_book.add_author(mock_authors[1])
         assert str(mock_book) == "Smithee, A. and Smithee, B., Autobiography"
 
     def test_author_role_none(self, mock_book, mock_author):

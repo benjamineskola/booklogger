@@ -48,4 +48,4 @@ class TestBook:
     def test_three_authors(self, mock_book, mock_authors):
         mock_book.add_author(mock_authors[1], order=2)
         mock_book.add_author(mock_authors[2], order=3)
-        assert mock_book.citation == "God, Jesus, and Holy Spirit, The Bible"
+        assert mock_book.citation == "God, Holy Spirit, and Jesus, The Bible"
