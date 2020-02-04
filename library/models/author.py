@@ -64,6 +64,10 @@ class Author(models.Model):
         return ".".join([name[0] for name in all_forenames if name]) + "."
 
     @property
+    def books(self):
+        return self.first_authored_books.all() | self.additional_authored_books.all()
+
+    @property
     def authored_books(self):
         books = self.books.filter(
             id__in=[
@@ -72,6 +76,10 @@ class Author(models.Model):
                     Q(role__isnull=True) | Q(role="") | Q(role="author")
                 )
             ]
+        ) | self.first_authored_books.filter(
+            Q(first_author_role__isnull=True)
+            | Q(first_author_role="")
+            | Q(first_author_role="author")
         )
         return books
 
@@ -79,5 +87,5 @@ class Author(models.Model):
     def edited_books(self):
         books = self.books.filter(
             id__in=[ba.book.id for ba in self.bookauthor_set.filter(role="editor")]
-        )
+        ) | self.first_authored_books.filter(role="editor")
         return books

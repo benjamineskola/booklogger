@@ -35,12 +35,14 @@ class Book(models.Model):
 
     title = models.CharField(db_index=True, max_length=255)
     subtitle = models.CharField(max_length=255, blank=True)
-    first_author = models.ForeignKey(Author, on_delete=models.CASCADE, null=True)
+    first_author = models.ForeignKey(
+        Author, on_delete=models.CASCADE, null=True, related_name="first_authored_books"
+    )
     first_author_role = models.CharField(
         db_index=True, max_length=255, blank=True, null=True
     )
     additional_authors = models.ManyToManyField(
-        Author, through="BookAuthor", related_name="books"
+        Author, through="BookAuthor", related_name="additional_authored_books"
     )
 
     class Format(models.IntegerChoices):
