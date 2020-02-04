@@ -169,9 +169,7 @@ def update_progress(request, book_id):
 
 
 def basic_search(request):
-    print(repr(request.GET.get("query")))
     query = request.GET.get("query")
-    # query = "".join(request.GET.get("query"))
 
     results = []
     if query:
