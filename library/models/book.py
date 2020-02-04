@@ -10,8 +10,6 @@ from library.utils import oxford_comma
 
 from .author import Author
 
-# from .book_author import BookAuthor
-
 
 class BookManager(models.Manager):
     def search(self, pattern):
@@ -28,8 +26,8 @@ class Book(models.Model):
     class Meta:
         indexes = [Index(fields=["series", "series_order", "title"])]
         ordering = [
-            Lower("authors__surname"),
-            Lower("authors__forenames"),
+            Lower("first_author__surname"),
+            Lower("first_author__forenames"),
             "series",
             "series_order",
             "title",
@@ -37,7 +35,13 @@ class Book(models.Model):
 
     title = models.CharField(db_index=True, max_length=255)
     subtitle = models.CharField(max_length=255, blank=True)
-    authors = models.ManyToManyField(Author, through="BookAuthor", related_name="books")
+    first_author = models.ForeignKey(Author, on_delete=models.CASCADE, null=True)
+    first_author_role = models.CharField(
+        db_index=True, max_length=255, blank=True, null=True
+    )
+    additional_authors = models.ManyToManyField(
+        Author, through="BookAuthor", related_name="books"
+    )
 
     class Format(models.IntegerChoices):
         PAPERBACK = 1
