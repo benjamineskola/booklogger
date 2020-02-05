@@ -46,9 +46,14 @@ class LogEntry(models.Model):
         return self._date_with_precision(self.progress_date, 0)
 
     def _date_with_precision(self, date, precision):
+        if not date:
+            return
+
         if precision == 2:
             return date.strftime("%Y")
         elif precision == 1:
             return date.strftime("%B %Y")
+        elif (timezone.now() - date).days < 270:
+            return date.strftime("%d %B")
         else:
             return date.strftime("%d %B, %Y")
