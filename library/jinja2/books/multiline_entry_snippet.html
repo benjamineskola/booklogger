@@ -25,7 +25,7 @@
         {% endif %}
 
         {% if user.is_authenticated %}
-          <a class="small" data-toggle="collapse" data-target="#collapse-logupdate-{{ book.id}}{% if entry %}-{{ entry.start_date.date() }}{% endif %}" role="button">❯</a>
+          <a class="small dropdown-toggle" data-toggle="collapse" data-target="#collapse-logupdate-{{ book.id}}{% if entry %}-{{ entry.start_date.date() }}{% endif %}" role="button">Update</a>
           </p>
           <div class="collapse" id="collapse-logupdate-{{book.id}}{% if entry %}-{{ entry.start_date.date() }}{% endif %}">
             {% include "books/update_form_snippet.html" %}
