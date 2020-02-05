@@ -16,5 +16,5 @@
       <input class="form-control-sm btn btn-primary mx-2" type="submit" name="Start Reading" value="Start Reading" />
     </form>
   {% endif %}
-  <a href="{{ url('admin:library_book_change', args=[book.id]) }}">edit</a>
+  <p class="card-text small p-2"><a class="card-link" href="{{ url('admin:library_book_change', args=[book.id]) }}">edit</a></p>
 {% endif %}
