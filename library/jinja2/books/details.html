@@ -35,10 +35,10 @@
     <dt>Pages</dt><dd>{{ book.page_count }}</dd>
 
     {% if book.edition_language and book.language != book.edition_language %}
-    <dt>Language</dt><dd>{{ book.edition_language }}</dd>
-    <dt>Original language</dt><dd>{{ book.language }}</dd>
+    <dt>Language</dt><dd>{{ book.get_edition_language_display() }}</dd>
+    <dt>Original language</dt><dd>{{ book.get_language_display() }}</dd>
     {% else %}
-    <dt>Language</dt><dd>{{ book.language }}</dd>
+    <dt>Language</dt><dd>{{ book.get_language_display() }}</dd>
     {% endif %}
   </div>
 

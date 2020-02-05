@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.postgres.search import TrigramDistance
 from django.db import models
 from django.db.models import F, Q
@@ -50,8 +51,10 @@ class Book(models.Model):
         EBOOK = 3
         WEB = 4
 
+    LANGUAGES = set([(x, y) for x, y in settings.LANGUAGES if len(x) == 2])
+
     first_published = models.PositiveSmallIntegerField(blank=True, null=True)
-    language = models.CharField(max_length=2, default="en")
+    language = models.CharField(max_length=2, default="en", choices=LANGUAGES)
 
     series = models.CharField(db_index=True, max_length=255, blank=True)
     series_order = models.FloatField(db_index=True, blank=True, null=True)
@@ -69,7 +72,9 @@ class Book(models.Model):
     google_books_id = models.CharField(max_length=255, blank=True)
     isbn = models.CharField(max_length=13, blank=True)
     asin = models.CharField(max_length=255, blank=True)
-    edition_language = models.CharField(max_length=2, blank=True)  # i.e., a translation
+    edition_language = models.CharField(
+        max_length=2, blank=True, choices=LANGUAGES
+    )  # i.e., a translation
     edition_title = models.CharField(max_length=255, blank=True)  # if translated
     edition_subtitle = models.CharField(max_length=255, blank=True)  # if translated
 
