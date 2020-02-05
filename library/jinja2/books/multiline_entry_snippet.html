@@ -1,5 +1,5 @@
 {% if not entry and book.log_entries and book.log_entries.count() > 0 %}
-  {% set entry = book.log_entries.last() %}
+  {% set entry = book.log_entries.order_by('end_date').last() %}
 {% endif %}
 <div class="card mb-3" style="">
   <div class="row no-gutters">
