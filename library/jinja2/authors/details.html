@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <h2>Books</h2>
-{% set items = author.all_books %}
+{% set items = author.books %}
 {% include "books/multiline_loop_snippet.html" %}
 <a href="{{ url('admin:library_author_change', args=[author.id]) }}">edit</a>
 {% endblock content %}
