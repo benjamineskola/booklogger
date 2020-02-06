@@ -5,6 +5,7 @@ from django.db import models
 from django.db.models import F, Q
 from django.db.models.functions import Lower
 from django.db.models.indexes import Index
+from django.urls import reverse
 
 
 class AuthorManager(models.Manager):
@@ -39,6 +40,15 @@ class Author(models.Model):
 
     def __str__(self):
         return " ".join([self.forenames, self.surname]).strip()
+
+    def get_absolute_url(self):
+        return reverse("author_details", args=[str(self.id)])
+
+    def get_link_data(self, book=None, **kwargs):
+        return {
+            "url": self.get_absolute_url(),
+            "text": self.attribution_for(book, initials=False) if book else str(self),
+        }
 
     def attribution_for(self, book, initials=True):
         role = self._role_for_book(book)

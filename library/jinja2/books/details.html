@@ -9,10 +9,7 @@
     <dl>
     {% if book.default_authors != book.full_authors %}
     <dt>Full Authors</dt><dd>
-    {% for author in book.full_authors %}
-    <a href="{{ url('author_details', args=[author.id]) }}">{{ author.attribution_for(book, initials=False) }}</a>
-    {%- if not loop.last %}, {% endif -%}
-    {%- endfor -%}
+    {{ book.full_authors | map('get_hyperlink', book=book) | list | oxford_comma | safe }}
     {% endif %}
     {% if book.subtitle %}
     <dt>Subtitle</dt><dd>{{ book.subtitle }}</dd>

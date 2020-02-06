@@ -1,1 +1,1 @@
-<i><a href="{{ url('book_details', args=[book.id])  }}">{{ book.display_title }}</a></i>
+<i>{{ book | get_hyperlink | safe }}</i>

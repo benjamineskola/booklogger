@@ -1,9 +1,1 @@
-{%- for book_author in book.authors -%}
-{% if loop.last and not loop.first %} and {% endif %}
-{%- if author and book_author.id == author.id -%}
-{{ book_author }}
-{%- else -%}
-<a href="{{ url('author_details', args=[book_author.id]) }}">{{ book_author.attribution_for(book, initials=False) }}</a>
-{%- endif -%}
-{% if loop.length > 2 and not loop.last %}, {%else%} {% endif %}
-{%- endfor -%}
+{{ book.authors | map('get_hyperlink', book=book) | list | oxford_comma | safe }}

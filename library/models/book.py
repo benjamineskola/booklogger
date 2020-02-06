@@ -4,6 +4,7 @@ from django.db import models
 from django.db.models import F, Q
 from django.db.models.functions import Lower
 from django.db.models.indexes import Index
+from django.urls import reverse
 from django.utils import timezone
 
 from library.utils import oxford_comma
@@ -91,6 +92,12 @@ class Book(models.Model):
 
     def __str__(self):
         return self.citation
+
+    def get_absolute_url(self):
+        return reverse("book_details", args=[str(self.id)])
+
+    def get_link_data(self, **kwargs):
+        return {"url": self.get_absolute_url(), "text": self.display_title}
 
     @property
     def authors(self):

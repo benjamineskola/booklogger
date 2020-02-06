@@ -1,4 +1,4 @@
-<a href="{{ url("author_details", args=[author.id]) }}">{{ author }}</a>
+{{ author | get_hyperlink | safe }}
 <span class="text-muted">(
 {%- if author.authored_books.count() > 0 -%}
   Author of {{ author.authored_books.first().title }}
