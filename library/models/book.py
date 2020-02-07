@@ -52,7 +52,7 @@ class Book(models.Model):
         EBOOK = 3
         WEB = 4
 
-    LANGUAGES = set([(x, y) for x, y in settings.LANGUAGES if len(x) == 2])
+    LANGUAGES = sorted(set([(x, y) for x, y in settings.LANGUAGES if len(x) == 2]))
 
     first_published = models.PositiveSmallIntegerField(blank=True, null=True)
     language = models.CharField(max_length=2, default="en", choices=LANGUAGES)
