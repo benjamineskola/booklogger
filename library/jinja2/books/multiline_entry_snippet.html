@@ -12,8 +12,7 @@
       <div class="card-body">
         <h5 class="card-title">{% include "books/title_snippet.html" %}<span class="text-muted small">{% include "books/series_snippet.html" %}</span></h5>
         <h6 class="card-subtitle">by {% include "books/authors_snippet.html" %}</h6>
-        <p class="card-text mb-0">{% if book.publication_data %}{{ book.publication_data }}. {% endif %}{% if book.page_count and book.page_count > 0 %}{{ book.page_count }} pages.{% endif %}
-        <br>
+        <p class="card-text mb-0">{% if book.publication_data %}{{ book.publication_data }}. {% endif %}{% if book.page_count and book.page_count > 0 %}{{ book.page_count }} pages.{% endif %}</p>
         {% if book.tags %}
           {% for tag in book.tags %}
             <a href="{{ url("tag_details", args=[tag]) }}" class="badge badge-secondary">{{ tag }}</a>
@@ -25,7 +24,7 @@
           <input class="form-control-sm m-1" name="tags">
         </form>
         {% if entry %}
-          <br>{% include "logentries/date_snippet.html" %}.</p>
+          <br>{% include "logentries/date_snippet.html" %}
 
           {% if entry.currently_reading %}
             <div class="progress" style="height: 5px">
