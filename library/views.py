@@ -195,3 +195,19 @@ def tag_details(request, tag_name):
         "books/list.html",
         {"page_title": f"Books tagged {tag_name}", "page_obj": page_obj},
     )
+
+
+def book_add_tags(request, book_id):
+    if not request.user.is_authenticated:
+        raise PermissionDenied
+    if request.method == "POST":
+        book = get_object_or_404(Book, pk=book_id)
+        print(request.POST.get("tags"))
+        for tag in request.POST.get("tags").split(","):
+            if not tag in book.tags:
+                book.tags.append(tag)
+        book.save()
+    if next := request.GET.get("next"):
+        return redirect(next)
+    else:
+        return redirect("book_details", book_id=book_id)

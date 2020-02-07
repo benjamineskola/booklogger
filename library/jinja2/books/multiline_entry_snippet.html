@@ -12,13 +12,18 @@
       <div class="card-body">
         <h5 class="card-title">{% include "books/title_snippet.html" %}<span class="text-muted small">{% include "books/series_snippet.html" %}</span></h5>
         <h6 class="card-subtitle">by {% include "books/authors_snippet.html" %}</h6>
-        <p class="card-text">{% if book.publication_data %}{{ book.publication_data }}. {% endif %}{% if book.page_count and book.page_count > 0 %}{{ book.page_count }} pages.{% endif %}
-        {% if book.tags| count > 0 %}
+        <p class="card-text mb-0">{% if book.publication_data %}{{ book.publication_data }}. {% endif %}{% if book.page_count and book.page_count > 0 %}{{ book.page_count }} pages.{% endif %}
         <br>
+        {% if book.tags %}
           {% for tag in book.tags %}
             <a href="{{ url("tag_details", args=[tag]) }}" class="badge badge-secondary">{{ tag }}</a>
           {% endfor %}
         {% endif %}
+        <a class="badge badge-secondary" data-toggle="collapse" data-target="#collapse-addtag-{{ book.id }}" role="button">+</a>
+        <form class="collapse" id="collapse-addtag-{{ book.id }}" action="{{url('book_add_tags', args=[book.id]) }}?next={{ request.get_full_path() }}" method="post">
+          <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+          <input class="form-control-sm m-1" name="tags">
+        </form>
         {% if entry %}
           <br>{% include "logentries/date_snippet.html" %}.</p>
 
