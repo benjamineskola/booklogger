@@ -28,7 +28,7 @@ SECRET_KEY = (
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = not os.environ.get("DYNO")
+DEBUG = os.environ.get("DEBUG") if os.environ.get("DYNO") else True
 
 ALLOWED_HOSTS = ["*"]
 
