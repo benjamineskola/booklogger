@@ -202,7 +202,8 @@ def book_add_tags(request, book_id):
         raise PermissionDenied
     if request.method == "POST":
         book = get_object_or_404(Book, pk=book_id)
-        print(request.POST.get("tags"))
+        if not book.tags:
+            book.tags = []
         for tag in request.POST.get("tags").split(","):
             if not tag in book.tags:
                 book.tags.append(tag)
