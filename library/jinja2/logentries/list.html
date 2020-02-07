@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
+{% if currently_reading %}
 <h2>Currently Reading</h2>
 {% set items = currently_reading %}
 {% include "books/multiline_loop_snippet.html" %}
+{% endif %}
 
 {% for group in read|groupby('end_date.year')|reverse %}
 <h2 class="mt-4">Read in {{ group.grouper }}</h2>

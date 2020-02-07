@@ -10,11 +10,7 @@ from .models import Author, Book, BookAuthor, LogEntry
 # Create your views here.
 
 
-def index(request):
-    return HttpResponse("Hello, world. You're at the library index.")
-
-
-def books_index(request):
+def books_all(request):
     books = Book.objects.all()
     paginator = Paginator(books, 100)
     page_number = request.GET.get("page")
@@ -77,21 +73,23 @@ def book_details(request, book_id):
     )
 
 
-def read_books(request):
+def reading_books(request):
     currently_reading = LogEntry.objects.filter(end_date__isnull=True).order_by(
         "-progress_date", "start_date"
-    )
-    read = LogEntry.objects.filter(end_date__isnull=False).order_by(
-        "end_date", "start_date"
     )
     return render(
         request,
         "logentries/list.html",
-        {
-            "page_title": "Read Books",
-            "read": read,
-            "currently_reading": currently_reading,
-        },
+        {"page_title": "Read Books", "currently_reading": currently_reading,},
+    )
+
+
+def read_books(request):
+    read = LogEntry.objects.filter(end_date__isnull=False).order_by(
+        "end_date", "start_date"
+    )
+    return render(
+        request, "logentries/list.html", {"page_title": "Read Books", "read": read,},
     )
 
 
