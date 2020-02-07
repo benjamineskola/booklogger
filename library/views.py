@@ -181,3 +181,17 @@ def basic_search(request):
         "search.html",
         {"page_title": f"Search{': ' + query if query else ''}", "results": results},
     )
+
+
+def tag_details(request, tag_name):
+    books = Book.objects.filter(tags__contains=[tag_name])
+    paginator = Paginator(books, 100)
+    page_number = request.GET.get("page")
+    if not page_number:
+        page_number = 1
+    page_obj = paginator.get_page(page_number)
+    return render(
+        request,
+        "books/list.html",
+        {"page_title": f"Books tagged {tag_name}", "page_obj": page_obj},
+    )

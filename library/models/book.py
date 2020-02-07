@@ -1,4 +1,6 @@
 from django.conf import settings
+from django.contrib.postgres.fields import ArrayField
+from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import TrigramDistance
 from django.db import models
 from django.db.models import F, Q
@@ -25,7 +27,10 @@ class Book(models.Model):
     objects = BookManager()
 
     class Meta:
-        indexes = [Index(fields=["series", "series_order", "title"])]
+        indexes = [
+            Index(fields=["series", "series_order", "title"]),
+            GinIndex(fields=["tags"]),
+        ]
         ordering = [
             Lower("first_author__surname"),
             Lower("first_author__forenames"),
@@ -89,6 +94,8 @@ class Book(models.Model):
     publisher_url = models.URLField(blank=True)
 
     want_to_read = models.BooleanField(db_index=True, default=True)
+
+    tags = ArrayField(models.CharField(max_length=32), null=True)
 
     def __str__(self):
         return self.citation

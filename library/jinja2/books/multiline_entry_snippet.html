@@ -13,6 +13,12 @@
         <h5 class="card-title">{% include "books/title_snippet.html" %}<span class="text-muted small">{% include "books/series_snippet.html" %}</span></h5>
         <h6 class="card-subtitle">by {% include "books/authors_snippet.html" %}</h6>
         <p class="card-text">{% if book.publication_data %}{{ book.publication_data }}. {% endif %}{% if book.page_count and book.page_count > 0 %}{{ book.page_count }} pages.{% endif %}
+        {% if book.tags| count > 0 %}
+        <br>
+          {% for tag in book.tags %}
+            <a href="{{ url("tag_details", args=[tag]) }}" class="badge badge-secondary">{{ tag }}</a>
+          {% endfor %}
+        {% endif %}
         {% if entry %}
           <br>{% include "logentries/date_snippet.html" %}.</p>
 
