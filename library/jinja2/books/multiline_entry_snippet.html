@@ -18,11 +18,13 @@
             <a href="{{ url("tag_details", args=[tag]) }}" class="badge badge-secondary">{{ tag }}</a>
           {% endfor %}
         {% endif %}
-        <a class="badge badge-secondary" data-toggle="collapse" data-target="#collapse-addtag-{{ book.id }}" role="button">+</a>
-        <form class="collapse" id="collapse-addtag-{{ book.id }}" action="{{url('book_add_tags', args=[book.id]) }}?next={{ request.get_full_path() }}" method="post">
-          <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-          <input class="form-control-sm m-1" name="tags">
-        </form>
+        {% if user.is_authenticated %}
+          <a class="badge badge-secondary" data-toggle="collapse" data-target="#collapse-addtag-{{ book.id }}" role="button">+</a>
+          <form class="collapse" id="collapse-addtag-{{ book.id }}" action="{{url('book_add_tags', args=[book.id]) }}?next={{ request.get_full_path() }}" method="post">
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+            <input class="form-control-sm m-1" name="tags">
+          </form>
+        {% endif %}
         {% if entry %}
           <br>{% include "logentries/date_snippet.html" %}
 
