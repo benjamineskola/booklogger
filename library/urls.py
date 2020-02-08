@@ -22,4 +22,5 @@ urlpatterns = [
     path("search", views.basic_search, name="basic_search"),
     path("tag/<str:tag_name>", views.tag_details, name="tag_details"),
     path("book/<int:book_id>/add_tags", views.book_add_tags, name="book_add_tags"),
+    path("tags", views.tag_cloud, name="tag_cloud"),
 ]

@@ -231,6 +231,41 @@ def tag_details(request, tag_name):
     )
 
 
+def tag_cloud(request):
+    all_book_tags = [book.tags for book in Book.objects.all()]
+    tag_counts = {}
+    tag_sizes = {}
+    for book_tags in all_book_tags:
+        for tag in book_tags:
+            if tag in tag_counts:
+                tag_counts[tag] += 1
+            else:
+                tag_counts[tag] = 1
+
+    counts_only = sorted(tag_counts.values())
+    median = counts_only[int(len(counts_only) / 2)]
+    maxi = counts_only[-1]
+    mini = counts_only[0]
+
+    above_median_buckets = (maxi - median) / 100
+    below_median_buckets = (median - mini) / 100
+    for tag in tag_counts:
+        if tag_counts[tag] > median + above_median_buckets:
+            tag_sizes[tag] = 1 + (
+                ((tag_counts[tag] - median) / above_median_buckets) * 0.02
+            )
+        elif tag_counts[tag] < median - below_median_buckets:
+            tag_sizes[tag] = 1 - (
+                ((median - tag_counts[tag]) / below_median_buckets) * 0.02
+            )
+        else:
+            tag_sizes[tag] = 1.0
+
+    return render(
+        request, "tags/cloud.html", {"page_title": f"All Tags", "tags": tag_sizes},
+    )
+
+
 def book_add_tags(request, book_id):
     if not request.user.is_authenticated:
         raise PermissionDenied

@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+{% for tag in tags %}
+<a style="font-size: {{ tags[tag]*2 }}rem" href="{{ url("tag_details", args=[tag]) }}">{{ tag }}</a>
+{%else%}
+what what
+{% endfor %}
+{% endblock content %}
