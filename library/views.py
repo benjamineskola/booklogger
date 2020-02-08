@@ -14,6 +14,8 @@ from .models import Author, Book, BookAuthor, LogEntry
 
 def books_all(request):
     books = Book.objects.all()
+    books = filter_books_by_request(books, request)
+
     paginator = Paginator(books, 100)
     page_number = request.GET.get("page")
     if not page_number:
@@ -26,6 +28,8 @@ def books_all(request):
 
 def owned_books(request):
     books = Book.objects.filter(owned=True)
+    books = filter_books_by_request(books, request)
+
     return render(
         request,
         "books/list_by_format.html",
@@ -35,6 +39,8 @@ def owned_books(request):
 
 def unowned_books(request):
     books = Book.objects.filter(want_to_read=True, owned=False)
+    books = filter_books_by_request(books, request)
+
     paginator = Paginator(books, 100)
     page_number = request.GET.get("page")
     if not page_number:
@@ -47,6 +53,8 @@ def unowned_books(request):
 
 def borrowed_books(request):
     books = Book.objects.filter(was_borrowed=True)
+    books = filter_books_by_request(books, request)
+
     paginator = Paginator(books, 100)
     page_number = request.GET.get("page")
     if not page_number:
@@ -79,6 +87,7 @@ def reading_books(request):
     currently_reading = LogEntry.objects.filter(end_date__isnull=True).order_by(
         "-progress_date", "start_date"
     )
+    currently_reading = filter_logs_by_request(currently_reading, request)
     return render(
         request,
         "logentries/list.html",
@@ -90,6 +99,7 @@ def read_books(request):
     read = LogEntry.objects.filter(end_date__isnull=False).order_by(
         "end_date", "start_date"
     )
+    read = filter_logs_by_request(read, request)
     return render(
         request, "logentries/list.html", {"page_title": "Read Books", "read": read,},
     )
@@ -104,6 +114,9 @@ def unread_books(request):
         "series_order",
         "title",
     )
+
+    want_to_read = filter_books_by_request(want_to_read, request)
+
     paginator = Paginator(want_to_read, 100)
     page_number = request.GET.get("page")
     if not page_number:
@@ -188,6 +201,8 @@ def basic_search(request):
 def tag_details(request, tag_name):
     tags = [tag.strip() for tag in tag_name.split(",")]
     books = Book.objects.filter(tags__contains=tags)
+    books = filter_books_by_request(books, request)
+
     paginator = Paginator(books, 100)
     page_number = request.GET.get("page")
     if not page_number:
@@ -216,3 +231,21 @@ def book_add_tags(request, book_id):
         return redirect(next)
     else:
         return redirect("book_details", book_id=book_id)
+
+
+def filter_books_by_request(qs, request):
+    if gender := request.GET.get("gender"):
+        qs = qs.filter(first_author__gender=gender)
+    if poc := request.GET.get("poc"):
+        qs = qs.filter(first_author__poc=True)
+
+    return qs
+
+
+def filter_logs_by_request(qs, request):
+    if gender := request.GET.get("gender"):
+        qs = qs.filter(book__first_author__gender=gender)
+    if poc := request.GET.get("poc"):
+        qs = qs.filter(book__first_author__poc=True)
+
+    return qs
