@@ -6,7 +6,12 @@ from .models import Author, Book, BookAuthor, LogEntry
 # Register your models here.
 
 
+class AuthorAdmin(admin.ModelAdmin):
+    search_fields = ["surname", "forenames"]
+
+
 class BookAuthorInline(admin.TabularInline):
+    autocomplete_fields = ["author", "book"]
     model = BookAuthor
     extra = 1
 
@@ -17,10 +22,12 @@ class LogEntryInline(admin.TabularInline):
 
 
 class BookAdmin(admin.ModelAdmin):
+    autocomplete_fields = ["first_author"]
     inlines = (BookAuthorInline, LogEntryInline)
+    search_fields = ["title", "series", "tags"]
 
 
-admin.site.register(Author)
+admin.site.register(Author, AuthorAdmin)
 admin.site.register(Book, BookAdmin)
 admin.site.register(BookAuthor)
 admin.site.register(LogEntry)
