@@ -37,6 +37,7 @@ class Author(models.Model):
         ORGANIZATION = 3
 
     gender = models.IntegerField(choices=Gender.choices, default=0)
+    poc = models.BooleanField(default=False)
 
     def __str__(self):
         return " ".join([self.forenames, self.surname]).strip()
