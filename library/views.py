@@ -193,7 +193,10 @@ def tag_details(request, tag_name):
     return render(
         request,
         "books/list.html",
-        {"page_title": f"Books tagged {tag_name}", "page_obj": page_obj},
+        {
+            "page_title": f"{books.count()} books tagged {tag_name}",
+            "page_obj": page_obj,
+        },
     )
 
 
