@@ -244,6 +244,8 @@ def filter_books_by_request(qs, request):
         qs = qs.filter(first_author__gender=gender)
     if poc := request.GET.get("poc"):
         qs = qs.filter(first_author__poc=True)
+    if tags := request.GET.get("tags"):
+        qs = qs.filter(tags__contains=[tag.strip() for tag in tags.split(",")])
 
     return qs
 
@@ -253,5 +255,7 @@ def filter_logs_by_request(qs, request):
         qs = qs.filter(book__first_author__gender=gender)
     if poc := request.GET.get("poc"):
         qs = qs.filter(book__first_author__poc=True)
+    if tags := request.GET.get("tags"):
+        qs = qs.filter(book__tags__contains=[tag.strip() for tag in tags.split(",")])
 
     return qs
