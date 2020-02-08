@@ -17,9 +17,14 @@ from .author import Author
 class BookManager(models.Manager):
     def search(self, pattern):
         return Book.objects.annotate(
+            fn_distance=TrigramDistance("first_author__surname", pattern),
+            sn_distance=TrigramDistance("first_author__forenames", pattern),
             title_distance=TrigramDistance("title", pattern),
             series_distance=TrigramDistance("series", pattern),
-            distance=F("title_distance") * F("series_distance"),
+            distance=F("fn_distance")
+            * F("sn_distance")
+            * F("title_distance")
+            * F("series_distance"),
         ).order_by("distance")
 
 
