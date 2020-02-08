@@ -95,7 +95,7 @@ class Book(models.Model):
 
     want_to_read = models.BooleanField(db_index=True, default=True)
 
-    tags = ArrayField(models.CharField(max_length=32), null=True)
+    tags = ArrayField(models.CharField(max_length=32), default=list, blank=True)
 
     def __str__(self):
         return self.citation

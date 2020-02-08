@@ -13,11 +13,9 @@
         <h5 class="card-title">{% include "books/title_snippet.html" %}<span class="text-muted small">{% include "books/series_snippet.html" %}</span></h5>
         <h6 class="card-subtitle">by {% include "books/authors_snippet.html" %}</h6>
         <p class="card-text mb-0">{% if book.publication_data %}{{ book.publication_data }}. {% endif %}{% if book.page_count and book.page_count > 0 %}{{ book.page_count }} pages.{% endif %}</p>
-        {% if book.tags %}
-          {% for tag in book.tags %}
-            <a href="{{ url("tag_details", args=[tag]) }}" class="badge badge-secondary">{{ tag }}</a>
-          {% endfor %}
-        {% endif %}
+        {% for tag in book.tags %}
+          <a href="{{ url("tag_details", args=[tag]) }}" class="badge badge-secondary">{{ tag }}</a>
+        {% endfor %}
         {% if user.is_authenticated %}
           <a class="badge badge-secondary" data-toggle="collapse" data-target="#collapse-addtag-{{ book.id }}" role="button">+</a>
           <form class="collapse" id="collapse-addtag-{{ book.id }}" action="{{url('book_add_tags', args=[book.id]) }}?next={{ request.get_full_path() }}" method="post">
