@@ -98,5 +98,5 @@ class Author(models.Model):
     def edited_books(self):
         books = self.books.filter(
             id__in=[ba.book.id for ba in self.bookauthor_set.filter(role="editor")]
-        ) | self.first_authored_books.filter(role="editor")
+        ) | self.first_authored_books.filter(first_author_role="editor")
         return books
