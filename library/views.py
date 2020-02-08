@@ -5,6 +5,8 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template import loader
 
+from library.utils import oxford_comma
+
 from .models import Author, Book, BookAuthor, LogEntry
 
 # Create your views here.
@@ -184,7 +186,8 @@ def basic_search(request):
 
 
 def tag_details(request, tag_name):
-    books = Book.objects.filter(tags__contains=[tag_name])
+    tags = [tag.strip() for tag in tag_name.split(",")]
+    books = Book.objects.filter(tags__contains=tags)
     paginator = Paginator(books, 100)
     page_number = request.GET.get("page")
     if not page_number:
@@ -194,7 +197,7 @@ def tag_details(request, tag_name):
         request,
         "books/list.html",
         {
-            "page_title": f"{books.count()} books tagged {tag_name}",
+            "page_title": f"{books.count()} books tagged {oxford_comma(tags)}",
             "page_obj": page_obj,
         },
     )
