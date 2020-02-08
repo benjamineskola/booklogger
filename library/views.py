@@ -130,8 +130,14 @@ def unread_books(request):
     )
 
 
-def all_authors(request):
+def author_list(request):
     authors = Author.objects.all()
+
+    if gender := request.GET.get("gender"):
+        authors = authors.filter(gender=gender)
+    if poc := request.GET.get("poc"):
+        authors = authors.filter(poc=True)
+
     paginator = Paginator(authors, 100)
     page_number = request.GET.get("page")
     if not page_number:
