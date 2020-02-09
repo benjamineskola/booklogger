@@ -1,3 +1,8 @@
+import os
+import re
+
+import requests
+import xmltodict
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.indexes import GinIndex
@@ -197,6 +202,41 @@ class Book(models.Model):
             return f"{self.series}, #{str(self.series_order).strip('.0')}"
         else:
             return self.series
+
+    def find_goodreads_data(self):
+        query = ""
+        if self.isbn:
+            query = self.isbn
+        else:
+            query = re.sub(" ", "+", self.title + " " + str(self.first_author))
+        search_url = f"https://www.goodreads.com/search/index.xml?key={os.environ['GOODREADS_KEY']}&q={query}"
+        data = requests.get(search_url).text
+        xml = xmltodict.parse(data, dict_constructor=dict)
+
+        try:
+            results = xml["GoodreadsResponse"]["search"]["results"]["work"]
+        except:
+            return
+        if "id" in results:
+            results = [results]
+
+        for result in results:
+            book = result["best_book"]
+
+            if book["title"].lower() != self.title.lower():
+                continue
+            if book["author"]["name"].lower() != str(self.first_author).lower():
+                continue
+
+            if not self.goodreads_id:
+                self.goodreads_id = book["id"]["#text"]
+            if not self.image_url:
+                if not "nophoto" in book["image_url"]:
+                    self.image_url = re.sub(
+                        r"_S\w\d+_.jpg$", "_SX475_.jpg", book["image_url"]
+                    )
+            self.save()
+            return
 
 
 class BookAuthor(models.Model):

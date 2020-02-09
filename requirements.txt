@@ -6,3 +6,5 @@ psycopg2
 pytest-django
 pytest-factoryboy
 PyYAML
+requests
+xmltodict
