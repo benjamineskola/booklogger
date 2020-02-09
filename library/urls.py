@@ -10,6 +10,7 @@ urlpatterns = [
     path("books/borrowed", views.borrowed_books, name="borrowed_books"),
     path("books/reading", views.reading_books, name="reading_books"),
     path("books/read", views.read_books, name="read_books"),
+    path("books/read/<int:year>", views.read_books, name="read_books"),
     path("books/toread", views.unread_books, name="unread_books"),
     path("authors", views.author_list, name="author_list"),
     path("author/<int:author_id>", views.author_details, name="author_details"),

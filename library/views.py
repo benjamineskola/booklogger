@@ -95,10 +95,13 @@ def reading_books(request):
     )
 
 
-def read_books(request):
+def read_books(request, year=None):
     read = LogEntry.objects.filter(end_date__isnull=False).order_by(
         "end_date", "start_date"
     )
+    if year:
+        read = read.filter(end_date__year=year)
+
     read = filter_logs_by_request(read, request)
     return render(
         request, "logentries/list.html", {"page_title": "Read Books", "read": read,},
