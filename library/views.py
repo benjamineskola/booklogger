@@ -129,7 +129,10 @@ def unread_books(request):
     return render(
         request,
         "books/toread.html",
-        {"page_obj": page_obj, "page_title": "Reading List"},
+        {
+            "page_obj": page_obj,
+            "page_title": f"Reading List ({want_to_read.count()} books)",
+        },
     )
 
 
