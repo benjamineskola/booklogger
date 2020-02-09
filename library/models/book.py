@@ -222,8 +222,13 @@ class Book(models.Model):
 
         for result in results:
             book = result["best_book"]
+            full_title = book["title"].lower()
+            title_without_series, *rest = full_title.split(" (")
 
-            if book["title"].lower() != self.title.lower():
+            if (
+                full_title != self.title.lower()
+                and title_without_series != self.title.lower()
+            ):
                 continue
             if book["author"]["name"].lower() != str(self.first_author).lower():
                 continue
