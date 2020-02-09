@@ -278,8 +278,9 @@ def book_add_tags(request, book_id):
     if request.method == "POST":
         book = get_object_or_404(Book, pk=book_id)
         for tag in request.POST.get("tags").split(","):
-            if not tag in book.tags:
-                book.tags.append(tag)
+            clean_tag = tag.strip()
+            if not clean_tag in book.tags:
+                book.tags.append(clean_tag)
         book.save()
     if next := request.GET.get("next"):
         return redirect(next)
