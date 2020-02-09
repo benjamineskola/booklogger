@@ -307,3 +307,21 @@ def filter_logs_by_request(qs, request):
         qs = qs.filter(book__tags__contains=[tag.strip() for tag in tags.split(",")])
 
     return qs
+
+
+def stats(request):
+    books = Book.objects.all()
+    owned = books.filter(owned=True)
+    read_books = books.filter(want_to_read=False) | books.filter(
+        log_entries__isnull=False
+    )
+    return render(
+        request,
+        "stats.html",
+        {
+            "page_title": f"Library Stats",
+            "books": books,
+            "owned": owned,
+            "read": read_books,
+        },
+    )

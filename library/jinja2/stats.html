@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<p>In total I own {{ owned | count }} books.</p>
+<p>Overall I've read {{ read | count }} in the period I've been tracking: {{ read.filter(first_author__gender=1) | count }} by men and {{ read.filter(first_author__gender=2) | count }} by women.<p>
+<p>
+  {{ read.fiction() | count }} were fiction,
+  {{ read.nonfiction() | count }} were non-fiction.<br>
+  {{ read.by_men().fiction() | count }} books by men were fiction,
+  {{ read.by_men().nonfiction() | count }} were non-fiction.<br>
+  {{ read.by_women().fiction() | count }} books by women were fiction,
+  {{ read.by_women().nonfiction() | count }} were non-fiction.
+</p>
+
+<ul>
+{% for year in range(2004,2021) | reverse %}
+  {% set year_books = books.filter(log_entries__end_date__year=year) %}
+  {% if year_books | count > 0 %}
+  {% set year_male = year_books.by_men().all() %}
+  {% set year_female = year_books.by_women().all() %}
+    <li>
+      <p>In <a href="{{ url("read_books", args=[year]) }}">{{ year }}</a> I read {{ year_books | count }} books: {{ year_male | count }} by men and {{ year_female | count }} by women.</p>
+      <p>
+        {{ year_books.fiction() | count }} were fiction,
+        {{ year_books.nonfiction() | count }} were non-fiction.<br>
+        {{ year_male.fiction() | count }} books by men were fiction,
+        {{ year_male.nonfiction() | count }} books by men were non-fiction.<br>
+        {{ year_female.fiction() | count }} books by women were fiction,
+        {{ year_female.nonfiction() | count }} books by women were non-fiction.
+      </p>
+    </li>
+  {% endif %}
+{% endfor %}
+  {% set undated_read = read.exclude(log_entries__isnull=False) %}
+  <li>
+    <p>Plus {{ undated_read | count }} others (i.e., read, but I'm not sure when). {{ undated_read.by_men() | count }} by men and {{ undated_read.by_women() | count }} by women.</p>
+      <p>
+        {{ undated_read.fiction() | count }} were fiction,
+        {{ undated_read.nonfiction() | count }} were non-fiction.<br>
+        {{ undated_read.by_men().fiction() | count }} books by men were fiction,
+        {{ undated_read.by_men().nonfiction() | count }} books by men were non-fiction.<br>
+        {{ undated_read.by_women().fiction() | count }} books by women were fiction,
+        {{ undated_read.by_women().nonfiction() | count }} books by women were non-fiction.
+      </p>
+  </li>
+</ul>
+{% endblock %}

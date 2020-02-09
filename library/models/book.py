@@ -20,8 +20,26 @@ from .author import Author
 
 
 class BookManager(models.Manager):
+    def get_queryset(self):
+        return BookQuerySet(self.model, using=self._db)
+
+    def by_gender(self, gender):
+        return self.get_queryset().by_gender(gender)
+
+    def by_men(self):
+        return self.get_queryset().by_men()
+
+    def by_women(self):
+        return self.get_queryset().by_women()
+
+    def fiction(self):
+        return self.get_queryset().fiction()
+
+    def nonfiction(self):
+        return self.get_queryset().nonfiction()
+
     def search(self, pattern):
-        return Book.objects.annotate(
+        return self.annotate(
             fn_distance=TrigramDistance("first_author__surname", pattern),
             sn_distance=TrigramDistance("first_author__forenames", pattern),
             title_distance=TrigramDistance("title", pattern),
@@ -31,6 +49,26 @@ class BookManager(models.Manager):
             * F("title_distance")
             * F("series_distance"),
         ).order_by("distance")
+
+
+class BookQuerySet(models.QuerySet):
+    def by_gender(self, gender):
+        return (
+            self.filter(first_author__gender=gender).distinct()
+            | self.filter(additional_authors__gender=gender).distinct()
+        )
+
+    def by_men(self):
+        return self.by_gender(1)
+
+    def by_women(self):
+        return self.by_gender(2)
+
+    def fiction(self):
+        return self.filter(tags__contains=["fiction"])
+
+    def nonfiction(self):
+        return self.filter(tags__contains=["non-fiction"])
 
 
 class Book(models.Model):
