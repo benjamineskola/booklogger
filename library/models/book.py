@@ -242,6 +242,14 @@ class Book(models.Model):
         else:
             return self.series
 
+    @property
+    def slug(self):
+        return re.sub(
+            r"[^A-Za-z0-9]+",
+            "-",
+            f"{self.first_author.surname} {self.title.split(':')[0]}",
+        ).lower()
+
     def find_goodreads_data(self):
         query = ""
         if self.isbn:
