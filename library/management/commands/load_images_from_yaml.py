@@ -32,11 +32,23 @@ class Command(BaseCommand):
             input_data = sys.stdin.read()
         data = yaml.safe_load(input_data)
 
-        for book_data in data:
-            print(book_data)
-            try:
-                book = Book.objects.get(**book_data["ids"])
-            except:
-                continue
-            book.image_url = book_data["image_url"]
-            book.save()
+        for author, books in data.items():
+            surname, forenames = self._normalize(author)
+            for book, book_data in books.items():
+                books = Book.objects.filter(
+                    title__iexact=book, first_author__surname__iexact=surname
+                )
+                if books.count() == 1:
+                    book_object = books.first()
+                elif books.count() > 1:
+                    print(f"can't uniquely identify {book} by {author}")
+                    continue
+                else:
+                    print(f"can't find {book} by {author}")
+                    continue
+
+                if book_object.image_url != book_data["image_url"]:
+                    print(f"changing {book}")
+                book_object.image_url = book_data["image_url"]
+                book_object.goodreads_id = book_data["ids"]["goodreads_id"]
+                book_object.save()
