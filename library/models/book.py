@@ -43,10 +43,12 @@ class BookManager(models.Manager):
             fn_distance=TrigramDistance("first_author__surname", pattern),
             sn_distance=TrigramDistance("first_author__forenames", pattern),
             title_distance=TrigramDistance("title", pattern),
+            edition_title_distance=TrigramDistance("edition_title", pattern),
             series_distance=TrigramDistance("series", pattern),
             distance=F("fn_distance")
             * F("sn_distance")
             * F("title_distance")
+            * F("edition_title_distance")
             * F("series_distance"),
         ).order_by("distance")
 
