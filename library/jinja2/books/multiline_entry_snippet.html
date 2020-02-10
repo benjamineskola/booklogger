@@ -21,6 +21,8 @@
           {% if book.owned %}
             <a href="{{ url("owned_books") }}" class="badge badge-info">owned</a>
             <a href="{{ url("unread_books") }}" class="badge badge-info">to read</a>
+          {% elif book.was_borrowed and book.borrowed_from == 'Sara' %}
+            <a href="{{ url("borrowed_books") }}" class="badge badge-info">borrowed</a>
           {% else %}
             <a href="{{ url("unowned_books") }}" class="badge badge-info">wishlist</a>
           {% endif %}
