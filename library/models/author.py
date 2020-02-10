@@ -83,14 +83,10 @@ class Author(models.Model):
         books = self.books.filter(
             id__in=[
                 ba.book.id
-                for ba in self.bookauthor_set.filter(
-                    Q(role__isnull=True) | Q(role="") | Q(role="author")
-                )
+                for ba in self.bookauthor_set.filter(Q(role="") | Q(role="author"))
             ]
         ) | self.first_authored_books.filter(
-            Q(first_author_role__isnull=True)
-            | Q(first_author_role="")
-            | Q(first_author_role="author")
+            Q(first_author_role="") | Q(first_author_role="author")
         )
         return books
 

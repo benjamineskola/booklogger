@@ -93,13 +93,14 @@ class Book(models.Model):
         Author, on_delete=models.CASCADE, null=True, related_name="first_authored_books"
     )
     first_author_role = models.CharField(
-        db_index=True, max_length=255, blank=True, null=True
+        db_index=True, max_length=255, blank=True, default=""
     )
     additional_authors = models.ManyToManyField(
         Author, through="BookAuthor", related_name="additional_authored_books"
     )
 
     class Format(models.IntegerChoices):
+        UNKNOWN = 0
         PAPERBACK = 1
         HARDBACK = 2
         EBOOK = 3
@@ -118,7 +119,7 @@ class Book(models.Model):
     edition_published = models.PositiveSmallIntegerField(blank=True, null=True)
     publisher = models.CharField(max_length=255, blank=True)
     edition_format = models.IntegerField(
-        db_index=True, choices=Format.choices, blank=True, null=True
+        db_index=True, choices=Format.choices, default=0
     )
     edition_number = models.PositiveSmallIntegerField(blank=True, null=True)
     page_count = models.PositiveSmallIntegerField(blank=True, null=True)
@@ -289,7 +290,7 @@ class BookAuthor(models.Model):
 
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
-    role = models.CharField(db_index=True, max_length=255, blank=True, null=True)
+    role = models.CharField(db_index=True, max_length=255, blank=True, default="")
     order = models.PositiveSmallIntegerField(db_index=True, blank=True, null=True)
 
     def __str__(self):
