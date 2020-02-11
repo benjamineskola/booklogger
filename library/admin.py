@@ -24,7 +24,14 @@ class LogEntryInline(admin.TabularInline):
 class BookAdmin(admin.ModelAdmin):
     autocomplete_fields = ["first_author"]
     inlines = (BookAuthorInline, LogEntryInline)
-    search_fields = ["title", "series", "tags"]
+    search_fields = [
+        "title",
+        "series",
+        "tags",
+        "edition_title",
+        "first_author__surname",
+        "first_author__forenames",
+    ]
 
 
 admin.site.register(Author, AuthorAdmin)
