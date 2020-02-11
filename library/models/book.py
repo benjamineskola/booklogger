@@ -157,7 +157,7 @@ class Book(models.Model):
         return self.citation
 
     def get_absolute_url(self):
-        return reverse("book_details", args=[str(self.id)])
+        return reverse("library:book_details", args=[str(self.id)])
 
     def get_link_data(self, **kwargs):
         return {"url": self.get_absolute_url(), "text": self.display_title}

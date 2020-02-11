@@ -164,7 +164,7 @@ def start_reading(request, book_id):
     if request.method == "POST":
         book = get_object_or_404(Book, pk=book_id)
         book.start_reading()
-    return redirect("book_details", book_id=book_id)
+    return redirect("library:book_details", book_id=book_id)
 
 
 def finish_reading(request, book_id):
@@ -173,7 +173,7 @@ def finish_reading(request, book_id):
     if request.method == "POST":
         book = get_object_or_404(Book, pk=book_id)
         book.finish_reading()
-    return redirect("book_details", book_id=book_id)
+    return redirect("library:book_details", book_id=book_id)
 
 
 def update_progress(request, book_id):
@@ -188,7 +188,7 @@ def update_progress(request, book_id):
             progress = int(request.POST["percentage"])
         if progress:
             book.update_progress(progress)
-    return redirect("book_details", book_id=book_id)
+    return redirect("library:book_details", book_id=book_id)
 
 
 def add_tags(request, book_id):
@@ -204,7 +204,7 @@ def add_tags(request, book_id):
     if next := request.GET.get("next"):
         return redirect(next)
     else:
-        return redirect("book_details", book_id=book_id)
+        return redirect("library:book_details", book_id=book_id)
 
 
 def filter_books_by_request(qs, request):

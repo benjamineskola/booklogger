@@ -2,6 +2,7 @@ from django.urls import include, path
 
 from . import views
 
+app_name = "library"
 urlpatterns = [
     path("", views.book.currently_reading, name="index"),
     path("author/<int:author_id>", views.author_details, name="author_details"),
@@ -37,18 +38,22 @@ urlpatterns = [
         include(
             [
                 path("", views.book.all, name="books_all"),
-                path("borrowed", views.book.borrowed, name="borrowed_books"),
-                path("owned", views.book.owned, name="owned_books"),
+                path("borrowed", views.book.borrowed, name="books_borrowed"),
+                path("owned", views.book.owned, name="books_owned"),
                 path(
                     "owned/bydate",
                     views.book.owned_by_date,
-                    name="owned_books_by_date",
+                    name="books_owned_by_date",
                 ),
-                path("read", views.book.read, name="read_books"),
-                path("read/<int:year>", views.book.read, name="read_books"),
-                path("reading", views.book.currently_reading, name="reading_books"),
-                path("toread", views.book.unread, name="unread_books"),
-                path("unowned", views.book.unowned, name="unowned_books"),
+                path("read", views.book.read, name="books_read"),
+                path("read/<int:year>", views.book.read, name="books_read"),
+                path(
+                    "reading",
+                    views.book.currently_reading,
+                    name="books_currently_reading",
+                ),
+                path("toread", views.book.unread, name="books_unread"),
+                path("unowned", views.book.unowned, name="books_unowned"),
             ]
         ),
     ),

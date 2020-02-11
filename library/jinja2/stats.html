@@ -18,7 +18,7 @@
   {% set year_male = year_books.by_men().all() %}
   {% set year_female = year_books.by_women().all() %}
     <li>
-      <p>In <a href="{{ url("read_books", args=[year]) }}">{{ year }}</a> I read {{ year_books | count }} books: {{ year_male | count }} by men and {{ year_female | count }} by women.</p>
+      <p>In <a href="{{ url("library:books_read", args=[year]) }}">{{ year }}</a> I read {{ year_books | count }} books: {{ year_male | count }} by men and {{ year_female | count }} by women.</p>
       <p>
         {{ year_books.fiction() | count }} were fiction,
         {{ year_books.nonfiction() | count }} were non-fiction.<br>

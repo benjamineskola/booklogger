@@ -43,7 +43,7 @@ class Author(models.Model):
         return " ".join([self.forenames, self.surname]).strip()
 
     def get_absolute_url(self):
-        return reverse("author_details", args=[str(self.id)])
+        return reverse("library:author_details", args=[str(self.id)])
 
     def get_link_data(self, book=None, **kwargs):
         return {
