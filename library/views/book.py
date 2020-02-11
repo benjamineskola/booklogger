@@ -4,18 +4,12 @@ from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.db.models import F
 from django.db.models.functions import Lower
-from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.template import loader
 
-from library.utils import oxford_comma
-
-from .models import Author, Book, BookAuthor, LogEntry
-
-# Create your views here.
+from library.models import Author, Book, BookAuthor, LogEntry
 
 
-def books_all(request):
+def all(request):
     books = Book.objects.all()
     books = filter_books_by_request(books, request)
 
@@ -29,7 +23,7 @@ def books_all(request):
     )
 
 
-def owned_books(request):
+def owned(request):
     books = Book.objects.filter(owned=True)
     books = filter_books_by_request(books, request)
 
@@ -46,7 +40,7 @@ def owned_books(request):
     )
 
 
-def owned_books_by_date(request):
+def owned_by_date(request):
     books = Book.objects.filter(owned=True).order_by(
         F("acquired_date").desc(nulls_last=True)
     )
@@ -72,7 +66,7 @@ def owned_books_by_date(request):
     )
 
 
-def unowned_books(request):
+def unowned(request):
     books = Book.objects.filter(want_to_read=True, owned=False)
     books = filter_books_by_request(books, request)
 
@@ -86,7 +80,7 @@ def unowned_books(request):
     )
 
 
-def borrowed_books(request):
+def borrowed(request):
     books = Book.objects.filter(was_borrowed=True)
     books = filter_books_by_request(books, request)
 
@@ -102,23 +96,7 @@ def borrowed_books(request):
     )
 
 
-def author_details(request, author_id):
-    author = get_object_or_404(Author, pk=author_id)
-    return render(
-        request, "authors/details.html", {"author": author, "page_title": author}
-    )
-
-
-def book_details(request, book_id):
-    book = get_object_or_404(Book, pk=book_id)
-    return render(
-        request,
-        "books/details.html",
-        {"book": book, "page_title": f"{book.title} by {book.display_authors}"},
-    )
-
-
-def reading_books(request):
+def currently_reading(request):
     currently_reading = LogEntry.objects.filter(end_date__isnull=True).order_by(
         "-progress_date", "start_date"
     )
@@ -130,7 +108,7 @@ def reading_books(request):
     )
 
 
-def read_books(request, year=None):
+def read(request, year=None):
     read = LogEntry.objects.filter(end_date__isnull=False).order_by(
         "end_date", "start_date"
     )
@@ -143,7 +121,7 @@ def read_books(request, year=None):
     )
 
 
-def unread_books(request):
+def unread(request):
     want_to_read = Book.objects.filter(want_to_read=True, owned=True).order_by(
         "edition_format",
         Lower("first_author__surname"),
@@ -171,27 +149,12 @@ def unread_books(request):
     )
 
 
-def author_list(request):
-    authors = Author.objects.all()
-
-    if gender := request.GET.get("gender"):
-        authors = authors.filter(gender=gender)
-    if poc := request.GET.get("poc"):
-        authors = authors.filter(poc=True)
-
-    paginator = Paginator(authors, 100)
-    page_number = request.GET.get("page")
-    if not page_number:
-        page_number = 1
-    page_obj = paginator.get_page(page_number)
+def details(request, book_id):
+    book = get_object_or_404(Book, pk=book_id)
     return render(
         request,
-        "authors/list.html",
-        {
-            "page_obj": page_obj,
-            "page_title": "Authors",
-            "total_authors": authors.count(),
-        },
+        "books/details.html",
+        {"book": book, "page_title": f"{book.title} by {book.display_authors}"},
     )
 
 
@@ -228,76 +191,7 @@ def update_progress(request, book_id):
     return redirect("book_details", book_id=book_id)
 
 
-def basic_search(request):
-    query = request.GET.get("query")
-
-    results = []
-    if query:
-        results = Book.objects.search(query)
-
-    return render(
-        request,
-        "search.html",
-        {"page_title": f"Search{': ' + query if query else ''}", "results": results},
-    )
-
-
-def tag_details(request, tag_name):
-    tags = [tag.strip() for tag in tag_name.split(",")]
-    books = Book.objects.filter(tags__contains=tags)
-    books = filter_books_by_request(books, request)
-
-    paginator = Paginator(books, 100)
-    page_number = request.GET.get("page")
-    if not page_number:
-        page_number = 1
-    page_obj = paginator.get_page(page_number)
-    return render(
-        request,
-        "books/list.html",
-        {
-            "page_title": f"{books.count()} books tagged {oxford_comma(tags)}",
-            "page_obj": page_obj,
-        },
-    )
-
-
-def tag_cloud(request):
-    all_book_tags = [book.tags for book in Book.objects.all()]
-    tag_counts = {}
-    tag_sizes = {}
-    for book_tags in all_book_tags:
-        for tag in book_tags:
-            if tag in tag_counts:
-                tag_counts[tag] += 1
-            else:
-                tag_counts[tag] = 1
-
-    counts_only = sorted(tag_counts.values())
-    median = counts_only[int(len(counts_only) / 2)]
-    maxi = counts_only[-1]
-    mini = counts_only[0]
-
-    above_median_buckets = (maxi - median) / 100
-    below_median_buckets = (median - mini) / 100
-    for tag in tag_counts:
-        if tag_counts[tag] > median + above_median_buckets:
-            tag_sizes[tag] = 1 + (
-                ((tag_counts[tag] - median) / above_median_buckets) * 0.02
-            )
-        elif tag_counts[tag] < median - below_median_buckets:
-            tag_sizes[tag] = 1 - (
-                ((median - tag_counts[tag]) / below_median_buckets) * 0.02
-            )
-        else:
-            tag_sizes[tag] = 1.0
-
-    return render(
-        request, "tags/cloud.html", {"page_title": f"All Tags", "tags": tag_sizes},
-    )
-
-
-def book_add_tags(request, book_id):
+def add_tags(request, book_id):
     if not request.user.is_authenticated:
         raise PermissionDenied
     if request.method == "POST":
@@ -333,21 +227,3 @@ def filter_logs_by_request(qs, request):
         qs = qs.filter(book__tags__contains=[tag.strip() for tag in tags.split(",")])
 
     return qs
-
-
-def stats(request):
-    books = Book.objects.all()
-    owned = books.filter(owned=True)
-    read_books = books.filter(want_to_read=False) | books.filter(
-        log_entries__isnull=False
-    )
-    return render(
-        request,
-        "stats.html",
-        {
-            "page_title": f"Library Stats",
-            "books": books,
-            "owned": owned,
-            "read": read_books,
-        },
-    )
