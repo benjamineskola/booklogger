@@ -2,24 +2,10 @@
 {% block content %}
   {% if results|count > 0 %}
 <div class="row row-cols-1 row-cols-md-2">
-    {% for result in results %}
-      {% if result[1].surname %}
-        <div class="col">
-          <div class="card mb-3">
-            <div class="card-body">
-              <p class="card-text">
-                {% set author = result[1] %}
-                {% include "authors/list_snippet.html" %}
-              </p>
-            </div>
-          </div>
-        </div>
-      {% else %}
-        {% set book = result[1] %}
-        <div class="col">
-          {% include "books/multiline_entry_snippet.html" %}
-        </div>
-      {% endif %}
+    {% for book in results %}
+      <div class="col">
+        {% include "books/multiline_entry_snippet.html" %}
+      </div>
     {% endfor %}
     </div>
   {% else %}

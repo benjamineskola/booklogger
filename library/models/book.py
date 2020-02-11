@@ -6,7 +6,7 @@ import xmltodict
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.indexes import GinIndex
-from django.contrib.postgres.search import TrigramDistance
+from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 from django.db import models
 from django.db.models import F, Q
 from django.db.models.functions import Lower
@@ -39,18 +39,23 @@ class BookManager(models.Manager):
         return self.get_queryset().nonfiction()
 
     def search(self, pattern):
-        return self.annotate(
-            fn_distance=TrigramDistance("first_author__surname", pattern),
-            sn_distance=TrigramDistance("first_author__forenames", pattern),
-            title_distance=TrigramDistance("title", pattern),
-            edition_title_distance=TrigramDistance("edition_title", pattern),
-            series_distance=TrigramDistance("series", pattern),
-            distance=F("fn_distance")
-            * F("sn_distance")
-            * F("title_distance")
-            * F("edition_title_distance")
-            * F("series_distance"),
-        ).order_by("distance")
+        query = SearchQuery(pattern)
+        vector = SearchVector(
+            "title",
+            "series",
+            "tags",
+            "edition_title",
+            "first_author__surname",
+            "first_author__forenames",
+            "additional_authors__surname",
+            "additional_authors__forenames",
+        )
+
+        return (
+            self.annotate(rank=SearchRank(vector, query))
+            .filter(rank__gte=0.01)
+            .order_by("-rank")
+        )
 
 
 class BookQuerySet(models.QuerySet):

@@ -31,6 +31,8 @@ class BookAdmin(admin.ModelAdmin):
         "edition_title",
         "first_author__surname",
         "first_author__forenames",
+        "additional_authors__surname",
+        "additional_authors__forenames",
     ]
 
 

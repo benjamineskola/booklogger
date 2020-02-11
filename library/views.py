@@ -233,17 +233,7 @@ def basic_search(request):
 
     results = []
     if query:
-        authors = [(a.distance, a) for a in Author.objects.search(query)[0:20]]
-        books = [(b.distance, b) for b in Book.objects.search(query)[0:20]]
-
-        for i, book in enumerate(books):
-            for word in query.split(" "):
-                if word in book[1].tags:
-                    books[i] = (book[0] * 0.5, book[1])
-                    continue
-
-        results = authors + books
-        results.sort(key=lambda x: x[0])
+        results = Book.objects.search(query)
 
     return render(
         request,
