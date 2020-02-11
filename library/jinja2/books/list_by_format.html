@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-{% for group in books|groupby('edition_format') %}
+{% for group in page_obj.object_list|groupby('edition_format') %}
   <h2>{{ group.list[0].get_edition_format_display() }}</h2>
   {% set items = group.list %}
   {% include "books/multiline_loop_snippet.html" -%}

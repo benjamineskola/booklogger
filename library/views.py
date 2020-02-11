@@ -1,3 +1,5 @@
+from itertools import groupby
+
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
 from django.db.models import F
@@ -31,10 +33,16 @@ def owned_books(request):
     books = Book.objects.filter(owned=True)
     books = filter_books_by_request(books, request)
 
+    paginator = Paginator(books, 100)
+    page_number = request.GET.get("page")
+    if not page_number:
+        page_number = 1
+    page_obj = paginator.get_page(page_number)
+
     return render(
         request,
         "books/list_by_format.html",
-        {"page_title": "Owned Books", "books": books},
+        {"page_title": "Owned Books", "page_obj": page_obj},
     )
 
 
@@ -44,10 +52,23 @@ def owned_books_by_date(request):
     )
     books = filter_books_by_request(books, request)
 
+    paginator = Paginator(books, 100)
+    page_number = request.GET.get("page")
+    if not page_number:
+        page_number = 1
+    page_obj = paginator.get_page(page_number)
+
+    groups = [
+        (d, list(l))
+        for d, l in groupby(
+            page_obj.object_list, lambda b: b.acquired_date or "Undated"
+        )
+    ]
+
     return render(
         request,
         "books/list_by_date.html",
-        {"page_title": "Owned Books", "books": books},
+        {"page_title": "Owned Books", "page_obj": page_obj, "page_groups": groups},
     )
 
 
