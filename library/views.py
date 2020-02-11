@@ -1,5 +1,6 @@
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator
+from django.db.models import F
 from django.db.models.functions import Lower
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -33,6 +34,19 @@ def owned_books(request):
     return render(
         request,
         "books/list_by_format.html",
+        {"page_title": "Owned Books", "books": books},
+    )
+
+
+def owned_books_by_date(request):
+    books = Book.objects.filter(owned=True).order_by(
+        F("acquired_date").desc(nulls_last=True)
+    )
+    books = filter_books_by_request(books, request)
+
+    return render(
+        request,
+        "books/list_by_date.html",
         {"page_title": "Owned Books", "books": books},
     )
 

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+{% for book in books %}
+{% if loop.changed(book.acquired_date) %}
+<h2>{{ book.acquired_date or "Undated" }}</h2>
+{% set items = books.filter(acquired_date = book.acquired_date) %}
+{% include "books/multiline_loop_snippet.html" -%}
+{% endif %}
+{% endfor %}
+{% endblock content %}
