@@ -16,6 +16,8 @@
         <span class="tags">
         {% for tag in book.tags | sort %}
           <a href="{{ url("library:tag_details", args=[tag]) }}" class="badge badge-secondary">{{ tag }}</a>
+        {% else %}
+          <a href="{{ url("library:tag_details", args=['untagged']) }}" class="badge badge-secondary">untagged</a>
         {% endfor %}
         {% if book.want_to_read %}
           {% if book.owned %}
