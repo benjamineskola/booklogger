@@ -2,6 +2,6 @@
 {% block content %}
 {% for date, items in page_groups %}
 <h2>{{ date }}</h2>
-{% include "books/multiline_loop_snippet.html" -%}
+{% include "books/card_loop.html" -%}
 {% endfor %}
 {% endblock content %}

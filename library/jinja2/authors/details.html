@@ -13,6 +13,6 @@
 
 <h2>Books</h2>
 {% set items = author.books %}
-{% include "books/multiline_loop_snippet.html" %}
+{% include "books/card_loop.html" %}
 <a href="{{ url('admin:library_author_change', args=[author.id]) }}">edit</a>
 {% endblock content %}
