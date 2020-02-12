@@ -57,6 +57,13 @@ class BookManager(models.Manager):
             .order_by("-rank")
         )
 
+    def rename_tag(self, old_name, new_name):
+        tagged_books = self.filter(tags__contains=[old_name])
+        for book in tagged_books:
+            book.tags.append(new_name)
+            book.tags.remove(old_name)
+            book.save()
+
 
 class BookQuerySet(models.QuerySet):
     def by_gender(self, gender):
