@@ -4,14 +4,14 @@ from . import views
 
 app_name = "library"
 urlpatterns = [
-    path("", views.book.currently_reading, name="index"),
-    path("author/<int:author_id>", views.author_details, name="author_details"),
-    path("authors", views.author_list, name="author_list"),
+    path("", views.book.CurrentlyReadingView.as_view(), name="index"),
+    path("author/<int:pk>", views.author.DetailView.as_view(), name="author_details"),
+    path("authors", views.author.IndexView.as_view(), name="author_list"),
     path(
         "book/",
         include(
             [
-                path("<int:book_id>", views.book.details, name="book_details"),
+                path("<int:pk>", views.book.DetailView.as_view(), name="book_details"),
                 path(
                     "<int:book_id>/add_tags", views.book.add_tags, name="book_add_tags",
                 ),
@@ -37,23 +37,35 @@ urlpatterns = [
         "books/",
         include(
             [
-                path("", views.book.all, name="books_all"),
-                path("borrowed", views.book.borrowed, name="books_borrowed"),
-                path("owned", views.book.owned, name="books_owned"),
+                path("", views.book.IndexView.as_view(), name="books_all"),
+                path(
+                    "borrowed",
+                    views.book.BorrowedIndexView.as_view(),
+                    name="books_borrowed",
+                ),
+                path("owned", views.book.OwnedIndexView.as_view(), name="books_owned"),
                 path(
                     "owned/bydate",
-                    views.book.owned_by_date,
+                    views.book.OwnedByDateView.as_view(),
                     name="books_owned_by_date",
                 ),
-                path("read", views.book.read, name="books_read"),
-                path("read/<int:year>", views.book.read, name="books_read"),
+                path("read", views.book.ReadView.as_view(), name="books_read"),
+                path(
+                    "read/<int:year>", views.book.ReadView.as_view(), name="books_read"
+                ),
                 path(
                     "reading",
-                    views.book.currently_reading,
+                    views.book.CurrentlyReadingView.as_view(),
                     name="books_currently_reading",
                 ),
-                path("toread", views.book.unread, name="books_unread"),
-                path("unowned", views.book.unowned, name="books_unowned"),
+                path(
+                    "toread", views.book.UnreadIndexView.as_view(), name="books_unread"
+                ),
+                path(
+                    "unowned",
+                    views.book.UnownedIndexView.as_view(),
+                    name="books_unowned",
+                ),
             ]
         ),
     ),

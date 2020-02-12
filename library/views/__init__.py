@@ -4,40 +4,9 @@ from django.shortcuts import get_object_or_404, render
 from library.models import Author, Book, BookAuthor, LogEntry
 from library.utils import oxford_comma
 
-from . import book
+from . import author, book
 
 # Create your views here.
-
-
-def author_details(request, author_id):
-    author = get_object_or_404(Author, pk=author_id)
-    return render(
-        request, "authors/details.html", {"author": author, "page_title": author}
-    )
-
-
-def author_list(request):
-    authors = Author.objects.all()
-
-    if gender := request.GET.get("gender"):
-        authors = authors.filter(gender=gender)
-    if poc := request.GET.get("poc"):
-        authors = authors.filter(poc=True)
-
-    paginator = Paginator(authors, 100)
-    page_number = request.GET.get("page")
-    if not page_number:
-        page_number = 1
-    page_obj = paginator.get_page(page_number)
-    return render(
-        request,
-        "authors/list.html",
-        {
-            "page_obj": page_obj,
-            "page_title": "Authors",
-            "total_authors": authors.count(),
-        },
-    )
 
 
 def basic_search(request):

@@ -1,8 +1,0 @@
-{% extends "base.html" %}
-{% block content %}
-  {% for format in page_obj|groupby('edition_format') %}
-    <h3>{{ format.list[0].get_edition_format_display() }} ({{ format.list | count }} books)</h3>
-    {% set items = format.list %}
-    {% include "books/multiline_loop_snippet.html" -%}
-  {% endfor%}
-{% endblock content %}

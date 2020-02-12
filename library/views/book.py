@@ -1,161 +1,120 @@
 from itertools import groupby
 
 from django.core.exceptions import PermissionDenied
-from django.core.paginator import Paginator
 from django.db.models import F
 from django.db.models.functions import Lower
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views import generic
 
 from library.models import Author, Book, BookAuthor, LogEntry
 
 
-def all(request):
-    books = Book.objects.all()
-    books = filter_books_by_request(books, request)
+class GenericIndexView(generic.ListView):
+    template_name = "books/list.html"
+    context_object_name = "items"
+    paginate_by = 100
 
-    paginator = Paginator(books, 100)
-    page_number = request.GET.get("page")
-    if not page_number:
-        page_number = 1
-    page_obj = paginator.get_page(page_number)
-    return render(
-        request, "books/list.html", {"page_title": "All Books", "page_obj": page_obj}
-    )
+    filter_by = {}
+    page_title = ""
 
+    def get_queryset(self):
+        books = Book.objects.all()
+        if self.filter_by:
+            books = books.filter(**self.filter_by)
+        return filter_books_by_request(books, self.request)
 
-def owned(request):
-    books = Book.objects.filter(owned=True)
-    books = filter_books_by_request(books, request)
-
-    paginator = Paginator(books, 100)
-    page_number = request.GET.get("page")
-    if not page_number:
-        page_number = 1
-    page_obj = paginator.get_page(page_number)
-
-    return render(
-        request,
-        "books/list_by_format.html",
-        {"page_title": "Owned Books", "page_obj": page_obj},
-    )
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = self.page_title
+        return context
 
 
-def owned_by_date(request):
-    books = Book.objects.filter(owned=True).order_by(
-        F("acquired_date").desc(nulls_last=True)
-    )
-    books = filter_books_by_request(books, request)
+class IndexView(GenericIndexView):
+    page_title = "All Books"
 
-    paginator = Paginator(books, 100)
-    page_number = request.GET.get("page")
-    if not page_number:
-        page_number = 1
-    page_obj = paginator.get_page(page_number)
 
-    groups = [
-        (d, list(l))
-        for d, l in groupby(
-            page_obj.object_list, lambda b: b.acquired_date or "Undated"
+class OwnedIndexView(GenericIndexView):
+    filter_by = {"owned": True}
+    page_title = "Owned Books"
+    template_name = "books/list_by_format.html"
+
+
+class OwnedByDateView(GenericIndexView):
+    template_name = "books/list_by_date.html"
+    filter_by = {"owned": True}
+
+    def get_queryset(self):
+        books = (
+            super().get_queryset().order_by(F("acquired_date").desc(nulls_last=True))
         )
-    ]
+        return books
 
-    return render(
-        request,
-        "books/list_by_date.html",
-        {"page_title": "Owned Books", "page_obj": page_obj, "page_groups": groups},
-    )
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
+        context["page_groups"] = [
+            (d, list(l))
+            for d, l in groupby(
+                context["page_obj"].object_list, lambda b: b.acquired_date or "Undated"
+            )
+        ]
 
-def unowned(request):
-    books = Book.objects.filter(want_to_read=True, owned=False)
-    books = filter_books_by_request(books, request)
-
-    paginator = Paginator(books, 100)
-    page_number = request.GET.get("page")
-    if not page_number:
-        page_number = 1
-    page_obj = paginator.get_page(page_number)
-    return render(
-        request, "books/list.html", {"page_title": "Wishlist", "page_obj": page_obj},
-    )
+        return context
 
 
-def borrowed(request):
-    books = Book.objects.filter(was_borrowed=True)
-    books = filter_books_by_request(books, request)
-
-    paginator = Paginator(books, 100)
-    page_number = request.GET.get("page")
-    if not page_number:
-        page_number = 1
-    page_obj = paginator.get_page(page_number)
-    return render(
-        request,
-        "books/list.html",
-        {"page_title": "Borrowed Books", "page_obj": page_obj},
-    )
+class UnownedIndexView(GenericIndexView):
+    filter_by = {"owned": False, "want_to_read": True}
+    page_title = "Unowned Books"
 
 
-def currently_reading(request):
-    currently_reading = LogEntry.objects.filter(end_date__isnull=True).order_by(
-        "-progress_date", "start_date"
-    )
-    currently_reading = filter_logs_by_request(currently_reading, request)
-    return render(
-        request,
-        "logentries/list.html",
-        {"page_title": "Read Books", "currently_reading": currently_reading,},
-    )
+class BorrowedIndexView(GenericIndexView):
+    filter_by = {"was_borrowed": True}
+    page_title = "Borrowed Books"
 
 
-def read(request, year=None):
-    read = LogEntry.objects.filter(end_date__isnull=False).order_by(
-        "end_date", "start_date"
-    )
-    if year:
-        read = read.filter(end_date__year=year)
-
-    read = filter_logs_by_request(read, request)
-    return render(
-        request, "logentries/list.html", {"page_title": "Read Books", "read": read,},
-    )
+class UnreadIndexView(GenericIndexView):
+    filter_by = {"owned": False, "want_to_read": True}
+    page_title = "Unread Books"
+    template_name = "books/list_by_format.html"
 
 
-def unread(request):
-    want_to_read = Book.objects.filter(want_to_read=True, owned=True).order_by(
-        "edition_format",
-        Lower("first_author__surname"),
-        Lower("first_author__forenames"),
-        "series",
-        "series_order",
-        "title",
-    )
-
-    want_to_read = filter_books_by_request(want_to_read, request)
-
-    paginator = Paginator(want_to_read, 100)
-    page_number = request.GET.get("page")
-    if not page_number:
-        page_number = 1
-    page_obj = paginator.get_page(page_number)
-
-    return render(
-        request,
-        "books/toread.html",
-        {
-            "page_obj": page_obj,
-            "page_title": f"Reading List ({want_to_read.count()} books)",
-        },
-    )
+class DetailView(generic.DetailView):
+    model = Book
+    template_name = "books/details.html"
 
 
-def details(request, book_id):
-    book = get_object_or_404(Book, pk=book_id)
-    return render(
-        request,
-        "books/details.html",
-        {"book": book, "page_title": f"{book.title} by {book.display_authors}"},
-    )
+class GenericLogView(generic.ListView):
+    template_name = "logentries/list.html"
+    context_object_name = "entries"
+
+    filter_by = {}
+    page_title = ""
+
+    def get_queryset(self, *args, **kwargs):
+        entries = LogEntry.objects.all().order_by("-progress_date", "start_date")
+
+        if "year" in self.kwargs:
+            entries = entries.filter(end_date__year=self.kwargs["year"])
+            self.page_title = f"Read in {self.kwargs['year']}"
+
+        if self.filter_by:
+            entries = entries.filter(**self.filter_by)
+        return filter_logs_by_request(entries, self.request)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = self.page_title
+        return context
+
+
+class CurrentlyReadingView(GenericLogView):
+    filter_by = {"end_date__isnull": True}
+    page_title = "Currently Reading"
+
+
+class ReadView(GenericLogView):
+    filter_by = {"end_date__isnull": False}
+    page_title = "Read Books"
 
 
 def start_reading(request, book_id):
