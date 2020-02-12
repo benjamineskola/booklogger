@@ -56,7 +56,10 @@ def basic_search(request):
 
 def tag_details(request, tag_name):
     tags = [tag.strip() for tag in tag_name.split(",")]
-    books = Book.objects.filter(tags__contains=tags)
+    if tags == ["untagged"]:
+        books = Book.objects.filter(tags__len=0)
+    else:
+        books = Book.objects.filter(tags__contains=tags)
     books = book.filter_books_by_request(books, request)
 
     paginator = Paginator(books, 100)
@@ -76,14 +79,17 @@ def tag_details(request, tag_name):
 
 def tag_cloud(request):
     all_book_tags = [book.tags for book in Book.objects.all()]
-    tag_counts = {}
+    tag_counts = {"untagged": 0}
     tag_sizes = {}
     for book_tags in all_book_tags:
-        for tag in book_tags:
-            if tag in tag_counts:
-                tag_counts[tag] += 1
+        if book_tags:
+            for tag in book_tags:
+                if tag in tag_counts:
+                    tag_counts[tag] += 1
+                else:
+                    tag_counts[tag] = 1
             else:
-                tag_counts[tag] = 1
+                tag_counts["untagged"] += 1
 
     counts_only = sorted(tag_counts.values())
     median = counts_only[int(len(counts_only) / 2)]
