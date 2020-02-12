@@ -10,8 +10,8 @@
     {% endif %}
     <div class="col-{% if book.image_url %}8{% else %}12{% endif %}">
       <div class="card-body">
-        <h5 class="card-title">{% include "books/title_snippet.html" %}<span class="text-muted small">{% include "books/series_snippet.html" %}</span></h5>
-        <h6 class="card-subtitle">by {% include "books/authors_snippet.html" %}</h6>
+        <h5 class="card-title"><i>{{ book | get_hyperlink | safe }}</i><span class="text-muted small">{% if book.display_series %} ({{ book.display_series }}){% endif %}</span></h5>
+        <h6 class="card-subtitle">by {{ book.authors | map('get_hyperlink', book=book) | list | oxford_comma | safe }}</h6>
         <p class="card-text mb-0">{% if book.publication_data %}{{ book.publication_data }}. {% endif %}{% if book.page_count and book.page_count > 0 %}{{ book.page_count }} pages.{% endif %}</p>
         <span class="tags">
         {% for tag in book.tags | sort %}
