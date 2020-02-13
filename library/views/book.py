@@ -131,7 +131,7 @@ class ReadView(GenericLogView):
 def start_reading(request, book_id):
     book = get_object_or_404(Book, pk=book_id)
     book.start_reading()
-    return redirect("library:book_details", book_id=book_id)
+    return redirect("library:book_details", pk=book_id)
 
 
 @login_required
@@ -139,7 +139,7 @@ def start_reading(request, book_id):
 def finish_reading(request, book_id):
     book = get_object_or_404(Book, pk=book_id)
     book.finish_reading()
-    return redirect("library:book_details", book_id=book_id)
+    return redirect("library:book_details", pk=book_id)
 
 
 @login_required
@@ -153,7 +153,7 @@ def update_progress(request, book_id):
         progress = int(request.POST["percentage"])
     if progress:
         book.update_progress(progress)
-    return redirect("library:book_details", book_id=book_id)
+    return redirect("library:book_details", pk=book_id)
 
 
 @login_required
@@ -169,4 +169,4 @@ def add_tags(request, book_id):
     if next := request.GET.get("next"):
         return redirect(next)
     else:
-        return redirect("library:book_details", book_id=book_id)
+        return redirect("library:book_details", pk=book_id)
