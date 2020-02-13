@@ -21,7 +21,7 @@ class GenericIndexView(generic.ListView):
         books = Book.objects.all()
         if self.filter_by:
             books = books.filter(**self.filter_by)
-        return filter_books_by_request(books, self.request)
+        return books.filter_by_request(self.request)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -99,7 +99,7 @@ class GenericLogView(generic.ListView):
 
         if self.filter_by:
             entries = entries.filter(**self.filter_by)
-        return filter_logs_by_request(entries, self.request)
+        return entries.filter_by_request(self.request)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -164,25 +164,3 @@ def add_tags(request, book_id):
         return redirect(next)
     else:
         return redirect("library:book_details", book_id=book_id)
-
-
-def filter_books_by_request(qs, request):
-    if gender := request.GET.get("gender"):
-        qs = qs.filter(first_author__gender=gender)
-    if poc := request.GET.get("poc"):
-        qs = qs.filter(first_author__poc=True)
-    if tags := request.GET.get("tags"):
-        qs = qs.filter(tags__contains=[tag.strip() for tag in tags.split(",")])
-
-    return qs
-
-
-def filter_logs_by_request(qs, request):
-    if gender := request.GET.get("gender"):
-        qs = qs.filter(book__first_author__gender=gender)
-    if poc := request.GET.get("poc"):
-        qs = qs.filter(book__first_author__poc=True)
-    if tags := request.GET.get("tags"):
-        qs = qs.filter(book__tags__contains=[tag.strip() for tag in tags.split(",")])
-
-    return qs

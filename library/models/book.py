@@ -64,6 +64,9 @@ class BookManager(models.Manager):
             book.tags.remove(old_name)
             book.save()
 
+    def filter_by_request(self, request):
+        return self.get_queryset().filter_by_request(request)
+
 
 class BookQuerySet(models.QuerySet):
     def by_gender(self, gender):
@@ -83,6 +86,17 @@ class BookQuerySet(models.QuerySet):
 
     def nonfiction(self):
         return self.filter(tags__contains=["non-fiction"])
+
+    def filter_by_request(self, request):
+        filter_by = {}
+        if gender := request.GET.get("gender"):
+            filter_by["first_author__gender"] = gender
+        if poc := request.GET.get("poc"):
+            filter_by["first_author__poc"] = bool(int(poc))
+        if tags := request.GET.get("tags"):
+            filter_by["tag__contains"] = [tag.strip() for tag in tags.split(",")]
+
+        return self.filter(**filter_by)
 
 
 class Book(models.Model):
