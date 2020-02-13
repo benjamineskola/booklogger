@@ -57,27 +57,24 @@ def tag_cloud(request):
                     tag_counts[tag] += 1
                 else:
                     tag_counts[tag] = 1
-            else:
-                tag_counts["untagged"] += 1
+        else:
+            tag_counts["untagged"] += 1
 
     counts_only = sorted(tag_counts.values())
     median = counts_only[int(len(counts_only) / 2)]
-    maxi = counts_only[-1]
-    mini = counts_only[0]
+    maxi = max(counts_only)
+    mini = min(counts_only)
 
-    above_median_buckets = (maxi - median) / 100
-    below_median_buckets = (median - mini) / 100
-    for tag in tag_counts:
-        if tag_counts[tag] > median + above_median_buckets:
-            tag_sizes[tag] = 1 + (
-                ((tag_counts[tag] - median) / above_median_buckets) * 0.02
-            )
-        elif tag_counts[tag] < median - below_median_buckets:
-            tag_sizes[tag] = 1 - (
-                ((median - tag_counts[tag]) / below_median_buckets) * 0.02
-            )
-        else:
-            tag_sizes[tag] = 1.0
+    above_median_buckets = max(1, int((maxi - median) / 30))
+    below_median_buckets = max(1, int((median - mini) / 30))
+
+    tag_sizes = {}
+
+    for i, j in enumerate(range(median, maxi, above_median_buckets)):
+        tag_sizes.update(dict([(k[0], i) for k in tag_counts.items() if k[1] >= j]))
+
+    for i, j in enumerate(reversed(range(mini, median, below_median_buckets))):
+        tag_sizes.update(dict([(k[0], -i) for k in tag_counts.items() if k[1] <= j]))
 
     return render(
         request, "tags/cloud.html", {"page_title": f"All Tags", "tags": tag_sizes},
