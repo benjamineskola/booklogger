@@ -55,7 +55,7 @@ class BookManager(models.Manager):
             self.annotate(rank=SearchRank(vector, query))
             .filter(rank__gte=0.01)
             .order_by("-rank")
-        )
+        ).distinct()
 
     def rename_tag(self, old_name, new_name):
         tagged_books = self.filter(tags__contains=[old_name])
