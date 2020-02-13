@@ -174,6 +174,15 @@ class Book(models.Model):
 
     tags = ArrayField(models.CharField(max_length=32), default=list, blank=True)
 
+    review = models.TextField(blank=True)
+    rating = models.DecimalField(
+        max_digits=2,
+        decimal_places=1,
+        choices=[(i / 2, i / 2) for i in range(1, 11)],
+        blank=True,
+        null=True,
+    )
+
     def __str__(self):
         return self.citation
 
