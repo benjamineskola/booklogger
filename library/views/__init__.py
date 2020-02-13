@@ -1,3 +1,5 @@
+from random import shuffle
+
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, render
 
@@ -76,8 +78,11 @@ def tag_cloud(request):
     for i, j in enumerate(reversed(range(mini, median, below_median_buckets))):
         tag_sizes.update(dict([(k[0], -i) for k in tag_counts.items() if k[1] <= j]))
 
+    tags = list(tag_sizes.items())
+    shuffle(tags)
+
     return render(
-        request, "tags/cloud.html", {"page_title": f"All Tags", "tags": tag_sizes},
+        request, "tags/cloud.html", {"page_title": f"All Tags", "tags": tags},
     )
 
 

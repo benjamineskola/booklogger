@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-{% for tag in tags %}
-<a style="font-size: {{ 3 + (tags[tag]/10) }}rem" href="{{ url("library:tag_details", args=[tag]) }}">{{ tag }}</a>
+{% for tag, size in tags %}
+<a style="font-size: {{ 2.5 + (size/10) }}rem" href="{{ url("library:tag_details", args=[tag]) }}">{{ tag }}</a>
 {% endfor %}
 {% endblock content %}
