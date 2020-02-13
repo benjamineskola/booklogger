@@ -1,10 +1,12 @@
 from itertools import groupby
 
+from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.db.models import F
 from django.db.models.functions import Lower
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import generic
+from django.views.decorators.http import require_POST
 
 from library.models import Author, Book, BookAuthor, LogEntry
 
@@ -124,49 +126,46 @@ class ReadView(GenericLogView):
     page_title = "Read Books"
 
 
+@login_required
+@require_POST
 def start_reading(request, book_id):
-    if not request.user.is_authenticated:
-        raise PermissionDenied
-    if request.method == "POST":
-        book = get_object_or_404(Book, pk=book_id)
-        book.start_reading()
+    book = get_object_or_404(Book, pk=book_id)
+    book.start_reading()
     return redirect("library:book_details", book_id=book_id)
 
 
+@login_required
+@require_POST
 def finish_reading(request, book_id):
-    if not request.user.is_authenticated:
-        raise PermissionDenied
-    if request.method == "POST":
-        book = get_object_or_404(Book, pk=book_id)
-        book.finish_reading()
+    book = get_object_or_404(Book, pk=book_id)
+    book.finish_reading()
     return redirect("library:book_details", book_id=book_id)
 
 
+@login_required
+@require_POST
 def update_progress(request, book_id):
-    if not request.user.is_authenticated:
-        raise PermissionDenied
-    if request.method == "POST":
-        book = get_object_or_404(Book, pk=book_id)
-        progress = 0
-        if request.POST["pages"] and book.page_count:
-            progress = int(int(request.POST["pages"]) / book.page_count * 100)
-        elif request.POST["percentage"]:
-            progress = int(request.POST["percentage"])
-        if progress:
-            book.update_progress(progress)
+    book = get_object_or_404(Book, pk=book_id)
+    progress = 0
+    if request.POST["pages"] and book.page_count:
+        progress = int(int(request.POST["pages"]) / book.page_count * 100)
+    elif request.POST["percentage"]:
+        progress = int(request.POST["percentage"])
+    if progress:
+        book.update_progress(progress)
     return redirect("library:book_details", book_id=book_id)
 
 
+@login_required
+@require_POST
 def add_tags(request, book_id):
-    if not request.user.is_authenticated:
-        raise PermissionDenied
-    if request.method == "POST":
-        book = get_object_or_404(Book, pk=book_id)
-        for tag in request.POST.get("tags").split(","):
-            clean_tag = tag.strip()
-            if not clean_tag in book.tags:
-                book.tags.append(clean_tag)
-        book.save()
+    book = get_object_or_404(Book, pk=book_id)
+    for tag in request.POST.get("tags").split(","):
+        clean_tag = tag.strip()
+        if not clean_tag in book.tags:
+            book.tags.append(clean_tag)
+    book.save()
+
     if next := request.GET.get("next"):
         return redirect(next)
     else:
