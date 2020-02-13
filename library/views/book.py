@@ -73,7 +73,7 @@ class BorrowedIndexView(GenericIndexView):
 
 
 class UnreadIndexView(GenericIndexView):
-    filter_by = {"owned": False, "want_to_read": True}
+    filter_by = {"owned": True, "want_to_read": True}
     page_title = "Unread Books"
     template_name = "books/list_by_format.html"
 
@@ -91,7 +91,7 @@ class GenericLogView(generic.ListView):
     page_title = ""
 
     def get_queryset(self, *args, **kwargs):
-        entries = LogEntry.objects.all().order_by("-progress_date", "start_date")
+        entries = LogEntry.objects.all().order_by("end_date", "start_date")
 
         if "year" in self.kwargs:
             entries = entries.filter(end_date__year=self.kwargs["year"])
@@ -110,6 +110,13 @@ class GenericLogView(generic.ListView):
 class CurrentlyReadingView(GenericLogView):
     filter_by = {"end_date__isnull": True}
     page_title = "Currently Reading"
+
+    def get_queryset(self, *args, **kwargs):
+        return (
+            super()
+            .get_queryset(*args, **kwargs)
+            .order_by("-progress_date", "start_date")
+        )
 
 
 class ReadView(GenericLogView):
