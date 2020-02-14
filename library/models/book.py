@@ -275,7 +275,7 @@ class Book(models.Model):
         if not self.series:
             return
         elif self.series_order:
-            return f"{self.series}, #{str(self.series_order).strip('.0')}"
+            return f"{self.series}, #{str(self.series_order).replace('.0', '')}"
         else:
             return self.series
 
