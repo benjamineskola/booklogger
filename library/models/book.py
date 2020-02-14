@@ -207,6 +207,10 @@ class Book(models.Model):
 
     @property
     def display_authors(self):
+        if len(self.authors) > 1:
+            attributions = [author._role_for_book(self) for author in self.authors]
+            if set(attributions) == {"ed."}:
+                return oxford_comma(self.authors) + " (eds.)"
         return oxford_comma(self.all_authors_attributed)
 
     @property
