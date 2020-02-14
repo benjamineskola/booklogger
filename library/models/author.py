@@ -42,6 +42,13 @@ class Author(models.Model):
     def __str__(self):
         return " ".join([self.forenames, self.surname]).strip()
 
+    def display_name(self, initials=False):
+        if initials:
+            name = f"{self.surname}{', ' + self.initials if self.initials else ''}"
+        else:
+            name = str(self)
+        return name
+
     def get_absolute_url(self):
         return reverse("library:author_details", args=[str(self.id)])
 
@@ -51,12 +58,9 @@ class Author(models.Model):
             "text": self.attribution_for(book, initials=False) if book else str(self),
         }
 
-    def attribution_for(self, book, initials=True):
+    def attribution_for(self, book, initials=False):
         role = self._role_for_book(book)
-        if initials:
-            name = f"{self.surname}{', ' + self.initials if self.initials else ''}"
-        else:
-            name = str(self)
+        name = self.display_name(initials)
         return name + (f" ({role})" if role else "")
 
     def _role_for_book(self, book):
