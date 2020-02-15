@@ -18,7 +18,9 @@
     <dt>Original Title</dt><dd>{{ book.title }}</br>
     {% endif %}
     <dt>First Published</dt><dd>{{ book.first_published }}</dd>
+    {% if book.first_published != book.edition_published %}
     <dt>Edition Published</dt><dd>{{ book.edition_published }}</dd>
+    {% endif %}
 
     <dt>Publisher</dt>
     {% if book.publisher_url %}
@@ -28,7 +30,9 @@
     {% endif %}
 
     <dt>Format</dt><dd>{{ book.get_edition_format_display() }}</dd>
+    {% if book.edition_number %}
     <dt>Edition</dt><dd>{{ book.edition_number }}</dd>
+    {% endif %}
     <dt>Pages</dt><dd>{{ book.page_count }}</dd>
 
     {% if book.edition_language and book.language != book.edition_language %}
