@@ -13,7 +13,6 @@ from library.models import Author, Book, BookAuthor, LogEntry
 
 class GenericIndexView(generic.ListView):
     template_name = "books/list.html"
-    context_object_name = "items"
     paginate_by = 100
 
     filter_by = {}
