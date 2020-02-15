@@ -31,7 +31,7 @@ def tag_details(request, tag_name):
         books = Book.objects.filter(tags__len=0)
     else:
         books = Book.objects.filter(tags__contains=tags)
-    books = book.filter_books_by_request(books, request)
+    books = books.filter_by_request(request)
 
     paginator = Paginator(books, 100)
     page_number = request.GET.get("page")
