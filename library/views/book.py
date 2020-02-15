@@ -40,6 +40,14 @@ class OwnedIndexView(GenericIndexView):
     page_title = "Owned Books"
     template_name = "books/list_by_format.html"
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if edition_format := self.kwargs.get("format"):
+            edition_format = edition_format.strip("s").upper()
+            qs = qs.filter(edition_format=Book.Format[edition_format])
+
+        return qs
+
 
 class OwnedByDateView(GenericIndexView):
     template_name = "books/list_by_date.html"
