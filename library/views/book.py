@@ -89,6 +89,12 @@ class DetailView(generic.DetailView):
     model = Book
     template_name = "books/details.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        book = self.get_object()
+        context["page_title"] = book.display_title + " by " + str(book.first_author)
+        return context
+
 
 class GenericLogView(generic.ListView):
     template_name = "logentries/list.html"

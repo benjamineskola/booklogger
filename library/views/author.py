@@ -7,6 +7,11 @@ class DetailView(generic.DetailView):
     model = Author
     template_name = "authors/details.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = str(self.get_object())
+        return context
+
 
 class IndexView(generic.ListView):
     template_name = "authors/list.html"
