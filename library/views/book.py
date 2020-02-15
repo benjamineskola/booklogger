@@ -23,6 +23,11 @@ class GenericIndexView(generic.ListView):
         books = Book.objects.all()
         if self.filter_by:
             books = books.filter(**self.filter_by)
+
+        if edition_format := self.kwargs.get("format"):
+            edition_format = edition_format.strip("s").upper()
+            books = books.filter(edition_format=Book.Format[edition_format])
+
         return books.filter_by_request(self.request)
 
     def get_context_data(self, **kwargs):
@@ -39,14 +44,6 @@ class OwnedIndexView(GenericIndexView):
     filter_by = {"owned": True}
     page_title = "Owned Books"
     template_name = "books/list_by_format.html"
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        if edition_format := self.kwargs.get("format"):
-            edition_format = edition_format.strip("s").upper()
-            qs = qs.filter(edition_format=Book.Format[edition_format])
-
-        return qs
 
 
 class OwnedByDateView(GenericIndexView):

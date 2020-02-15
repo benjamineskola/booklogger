@@ -67,6 +67,11 @@ urlpatterns = [
                     "toread", views.book.UnreadIndexView.as_view(), name="books_unread"
                 ),
                 path(
+                    "toread/<str:format>",
+                    views.book.UnreadIndexView.as_view(),
+                    name="books_unread",
+                ),
+                path(
                     "unowned",
                     views.book.UnownedIndexView.as_view(),
                     name="books_unowned",
