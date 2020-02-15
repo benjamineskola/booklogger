@@ -139,24 +139,24 @@ class ReadView(GenericLogView):
 
 @login_required
 @require_POST
-def start_reading(request, book_id):
-    book = get_object_or_404(Book, pk=book_id)
+def start_reading(request, pk):
+    book = get_object_or_404(Book, pk=pk)
     book.start_reading()
-    return redirect("library:book_details", pk=book_id)
+    return redirect("library:book_details", pk=pk)
 
 
 @login_required
 @require_POST
-def finish_reading(request, book_id):
-    book = get_object_or_404(Book, pk=book_id)
+def finish_reading(request, pk):
+    book = get_object_or_404(Book, pk=pk)
     book.finish_reading()
-    return redirect("library:book_details", pk=book_id)
+    return redirect("library:book_details", pk=pk)
 
 
 @login_required
 @require_POST
-def update_progress(request, book_id):
-    book = get_object_or_404(Book, pk=book_id)
+def update_progress(request, pk):
+    book = get_object_or_404(Book, pk=pk)
     progress = 0
     if request.POST["pages"] and book.page_count:
         progress = int(int(request.POST["pages"]) / book.page_count * 100)
@@ -164,13 +164,13 @@ def update_progress(request, book_id):
         progress = int(request.POST["percentage"])
     if progress:
         book.update_progress(progress)
-    return redirect("library:book_details", pk=book_id)
+    return redirect("library:book_details", pk=pk)
 
 
 @login_required
 @require_POST
-def add_tags(request, book_id):
-    book = get_object_or_404(Book, pk=book_id)
+def add_tags(request, pk):
+    book = get_object_or_404(Book, pk=pk)
     for tag in request.POST.get("tags").split(","):
         clean_tag = tag.strip()
         if not clean_tag in book.tags:
@@ -180,4 +180,4 @@ def add_tags(request, book_id):
     if next := request.GET.get("next"):
         return redirect(next)
     else:
-        return redirect("library:book_details", pk=book_id)
+        return redirect("library:book_details", pk=pk)

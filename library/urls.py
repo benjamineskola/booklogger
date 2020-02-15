@@ -8,27 +8,15 @@ urlpatterns = [
     path("author/<int:pk>", views.author.DetailView.as_view(), name="author_details"),
     path("authors", views.author.IndexView.as_view(), name="author_list"),
     path(
-        "book/",
+        "book/<int:pk>/",
         include(
             [
-                path("<int:pk>", views.book.DetailView.as_view(), name="book_details"),
+                path("", views.book.DetailView.as_view(), name="book_details"),
+                path("add_tags", views.book.add_tags, name="book_add_tags",),
+                path("finish", views.book.finish_reading, name="book_finish_reading",),
+                path("start", views.book.start_reading, name="book_start_reading",),
                 path(
-                    "<int:book_id>/add_tags", views.book.add_tags, name="book_add_tags",
-                ),
-                path(
-                    "<int:book_id>/finish",
-                    views.book.finish_reading,
-                    name="book_finish_reading",
-                ),
-                path(
-                    "<int:book_id>/start",
-                    views.book.start_reading,
-                    name="book_start_reading",
-                ),
-                path(
-                    "<int:book_id>/update",
-                    views.book.update_progress,
-                    name="book_update_progress",
+                    "update", views.book.update_progress, name="book_update_progress",
                 ),
             ]
         ),
