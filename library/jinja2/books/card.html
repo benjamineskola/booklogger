@@ -42,21 +42,23 @@
         {% else %}
           <a href="{{ url("library:tag_details", args=['untagged']) }}" class="badge badge-secondary">untagged</a>
         {% endfor %}
-        {% if book.want_to_read %}
-          {% if book.owned %}
-            <a href="{{ url("library:books_owned") }}" class="badge badge-info">owned</a>
-            <a href="{{ url("library:books_unread") }}" class="badge badge-info">to read</a>
-          {% elif book.was_borrowed and book.borrowed_from == 'Sara' %}
-            <a href="{{ url("library:books_borrowed") }}" class="badge badge-info">borrowed</a>
-          {% else %}
-            <a href="{{ url("library:books_unowned") }}" class="badge badge-info">wishlist</a>
-          {% endif %}
-        {% else %}
-          {% if book.owned %}
-            <a href="{{ url("library:books_owned") }}" class="badge badge-info">owned</a>
-          {% endif %}
-          <a href="{{ url("library:books_read") }}" class="badge badge-info">read</a>
+
+        {% if book.owned %}
+          <a href="{{ url("library:books_owned") }}" class="badge badge-info">owned</a>
+        {% elif book.was_borrowed and book.borrowed_from == 'Sara' %}
+          <a href="{{ url("library:books_borrowed") }}" class="badge badge-info">borrowed</a>
         {% endif %}
+
+        {% if book.currently_reading %}
+            <a href="{{ url("library:books_currently_reading") }}" class="badge badge-info">reading</a>
+        {% elif book.want_to_read and book.owned %}
+            <a href="{{ url("library:books_unread") }}" class="badge badge-info">to read</a>
+        {% elif book.want_to_read %}
+            <a href="{{ url("library:books_unowned") }}" class="badge badge-info">wishlist</a>
+        {% else %}
+            <a href="{{ url("library:books_read") }}" class="badge badge-info">read</a>
+        {% endif %}
+
         {% if user.is_authenticated %}
           <a class="badge badge-secondary" data-toggle="collapse" data-target="#collapse-addtag-{{ book.id }}" role="button">+</a>
           <form class="collapse" id="collapse-addtag-{{ book.id }}" action="{{url('library:book_add_tags', args=[book.id]) }}?next={{ request.get_full_path() }}#{{ book.slug }}" method="post">
