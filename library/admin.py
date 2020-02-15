@@ -7,7 +7,7 @@ from .models import Author, Book, BookAuthor, LogEntry
 
 
 class AuthorAdmin(admin.ModelAdmin):
-    search_fields = ["surname", "forenames"]
+    search_fields = ["surname", "forenames", "single_name"]
 
 
 class BookAuthorInline(admin.TabularInline):
@@ -31,8 +31,10 @@ class BookAdmin(admin.ModelAdmin):
         "edition_title",
         "first_author__surname",
         "first_author__forenames",
+        "first_author__single_name",
         "additional_authors__surname",
         "additional_authors__forenames",
+        "additional_authors__single_name",
     ]
 
 

@@ -47,8 +47,10 @@ class BookManager(models.Manager):
             "edition_title",
             "first_author__surname",
             "first_author__forenames",
+            "first_author__single_name",
             "additional_authors__surname",
             "additional_authors__forenames",
+            "additional_authors__single_name",
         )
 
         return (

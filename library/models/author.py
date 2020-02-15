@@ -2,7 +2,7 @@ import re
 
 from django.contrib.postgres.search import TrigramDistance
 from django.db import models
-from django.db.models import F, Q
+from django.db.models import CheckConstraint, F, Q
 from django.db.models.functions import Lower
 from django.db.models.indexes import Index
 from django.urls import reverse
@@ -21,14 +21,24 @@ class Author(models.Model):
     objects = AuthorManager()
 
     class Meta:
+        constraints = [
+            CheckConstraint(
+                check=(
+                    (Q(surname="") & Q(forenames="") & ~Q(single_name=""))
+                    | (~Q(surname="") & ~Q(forenames="") & Q(single_name=""))
+                ),
+                name="surname_and_forenames_or_single_name",
+            )
+        ]
         indexes = [Index(fields=["surname", "forenames"])]
         ordering = [
             Lower("surname"),
             Lower("forenames"),
         ]
 
-    surname = models.CharField(db_index=True, max_length=255)
-    forenames = models.CharField(db_index=True, max_length=255)
+    surname = models.CharField(db_index=True, max_length=255, blank=True)
+    forenames = models.CharField(db_index=True, max_length=255, blank=True)
+    single_name = models.CharField(db_index=True, max_length=255, blank=True)
 
     class Gender(models.IntegerChoices):
         UNKNOWN = 0
@@ -40,10 +50,15 @@ class Author(models.Model):
     poc = models.BooleanField(default=False)
 
     def __str__(self):
-        return " ".join([self.forenames, self.surname]).strip()
+        if self.single_name:
+            return self.single_name
+        else:
+            return " ".join([self.forenames, self.surname]).strip()
 
     def display_name(self, initials=False):
-        if initials:
+        if self.single_name:
+            name = self.single_name
+        elif initials:
             name = f"{self.surname}{', ' + self.initials if self.initials else ''}"
         else:
             name = str(self)
