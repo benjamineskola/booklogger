@@ -55,14 +55,12 @@ class Author(models.Model):
         else:
             return " ".join([self.forenames, self.surname]).strip()
 
-    def display_name(self, initials=False):
+    @property
+    def name_with_initials(self):
         if self.single_name:
-            name = self.single_name
-        elif initials:
-            name = f"{self.surname}{', ' + self.initials if self.initials else ''}"
+            return self.single_name
         else:
-            name = str(self)
-        return name
+            return self.surname + ", " + self.initials
 
     def get_absolute_url(self):
         return reverse("library:author_details", args=[str(self.id)])
@@ -75,7 +73,10 @@ class Author(models.Model):
 
     def attribution_for(self, book, initials=False):
         role = self._role_for_book(book)
-        name = self.display_name(initials)
+        if initials:
+            name = self.name_with_initials
+        else:
+            name = str(self)
         return name + (f" ({role})" if role else "")
 
     def _role_for_book(self, book):

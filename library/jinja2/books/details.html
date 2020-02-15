@@ -7,9 +7,9 @@
 
   <div class="col">
     <dl>
-    {% if book.default_authors != book.full_authors %}
+    {% if book.authors != book.all_authors %}
     <dt>Full Authors</dt><dd>
-    {{ book.full_authors | map('get_hyperlink', book=book) | list | oxford_comma | safe }}
+    {{ book.all_authors | map('get_hyperlink', book=book) | list | oxford_comma | safe }}
     {% endif %}
     {% if book.subtitle %}
     <dt>Subtitle</dt><dd>{{ book.subtitle }}</dd>

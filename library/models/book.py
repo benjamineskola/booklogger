@@ -197,12 +197,24 @@ class Book(models.Model):
         return {"url": self.get_absolute_url(), "text": self.display_title}
 
     @property
-    def authors(self):
+    def all_authors(self):
         authors = []
         if self.first_author:
             authors.append(self.first_author)
         if self.additional_authors.count():
             authors += self.additional_authors.all()
+        return authors
+
+    @property
+    def authors(self):
+        authors = []
+        if self.first_author:
+            authors.append(self.first_author)
+        if self.additional_authors.count():
+            authors += [
+                ba.author
+                for ba in self.bookauthor_set.filter(role=self.first_author_role)
+            ]
         return authors
 
     @property
@@ -213,16 +225,17 @@ class Book(models.Model):
                 return True
         return False
 
-    def all_authors_attributed(self, initials=False):
-        return [a.attribution_for(self, initials) for a in self.authors]
-
-    def display_authors(self, initials=False):
+    @property
+    def display_authors(self):
         if self.all_authors_editors:
             return (
-                oxford_comma([author.display_name(initials) for author in self.authors])
+                oxford_comma([author.name_with_initials for author in self.authors])
                 + " (eds.)"
             )
-        return oxford_comma(self.all_authors_attributed(initials))
+        else:
+            return oxford_comma(
+                [a.attribution_for(self, initials=True) for a in self.authors]
+            )
 
     @property
     def display_title(self):
@@ -238,7 +251,7 @@ class Book(models.Model):
     def citation(self):
         return " ".join(
             [
-                self.display_authors(initials=True) + ",",
+                self.display_authors + ",",
                 self.display_title,
                 (f"({self.publication_data})" if self.publication_data else ""),
             ]
