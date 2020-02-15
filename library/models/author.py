@@ -96,23 +96,31 @@ class Author(models.Model):
 
     @property
     def books(self):
-        return self.first_authored_books.all() | self.additional_authored_books.all()
+        return (
+            self.first_authored_books.all() | self.additional_authored_books.all()
+        ).distinct()
 
     @property
     def authored_books(self):
-        books = self.books.filter(
-            id__in=[
-                ba.book.id
-                for ba in self.bookauthor_set.filter(Q(role="") | Q(role="author"))
-            ]
-        ) | self.first_authored_books.filter(
-            Q(first_author_role="") | Q(first_author_role="author")
+        books = (
+            self.books.filter(
+                id__in=[
+                    ba.book.id
+                    for ba in self.bookauthor_set.filter(Q(role="") | Q(role="author"))
+                ]
+            )
+            | self.first_authored_books.filter(
+                Q(first_author_role="") | Q(first_author_role="author")
+            ).distinct()
         )
         return books
 
     @property
     def edited_books(self):
-        books = self.books.filter(
-            id__in=[ba.book.id for ba in self.bookauthor_set.filter(role="editor")]
-        ) | self.first_authored_books.filter(first_author_role="editor")
+        books = (
+            self.books.filter(
+                id__in=[ba.book.id for ba in self.bookauthor_set.filter(role="editor")]
+            )
+            | self.first_authored_books.filter(first_author_role="editor").distinct()
+        )
         return books
