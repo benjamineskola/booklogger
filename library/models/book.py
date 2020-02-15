@@ -227,7 +227,9 @@ class Book(models.Model):
 
     @property
     def display_authors(self):
-        if self.all_authors_editors:
+        if len(self.authors) > 3:
+            return self.first_author.attribution_for(self) + " and others"
+        elif self.all_authors_editors:
             return (
                 oxford_comma([author.name_with_initials for author in self.authors])
                 + " (eds.)"

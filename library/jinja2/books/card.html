@@ -12,7 +12,9 @@
       <div class="card-body">
         <h5 class="card-title"><i>{{ book | get_hyperlink | safe }}</i><span class="text-muted small">{% if book.display_series %} ({{ book.display_series }}){% endif %}</span></h5>
         <h6 class="card-subtitle">by
-        {% if book.all_authors_editors %}
+        {% if book.authors | count > 3 %}
+        {{ book.first_author | get_hyperlink(book=book) | safe }} and others
+        {% elif book.all_authors_editors %}
         {{ book.authors | map('get_hyperlink') | list | oxford_comma | safe }} (eds.)
         {% else %}
         {{ book.authors | map('get_hyperlink', book=book) | list | oxford_comma | safe }}
