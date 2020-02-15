@@ -32,6 +32,7 @@ class Author(models.Model):
         ]
         indexes = [Index(fields=["surname", "forenames"])]
         ordering = [
+            Lower("single_name"),
             Lower("surname"),
             Lower("forenames"),
         ]

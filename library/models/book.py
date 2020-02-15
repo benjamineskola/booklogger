@@ -112,6 +112,7 @@ class Book(models.Model):
             GinIndex(fields=["tags"]),
         ]
         ordering = [
+            Lower("first_author__single_name"),
             Lower("first_author__surname"),
             Lower("first_author__forenames"),
             "series",
