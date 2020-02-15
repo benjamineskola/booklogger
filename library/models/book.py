@@ -94,7 +94,7 @@ class BookQuerySet(models.QuerySet):
         if poc := request.GET.get("poc"):
             filter_by["first_author__poc"] = bool(int(poc))
         if tags := request.GET.get("tags"):
-            filter_by["tag__contains"] = [tag.strip() for tag in tags.split(",")]
+            filter_by["tags__contains"] = [tag.strip() for tag in tags.split(",")]
 
         return self.filter(**filter_by)
 
