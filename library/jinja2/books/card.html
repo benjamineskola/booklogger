@@ -49,7 +49,7 @@
           <a href="{{ url("library:books_borrowed") }}" class="badge badge-info">borrowed</a>
         {% endif %}
 
-        {% if book.edition_format and (book.owned or book.was_borrowed) %}
+        {% if book.edition_format and (book.owned or book.was_borrowed or book.currently_reading) %}
           <a href="{{ url("library:books_owned", args=[book.get_edition_format_display().lower()]) }}" class="badge badge-info">{{ book.get_edition_format_display() | lower }}</a>
         {% endif %}
 
