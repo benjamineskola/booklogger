@@ -16,6 +16,8 @@ class LogEntryQuerySet(models.QuerySet):
     def filter_by_request(self, request):
         filter_by = {}
         if gender := request.GET.get("gender"):
+            if not gender.isdigit():
+                gender = Author.Gender[gender.upper()]
             filter_by["book__first_author__gender"] = gender
         if poc := request.GET.get("poc"):
             filter_by["book__first_author__poc"] = bool(int(poc))
