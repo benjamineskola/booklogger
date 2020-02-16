@@ -35,7 +35,15 @@ class GenericIndexView(generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["page_title"] = self.page_title
+        context["total"] = self.get_queryset().count()
+        context["counts"] = {
+            x: len(list(y))
+            for x, y in groupby(
+                self.get_queryset().order_by("edition_format"),
+                lambda b: b.edition_format,
+            )
+        }
+        context["page_title"] = self.page_title + f" ({context['total']})"
         return context
 
 
@@ -47,6 +55,9 @@ class OwnedIndexView(GenericIndexView):
     filter_by = {"owned": True}
     page_title = "Owned Books"
     template_name = "books/list_by_format.html"
+
+    def get_queryset(self):
+        return super().get_queryset().order_by("edition_format")
 
 
 class OwnedByDateView(GenericIndexView):
@@ -95,7 +106,13 @@ class UnreadIndexView(GenericIndexView):
             | books.filter(was_borrowed=True, borrowed_from="public domain")
             | books.filter(edition_format=Book.Format["WEB"])
         )
-        return books
+        return books.order_by(
+            "edition_format",
+            "first_author__single_name",
+            "first_author__surname",
+            "first_author__forenames",
+            "title",
+        )
 
 
 class DetailView(generic.DetailView):

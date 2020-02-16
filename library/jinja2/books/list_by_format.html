@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 {% for group in page_obj.object_list|groupby('edition_format') %}
-  <h2>{{ group.list[0].get_edition_format_display() }}</h2>
+  <h2>{{ group.list[0].get_edition_format_display() }} ({{ counts[group.list[0].edition_format]  }})</h2>
   {% set items = group.list %}
   {% include "books/card_loop.html" -%}
 {% endfor%}
