@@ -79,9 +79,19 @@ class BorrowedIndexView(GenericIndexView):
 
 
 class UnreadIndexView(GenericIndexView):
-    filter_by = {"owned": True, "want_to_read": True}
+    filter_by = {"want_to_read": True}
     page_title = "Unread Books"
     template_name = "books/list_by_format.html"
+
+    def get_queryset(self):
+        books = super().get_queryset()
+        books = (
+            books.filter(owned=True)
+            | books.filter(was_borrowed=True, borrowed_from="Sara")
+            | books.filter(was_borrowed=True, borrowed_from="public domain")
+            | books.filter(edition_format=Book.Format["WEB"])
+        )
+        return books
 
 
 class DetailView(generic.DetailView):
