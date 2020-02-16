@@ -19,7 +19,11 @@ class GenericIndexView(generic.ListView):
     page_title = ""
 
     def get_queryset(self):
-        books = Book.objects.all()
+        books = (
+            Book.objects.select_related("first_author")
+            .prefetch_related("additional_authors", "log_entries")
+            .all()
+        )
         if self.filter_by:
             books = books.filter(**self.filter_by)
 
@@ -113,7 +117,12 @@ class GenericLogView(generic.ListView):
     page_title = ""
 
     def get_queryset(self, *args, **kwargs):
-        entries = LogEntry.objects.all().order_by("end_date", "start_date")
+        entries = (
+            LogEntry.objects.select_related("book", "book__first_author")
+            .prefetch_related("book__additional_authors", "book__log_entries")
+            .all()
+            .order_by("end_date", "start_date")
+        )
 
         if "year" in self.kwargs:
             entries = entries.filter(end_date__year=self.kwargs["year"])
