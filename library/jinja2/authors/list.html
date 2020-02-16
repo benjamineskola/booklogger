@@ -8,11 +8,11 @@
       <span class="text-muted">(
       {%- if author.authored_books.count() > 0 -%}
         Author of {{ author.authored_books.first().title }}
-      {%- elif author.edited_books.count() > 0 %}
+      {%- elif author.edited_books.count() > 0 -%}
         Editor of {{ author.edited_books.first().title }}
-      {% else %}
+      {%- else -%}
         Contributor to {{ author.books.first().title }}
-      {% endif %}
+      {%- endif %}
       {%- if author.books.count() > 1 %}
         and {{ author.books.count() -1 }} other{% if author.books.count() > 2 %}s{% endif %}
       {%- endif %}.)</span>
