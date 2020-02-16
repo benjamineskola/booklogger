@@ -24,7 +24,7 @@
 
     <dt>Publisher</dt>
     {% if book.publisher_url %}
-    <dd><a href="{{ book.publisher_url }}">{{ book.publisher }}</a></dd>
+    <dd><a href="{{ book.publisher_url }}">{{ book.publisher or book.publisher_url }}</a></dd>
     {% else %}
     <dd>{{ book.publisher }}</dd>
     {% endif %}
