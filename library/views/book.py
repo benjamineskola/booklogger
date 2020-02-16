@@ -86,7 +86,7 @@ class OwnedByDateView(GenericIndexView):
 
 
 class UnownedIndexView(GenericIndexView):
-    filter_by = {"owned": False, "want_to_read": True}
+    filter_by = {"owned": False, "was_borrowed": False, "want_to_read": True}
     page_title = "Unowned Books"
 
 
