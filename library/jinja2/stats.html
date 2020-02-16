@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <p>In total I own {{ owned | count }} books.</p>
-<p>Overall I've read {{ read | count }} in the period I've been tracking: {{ read.filter(first_author__gender=1) | count }} by men and {{ read.filter(first_author__gender=2) | count }} by women.<p>
+<p>Overall I've read {{ read | count }} in the period I've been tracking: {{ read.filter(first_author__gender=1) | count }} by men and {{ read.filter(first_author__gender=2) | count }} by women ({{ read.exclude(first_author__gender=1).exclude(first_author__gender=2).count() }} by groups or organizations).<p>
 <p>
   {{ read.fiction() | count }} were fiction,
   {{ read.nonfiction() | count }} were non-fiction.<br>
