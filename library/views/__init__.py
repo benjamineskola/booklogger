@@ -28,10 +28,15 @@ def basic_search(request):
 def tag_details(request, tag_name):
     tags = [tag.strip() for tag in tag_name.split(",")]
     if tags == ["untagged"]:
-        books = Book.objects.filter(tags__len=0)
+        condition = {"tags__len": 0}
     else:
-        books = Book.objects.filter(tags__contains=tags)
-    books = books.filter_by_request(request)
+        condition = {"tags__contains": tags}
+    books = (
+        Book.objects.select_related("first_author")
+        .prefetch_related("additional_authors", "log_entries")
+        .filter(**condition)
+        .filter_by_request(request)
+    )
 
     paginator = Paginator(books, 100)
     page_number = request.GET.get("page")
