@@ -311,6 +311,15 @@ class Book(models.Model):
             return self.series
 
     @property
+    def read(self):
+        if not self.log_entries.count():
+            return False
+        completed_entries = [
+            entry.end_date for entry in self.log_entries.all() if entry.end_date
+        ]
+        return bool(completed_entries)
+
+    @property
     def slug(self):
         return re.sub(
             r"[^A-Za-z0-9]+",
