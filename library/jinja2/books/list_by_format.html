@@ -1,5 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
+{% if not format %}
+  Formats: <a href="{{ url("library:" + request.resolver_match.url_name) }}">all</a>
+  {%- for n, f  in formats if n in counts and counts[n] > 0 -%}
+  , <a href="{{ url("library:" + request.resolver_match.url_name, args=[f.lower()]) }}">{{ f | lower }}</a> ({{ counts[n] }})
+  {%- endfor -%}
+{% endif %}
+
 {% for group in page_obj.object_list|groupby('edition_format') %}
   <h2>{{ group.list[0].get_edition_format_display() }} ({{ counts[group.list[0].edition_format]  }})</h2>
   {% set items = group.list %}

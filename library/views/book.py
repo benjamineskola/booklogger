@@ -35,6 +35,8 @@ class GenericIndexView(generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["formats"] = Book.Format.choices
+        context["format"] = self.kwargs.get("format")
         context["total"] = self.get_queryset().count()
         context["counts"] = {
             x: len(list(y))
