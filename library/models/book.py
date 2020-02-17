@@ -279,6 +279,8 @@ class Book(models.Model):
     def start_reading(self):
         if not self.log_entries.filter(end_date=None):
             self.log_entries.create()
+            self.want_to_read = False
+            self.save()
 
     def finish_reading(self):
         entry = self.log_entries.get(end_date=None)
