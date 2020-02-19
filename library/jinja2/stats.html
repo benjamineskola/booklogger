@@ -17,8 +17,21 @@
   {% if year_books | count > 0 %}
   {% set year_male = year_books.by_men().all() %}
   {% set year_female = year_books.by_women().all() %}
+  {% set year_both = year_books.by_women().by_men().all() %}
+  {% set year_neither = year_books.exclude(first_author__gender=1).exclude(first_author__gender=2).all() %}
     <li>
-      <p>In <a href="{{ url("library:books_read", args=[year]) }}">{{ year }}</a> I read {{ year_books | count }} books: {{ year_male | count }} by men and {{ year_female | count }} by women.</p>
+      <p>
+        In <a href="{{ url("library:books_read", args=[year]) }}">{{ year }}</a> I read {{ year_books | count }} books: {{ year_male | count }} by <a href="{{ url("library:books_read", args=[year]) }}?gender=male">men</a> and {{ year_female | count }} by <a href="{{ url("library:books_read", args=[year]) }}?gender=female">women</a>.
+        {% if year_both | count > 0 or year_neither | count > 0 %} (
+        {%- if year_both |count > 0 -%}
+        {{ year_both | count }} of those were by both men and women
+        {%- endif -%}
+        {%- if year_both | count > 0 and year_neither | count > 0 %}; {% endif -%}
+        {%- if year_neither |count > 0 -%}
+        {{ year_neither | count }} were by <a href="{{ url("library:books_read", args=[year]) }}?gender=organization">groups or organizations</a>.
+        {%- endif -%}
+        ){% endif %}
+      </p>
       <p>
         {{ year_books.fiction() | count }} were fiction,
         {{ year_books.nonfiction() | count }} were non-fiction.<br>
