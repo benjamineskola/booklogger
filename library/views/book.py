@@ -41,7 +41,7 @@ class GenericIndexView(generic.ListView):
         context["counts"] = {
             x: len(list(y))
             for x, y in groupby(
-                self.get_queryset().order_by("edition_format"),
+                self.get_queryset().order_by("edition_format", *Book._meta.ordering),
                 lambda b: b.edition_format,
             )
         }
@@ -59,7 +59,7 @@ class OwnedIndexView(GenericIndexView):
     template_name = "books/list_by_format.html"
 
     def get_queryset(self):
-        return super().get_queryset().order_by("edition_format")
+        return super().get_queryset().order_by("edition_format", *Book._meta.ordering)
 
 
 class OwnedByDateView(GenericIndexView):
@@ -68,7 +68,9 @@ class OwnedByDateView(GenericIndexView):
 
     def get_queryset(self):
         books = (
-            super().get_queryset().order_by(F("acquired_date").desc(nulls_last=True))
+            super()
+            .get_queryset()
+            .order_by(F("acquired_date").desc(nulls_last=True), *Book._meta.ordering)
         )
         return books
 
@@ -108,13 +110,7 @@ class UnreadIndexView(GenericIndexView):
             | books.filter(was_borrowed=True, borrowed_from="public domain")
             | books.filter(edition_format=Book.Format["WEB"])
         )
-        return books.order_by(
-            "edition_format",
-            "first_author__single_name",
-            "first_author__surname",
-            "first_author__forenames",
-            "title",
-        )
+        return books.order_by("edition_format", *Book._meta.ordering,)
 
 
 class DetailView(generic.DetailView):
