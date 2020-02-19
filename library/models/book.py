@@ -102,7 +102,9 @@ class BookQuerySet(models.QuerySet):
                 additional_authors__poc=bool(int(poc))
             )
         if tags := request.GET.get("tags"):
-            filter_by &= Q(tags__contains=[tag.strip() for tag in tags.split(",")])
+            filter_by &= Q(
+                tags__contains=[tag.strip().lower() for tag in tags.split(",")]
+            )
 
         return self.filter(filter_by)
 

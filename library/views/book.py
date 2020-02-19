@@ -206,7 +206,7 @@ def update_progress(request, pk):
 def add_tags(request, pk):
     book = get_object_or_404(Book, pk=pk)
     for tag in request.POST.get("tags").split(","):
-        clean_tag = tag.strip()
+        clean_tag = tag.strip().lower()
         if not clean_tag in book.tags:
             book.tags.append(clean_tag)
     book.save()
