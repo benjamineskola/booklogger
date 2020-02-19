@@ -209,7 +209,8 @@ class Book(models.Model):
         if self.first_author:
             authors.append(self.first_author)
         if self.additional_authors.count():
-            authors += self.additional_authors.all()
+            authors += [ba.author for ba in self.bookauthor_set.all()]
+
         return authors
 
     @property
