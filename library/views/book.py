@@ -65,6 +65,7 @@ class OwnedIndexView(GenericIndexView):
 class OwnedByDateView(GenericIndexView):
     template_name = "books/list_by_date.html"
     filter_by = {"owned": True}
+    page_title = "Owned Books by Date"
 
     def get_queryset(self):
         books = (
