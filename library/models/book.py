@@ -90,17 +90,21 @@ class BookQuerySet(models.QuerySet):
         return self.filter(tags__contains=["non-fiction"])
 
     def filter_by_request(self, request):
-        filter_by = {}
+        filter_by = Q()
         if gender := request.GET.get("gender"):
             if not gender.isdigit():
                 gender = Author.Gender[gender.upper()]
-            filter_by["first_author__gender"] = gender
+            filter_by &= Q(first_author__gender=gender) | Q(
+                additional_authors__gender=gender
+            )
         if poc := request.GET.get("poc"):
-            filter_by["first_author__poc"] = bool(int(poc))
+            filter_by &= Q(first_author__poc=bool(int(poc))) | Q(
+                additional_authors__poc=bool(int(poc))
+            )
         if tags := request.GET.get("tags"):
-            filter_by["tags__contains"] = [tag.strip() for tag in tags.split(",")]
+            filter_by &= Q(tags__contains=[tag.strip() for tag in tags.split(",")])
 
-        return self.filter(**filter_by)
+        return self.filter(filter_by)
 
 
 class Book(models.Model):

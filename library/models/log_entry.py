@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 from django.utils import timezone
 
 from .author import Author
@@ -15,17 +16,21 @@ class LogEntryManager(models.Manager):
 
 class LogEntryQuerySet(models.QuerySet):
     def filter_by_request(self, request):
-        filter_by = {}
+        filter_by = Q()
         if gender := request.GET.get("gender"):
             if not gender.isdigit():
                 gender = Author.Gender[gender.upper()]
-            filter_by["book__first_author__gender"] = gender
+            filter_by &= Q(book__first_author__gender=gender) | Q(
+                book__additional_authors__gender=gender
+            )
         if poc := request.GET.get("poc"):
-            filter_by["book__first_author__poc"] = bool(int(poc))
+            filter_by &= Q(book__first_author__poc=bool(int(poc))) | Q(
+                book__additional_authors__poc=bool(int(poc))
+            )
         if tags := request.GET.get("tags"):
-            filter_by["book__tags__contains"] = [tag.strip() for tag in tags.split(",")]
+            filter_by &= Q(book_tags__contains=[tag.strip() for tag in tags.split(",")])
 
-        return self.filter(**filter_by)
+        return self.filter(filter_by)
 
 
 class LogEntry(models.Model):
