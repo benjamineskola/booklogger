@@ -33,14 +33,14 @@ urlpatterns = [
                 ),
                 path("owned", views.book.OwnedIndexView.as_view(), name="books_owned"),
                 path(
-                    "owned/<str:format>",
-                    views.book.OwnedIndexView.as_view(),
-                    name="books_owned",
-                ),
-                path(
                     "owned/bydate",
                     views.book.OwnedByDateView.as_view(),
                     name="books_owned_by_date",
+                ),
+                path(
+                    "owned/<str:format>",
+                    views.book.OwnedIndexView.as_view(),
+                    name="books_owned",
                 ),
                 path("read", views.book.ReadView.as_view(), name="books_read"),
                 path(
