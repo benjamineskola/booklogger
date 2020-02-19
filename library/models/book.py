@@ -378,6 +378,13 @@ class Book(models.Model):
             self.save()
             return
 
+    def add_tags(self, tags):
+        for tag in tags:
+            clean_tag = tag.strip().lower()
+            if not clean_tag in book.tags:
+                self.tags.append(clean_tag)
+        self.save()
+
 
 class BookAuthor(models.Model):
     class Meta:
