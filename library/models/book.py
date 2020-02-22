@@ -209,10 +209,7 @@ class Book(models.Model):
         return reverse("library:book_details", args=[str(self.id)])
 
     def get_link_data(self, **kwargs):
-        text = self.display_title
-        if self.editions.all() and self.edition_format:
-            text += f" ({self.get_edition_format_display().lower()} edition)"
-        return {"url": self.get_absolute_url(), "text": text}
+        return {"url": self.get_absolute_url(), "text": self.display_title}
 
     @property
     def all_authors(self):
