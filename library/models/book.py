@@ -405,9 +405,12 @@ class Book(models.Model):
             first_author=self.first_author,
             first_author_role=self.first_author_role,
             first_published=self.first_published,
+            language=self.language,
             image_url=self.image_url,
             publisher_url=self.publisher_url,
             want_to_read=self.want_to_read,
+            series=self.series,
+            series_order=self.series_order,
             tags=self.tags,
             review=self.review,
             rating=self.rating,
@@ -419,6 +422,23 @@ class Book(models.Model):
             edition.add_author(author.author, role=author.role, order=author.order)
         self.editions.add(edition)
         self.save()
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.editions.all().update(
+            title=self.title,
+            subtitle=self.subtitle,
+            first_author=self.first_author,
+            first_author_role=self.first_author_role,
+            first_published=self.first_published,
+            language=self.language,
+            want_to_read=self.want_to_read,
+            tags=self.tags,
+            review=self.review,
+            rating=self.rating,
+            series=self.series,
+            series_order=self.series_order,
+        )
 
 
 class BookAuthor(models.Model):
