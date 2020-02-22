@@ -194,7 +194,7 @@ class Book(models.Model):
         null=True,
     )
 
-    editions = models.ManyToManyField("self", symmetrical=True)
+    editions = models.ManyToManyField("self", symmetrical=True, blank=True)
 
     def __str__(self):
         if self.editions.all() and self.edition_format:
