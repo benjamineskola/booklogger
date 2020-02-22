@@ -443,6 +443,13 @@ class Book(models.Model):
             series_order=self.series_order,
         )
 
+    @property
+    def all_log_entries(self):
+        entries = self.log_entries.all()
+        for edition in self.editions.all():
+            entries |= edition.log_entries.all()
+        return entries
+
 
 class BookAuthor(models.Model):
     class Meta:

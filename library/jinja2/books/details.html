@@ -74,8 +74,12 @@
   <div class="col">
   <h3>Reading History</h3>
   <ul class="list-unstyled">
-  {% for entry in book.log_entries.all() %}
-    <li>{% include "logentries/date_snippet.html" %}<li>
+  {% for entry in book.all_log_entries %}
+    <li>{% include "logentries/date_snippet.html" %}
+    {% if entry not in book.log_entries.all() %}
+    (<a href="{{ url('library:book_details', args=[entry.book.pk]) }}">{{ entry.book.get_edition_format_display().lower() }} edition</a>)
+    {% endif %}
+    <li>
   {% else %}
   <li>No reading history</li>
   {% endfor %}
@@ -91,7 +95,7 @@
     <h3>Other Editions</h3>
     <ul>
     {% for edition in book.editions.all() %}
-    <li>{{ book | get_hyperlink | safe }}</li>
+    <li>{{ edition | get_hyperlink | safe }}</li>
     {% endfor %}
     </ul>
   </div>
