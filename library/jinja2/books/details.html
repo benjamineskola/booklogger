@@ -85,5 +85,16 @@
   <div class="col">
     {% include "books/update_form_snippet.html" %}
   </div>
+
+  {% if book.editions.all() | count > 0 %}
+  <div class="col">
+    <h3>Other Editions</h3>
+    <ul>
+    {% for edition in book.editions.all() %}
+    <li>{{ book | get_hyperlink | safe }}</li>
+    {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
 </div>
 {% endblock content %}

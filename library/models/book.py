@@ -194,8 +194,16 @@ class Book(models.Model):
         null=True,
     )
 
+    editions = models.ManyToManyField("self", symmetrical=True)
+
     def __str__(self):
-        return self.citation
+        if self.editions.all() and self.edition_format:
+            return (
+                self.citation
+                + f" ({self.get_edition_format_display().lower()} edition)"
+            )
+        else:
+            return self.citation
 
     def get_absolute_url(self):
         return reverse("library:book_details", args=[str(self.id)])
@@ -384,6 +392,32 @@ class Book(models.Model):
             clean_tag = tag.strip().lower()
             if not clean_tag in book.tags:
                 self.tags.append(clean_tag)
+        self.save()
+
+        for edition in self.editions:
+            edition.add_tags(tags)
+
+    def create_new_edition(self, edition_format):
+        edition = Book(
+            title=self.title,
+            subtitle=self.subtitle,
+            edition_format=edition_format,
+            first_author=self.first_author,
+            first_author_role=self.first_author_role,
+            first_published=self.first_published,
+            image_url=self.image_url,
+            publisher_url=self.publisher_url,
+            want_to_read=self.want_to_read,
+            tags=self.tags,
+            review=self.review,
+            rating=self.rating,
+            # technically this is per-edition but this is convenient
+            goodreads_id=self.goodreads_id,
+        )
+        edition.save()
+        for author in self.bookauthor_set.all():
+            edition.add_author(author.author, role=author.role, order=author.order)
+        self.editions.add(edition)
         self.save()
 
 

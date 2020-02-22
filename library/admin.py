@@ -22,7 +22,7 @@ class LogEntryInline(admin.TabularInline):
 
 
 class BookAdmin(admin.ModelAdmin):
-    autocomplete_fields = ["first_author"]
+    autocomplete_fields = ["first_author", "editions"]
     inlines = (BookAuthorInline, LogEntryInline)
     search_fields = [
         "title",
