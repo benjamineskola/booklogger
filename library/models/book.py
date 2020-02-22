@@ -261,7 +261,11 @@ class Book(models.Model):
 
     @property
     def display_date(self):
-        if self.edition_published and self.first_published:
+        if (
+            self.edition_published
+            and self.first_published
+            and self.edition_published != self.first_published
+        ):
             return f"[{self.first_published}] {self.edition_published}"
         elif self.edition_published:
             return self.edition_published
