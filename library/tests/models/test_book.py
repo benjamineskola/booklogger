@@ -9,9 +9,9 @@ class TestBook:
     @pytest.fixture
     def mock_authors(self, author_factory):
         authors = [
-            author_factory(single_name="God"),
-            author_factory(single_name="Jesus"),
-            author_factory(single_name="Holy Spirit"),
+            author_factory(surname="God"),
+            author_factory(surname="Jesus"),
+            author_factory(surname="Holy Spirit"),
         ]
         for author in authors:
             author.save()

@@ -21,25 +21,15 @@ class Author(models.Model):
     objects = AuthorManager()
 
     class Meta:
-        constraints = [
-            CheckConstraint(
-                check=(
-                    (Q(surname="") & Q(forenames="") & ~Q(single_name=""))
-                    | (~Q(surname="") & ~Q(forenames="") & Q(single_name=""))
-                ),
-                name="surname_and_forenames_or_single_name",
-            )
-        ]
         indexes = [Index(fields=["surname", "forenames"])]
         ordering = [
-            Lower("single_name"),
             Lower("surname"),
             Lower("forenames"),
         ]
 
-    surname = models.CharField(db_index=True, max_length=255, blank=True)
+    surname = models.CharField(db_index=True, max_length=255)
     forenames = models.CharField(db_index=True, max_length=255, blank=True)
-    single_name = models.CharField(db_index=True, max_length=255, blank=True)
+    surname_first = models.BooleanField(default=False)
 
     class Gender(models.IntegerChoices):
         UNKNOWN = 0
@@ -51,17 +41,19 @@ class Author(models.Model):
     poc = models.BooleanField(default=False)
 
     def __str__(self):
-        if self.single_name:
-            return self.single_name
+        if not self.forenames:
+            return self.surname
+        elif self.surname_first:
+            return self.surname + " " + self.forenames
         else:
-            return " ".join([self.forenames, self.surname]).strip()
+            return self.forenames + " " + self.surname
 
     @property
     def name_with_initials(self):
-        if self.single_name:
-            return self.single_name
-        else:
+        if self.forenames:
             return self.surname + ", " + self.initials
+        else:
+            return self.surname
 
     def get_absolute_url(self):
         return reverse("library:author_details", args=[str(self.id)])
