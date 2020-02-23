@@ -16,6 +16,22 @@ class BookAuthorInline(admin.TabularInline):
     extra = 1
 
 
+class LogEntryAdmin(admin.ModelAdmin):
+    autocomplete_fields = ["book"]
+    search_fields = [
+        "book_title",
+        "book_series",
+        "book_tags",
+        "book_edition_title",
+        "book_first_author__surname",
+        "book_first_author__forenames",
+        "book_first_author__single_name",
+        "book_additional_authors__surname",
+        "book_additional_authors__forenames",
+        "book_additional_authors__single_name",
+    ]
+
+
 class LogEntryInline(admin.TabularInline):
     model = LogEntry
     extra = 0
@@ -41,4 +57,4 @@ class BookAdmin(admin.ModelAdmin):
 admin.site.register(Author, AuthorAdmin)
 admin.site.register(Book, BookAdmin)
 admin.site.register(BookAuthor)
-admin.site.register(LogEntry)
+admin.site.register(LogEntry, LogEntryAdmin)

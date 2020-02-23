@@ -57,7 +57,14 @@ class LogEntry(models.Model):
     )
 
     def __str__(self):
-        return f"{self.book} from {self.start_date} to {self.end_date}"
+        text = str(self.book)
+        if self.start_date:
+            text += f" from {self.start_date_display}"
+        if self.end_date:
+            text += f" to {self.end_date_display}"
+        else:
+            text += ", unfinished"
+        return text
 
     @property
     def currently_reading(self):
