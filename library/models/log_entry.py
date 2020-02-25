@@ -1,3 +1,6 @@
+from datetime import datetime
+from typing import Any, Optional
+
 from django.db import models
 from django.db.models import Q
 from django.utils import timezone
@@ -6,16 +9,16 @@ from .author import Author
 from .book import Book
 
 
-class LogEntryManager(models.Manager):
-    def get_queryset(self):
-        return LogEntryQuerySet(self.model, using=self._db)
+class LogEntryManager(models.Manager):  # type: ignore [type-arg]
+    def get_queryset(self) -> "LogEntryQuerySet":
+        return LogEntryQuerySet(self.model, using=self._db)  # type: ignore [attr-defined]
 
-    def filter_by_request(self, request):
+    def filter_by_request(self, request: Any) -> "LogEntryQuerySet":
         return self.get_queryset().filter_by_request(request)
 
 
-class LogEntryQuerySet(models.QuerySet):
-    def filter_by_request(self, request):
+class LogEntryQuerySet(models.QuerySet):  # type: ignore [type-arg]
+    def filter_by_request(self, request: Any) -> "LogEntryQuerySet":
         filter_by = Q()
         if gender := request.GET.get("gender"):
             if not gender.isdigit():
@@ -56,7 +59,7 @@ class LogEntry(models.Model):
         choices=DatePrecision.choices, default=0
     )
 
-    def __str__(self):
+    def __str__(self) -> str:
         text = str(self.book)
         if self.start_date:
             text += f" from {self.start_date_display}"
@@ -67,27 +70,27 @@ class LogEntry(models.Model):
         return text
 
     @property
-    def currently_reading(self):
+    def currently_reading(self) -> bool:
         if self.start_date and not self.end_date:
             return True
         else:
             return False
 
     @property
-    def start_date_display(self):
+    def start_date_display(self) -> str:
         return self._date_with_precision(self.start_date, self.start_precision)
 
     @property
-    def end_date_display(self):
+    def end_date_display(self) -> str:
         return self._date_with_precision(self.end_date, self.end_precision)
 
     @property
-    def progress_date_display(self):
+    def progress_date_display(self) -> str:
         return self._date_with_precision(self.progress_date, 0)
 
-    def _date_with_precision(self, date, precision):
+    def _date_with_precision(self, date: Optional[datetime], precision: int) -> str:
         if not date:
-            return
+            return ""
 
         if precision == 2:
             return date.strftime("%Y")
