@@ -1,5 +1,6 @@
 import os
 import re
+from typing import Any, Dict, Iterable, Optional, Sequence
 
 import requests
 import xmltodict
@@ -18,27 +19,29 @@ from library.utils import oxford_comma
 
 from .author import Author
 
+LogEntry = models.Model
 
-class BookManager(models.Manager):
-    def get_queryset(self):
-        return BookQuerySet(self.model, using=self._db)
 
-    def by_gender(self, gender):
+class BookManager(models.Manager):  # type: ignore [type-arg]
+    def get_queryset(self) -> "BookQuerySet":
+        return BookQuerySet(self.model, using=self._db)  # type: ignore [attr-defined]
+
+    def by_gender(self, gender: int) -> "BookQuerySet":
         return self.get_queryset().by_gender(gender)
 
-    def by_men(self):
+    def by_men(self) -> "BookQuerySet":
         return self.get_queryset().by_men()
 
-    def by_women(self):
+    def by_women(self) -> "BookQuerySet":
         return self.get_queryset().by_women()
 
-    def fiction(self):
+    def fiction(self) -> "BookQuerySet":
         return self.get_queryset().fiction()
 
-    def nonfiction(self):
+    def nonfiction(self) -> "BookQuerySet":
         return self.get_queryset().nonfiction()
 
-    def search(self, pattern):
+    def search(self, pattern: str) -> "BookQuerySet":
         query = SearchQuery(pattern)
         vector = SearchVector(
             "title",
@@ -55,39 +58,39 @@ class BookManager(models.Manager):
             self.annotate(rank=SearchRank(vector, query))
             .filter(rank__gte=0.01)
             .order_by("-rank")
-        ).distinct()
+        ).distinct()  # type: ignore [return-value]
 
-    def rename_tag(self, old_name, new_name):
+    def rename_tag(self, old_name: str, new_name: str) -> None:
         tagged_books = self.filter(tags__contains=[old_name])
         for book in tagged_books:
             book.tags.append(new_name)
             book.tags.remove(old_name)
             book.save()
 
-    def filter_by_request(self, request):
+    def filter_by_request(self, request: str) -> "BookQuerySet":
         return self.get_queryset().filter_by_request(request)
 
 
-class BookQuerySet(models.QuerySet):
-    def by_gender(self, gender):
+class BookQuerySet(models.QuerySet):  # type: ignore [type-arg]
+    def by_gender(self, gender: int) -> "BookQuerySet":
         return (
             self.filter(first_author__gender=gender).distinct()
             | self.filter(additional_authors__gender=gender).distinct()
         )
 
-    def by_men(self):
+    def by_men(self) -> "BookQuerySet":
         return self.by_gender(1)
 
-    def by_women(self):
+    def by_women(self) -> "BookQuerySet":
         return self.by_gender(2)
 
-    def fiction(self):
+    def fiction(self) -> "BookQuerySet":
         return self.filter(tags__contains=["fiction"])
 
-    def nonfiction(self):
+    def nonfiction(self) -> "BookQuerySet":
         return self.filter(tags__contains=["non-fiction"])
 
-    def filter_by_request(self, request):
+    def filter_by_request(self, request: Any) -> "BookQuerySet":
         filter_by = Q()
         if gender := request.GET.get("gender"):
             if not gender.isdigit():
@@ -193,7 +196,7 @@ class Book(models.Model):
 
     editions = models.ManyToManyField("self", symmetrical=True, blank=True)
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self.editions.all() and self.edition_format:
             return (
                 self.citation
@@ -202,14 +205,14 @@ class Book(models.Model):
         else:
             return self.citation
 
-    def get_absolute_url(self):
+    def get_absolute_url(self) -> str:
         return reverse("library:book_details", args=[str(self.id)])
 
-    def get_link_data(self, **kwargs):
+    def get_link_data(self, **kwargs: Dict[str, Any]) -> Dict[str, str]:
         return {"url": self.get_absolute_url(), "text": self.display_title}
 
     @property
-    def all_authors(self):
+    def all_authors(self) -> Sequence[Author]:
         authors = []
         if self.first_author:
             authors.append(self.first_author)
@@ -219,7 +222,7 @@ class Book(models.Model):
         return authors
 
     @property
-    def authors(self):
+    def authors(self) -> Sequence[Author]:
         authors = []
         if self.first_author:
             authors.append(self.first_author)
@@ -231,7 +234,7 @@ class Book(models.Model):
         return authors
 
     @property
-    def all_authors_editors(self):
+    def all_authors_editors(self) -> bool:
         if len(self.authors) > 1:
             attributions = [author._role_for_book(self) for author in self.authors]
             if set(attributions) == {"ed."}:
@@ -239,9 +242,9 @@ class Book(models.Model):
         return False
 
     @property
-    def display_authors(self):
+    def display_authors(self) -> str:
         if len(self.authors) > 3:
-            return self.first_author.attribution_for(self) + " and others"
+            return str(self.authors[0].attribution_for(self)) + " and others"
         elif self.all_authors_editors:
             return (
                 oxford_comma([author.name_with_initials for author in self.authors])
@@ -253,11 +256,11 @@ class Book(models.Model):
             )
 
     @property
-    def display_title(self):
+    def display_title(self) -> str:
         return self.edition_title if self.edition_title else self.title
 
     @property
-    def display_date(self):
+    def display_date(self) -> str:
         if (
             self.edition_published
             and self.first_published
@@ -265,12 +268,12 @@ class Book(models.Model):
         ):
             return f"[{self.first_published}] {self.edition_published}"
         elif self.edition_published:
-            return self.edition_published
+            return str(self.edition_published)
         else:
-            return self.first_published
+            return str(self.first_published)
 
     @property
-    def citation(self):
+    def citation(self) -> str:
         return " ".join(
             [
                 self.display_authors + ",",
@@ -280,10 +283,12 @@ class Book(models.Model):
         ).strip()
 
     @property
-    def publication_data(self):
+    def publication_data(self) -> str:
         return ", ".join([str(i) for i in [self.publisher, self.display_date] if i])
 
-    def add_author(self, author, role="", order=None):
+    def add_author(
+        self, author: "Author", role: str = "", order: Optional[int] = None
+    ) -> None:
         if author.id is not self.first_author_id and author not in self.authors:
             if not self.first_author:
                 self.first_author = author
@@ -295,27 +300,27 @@ class Book(models.Model):
                 )
                 authorship.save()
 
-    def start_reading(self):
+    def start_reading(self) -> None:
         if not self.log_entries.filter(end_date=None):
             self.log_entries.create()
             self.want_to_read = False
             self.save()
 
-    def finish_reading(self):
+    def finish_reading(self) -> None:
         entry = self.log_entries.get(end_date=None)
         entry.end_date = timezone.now()
         entry.progress_date = timezone.now()
         entry.progress = 100
         entry.save()
 
-    def update_progress(self, progress):
+    def update_progress(self, progress: int) -> None:
         entry = self.log_entries.get(end_date=None)
         entry.progress_date = timezone.now()
         entry.progress = progress
         entry.save()
 
     @property
-    def currently_reading(self):
+    def currently_reading(self) -> bool:
         entries = self.log_entries.filter(end_date=None).order_by("-start_date")
         if not entries:
             return False
@@ -323,16 +328,16 @@ class Book(models.Model):
             return entries[0].currently_reading
 
     @property
-    def display_series(self):
+    def display_series(self) -> str:
         if not self.series:
-            return
+            return ""
         elif self.series_order:
             return f"{self.series}, #{str(self.series_order).replace('.0', '')}"
         else:
             return self.series
 
     @property
-    def read(self):
+    def read(self) -> bool:
         if not self.log_entries.count():
             return False
         completed_entries = [
@@ -341,14 +346,16 @@ class Book(models.Model):
         return bool(completed_entries)
 
     @property
-    def slug(self):
-        return re.sub(
-            r"[^A-Za-z0-9]+",
-            "-",
-            f"{self.first_author.surname} {self.title.split(':')[0]}",
-        ).lower()
+    def slug(self) -> str:
+        if self.first_author:
+            name = self.first_author.surname + "-"
+        else:
+            name = ""
 
-    def find_goodreads_data(self):
+        name += self.title.split(":")[0]
+        return re.sub(r"[^A-Za-z0-9]+", "-", name,).lower()
+
+    def find_goodreads_data(self) -> None:
         query = ""
         if self.isbn:
             query = self.isbn
@@ -388,17 +395,17 @@ class Book(models.Model):
             self.save()
             return
 
-    def add_tags(self, tags):
+    def add_tags(self, tags: Iterable[str]) -> None:
         for tag in tags:
             clean_tag = tag.strip().lower()
-            if not clean_tag in book.tags:
+            if not clean_tag in self.tags:
                 self.tags.append(clean_tag)
         self.save()
 
         for edition in self.editions:
             edition.add_tags(tags)
 
-    def create_new_edition(self, edition_format):
+    def create_new_edition(self, edition_format: int) -> None:
         edition = Book(
             title=self.title,
             subtitle=self.subtitle,
@@ -424,7 +431,7 @@ class Book(models.Model):
         self.editions.add(edition)
         self.save()
 
-    def save(self, *args, **kwargs):
+    def save(self, *args: Any, **kwargs: Any) -> None:
         super().save(*args, **kwargs)
         self.editions.all().update(
             title=self.title,
@@ -442,7 +449,7 @@ class Book(models.Model):
         )
 
     @property
-    def all_log_entries(self):
+    def all_log_entries(self) -> "models.QuerySet[LogEntry]":
         entries = self.log_entries.all()
         for edition in self.editions.all():
             entries |= edition.log_entries.all()
@@ -459,9 +466,9 @@ class BookAuthor(models.Model):
     role = models.CharField(db_index=True, max_length=255, blank=True, default="")
     order = models.PositiveSmallIntegerField(db_index=True, blank=True, null=True)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return ": ".join([str(self.author), str(self.role), self.book.title])
 
     @property
-    def display_role(self):
+    def display_role(self) -> str:
         return "ed." if self.role == "editor" else self.role
