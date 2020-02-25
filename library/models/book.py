@@ -269,8 +269,10 @@ class Book(models.Model):
             return f"[{self.first_published}] {self.edition_published}"
         elif self.edition_published:
             return str(self.edition_published)
-        else:
+        elif self.first_published:
             return str(self.first_published)
+        else:
+            return ""
 
     @property
     def citation(self) -> str:
