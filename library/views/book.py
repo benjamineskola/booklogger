@@ -29,7 +29,12 @@ class GenericIndexView(generic.ListView):
 
         if edition_format := self.kwargs.get("format"):
             edition_format = edition_format.strip("s").upper()
-            books = books.filter(edition_format=Book.Format[edition_format])
+            if edition_format == "PHYSICAL":
+                books = books.filter(
+                    edition_format=Book.Format["PAPERBACK"]
+                ) | books.filter(edition_format=Book.Format["HARDBACK"])
+            else:
+                books = books.filter(edition_format=Book.Format[edition_format])
 
         return books.filter_by_request(self.request)
 
