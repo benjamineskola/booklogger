@@ -32,7 +32,7 @@ class LogEntryQuerySet(models.QuerySet):  # type: ignore [type-arg]
             )
         if tags := request.GET.get("tags"):
             filter_by &= Q(
-                book_tags__contains=[tag.strip().lower() for tag in tags.split(",")]
+                book__tags__contains=[tag.strip().lower() for tag in tags.split(",")]
             )
 
         return self.filter(filter_by)
