@@ -272,21 +272,14 @@ class Book(models.Model):
         elif self.first_published:
             return str(self.first_published)
         else:
-            return ""
+            return "n.d."
 
     @property
     def citation(self) -> str:
-        return " ".join(
-            [
-                self.display_authors + ",",
-                self.display_title,
-                (f"({self.publication_data})" if self.publication_data else ""),
-            ]
-        ).strip()
-
-    @property
-    def publication_data(self) -> str:
-        return ", ".join([str(i) for i in [self.publisher, self.display_date] if i])
+        citation = f"{self.display_authors} ({self.display_date}) {self.display_title}."
+        if self.publisher:
+            citation += f" {self.publisher}."
+        return citation
 
     def add_author(
         self, author: "Author", role: str = "", order: Optional[int] = None
