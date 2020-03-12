@@ -2,6 +2,7 @@ from random import shuffle
 
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404, render
+from django.utils import timezone
 
 from library.models import Author, Book, BookAuthor, LogEntry
 from library.utils import oxford_comma
@@ -105,5 +106,14 @@ def stats(request):
             "books": books,
             "owned": owned,
             "read": read_books,
+            "current_year": timezone.now().year,
+            "current_week": (
+                (
+                    timezone.datetime.now()
+                    - timezone.datetime(timezone.now().year, 1, 1)
+                ).days
+                // 7
+            )
+            + 1,
         },
     )
