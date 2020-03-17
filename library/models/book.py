@@ -24,7 +24,7 @@ LogEntry = models.Model
 
 class BookManager(models.Manager):  # type: ignore [type-arg]
     def get_queryset(self) -> "BookQuerySet":
-        return BookQuerySet(self.model, using=self._db)  # type: ignore [attr-defined]
+        return BookQuerySet(self.model, using=self._db)
 
     def by_gender(self, gender: int) -> "BookQuerySet":
         return self.get_queryset().by_gender(gender)

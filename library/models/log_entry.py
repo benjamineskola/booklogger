@@ -11,7 +11,7 @@ from .book import Book
 
 class LogEntryManager(models.Manager):  # type: ignore [type-arg]
     def get_queryset(self) -> "LogEntryQuerySet":
-        return LogEntryQuerySet(self.model, using=self._db)  # type: ignore [attr-defined]
+        return LogEntryQuerySet(self.model, using=self._db)
 
     def filter_by_request(self, request: Any) -> "LogEntryQuerySet":
         return self.get_queryset().filter_by_request(request)
