@@ -35,12 +35,12 @@
         ){% endif %}
       </p>
       <p>
-        {{ year_books.fiction() | count }} were fiction,
-        {{ year_books.nonfiction() | count }} were non-fiction.<br>
-        {{ year_male.fiction() | count }} books by men were fiction,
-        {{ year_male.nonfiction() | count }} books by men were non-fiction.<br>
-        {{ year_female.fiction() | count }} books by women were fiction,
-        {{ year_female.nonfiction() | count }} books by women were non-fiction.
+        {{ year_books.fiction() | count }} were <a href="{{ url("library:books_read", args=[year]) }}?tags=fiction">fiction</a>,
+        {{ year_books.nonfiction() | count }} were <a href="{{ url("library:books_read", args=[year]) }}?tags=non-fiction">non-fiction</a>.<br>
+        By men: {{ year_male.fiction() | count }} ({{ ((year_male.fiction() | count) / (year_male | count | default(1, true)) * 100) | round(2) }}%) fiction, {{ year_male.nonfiction() | count }} ({{ ((year_male.nonfiction() | count) / (year_male | count | default(1, true)) * 100) | round(2) }}%) non-fiction.<br>
+        By women: {{ year_female.fiction() | count }} ({{ ((year_female.fiction() | count) / (year_female | count | default(1, true)) * 100) | round(2) }}%) fiction, {{ year_female.nonfiction() | count }} ({{ ((year_female.nonfiction() | count) / (year_female | count | default(1, true)) * 100) | round(2) }}%) non-fiction.<br>
+        Fiction: {{ year_male.fiction() | count }} ({{ ((year_male.fiction() | count) / (year_books.fiction() | count | default(1, true)) * 100) | round(2) }}%) by men, {{ year_female.fiction() | count }} ({{ ((year_female.fiction() | count) / (year_books.fiction() | count | default(1, true)) * 100) | round(2) }}%) by women.<br>
+        Non-fiction: {{ year_male.nonfiction() | count }} ({{ ((year_male.nonfiction() | count) / (year_books.nonfiction() | count | default(1, true)) * 100) | round(2) }}%) by men, {{ year_female.nonfiction() | count }} ({{ ((year_female.nonfiction() | count) / (year_books.nonfiction() | count | default(1, true)) * 100) | round(2) }}%) by women.<br>
       </p>
     </li>
   {% endif %}
