@@ -114,6 +114,7 @@ class UnreadIndexView(GenericIndexView):
             books.filter(owned=True)
             | books.filter(was_borrowed=True, borrowed_from="Sara")
             | books.filter(was_borrowed=True, borrowed_from="public domain")
+            | books.filter(was_borrowed=True, borrowed_from="Amazon Prime")
             | books.filter(edition_format=Book.Format["WEB"])
         )
         return books.order_by("edition_format", *Book._meta.ordering,)
