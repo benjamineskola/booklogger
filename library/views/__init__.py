@@ -98,6 +98,15 @@ def stats(request):
     read_books = books.filter(want_to_read=False) | books.filter(
         log_entries__isnull=False
     )
+
+    current_year = timezone.now().year
+    first_day = timezone.datetime(current_year, 1, 1)
+    last_day = timezone.datetime(current_year, 12, 31)
+    year_days = (last_day - first_day).days
+    current_day = (timezone.datetime.now() - first_day).days
+    current_week = (current_day // 7) + 1
+    current_year_books = books.filter(log_entries__end_date__year=current_year)
+    predicted_books = current_year_books.count() / current_day * year_days
     return render(
         request,
         "stats.html",
@@ -106,14 +115,8 @@ def stats(request):
             "books": books,
             "owned": owned,
             "read": read_books,
-            "current_year": timezone.now().year,
-            "current_week": (
-                (
-                    timezone.datetime.now()
-                    - timezone.datetime(timezone.now().year, 1, 1)
-                ).days
-                // 7
-            )
-            + 1,
+            "current_year": current_year,
+            "current_week": current_week,
+            "predicted_books": predicted_books,
         },
     )
