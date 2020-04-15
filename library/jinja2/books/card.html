@@ -22,7 +22,7 @@
         </h6>
         <p class="card-text mb-0">({{ book.display_date }}){% if book.publisher %} {{ book.publisher }}.{% endif %}{% if book.page_count and book.page_count > 0 %} {{ book.page_count }} pages.{% endif %}
         {% if book.rating %}
-          <span class="small" display="inline-block">
+          <span class="small" style="display: inline-block">
           {% set rating_floor = book.rating | float | round(0, 'floor') | int %}
           {% set rating_ceil = book.rating | float | round(0, 'ceil') | int %}
 
