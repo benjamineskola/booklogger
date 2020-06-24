@@ -55,37 +55,43 @@ def tag_details(request, tag_name):
 
 
 def tag_cloud(request):
-    all_book_tags = [book.tags for book in Book.objects.all()]
-    tag_counts = {"untagged": 0}
-    tag_sizes = {}
-    for book_tags in all_book_tags:
-        if book_tags:
+    all_tags = {
+        "fiction": [book.tags for book in Book.objects.fiction()],
+        "non-fiction": [book.tags for book in Book.objects.nonfiction()],
+    }
+
+    tags = {
+        "untagged": Book.objects.exclude(tags__contains=["non-fiction"])
+        .exclude(tags__contains=["fiction"])
+        .count(),
+        "non-fiction": {
+            "no other tags": Book.objects.fiction().filter(tags=["non-fiction"]).count()
+        },
+        "fiction": {
+            "no other tags": Book.objects.nonfiction().filter(tags=["fiction"]).count()
+        },
+        "all": {},
+    }
+
+    for key in ["fiction", "non-fiction"]:
+        for book_tags in all_tags[key]:
             for tag in book_tags:
-                if tag in tag_counts:
-                    tag_counts[tag] += 1
+                if tag in tags[key]:
+                    tags[key][tag] += 1
                 else:
-                    tag_counts[tag] = 1
-        else:
-            tag_counts["untagged"] += 1
+                    tags[key][tag] = 1
+                if tag in tags["all"]:
+                    tags["all"][tag] += 1
+                else:
+                    tags["all"][tag] = 1
 
-    counts_only = sorted(tag_counts.values())
-    median = counts_only[int(len(counts_only) / 2)]
-    maxi = max(counts_only)
-    mini = min(counts_only)
-
-    above_median_buckets = max(1, int((maxi - median) / 30))
-    below_median_buckets = max(1, int((median - mini) / 30))
-
-    tag_sizes = {}
-
-    for i, j in enumerate(range(median, maxi, above_median_buckets)):
-        tag_sizes.update(dict([(k[0], i) for k in tag_counts.items() if k[1] >= j]))
-
-    for i, j in enumerate(reversed(range(mini, median, below_median_buckets))):
-        tag_sizes.update(dict([(k[0], -i) for k in tag_counts.items() if k[1] <= j]))
-
-    tags = list(tag_sizes.items())
-    shuffle(tags)
+    for key in ["fiction", "non-fiction", "all"]:
+        tags[key] = {
+            k: v
+            for k, v in sorted(
+                tags[key].items(), key=lambda item: item[1], reverse=True
+            )
+        }
 
     return render(
         request, "tags/cloud.html", {"page_title": f"All Tags", "tags": tags},

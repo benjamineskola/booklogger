@@ -1,6 +1,25 @@
 {% extends "base.html" %}
 {% block content %}
-{% for tag, size in tags %}
-<a style="font-size: {{ 2.5 + (size/10) }}rem" href="{{ url("library:tag_details", args=[tag]) }}">{{ tag }}</a>
+
+{% for tag, count in tags['all'].items() %}
+{% if count %}
+<a class="badge badge-secondary" href="{{ url("library:tag_details", args=[tag]) }}">{{ tag }}: {{ count }}</a>
+{% endif %}
 {% endfor %}
+<a class="badge badge-secondary" href="{{ url("library:tag_details", args=['untagged']) }}">untagged: {{ tags['untagged'] }}</a>
+
+<h3>Fiction</h3>
+{% for tag, count in tags['fiction'].items() %}
+{% if count %}
+<a class="badge badge-secondary" href="{{ url("library:tag_details", args=[tag]) }}{% if tag != "fiction" and tag != "no other tags" %}?tags=fiction{% endif %}">{{ tag }}: {{ count }}</a>
+{% endif %}
+{% endfor %}
+
+<h3>Non-fiction</h3>
+{% for tag, count in tags['non-fiction'].items() %}
+{% if count %}
+<a class="badge badge-secondary" href="{{ url("library:tag_details", args=[tag]) }}{% if tag != "non-fiction" and tag != "no other tags" %}?tags=non-fiction{% endif %}">{{ tag }}: {{ count }}</a>
+{% endif %}
+{% endfor %}
+
 {% endblock content %}
