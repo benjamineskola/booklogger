@@ -24,6 +24,9 @@ def basic_search(request):
             return redirect(results[0])
         results = Book.objects.search(query)
 
+    if results and len(results) == 1:
+        return redirect(results[0])
+
     return render(
         request,
         "search.html",
