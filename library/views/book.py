@@ -150,7 +150,7 @@ class GenericLogView(generic.ListView):
 
         if self.filter_by:
             entries = entries.filter(**self.filter_by)
-        return entries.filter_by_request(self.request)
+        return entries.filter_by_request(self.request).distinct()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
