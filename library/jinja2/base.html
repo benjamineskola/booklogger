@@ -26,7 +26,16 @@
     </form>
     <div class="navbar-nav">
     {% if user.is_authenticated %}
-      <a class="nav-item nav-link" href="{{ url('admin:index') }}">Admin</a>
+      <div class="dropdown">
+        <a class="dropdown-toggle" id="admin-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Admin
+        </a>
+        <div class="dropdown-menu" aria-labelledby="admin-dropdown">
+          <a class="dropdown-item" href="{{ url('admin:index') }}">Admin</a>
+          <a class="dropdown-item" href="{{ url('admin:library_book_add') }}">Create</a>
+          <a class="dropdown-item" href="{{ url('library:book_import') }}">Import</a>
+        </div>
+      </div>
     {% else %}
       <a class="nav-item nav-link" href="{{ url('admin:login') }}?next={{ request.get_full_path () }}">Log In</a>
     {% endif %}
