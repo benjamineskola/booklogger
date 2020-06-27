@@ -1,5 +1,5 @@
 import re
-from typing import Any, Dict, Iterable, Optional
+from typing import Any, Dict, Iterable, MutableMapping, Optional, Tuple
 
 from django.contrib.postgres.search import TrigramDistance
 from django.db import models
@@ -18,6 +18,12 @@ class AuthorManager(models.Manager):  # type: ignore
             fn_distance=TrigramDistance("forenames", pattern),
             distance=F("sn_distance") * F("fn_distance"),
         ).order_by("distance")
+
+    def get_by_single_name(self, name: str) -> "Author":
+        return Author.objects.get(**Author.normalise_name(name))
+
+    def get_or_create_by_single_name(self, name: str) -> Tuple["Author", bool]:
+        return Author.objects.get_or_create(**Author.normalise_name(name))
 
 
 class Author(models.Model):
@@ -125,3 +131,20 @@ class Author(models.Model):
             | self.first_authored_books.filter(first_author_role="editor").distinct()
         )
         return books
+
+    @staticmethod
+    def normalise_name(name: str) -> MutableMapping[str, str]:
+        words = name.split(" ")
+        surname = words.pop()
+        while words and words[-1].lower() in [
+            "von",
+            "van",
+            "der",
+            "le",
+            "de",
+        ]:
+            surname = words.pop() + " " + surname
+
+        forenames = " ".join(words)
+
+        return {"surname": surname, "forenames": forenames}

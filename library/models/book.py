@@ -105,23 +105,9 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
                 r"_S\w\d+_.jpg$", "_SX475_.jpg", goodreads_book["image_url"]
             )
 
-        author_names = goodreads_book["author"]["name"].split(" ")
-        author_surname = author_names.pop()
-        while author_names and author_names[-1].lower() in [
-            "von",
-            "van",
-            "der",
-            "le",
-            "de",
-        ]:
-            author_surname = author_names.pop() + " " + author_surname
-        author_forenames = " ".join(author_names)
-
-        author, created = Author.objects.get_or_create(
-            forenames=author_forenames, surname=author_surname
+        book.first_author, created = Author.objects.get_or_create_by_single_name(
+            goodreads_book["author"]["name"]
         )
-
-        book.first_author = author
         book.save()
 
         return book

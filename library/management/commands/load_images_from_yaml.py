@@ -10,16 +10,6 @@ from library.models import Author, Book, BookAuthor, LogEntry
 
 
 class Command(BaseCommand):
-    def _normalize(self, raw_name):
-        words = raw_name.split(" ")
-        surname = words.pop()
-
-        while words and words[-1].lower() in ["von", "van", "der", "le", "de"]:
-            surname = words.pop() + " " + surname
-
-        forenames = " ".join(words)
-        return (surname.strip(), forenames.strip())
-
     def add_arguments(self, parser):
         parser.add_argument("file", nargs="?")
         parser.add_argument("-f", "--force", action="store_true", default=False)
@@ -33,10 +23,11 @@ class Command(BaseCommand):
         data = yaml.safe_load(input_data)
 
         for author, books in data.items():
-            surname, forenames = self._normalize(author)
+            author_names = Author.normalise_name(author)
             for book, book_data in books.items():
                 books = Book.objects.filter(
-                    title__iexact=book, first_author__surname__iexact=surname
+                    title__iexact=book,
+                    first_author__surname__iexact=author_names["surname"],
                 )
                 if books.count() == 1:
                     book_object = books.first()

@@ -30,15 +30,10 @@ class Command(BaseCommand):
             book = dict(row)
             books.append(book)
 
-            author_names = self._normalize(book["AUTHOR"])
-            author_name = author_names[0] + (
-                (", " + author_names[1]) if author_names[1] else ""
-            )
+            author_name = book["AUTHOR"]
 
             if author_name not in authors:
                 author_data = {
-                    "surname": author_names[0],
-                    "forenames": author_names[1],
                     "books": [],
                     "pk": None,
                 }
@@ -62,9 +57,7 @@ class Command(BaseCommand):
             authors[author_name]["books"].append(book_data)
 
         for key, author in authors.items():
-            a, created = Author.objects.get_or_create(
-                surname=author["surname"], forenames=author["forenames"]
-            )
+            a, created = Author.objects.get_or_create_by_single_name(author_name)
             if created:
                 print(f"created {a}")
             else:
@@ -78,13 +71,3 @@ class Command(BaseCommand):
                         b = Book(**book)
                         b.save()
                         print(f"  creating {b}")
-
-    def _normalize(self, raw_name):
-        words = raw_name.split(" ")
-        surname = words.pop()
-
-        while words and words[-1].lower() in ["von", "van", "der", "le", "de"]:
-            surname = words.pop() + " " + surname
-
-        forenames = " ".join(words)
-        return (surname.strip(), forenames.strip())

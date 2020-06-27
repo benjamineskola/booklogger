@@ -10,16 +10,6 @@ from library.models import Author, Book, BookAuthor, LogEntry
 
 
 class Command(BaseCommand):
-    def _normalize(self, raw_name):
-        words = raw_name.split(" ")
-        surname = words.pop()
-
-        while words and words[-1].lower() in ["von", "van", "der", "le", "de"]:
-            surname = words.pop() + " " + surname
-
-        forenames = " ".join(words)
-        return (surname.strip(), forenames.strip())
-
     def add_arguments(self, parser):
         parser.add_argument("file", nargs="?")
         parser.add_argument("-f", "--force", action="store_true", default=False)
@@ -37,9 +27,9 @@ class Command(BaseCommand):
             if not ids:
                 continue
 
-            surname, *forenames = author.split(", ")
-            if forenames:
-                forenames = forenames[0]
+            author_split = Author.normalise_name(author)
+            surname = author_split["surname"]
+            forenames = author.split["forenames"]
 
             title = re.sub(r"^_(.*)_\s*$", r"\1", title)
             if title.endswith(")"):
