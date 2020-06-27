@@ -9,7 +9,7 @@ from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 from django.db import models
-from django.db.models import F, Q
+from django.db.models import Q
 from django.db.models.functions import Lower
 from django.db.models.indexes import Index
 from django.urls import reverse
@@ -69,6 +69,62 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
 
     def filter_by_request(self, request: str) -> "BookQuerySet":
         return self.get_queryset().filter_by_request(request)
+
+    def find_on_goodreads(self, query: str) -> Optional[Dict[str, Any]]:
+        search_url = f"https://www.goodreads.com/search/index.xml?key={os.environ['GOODREADS_KEY']}&q={query}"
+        data = requests.get(search_url).text
+        xml = xmltodict.parse(data, dict_constructor=dict)
+
+        try:
+            all_results = xml["GoodreadsResponse"]["search"]["results"]["work"]
+        except:
+            return None
+
+        results: Sequence[Dict[str, Any]] = []
+        if "id" in all_results:
+            results = [all_results]
+        else:
+            results = all_results
+
+        return results[0]
+
+    def create_from_goodreads(self, query: str) -> Optional["Book"]:
+        result = self.find_on_goodreads(query)
+        if not result:
+            return None
+
+        goodreads_book = result["best_book"]
+        book = Book(
+            title=goodreads_book["title"],
+            goodreads_id=goodreads_book["id"]["#text"],
+            first_published=result["original_publication_year"]["#text"],
+        )
+
+        if not "nophoto" in goodreads_book["image_url"]:
+            book.image_url = re.sub(
+                r"_S\w\d+_.jpg$", "_SX475_.jpg", goodreads_book["image_url"]
+            )
+
+        author_names = goodreads_book["author"]["name"].split(" ")
+        author_surname = author_names.pop()
+        while author_names and author_names[-1].lower() in [
+            "von",
+            "van",
+            "der",
+            "le",
+            "de",
+        ]:
+            author_surname = author_names.pop() + " " + author_surname
+        author_forenames = " ".join(author_names)
+
+        author, created = Author.objects.get_or_create(
+            forenames=author_forenames, surname=author_surname
+        )
+
+        book.first_author = author
+        book.save()
+
+        return book
 
 
 class BookQuerySet(models.QuerySet):  # type: ignore [type-arg]
@@ -349,46 +405,6 @@ class Book(models.Model):
 
         name += self.title.split(":")[0]
         return re.sub(r"[^A-Za-z0-9]+", "-", name,).lower()
-
-    def find_goodreads_data(self) -> None:
-        query = ""
-        if self.isbn:
-            query = self.isbn
-        else:
-            query = re.sub(" ", "+", self.title + " " + str(self.first_author))
-        search_url = f"https://www.goodreads.com/search/index.xml?key={os.environ['GOODREADS_KEY']}&q={query}"
-        data = requests.get(search_url).text
-        xml = xmltodict.parse(data, dict_constructor=dict)
-
-        try:
-            results = xml["GoodreadsResponse"]["search"]["results"]["work"]
-        except:
-            return
-        if "id" in results:
-            results = [results]
-
-        for result in results:
-            book = result["best_book"]
-            full_title = book["title"].lower()
-            title_without_series, *rest = full_title.split(" (")
-
-            if (
-                full_title != self.title.lower()
-                and title_without_series != self.title.lower()
-            ):
-                continue
-            if book["author"]["name"].lower() != str(self.first_author).lower():
-                continue
-
-            if not self.goodreads_id:
-                self.goodreads_id = book["id"]["#text"]
-            if not self.image_url:
-                if not "nophoto" in book["image_url"]:
-                    self.image_url = re.sub(
-                        r"_S\w\d+_.jpg$", "_SX475_.jpg", book["image_url"]
-                    )
-            self.save()
-            return
 
     def add_tags(self, tags: Iterable[str]) -> None:
         for tag in tags:

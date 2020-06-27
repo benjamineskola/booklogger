@@ -4,7 +4,6 @@ django-stubs
 django_heroku
 gunicorn
 jinja2
-mypy
 psycopg2
 pytest-django
 pytest-factoryboy

@@ -8,6 +8,8 @@ from django.utils import timezone
 from library.models import Author, Book, BookAuthor, LogEntry
 from library.utils import oxford_comma
 
+import requests
+import os
 from . import author, book
 
 # Create your views here.
@@ -30,7 +32,12 @@ def basic_search(request):
     return render(
         request,
         "search.html",
-        {"page_title": f"Search{': ' + query if query else ''}", "results": results},
+        {
+            "page_title": f"Search{': ' + query if query else ''}",
+            "results": results,
+            "query": query,
+            "goodreads_result": Book.objects.find_on_goodreads(query),
+        },
     )
 
 
@@ -134,3 +141,7 @@ def stats(request):
             "predicted_books": predicted_books,
         },
     )
+
+def import_book(request, query):
+    book = Book.objects.create_from_goodreads(query)
+    return redirect(book)
