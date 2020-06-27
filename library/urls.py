@@ -21,6 +21,7 @@ urlpatterns = [
             ]
         ),
     ),
+    path("book/import", views.import_book, name="book_import"),
     path("book/import/<str:query>", views.import_book, name="book_import"),
     path(
         "books/",

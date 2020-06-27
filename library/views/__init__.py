@@ -1,5 +1,8 @@
+import os
 from random import shuffle
 
+import requests
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
@@ -8,8 +11,6 @@ from django.utils import timezone
 from library.models import Author, Book, BookAuthor, LogEntry
 from library.utils import oxford_comma
 
-import requests
-import os
 from . import author, book
 
 # Create your views here.
@@ -142,6 +143,23 @@ def stats(request):
         },
     )
 
-def import_book(request, query):
-    book = Book.objects.create_from_goodreads(query)
-    return redirect(book)
+
+@login_required
+def import_book(request, query=None):
+    if request.method == "POST" and not query:
+        query = request.POST.get("query")
+    if request.method == "GET" and not query:
+        query = request.GET.get("query")
+
+    if query and request.method == "POST":
+        book = Book.objects.create_from_goodreads(query)
+        return redirect(book)
+    else:
+        goodreads_result = None
+        if query:
+            goodreads_result = Book.objects.find_on_goodreads(query)
+        return render(
+            request,
+            "books/import.html",
+            {"query": query, "goodreads_result": goodreads_result},
+        )

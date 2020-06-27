@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% if query %}
+<p>This might be the following book on Goodreads: <a href="https://www.goodreads.com/book/show/{{ goodreads_result["best_book"]["id"]["#text"] }}">{{ goodreads_result["best_book"]["author"]["name"] }}, <em>{{ goodreads_result["best_book"]["title"] }}</em></a>.</p>
+<form class="form-inline" action="{{url('library:book_import', args=[query])}}" method="post">
+  <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+  <input class="form-control-sm btn btn-primary mx-2" type="submit" name="Confirm" value="Confirm" />
+</form>
+{% endif %}
+
+<br>
+<form class="form-inline" action="{{url('library:book_import')}}" method="get">
+  <input class="form-control-sm mx-2" type="input" name="query" />
+  <input class="form-control-sm btn btn-primary mx-2" type="submit" value="Import" />
+</form>
+{% endblock content %}
