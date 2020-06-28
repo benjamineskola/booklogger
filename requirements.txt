@@ -1,4 +1,5 @@
 bpython
+commonmark
 Django >=3.0.2,<4.0
 django-stubs
 django_heroku

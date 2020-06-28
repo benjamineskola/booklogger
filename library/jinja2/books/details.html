@@ -71,6 +71,13 @@
     </dl>
   </div>
 
+  {% if book.review %}
+  <div class="col">
+    <h3>Review</h3>
+    {{ book.review | markdown }}
+  </div>
+  {% endif %}
+
   <div class="col">
   <h3>Reading History</h3>
   <ul class="list-unstyled">
