@@ -3,6 +3,7 @@ from itertools import groupby
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.db.models import F
+from django.db.models.expressions import RawSQL
 from django.db.models.functions import Lower
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import generic
@@ -35,6 +36,13 @@ class GenericIndexView(generic.ListView):
                 ) | books.filter(edition_format=Book.Format["HARDBACK"])
             else:
                 books = books.filter(edition_format=Book.Format[edition_format])
+
+        if sort_by := self.request.GET.get("sort_by"):
+            field_names = [f.name for f in Book._meta.get_fields()]
+            if sort_by.startswith("-") and sort_by[1:] in field_names:
+                books = books.order_by(F(sort_by[1:]).desc(nulls_last=True))
+            elif sort_by in field_names:
+                books = books.order_by(sort_by)
 
         return books.filter_by_request(self.request)
 
