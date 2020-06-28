@@ -17,6 +17,20 @@
   .page-link {
     border-color: var(--gray);
   }
+
+  .dropdown-menu, .dropdown-item, .dropdown-toggle {
+    color: var(--gray);
+    background-color: var(--dark);
+  }
+
+  .dropdown-item:hover, .dropdown-item:focus {
+    color: var(--light);
+    background-color: var(--dark);
+  }
+
+  .dropdown-menu {
+    border: 1px solid var(--gray);
+  }
 }
 
 .bg-dark {
