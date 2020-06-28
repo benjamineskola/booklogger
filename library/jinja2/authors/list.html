@@ -4,7 +4,7 @@
 <ul class="list-unstyled">
   {% for author in page_obj %}
     <li>
-      {{ author | get_hyperlink | safe }}
+      {{ author | get_hyperlink }}
       <span class="text-muted">(
       {%- if author.authored_books.count() > 0 -%}
         Author of {{ author.authored_books.first().title }}
