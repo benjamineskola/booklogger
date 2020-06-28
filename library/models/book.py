@@ -238,6 +238,8 @@ class Book(models.Model):
 
     editions = models.ManyToManyField("self", symmetrical=True, blank=True)
 
+    created_date = models.DateTimeField(db_index=True, default=timezone.now)
+
     def __str__(self) -> str:
         if self.editions.all() and self.edition_format:
             return (

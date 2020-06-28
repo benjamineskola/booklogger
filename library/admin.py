@@ -38,6 +38,7 @@ class LogEntryInline(admin.TabularInline):
 class BookAdmin(admin.ModelAdmin):
     autocomplete_fields = ["first_author", "editions"]
     inlines = (BookAuthorInline, LogEntryInline)
+    readonly_fields = ("created_date",)
     search_fields = [
         "title",
         "series",
