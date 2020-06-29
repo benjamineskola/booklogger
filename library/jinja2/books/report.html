@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+{% if page %}
+{% for category, items in categories.items() %}
+<h3>{{ category }} ({{ items.count() }})</h3>
+<ul>
+{% for item in items %}
+<li><a href="{{ item.get_absolute_url() }}">{{ item }}</a> <small>(
+<a href="{{ url('admin:library_book_change', args=[item.id]) }}">edit</a>
+{% if item.goodreads_id %}
+&middot; <a href="https://goodreads.com/book/show/{{ item.goodreads_id }}">Goodreads</a>
+{% elif item.isbn %}
+&middot; <a href="https://goodreads.com/search?q={{ item.isbn }}">Goodreads</a>
+{% elif item.asin %}
+&middot; <a href="https://goodreads.com/search?q={{ item.asin }}">Goodreads</a>
+{% endif %}
+{% if item.asin %}&middot; <a href="https://amazon.co.uk/dp/{{ item.asin }}">Amazon</a>{% endif %}
+)</small></li>
+{% endfor %}
+</ul>
+{% endfor %}
+{% else %}
+<ul>
+{% for i in range(1, 9) %}
+<li><a href="/report/{{ i }}">{{ i }}</a></li>
+{% endfor %}
+</ul>
+
+{% endif %}
+{% endblock %}

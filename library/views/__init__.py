@@ -163,3 +163,45 @@ def import_book(request, query=None):
             "books/import.html",
             {"query": query, "goodreads_result": goodreads_result},
         )
+
+
+def report(request, page=None):
+    categories = {}
+    if page:
+        owned_books = Book.objects.filter(owned=True)
+
+    if page == 1:
+        categories["Missing ISBN"] = owned_books.filter(isbn="", asin="")
+    elif page == 2:
+        categories["Missing ASIN"] = (
+            owned_books.filter(edition_format=3, asin="")
+            .exclude(publisher="Verso")
+            .exclude(publisher="Pluto")
+            .exclude(publisher="Haymarket")
+        )
+    elif page == 3:
+        categories["Messy Publisher"] = Book.objects.filter(
+            Q(publisher__endswith="Books") | Q(publisher__endswith="Press")
+        ).exclude(publisher__contains="University")
+    elif page == 4:
+        categories["Missing Goodreads"] = Book.objects.filter(goodreads_id="")
+    elif page == 5:
+        categories["Missing Image"] = owned_books.filter(image_url="")
+    elif page == 5:
+        categories["Missing Publisher"] = owned_books.filter(publisher="")
+    elif page == 6:
+        categories["Missing Publisher URL"] = owned_books.filter(
+            publisher_url=""
+        ).filter(Q(publisher="Verso") | Q(publisher="Pluto") | Q(publisher="Haymarket"))
+    elif page == 7:
+        categories["Missing Page Count"] = owned_books.filter(
+            Q(page_count=0) | Q(page_count__isnull=True)
+        )
+    elif page == 8:
+        categories["Missing Publication Date"] = Book.objects.filter(
+            Q(first_published=0) | Q(first_published__isnull=True)
+        )
+
+    return render(
+        request, "books/report.html", {"categories": categories, "page": page}
+    )
