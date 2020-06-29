@@ -1,33 +1,19 @@
 {% extends "base.html" %}
 {% block content %}
 
-{% for tag, count in tags['all'].items() %}
-{% if count %}
-<a class="badge badge-secondary" href="{{ url("library:tag_details", args=[tag]) }}">{{ tag }}: {{ count }}</a>
-{% endif %}
+{% for genre in ["all", "fiction", "non-fiction"] %}
+<h3>{{ genre.title() }}</h3>
+  {% for tag, count in tags[genre].items() %}
+    {% if count %}
+      {% if tag == "no other tags" %}
+        <a class="badge badge-secondary" href="{{ url("library:tag_details", args=[genre + "!"]) }}">{{ tag }}: {{ count }}</a>
+      {% else %}
+        <a class="badge badge-{% if tag == genre %}info{% else%}secondary{% endif %}" href="{{ url("library:tag_details", args=[tag]) }}{% if tag != genre %}?tags={{ genre }}{% endif %}">{{ tag }}: {{ count }}</a>
+      {% endif %}
+    {% endif %}
+  {% endfor %}
 {% endfor %}
-<a class="badge badge-secondary" href="{{ url("library:tag_details", args=['untagged']) }}">untagged: {{ tags['untagged'] }}</a>
-
-<h3>Fiction</h3>
-{% for tag, count in tags['fiction'].items() %}
-{% if count %}
-{% if tag == "no other tags" %}
-<a class="badge badge-secondary" href="{{ url("library:tag_details", args=["fiction!"]) }}">{{ tag }}: {{ count }}</a>
-{% else %}
-<a class="badge badge-secondary" href="{{ url("library:tag_details", args=[tag]) }}{% if tag != "fiction" %}?tags=fiction{% endif %}">{{ tag }}: {{ count }}</a>
+{% if genre == "all" and tags["untagged"] %}
+  <a class="badge badge-secondary" href="{{ url("library:tag_details", args=["untagged"]) }}">untagged: {{ tags["untagged"] }}</a>
 {% endif %}
-{% endif %}
-{% endfor %}
-
-<h3>Non-fiction</h3>
-{% for tag, count in tags['non-fiction'].items() %}
-{% if count %}
-{% if tag == "no other tags" %}
-<a class="badge badge-secondary" href="{{ url("library:tag_details", args=["non-fiction!"]) }}">{{ tag }}: {{ count }}</a>
-{% else %}
-<a class="badge badge-secondary" href="{{ url("library:tag_details", args=[tag]) }}{% if tag != "non-fiction" %}?tags=non-fiction{% endif %}">{{ tag }}: {{ count }}</a>
-{% endif %}
-{% endif %}
-{% endfor %}
-
 {% endblock content %}

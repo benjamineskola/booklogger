@@ -109,9 +109,7 @@ def tag_cloud(request):
             )
         }
 
-    return render(
-        request, "tags/cloud.html", {"page_title": f"All Tags", "tags": tags},
-    )
+    return render(request, "tags/cloud.html", {"page_title": f"Tags", "tags": tags},)
 
 
 def stats(request):
