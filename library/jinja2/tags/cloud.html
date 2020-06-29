@@ -11,14 +11,22 @@
 <h3>Fiction</h3>
 {% for tag, count in tags['fiction'].items() %}
 {% if count %}
-<a class="badge badge-secondary" href="{{ url("library:tag_details", args=[tag]) }}{% if tag != "fiction" and tag != "no other tags" %}?tags=fiction{% endif %}">{{ tag }}: {{ count }}</a>
+{% if tag == "no other tags" %}
+<a class="badge badge-secondary" href="{{ url("library:tag_details", args=["fiction!"]) }}">{{ tag }}: {{ count }}</a>
+{% else %}
+<a class="badge badge-secondary" href="{{ url("library:tag_details", args=[tag]) }}{% if tag != "fiction" %}?tags=fiction{% endif %}">{{ tag }}: {{ count }}</a>
+{% endif %}
 {% endif %}
 {% endfor %}
 
 <h3>Non-fiction</h3>
 {% for tag, count in tags['non-fiction'].items() %}
 {% if count %}
-<a class="badge badge-secondary" href="{{ url("library:tag_details", args=[tag]) }}{% if tag != "non-fiction" and tag != "no other tags" %}?tags=non-fiction{% endif %}">{{ tag }}: {{ count }}</a>
+{% if tag == "no other tags" %}
+<a class="badge badge-secondary" href="{{ url("library:tag_details", args=["non-fiction!"]) }}">{{ tag }}: {{ count }}</a>
+{% else %}
+<a class="badge badge-secondary" href="{{ url("library:tag_details", args=[tag]) }}{% if tag != "non-fiction" %}?tags=non-fiction{% endif %}">{{ tag }}: {{ count }}</a>
+{% endif %}
 {% endif %}
 {% endfor %}
 

@@ -46,6 +46,8 @@ def tag_details(request, tag_name):
     tags = [tag.strip() for tag in tag_name.split(",")]
     if tags == ["untagged"]:
         condition = {"tags__len": 0}
+    elif len(tags) == 1 and tags[0].endswith("!"):
+        condition = {"tags": [tags[0][0:-1]]}
     else:
         condition = {"tags__contains": tags}
     books = (
@@ -81,11 +83,9 @@ def tag_cloud(request):
         .exclude(tags__contains=["fiction"])
         .count(),
         "non-fiction": {
-            "no other tags": Book.objects.fiction().filter(tags=["non-fiction"]).count()
+            "no other tags": Book.objects.filter(tags=["non-fiction"]).count()
         },
-        "fiction": {
-            "no other tags": Book.objects.nonfiction().filter(tags=["fiction"]).count()
-        },
+        "fiction": {"no other tags": Book.objects.filter(tags=["fiction"]).count()},
         "all": {},
     }
 
