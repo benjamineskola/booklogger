@@ -75,8 +75,8 @@ def tag_details(request, tag_name):
 
 def tag_cloud(request):
     all_tags = {
-        "fiction": [book.tags for book in Book.objects.fiction()],
-        "non-fiction": [book.tags for book in Book.objects.nonfiction()],
+        "fiction": Book.objects.fiction().values_list("tags", flat=True),
+        "non-fiction": Book.objects.nonfiction().values_list("tags", flat=True),
     }
 
     tags = {
