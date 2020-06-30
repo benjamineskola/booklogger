@@ -8,7 +8,7 @@ urlpatterns = [
     path("author/<int:pk>/", views.author.DetailView.as_view(), name="author_details"),
     path("authors/", views.author.IndexView.as_view(), name="author_list"),
     path(
-        "book/<int:pk>/",
+        "book/<slug:slug>/",
         include(
             [
                 path("", views.book.DetailView.as_view(), name="book_details"),

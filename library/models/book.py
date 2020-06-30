@@ -3,6 +3,7 @@ import re
 from typing import Any, Dict, Iterable, Optional, Sequence
 
 import requests
+import unidecode
 import xmltodict
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
@@ -111,6 +112,13 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
         book.save()
 
         return book
+
+    def regenerate_all_slugs(self) -> None:
+        qs = self.get_queryset()
+        qs.update(slug=None)
+        for book in qs:
+            book.slug = book._generate_slug()
+            book.save()
 
 
 class BookQuerySet(models.QuerySet):  # type: ignore [type-arg]
@@ -240,6 +248,8 @@ class Book(models.Model):
 
     created_date = models.DateTimeField(db_index=True, default=timezone.now)
 
+    slug = models.SlugField(null=True)
+
     def __str__(self) -> str:
         if self.editions.all() and self.edition_format:
             return (
@@ -250,7 +260,7 @@ class Book(models.Model):
             return self.citation
 
     def get_absolute_url(self) -> str:
-        return reverse("library:book_details", args=[str(self.id)])
+        return reverse("library:book_details", args=[self.slug])
 
     def get_link_data(self, **kwargs: Dict[str, Any]) -> Dict[str, str]:
         return {"url": self.get_absolute_url(), "text": self.display_title}
@@ -384,16 +394,6 @@ class Book(models.Model):
         ]
         return bool(completed_entries)
 
-    @property
-    def slug(self) -> str:
-        if self.first_author:
-            name = self.first_author.surname + "-"
-        else:
-            name = ""
-
-        name += self.title.split(":")[0]
-        return re.sub(r"[^A-Za-z0-9]+", "-", name,).lower()
-
     def add_tags(self, tags: Iterable[str]) -> None:
         for tag in tags:
             clean_tag = tag.strip().lower()
@@ -428,7 +428,11 @@ class Book(models.Model):
         self.save()
 
     def save(self, *args: Any, **kwargs: Any) -> None:
+        if not self.slug:
+            self.slug = self._generate_slug()
+
         super().save(*args, **kwargs)
+
         self.editions.all().update(
             title=self.title,
             subtitle=self.subtitle,
@@ -450,6 +454,29 @@ class Book(models.Model):
         for edition in self.editions.all():
             entries |= edition.log_entries.all()
         return entries
+
+    def _generate_slug(self) -> str:
+        slug = self.first_author.surname.lower() + "-" if self.first_author else ""
+
+        stopwords = ["a", "an", "and", "at", "in", "is", "of", "on", "to", "for", "the"]
+
+        title = self.edition_title if self.edition_title else self.title
+
+        title_words = title.split(":")[0].lower().split(" ")
+        title_words = [word for word in title_words if word not in stopwords]
+
+        slug += "-".join(title_words)
+
+        slug = unidecode.unidecode(slug)
+        slug = re.sub(r"[^\w\s-]+", "", slug)
+        slug = re.sub(r"\s+", "-", slug)
+
+        slug = slug[0:50].strip("-")
+        matches = Book.objects.filter(slug__regex=f"^{slug}(-\\d+)?$")
+        if matches:
+            slug = slug[0:48].strip("-") + "-" + str(matches.count())
+
+        return slug
 
 
 class BookAuthor(models.Model):

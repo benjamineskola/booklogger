@@ -10,4 +10,5 @@ pytest-django
 pytest-factoryboy
 PyYAML
 requests
+unidecode
 xmltodict
