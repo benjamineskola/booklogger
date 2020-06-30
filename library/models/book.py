@@ -401,9 +401,6 @@ class Book(models.Model):
                 self.tags.append(clean_tag)
         self.save()
 
-        for edition in self.editions.all():
-            edition.add_tags(tags)
-
     def create_new_edition(self, edition_format: int) -> None:
         edition = Book(
             title=self.title,
