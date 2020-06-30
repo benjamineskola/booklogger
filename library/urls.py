@@ -70,6 +70,12 @@ urlpatterns = [
         ),
     ),
     path("search/", views.basic_search, name="basic_search"),
+    path("series/", views.series_list, name="series_index"),
+    path(
+        "series/<path:series>/",
+        views.book.SeriesIndexView.as_view(),
+        name="series_details",
+    ),
     path("stats/", views.stats, name="stats"),
     path("tag/<str:tag_name>/", views.tag_details, name="tag_details"),
     path("tags/", views.tag_cloud, name="tag_cloud"),

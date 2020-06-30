@@ -126,6 +126,18 @@ class UnreadIndexView(GenericIndexView):
         return books.order_by("edition_format", *Book._meta.ordering,)
 
 
+class SeriesIndexView(GenericIndexView):
+    def get_queryset(self):
+        books = super().get_queryset()
+        books = books.filter(series=self.kwargs["series"])
+        return books
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "Books in series: " + self.kwargs["series"]
+        return context
+
+
 class DetailView(generic.DetailView):
     model = Book
     template_name = "books/details.html"

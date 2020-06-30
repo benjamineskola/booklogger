@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<p>There are a total of {{ series_count }} series.</p>
+<ul class="list-unstyled">
+  {% for series in all_series %}
+    <li>
+      <a href="{{ url("library:series_details", args=[series]) }}">{{ series }}</a>
+    </li>
+  {% endfor %}
+</ul>
+{% endblock content %}

@@ -1,4 +1,5 @@
 import os
+import re
 from random import shuffle
 
 import requests
@@ -202,4 +203,23 @@ def report(request, page=None):
 
     return render(
         request, "books/report.html", {"categories": categories, "page": page}
+    )
+
+
+def series_list(request):
+    all_series = (
+        Book.objects.exclude(series="")
+        .order_by("series")
+        .distinct("series")
+        .values_list("series", flat=True)
+    )
+    series_count = all_series.count()
+    sorted_series = sorted(
+        all_series, key=lambda s: re.sub(r"^(A|The) (.*)", r"\2, \1", s)
+    )
+
+    return render(
+        request,
+        "books/series_index.html",
+        {"all_series": sorted_series, "series_count": series_count},
     )
