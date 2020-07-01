@@ -1,6 +1,7 @@
 import re
 from typing import Any, Dict, Iterable, MutableMapping, Optional, Tuple
 
+import unidecode
 from django.contrib.postgres.search import TrigramDistance
 from django.db import models
 from django.db.models import CheckConstraint, F, Q
@@ -24,6 +25,13 @@ class AuthorManager(models.Manager):  # type: ignore
 
     def get_or_create_by_single_name(self, name: str) -> Tuple["Author", bool]:
         return Author.objects.get_or_create(**Author.normalise_name(name))
+
+    def regenerate_all_slugs(self) -> None:
+        qs = self.get_queryset()
+        qs.update(slug=None)
+        for author in qs:
+            author.slug = author._generate_slug()
+            author.save()
 
 
 class Author(models.Model):
@@ -49,6 +57,8 @@ class Author(models.Model):
     gender = models.IntegerField(choices=Gender.choices, default=0)
     poc = models.BooleanField(default=False)
 
+    slug = models.SlugField(null=True)
+
     def __str__(self) -> str:
         if not self.forenames:
             return self.surname
@@ -65,7 +75,7 @@ class Author(models.Model):
             return self.surname
 
     def get_absolute_url(self) -> str:
-        return reverse("library:author_details", args=[str(self.id)])
+        return reverse("library:author_details", args=[str(self.slug)])
 
     def get_link_data(
         self, book: Optional[Book] = None, **kwargs: Dict[str, Any]
@@ -148,3 +158,22 @@ class Author(models.Model):
         forenames = " ".join(words)
 
         return {"surname": surname, "forenames": forenames}
+
+    def _generate_slug(self) -> str:
+        slug = self.name_with_initials.lower()
+        slug = unidecode.unidecode(slug)
+        slug = re.sub(r"[^\w\s-]+", "", slug)
+        slug = re.sub(r"\s+", "-", slug)
+
+        slug = slug[0:50].strip("-")
+        matches = Author.objects.filter(slug__regex=f"^{slug}(-\\d+)?$")
+        if matches:
+            slug = slug[0:48].strip("-") + "-" + str(matches.count())
+
+        return slug
+
+    def save(self, *args: Any, **kwargs: Any) -> None:
+        if not self.slug:
+            self.slug = self._generate_slug()
+
+        super().save(*args, **kwargs)

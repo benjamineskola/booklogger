@@ -5,7 +5,9 @@ from . import views
 app_name = "library"
 urlpatterns = [
     path("", views.book.CurrentlyReadingView.as_view(), name="index"),
-    path("author/<int:pk>/", views.author.DetailView.as_view(), name="author_details"),
+    path(
+        "author/<slug:slug>/", views.author.DetailView.as_view(), name="author_details"
+    ),
     path("authors/", views.author.IndexView.as_view(), name="author_list"),
     path(
         "book/<slug:slug>/",
