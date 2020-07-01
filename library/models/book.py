@@ -115,7 +115,7 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
 
     def regenerate_all_slugs(self) -> None:
         qs = self.get_queryset()
-        qs.update(slug=None)
+        qs.update(slug="")
         for book in qs:
             book.slug = book._generate_slug()
             book.save()

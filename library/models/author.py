@@ -28,7 +28,7 @@ class AuthorManager(models.Manager):  # type: ignore
 
     def regenerate_all_slugs(self) -> None:
         qs = self.get_queryset()
-        qs.update(slug=None)
+        qs.update(slug="")
         for author in qs:
             author.slug = author._generate_slug()
             author.save()
