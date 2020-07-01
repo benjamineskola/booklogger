@@ -9,6 +9,8 @@ urlpatterns = [
         "author/<slug:slug>/", views.author.DetailView.as_view(), name="author_details"
     ),
     path("authors/", views.author.IndexView.as_view(), name="author_list"),
+    path("book/import/", views.import_book, name="book_import"),
+    path("book/import/<str:query>/", views.import_book, name="book_import"),
     path(
         "book/<slug:slug>/",
         include(
@@ -23,8 +25,6 @@ urlpatterns = [
             ]
         ),
     ),
-    path("book/import/", views.import_book, name="book_import"),
-    path("book/import/<str:query>/", views.import_book, name="book_import"),
     path(
         "books/",
         include(
