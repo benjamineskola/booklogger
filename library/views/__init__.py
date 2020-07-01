@@ -5,7 +5,7 @@ from random import shuffle
 import requests
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
@@ -209,13 +209,13 @@ def report(request, page=None):
 def series_list(request):
     all_series = (
         Book.objects.exclude(series="")
+        .values_list("series")
+        .annotate(count=Count("series"))
         .order_by("series")
-        .distinct("series")
-        .values_list("series", flat=True)
     )
     series_count = all_series.count()
     sorted_series = sorted(
-        all_series, key=lambda s: re.sub(r"^(A|The) (.*)", r"\2, \1", s)
+        all_series, key=lambda s: re.sub(r"^(A|The) (.*)", r"\2, \1", s[0])
     )
 
     return render(

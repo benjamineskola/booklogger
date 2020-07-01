@@ -2,9 +2,9 @@
 {% block content %}
 <p>There are a total of {{ series_count }} series.</p>
 <ul class="list-unstyled">
-  {% for series in all_series %}
+  {% for series, count in all_series %}
     <li>
-      <a href="{{ url("library:series_details", args=[series]) }}">{{ series }}</a>
+      <a href="{{ url("library:series_details", args=[series]) }}">{{ series }}</a> <span class="text-muted">({{ count }} book{% if count > 1 %}s{% endif %})</span>
     </li>
   {% endfor %}
 </ul>
