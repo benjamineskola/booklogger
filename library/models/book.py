@@ -248,7 +248,7 @@ class Book(models.Model):
 
     created_date = models.DateTimeField(db_index=True, default=timezone.now)
 
-    slug = models.SlugField(null=True)
+    slug = models.SlugField(blank=True, default="")
 
     def __str__(self) -> str:
         if self.editions.all() and self.edition_format:

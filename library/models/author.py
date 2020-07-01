@@ -57,7 +57,7 @@ class Author(models.Model):
     gender = models.IntegerField(choices=Gender.choices, default=0)
     poc = models.BooleanField(default=False)
 
-    slug = models.SlugField(null=True)
+    slug = models.SlugField(blank=True, default="")
 
     def __str__(self) -> str:
         if not self.forenames:
