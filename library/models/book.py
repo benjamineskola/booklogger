@@ -457,6 +457,7 @@ class Book(models.Model):
 
     def _generate_slug(self) -> str:
         slug = self.first_author.surname.lower() + "-" if self.first_author else ""
+        slug = "-".join(slug.split(" "))
 
         stopwords = ["a", "an", "and", "at", "in", "is", "of", "on", "to", "for", "the"]
 
@@ -468,8 +469,7 @@ class Book(models.Model):
         slug += "-".join(title_words)
 
         slug = unidecode.unidecode(slug)
-        slug = re.sub(r"[^\w\s-]+", "", slug)
-        slug = re.sub(r"\s+", "-", slug)
+        slug = re.sub(r"[^\w-]+", "", slug)
 
         slug = slug[0:50].strip("-")
         matches = Book.objects.filter(slug__regex=f"^{slug}(-\\d+)?$")

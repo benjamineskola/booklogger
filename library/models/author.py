@@ -160,10 +160,9 @@ class Author(models.Model):
         return {"surname": surname, "forenames": forenames}
 
     def _generate_slug(self) -> str:
-        slug = self.name_with_initials.lower()
+        slug = "-".join(self.name_with_initials.lower().split(" "))
         slug = unidecode.unidecode(slug)
-        slug = re.sub(r"[^\w\s-]+", "", slug)
-        slug = re.sub(r"\s+", "-", slug)
+        slug = re.sub(r"[^\w-]+", "", slug)
 
         slug = slug[0:50].strip("-")
         matches = Author.objects.filter(slug__regex=f"^{slug}(-\\d+)?$")
