@@ -54,9 +54,18 @@
 
     {% if book.google_books_id %}
     <dt>Google</dt><dd><a href="https://books.google.co.uk/books?id={{ book.google_books_id }}">{{ book.google_books_id }}</a></dd>
+    {% elif book.isbn %}
+    <dt>Google</dt><dd><a href="https://www.googleapis.com/books/v1/volumes?q=isbn:{{ book.isbn }}">{{ book.isbn }}</a></dd>
+    {% else %}
+    <dt>Google</dt><dd><a href="https://www.googleapis.com/books/v1/volumes?q={{ book.title | urlencode }}%20{{ book.first_author | urlencode }}">search</a></dd>
     {% endif %}
+
     {% if book.asin %}
     <dt>Amazon</dt><dd><a href="https://amazon.co.uk/dp/{{ book.asin }}">{{ book.asin }}</a></dd>
+    {% elif book.isbn10 %}
+    <dt>Amazon</dt><dd><a href="https://amazon.co.uk/dp/{{ book.isbn10 }}">{{ book.isbn10 }}</a>
+    or
+    <a href="https://www.amazon.co.uk/s?k={{ book.title | urlencode }}%20{{ book.first_author | urlencode }}&i=stripbooks">search</a></dd>
     {% endif %}
     <dt>ISBN</dt><dd>{{ book.isbn }}</dd>
   </div>

@@ -478,6 +478,15 @@ class Book(models.Model):
 
         return slug
 
+    @property
+    def isbn10(self) -> Optional[str]:
+        if not self.isbn or len(self.isbn) != 13 or not self.isbn.startswith("978"):
+            return None
+
+        new_isbn = [int(i) for i in self.isbn[3:-1]]
+        check_digit = 11 - sum([(10 - i) * new_isbn[i] for i in range(9)]) % 11
+        return "".join([str(i) for i in new_isbn]) + str(check_digit)
+
 
 class BookAuthor(models.Model):
     class Meta:
