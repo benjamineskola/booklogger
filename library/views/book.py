@@ -245,7 +245,7 @@ def add_tags(request, slug):
 
 @login_required
 def edit(request, slug):
-    book = Book.objects.get(slug=slug)
+    book = get_object_or_404(Book, slug=slug)
     if request.method == "POST":
         form = BookForm(request.POST, instance=book)
         if form.is_valid():

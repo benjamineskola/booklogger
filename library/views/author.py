@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views import generic
 
 from library.forms import AuthorForm
@@ -30,7 +30,7 @@ class IndexView(generic.ListView):
 
 @login_required
 def edit(request, slug):
-    author = Author.objects.get(slug=slug)
+    author = get_object_or_404(Author, slug=slug)
     if request.method == "POST":
         form = AuthorForm(request.POST, instance=author)
         if form.is_valid():
