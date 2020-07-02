@@ -14,5 +14,5 @@
 <h2>Books</h2>
 {% set items = author.books %}
 {% include "books/card_loop.html" %}
-<a href="{{ url('admin:library_author_change', args=[author.id]) }}">edit</a>
+<a href="{{ url('library:author_edit', args=[author.slug]) }}">edit</a>
 {% endblock content %}

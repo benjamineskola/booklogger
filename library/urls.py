@@ -5,8 +5,15 @@ from . import views
 app_name = "library"
 urlpatterns = [
     path("", views.book.CurrentlyReadingView.as_view(), name="index"),
+    path("author/new/", views.author.new, name="author_new"),
     path(
-        "author/<slug:slug>/", views.author.DetailView.as_view(), name="author_details"
+        "author/<slug:slug>/",
+        include(
+            [
+                path("", views.author.DetailView.as_view(), name="author_details"),
+                path("edit", views.author.edit, name="author_edit"),
+            ]
+        ),
     ),
     path("authors/", views.author.IndexView.as_view(), name="author_list"),
     path("book/import/", views.import_book, name="book_import"),
