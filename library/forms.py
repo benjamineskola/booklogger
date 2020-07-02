@@ -21,5 +21,12 @@ class BookForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(BookForm, self).__init__(*args, **kwargs)
+        if "instance" in kwargs:
+            self.fields["editions"].queryset = Book.objects.filter(
+                first_author=kwargs["instance"].first_author
+            )
+        else:
+            self._meta.exclude += "editions"
+
         for field in self.fields:
             self.fields[field].widget.attrs.update({"class": "form-control col-8"})
