@@ -185,7 +185,10 @@ class Book(models.Model):
         db_index=True, max_length=255, blank=True, default=""
     )
     additional_authors = models.ManyToManyField(
-        Author, through="BookAuthor", related_name="additional_authored_books"
+        Author,
+        through="BookAuthor",
+        related_name="additional_authored_books",
+        blank=True,
     )
 
     class Format(models.IntegerChoices):

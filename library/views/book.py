@@ -5,10 +5,12 @@ from django.core.exceptions import PermissionDenied
 from django.db.models import F
 from django.db.models.expressions import RawSQL
 from django.db.models.functions import Lower
+from django.forms import modelform_factory
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import generic
 from django.views.decorators.http import require_POST
 
+from library.forms import BookForm
 from library.models import Author, Book, BookAuthor, LogEntry
 
 
@@ -239,3 +241,38 @@ def add_tags(request, slug):
         return redirect(next)
     else:
         return redirect("library:book_details", slug=slug)
+
+
+@login_required
+def edit(request, slug):
+    book = Book.objects.get(slug=slug)
+    if request.method == "POST":
+        form = BookForm(request.POST, instance=book)
+        if form.is_valid():
+            form.save()
+            return redirect("library:book_details", slug=slug)
+        else:
+            return render(
+                request, "edit_form.html", {"form": form, "item": book, "type": "book"}
+            )
+    else:
+        form = BookForm(instance=book)
+
+        return render(
+            request, "edit_form.html", {"form": form, "item": book, "type": "book"}
+        )
+
+
+@login_required
+def new(request):
+    if request.method == "POST":
+        form = BookForm(request.POST)
+        if form.is_valid():
+            book = form.save()
+            return redirect("library:book_details", slug=book.slug)
+        else:
+            return redirect("library:book_new")
+    else:
+        form = BookForm()
+
+        return render(request, "edit_form.html", {"form": form, "type": "book"})

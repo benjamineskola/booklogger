@@ -138,6 +138,8 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 
+LOGIN_URL = "/admin/login/"
+
 
 if os.environ.get("DYNO"):
     import django_heroku

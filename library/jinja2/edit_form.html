@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+{% if item %}
+<h2>Editing {{ item }}</h2>
+{% else %}
+<h2>Creating {{ type }}</h2>
+{% endif %}
+
+<form method="post">
+  <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+{% for field in form %}
+<div class="form-group">
+<label for="{{field.id_for_label}}">{{ field.label_tag() }} {% if field.field.required %}(required){% endif %}</label> {{ field }}
+</div>
+{% endfor %}
+<div class="form-group">
+  <input type="submit" value="Submit">
+</div>
+</form>
+
+{% if item %}
+<a href="{{ url("admin:library_" + type + "_change", args=[item.id]) }}">Advanced</a>
+{% endif %}
+{% endblock content %}
