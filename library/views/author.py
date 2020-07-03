@@ -34,8 +34,8 @@ def edit(request, slug):
     if request.method == "POST":
         form = AuthorForm(request.POST, instance=author)
         if form.is_valid():
-            form.save()
-            return redirect("library:author_details", slug=slug)
+            author = form.save()
+            return redirect("library:author_details", slug=author.slug)
         else:
             return render(
                 request,

@@ -270,8 +270,8 @@ def edit(request, slug):
     if request.method == "POST":
         form = BookForm(request.POST, instance=book)
         if form.is_valid():
-            form.save()
-            return redirect("library:book_details", slug=slug)
+            book = form.save()
+            return redirect("library:book_details", slug=book.slug)
         else:
             return render(
                 request, "edit_form.html", {"form": form, "item": book, "type": "book"}
