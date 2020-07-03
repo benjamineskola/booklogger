@@ -7,8 +7,10 @@
   {% if books_by_year[year]['count'] > 0 %}
   {% set year_books = books_by_year[year] %}
 
-  {% if year in ["total", "!undated"] %}
+  {% if year == "total" %}
   {% set url_base = url("library:books_read") %}
+  {% elif year == "!undated" %}
+  {% set url_base = url("library:books_read_undated") %}
   {% else %}
   {% set url_base = url("library:books_read", args=[year]) %}
   {% endif %}

@@ -199,6 +199,20 @@ class ReadView(GenericLogView):
     page_title = "Read Books"
 
 
+class UndatedReadView(GenericIndexView):
+    page_title = "Undated Read Books"
+
+    def get_queryset(self, *args, **kwargs):
+        items = (
+            super()
+            .get_queryset(*args, **kwargs)
+            .filter(want_to_read=False)
+            .exclude(log_entries__isnull=False)
+            .exclude(editions__log_entries__isnull=False)
+        )
+        return items
+
+
 @login_required
 @require_POST
 def start_reading(request, slug):

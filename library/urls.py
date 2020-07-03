@@ -60,6 +60,11 @@ urlpatterns = [
                     "read/<int:year>/", views.book.ReadView.as_view(), name="books_read"
                 ),
                 path(
+                    "read/undated/",
+                    views.book.UndatedReadView.as_view(),
+                    name="books_read_undated",
+                ),
+                path(
                     "reading/",
                     views.book.CurrentlyReadingView.as_view(),
                     name="books_currently_reading",

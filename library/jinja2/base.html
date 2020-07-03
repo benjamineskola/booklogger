@@ -68,7 +68,7 @@
       </div>
     </main>
 
-    {% if page_obj  and page_obj.paginator.num_pages > 1 %}
+    {% if page_obj and page_obj.paginator and page_obj.paginator.num_pages > 1 %}
     {% set params = request.GET.copy() %}
     {% if 'page' in params %}
     {% set ignored = params.pop('page') %}
