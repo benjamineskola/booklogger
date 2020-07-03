@@ -273,6 +273,12 @@ def report(request, page=None):
                 Q(first_published=0) | Q(first_published__isnull=True)
             ),
         ),
+        (
+            "Ebook edition without ISBN or ASIN",
+            lambda: owned_books.filter(has_ebook_edition=True).filter(
+                ebook_isbn="", ebook_asin=""
+            ),
+        ),
     ]
 
     results = None
