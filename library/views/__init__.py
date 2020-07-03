@@ -113,11 +113,69 @@ def tag_cloud(request):
     return render(request, "tags/cloud.html", {"page_title": f"Tags", "tags": tags},)
 
 
+def _stats_for_queryset(books):
+    fiction = books.fiction()
+    nonfiction = books.nonfiction()
+    result = {
+        "count": books.count(),
+        "men": books.by_men().count(),
+        "women": books.by_women().count(),
+        "both": books.by_women().by_men().count(),
+        "neither": books.exclude(first_author__gender=1)
+        .exclude(first_author__gender=2)
+        .count(),
+        "fiction": fiction.count(),
+        "nonfiction": nonfiction.count(),
+        "breakdowns": {},
+    }
+    for gender, i in [("men", 1), ("women", 2)]:
+        gender_fiction = fiction.by_gender(i)
+        gender_nonfiction = nonfiction.by_gender(i)
+
+        result["breakdowns"][gender] = {
+            "fiction_count": gender_fiction.count(),
+            "percentage_fiction": gender_fiction.count() / max(1, result[gender]) * 100,
+            "nonfiction_count": gender_nonfiction.count(),
+            "percentage_nonfiction": gender_nonfiction.count()
+            / max(1, result[gender])
+            * 100,
+        }
+    for genre in ["fiction", "non-fiction"]:
+        genre_books = books.filter(tags__contains=[genre])
+        result["breakdowns"][genre] = {
+            "men_count": genre_books.by_men().count(),
+            "women_count": genre_books.by_women().count(),
+            f"percentage_men": genre_books.by_men().count()
+            / max(1, genre_books.count())
+            * 100,
+            f"percentage_women": genre_books.by_women().count()
+            / max(1, genre_books.count())
+            * 100,
+        }
+    return result
+
+
 def stats(request):
     books = Book.objects.all()
     owned = books.filter(owned=True)
     read_books = books.filter(want_to_read=False) | books.filter(
         log_entries__isnull=False
+    )
+
+    books_by_year = {}  # {"all": {"books": books, "count": books.count()}}
+
+    for year in (
+        LogEntry.objects.exclude(end_date__isnull=True)
+        .distinct("end_date__year")
+        .values_list("end_date__year", flat=True)
+    ):
+        books_by_year[str(year)] = _stats_for_queryset(
+            books.filter(log_entries__end_date__year=year)
+        )
+
+    books_by_year["total"] = _stats_for_queryset(read_books)
+    books_by_year["!undated"] = _stats_for_queryset(
+        read_books.exclude(log_entries__isnull=False)
     )
 
     current_year = timezone.now().year
@@ -126,19 +184,19 @@ def stats(request):
     year_days = (last_day - first_day).days
     current_day = (timezone.datetime.now() - first_day).days
     current_week = (current_day // 7) + 1
-    current_year_books = books.filter(log_entries__end_date__year=current_year)
-    predicted_books = current_year_books.count() / current_day * year_days
+    current_year_count = books.filter(log_entries__end_date__year=current_year).count()
+    predicted_count = current_year_count / current_day * year_days
+
     return render(
         request,
         "stats.html",
         {
             "page_title": f"Library Stats",
-            "books": books,
-            "owned": owned,
-            "read": read_books,
+            "owned": owned.count(),
             "current_year": current_year,
             "current_week": current_week,
-            "predicted_books": predicted_books,
+            "predicted_count": predicted_count,
+            "books_by_year": books_by_year,
         },
     )
 
