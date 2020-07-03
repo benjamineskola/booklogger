@@ -68,6 +68,16 @@
     <a href="https://www.amazon.co.uk/s?k={{ book.title | urlencode }}%20{{ book.first_author | urlencode }}&i=stripbooks">search</a></dd>
     {% endif %}
     <dt>ISBN</dt><dd>{{ book.isbn }}</dd>
+
+    {% if book.has_ebook_edition %}
+      <dt>Ebook Edition</dt><dd>{{ book.ebook_acquired_date }}</dd>
+      {% if book.ebook_asin %}
+      <dt>Amazon</dt><dd><a href="https://amazon.co.uk/dp/{{ book.asin }}">{{ book.asin }}</a></dd>
+      {% endif %}
+      {% if book.ebook_asin %}
+      <dt>Ebook ISBN</dt><dd>{{ book.ebook_isbn }}</dd>
+      {% endif %}
+    {% endif %}
   </div>
 
   <div class="col">

@@ -247,6 +247,11 @@ class Book(models.Model):
         null=True,
     )
 
+    has_ebook_edition = models.BooleanField(default=False)
+    ebook_isbn = models.CharField(max_length=13, blank=True)
+    ebook_asin = models.CharField(max_length=255, blank=True)
+    ebook_acquired_date = models.DateField(blank=True, null=True)
+
     editions = models.ManyToManyField("self", symmetrical=True, blank=True)
 
     created_date = models.DateTimeField(db_index=True, default=timezone.now)

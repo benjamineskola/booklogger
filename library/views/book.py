@@ -2,8 +2,7 @@ from itertools import groupby
 
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-from django.db.models import F
-from django.db.models.expressions import RawSQL
+from django.db.models import F, Q
 from django.db.models.functions import Lower
 from django.forms import modelform_factory
 from django.shortcuts import get_object_or_404, redirect, render
@@ -31,11 +30,19 @@ class GenericIndexView(generic.ListView):
             books = books.filter(**self.filter_by)
 
         if edition_format := self.kwargs.get("format"):
+            print(edition_format)
+            print(Book.Format["EBOOK"])
             edition_format = edition_format.strip("s").upper()
             if edition_format == "PHYSICAL":
                 books = books.filter(
-                    edition_format=Book.Format["PAPERBACK"]
-                ) | books.filter(edition_format=Book.Format["HARDBACK"])
+                    Q(edition_format=Book.Format["PAPERBACK"])
+                    | Q(edition_format=Book.Format["HARDBACK"])
+                )
+            elif edition_format == "EBOOK":
+                books = books.filter(
+                    Q(edition_format=Book.Format[edition_format])
+                    | Q(has_ebook_edition=True)
+                )
             else:
                 books = books.filter(edition_format=Book.Format[edition_format])
 

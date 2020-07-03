@@ -57,6 +57,9 @@
 
         {% if book.edition_format and (book.owned or book.was_borrowed or book.currently_reading) %}
           <a href="{{ url("library:books_owned", args=[book.get_edition_format_display().lower()]) }}" class="badge badge-info">{{ book.get_edition_format_display() | lower }}</a>
+          {% if book.get_edition_format_display().lower() != "ebook" and book.has_ebook_edition %}
+          <a href="{{ url("library:books_owned", args=["ebook"]) }}" class="badge badge-info">ebook</a>
+          {% endif %}
         {% endif %}
 
         {% if book.currently_reading %}
