@@ -210,7 +210,7 @@ def import_book(request, query=None):
 
     if query and request.method == "POST":
         book = Book.objects.create_from_goodreads(query)
-        return redirect("library:book_edit", args=[book.slug])
+        return redirect("library:book_edit", slug=book.slug)
     else:
         goodreads_result = None
         if query:
