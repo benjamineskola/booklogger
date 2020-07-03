@@ -259,7 +259,12 @@ class Book(models.Model):
     slug = models.SlugField(blank=True, default="")
 
     def __str__(self) -> str:
-        if self.editions.all() and self.edition_format:
+        if (
+            self.editions.count()
+            and self.edition_format
+            and self.edition_title
+            in self.editions.all().values_list("edition_title", flat=True)
+        ):
             return (
                 self.citation
                 + f" ({self.get_edition_format_display().lower()} edition)"

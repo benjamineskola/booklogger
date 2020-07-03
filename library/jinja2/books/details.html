@@ -70,7 +70,7 @@
     <dt>ISBN</dt><dd>{{ book.isbn }}</dd>
 
     {% if book.has_ebook_edition %}
-      <dt>Ebook Edition</dt><dd>{{ book.ebook_acquired_date }}</dd>
+      <dt>Ebook Acquired</dt><dd>{{ book.ebook_acquired_date or "Unknown" }}</dd>
       {% if book.ebook_asin %}
       <dt>Amazon</dt><dd><a href="https://amazon.co.uk/dp/{{ book.asin }}">{{ book.asin }}</a></dd>
       {% endif %}
