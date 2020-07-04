@@ -30,8 +30,6 @@ class GenericIndexView(generic.ListView):
             books = books.filter(**self.filter_by)
 
         if edition_format := self.kwargs.get("format"):
-            print(edition_format)
-            print(Book.Format["EBOOK"])
             edition_format = edition_format.strip("s").upper()
             if edition_format == "PHYSICAL":
                 books = books.filter(
@@ -78,7 +76,6 @@ class IndexView(GenericIndexView):
 class OwnedIndexView(GenericIndexView):
     filter_by = {"owned": True}
     page_title = "Owned Books"
-    template_name = "books/list_by_format.html"
 
     def get_queryset(self):
         return super().get_queryset().order_by("edition_format", *Book._meta.ordering)
@@ -123,7 +120,6 @@ class BorrowedIndexView(GenericIndexView):
 class UnreadIndexView(GenericIndexView):
     filter_by = {"want_to_read": True}
     page_title = "Unread Books"
-    template_name = "books/list_by_format.html"
 
     def get_queryset(self):
         books = super().get_queryset()

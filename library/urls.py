@@ -44,6 +44,11 @@ urlpatterns = [
                     views.book.BorrowedIndexView.as_view(),
                     name="books_borrowed",
                 ),
+                path(
+                    "borrowed/<str:format>/",
+                    views.book.BorrowedIndexView.as_view(),
+                    name="books_borrowed",
+                ),
                 path("owned/", views.book.OwnedIndexView.as_view(), name="books_owned"),
                 path(
                     "owned/bydate/",
@@ -81,6 +86,14 @@ urlpatterns = [
                     "unowned/",
                     views.book.UnownedIndexView.as_view(),
                     name="books_unowned",
+                ),
+                path(
+                    "unowned/<str:format>/",
+                    views.book.UnownedIndexView.as_view(),
+                    name="books_unowned",
+                ),
+                path(
+                    "<str:format>/", views.book.IndexView.as_view(), name="books_all",
                 ),
             ]
         ),
