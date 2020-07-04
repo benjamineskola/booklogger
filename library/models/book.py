@@ -98,7 +98,7 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
         book = Book(
             title=goodreads_book["title"],
             goodreads_id=goodreads_book["id"]["#text"],
-            first_published=result["original_publication_year"]["#text"],
+            first_published=result["original_publication_year"].get("#text"),
         )
 
         if not "nophoto" in goodreads_book["image_url"]:
