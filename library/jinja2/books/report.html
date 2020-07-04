@@ -5,7 +5,7 @@
 <ul>
 {% for item in results %}
 <li><a href="{{ item.get_absolute_url() }}">{{ item }}</a> <small>(
-<a href="{{ url('admin:library_book_change', args=[item.id]) }}">edit</a>
+<a href="{{ url('library:book_edit', args=[item.slug]) }}">edit</a>
 {% if item.goodreads_id %}
 &middot; <a href="https://goodreads.com/book/show/{{ item.goodreads_id }}">Goodreads</a>
 {% elif item.isbn %}
