@@ -274,13 +274,27 @@ def edit(request, slug):
             return redirect("library:book_details", slug=book.slug)
         else:
             return render(
-                request, "edit_form.html", {"form": form, "item": book, "type": "book"}
+                request,
+                "edit_form.html",
+                {
+                    "form": form,
+                    "item": book,
+                    "type": "book",
+                    "page_title": f"Editing {book}",
+                },
             )
     else:
         form = BookForm(instance=book)
 
         return render(
-            request, "edit_form.html", {"form": form, "item": book, "type": "book"}
+            request,
+            "edit_form.html",
+            {
+                "form": form,
+                "item": book,
+                "type": "book",
+                "page_title": f"Editing {book}",
+            },
         )
 
 
@@ -296,4 +310,8 @@ def new(request):
     else:
         form = BookForm()
 
-        return render(request, "edit_form.html", {"form": form, "type": "book"})
+        return render(
+            request,
+            "edit_form.html",
+            {"form": form, "type": "book", "page_title": "New book"},
+        )

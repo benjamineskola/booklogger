@@ -40,13 +40,25 @@ def edit(request, slug):
             return render(
                 request,
                 "edit_form.html",
-                {"form": form, "item": author, "type": "author"},
+                {
+                    "form": form,
+                    "item": author,
+                    "type": "author",
+                    "page_title": f"Editing {author}",
+                },
             )
     else:
         form = AuthorForm(instance=author)
 
         return render(
-            request, "edit_form.html", {"form": form, "item": author, "type": "author"}
+            request,
+            "edit_form.html",
+            {
+                "form": form,
+                "item": author,
+                "type": "author",
+                "page_title": f"Editing {author}",
+            },
         )
 
 
@@ -62,4 +74,8 @@ def new(request):
     else:
         form = AuthorForm()
 
-        return render(request, "edit_form.html", {"form": form, "type": "author"})
+        return render(
+            request,
+            "edit_form.html",
+            {"form": form, "type": "author", "page_title": "New author"},
+        )
