@@ -272,12 +272,18 @@ class Book(models.Model):
             and self.edition_title
             in self.editions.all().values_list("edition_title", flat=True)
         ):
-            return (
-                self.citation
-                + f" ({self.get_edition_format_display().lower()} edition)"
-            )
+            return self.citation + f" ({self.get_edition_disambiguator()} edition)"
         else:
             return self.citation
+
+    def get_edition_disambiguator(self) -> str:
+        if self.editions.exclude(edition_language=self.edition_language).count():
+            if self.edition_language:
+                return self.get_edition_language_display()
+            else:
+                return self.get_language_display()
+        else:
+            return self.get_edition_format_display().lower()
 
     def get_absolute_url(self) -> str:
         return reverse("library:book_details", args=[self.slug])

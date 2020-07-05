@@ -103,7 +103,7 @@
   {% for entry in book.all_log_entries %}
     <li>{% include "logentries/date_snippet.html" %}
     {% if entry not in book.log_entries.all() %}
-    (<a href="{{ url('library:book_details', args=[entry.book.pk]) }}">{{ entry.book.get_edition_format_display().lower() }} edition</a>)
+    (<a href="{{ url('library:book_details', args=[entry.book.pk]) }}">{{ entry.book.get_edition_disambiguator() }} edition</a>)
     {% endif %}
     <li>
   {% else %}
@@ -121,7 +121,7 @@
     <h3>Other Editions</h3>
     <ul>
     {% for edition in book.editions.all() %}
-    <li>{{ edition | get_hyperlink }} ({{ edition.get_edition_format_display() }} edition)</li>
+    <li>{{ edition | get_hyperlink }} ({{ edition.get_edition_disambiguator() }} edition)</li>
     {% endfor %}
     </ul>
   </div>
