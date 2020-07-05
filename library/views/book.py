@@ -2,7 +2,7 @@ from itertools import groupby
 
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-from django.db.models import F, Q
+from django.db.models import Count, F, Q
 from django.db.models.functions import Lower
 from django.forms import modelform_factory
 from django.shortcuts import get_object_or_404, redirect, render
@@ -58,13 +58,12 @@ class GenericIndexView(generic.ListView):
         context["formats"] = Book.Format.choices
         context["format"] = self.kwargs.get("format")
         context["total"] = self.get_queryset().count()
-        context["counts"] = {
-            x: len(list(y))
-            for x, y in groupby(
-                self.get_queryset().order_by("edition_format", *Book._meta.ordering),
-                lambda b: b.edition_format,
-            )
-        }
+        context["counts"] = dict(
+            self.get_queryset()
+            .values_list("edition_format")
+            .annotate(count=Count("edition_format"))
+            .order_by("edition_format")
+        )
         context["page_title"] = self.page_title + f" ({context['total']})"
         return context
 
