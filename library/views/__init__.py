@@ -157,7 +157,7 @@ def _stats_for_queryset(books):
 
 def stats(request):
     books = Book.objects.all()
-    owned = books.filter(owned=True)
+    owned = books.filter(owned_by__username="ben")
     read_books = books.filter(want_to_read=False) | books.filter(
         log_entries__isnull=False
     )
@@ -284,7 +284,7 @@ def report(request, page=None):
     results = None
 
     if page:
-        owned_books = Book.objects.filter(owned=True)
+        owned_books = Book.objects.filter(owned_by__isnull=False)
         results = categories[page - 1][1]()
 
     return render(

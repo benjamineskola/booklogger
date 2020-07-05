@@ -47,7 +47,7 @@
 
         {% if book.owned %}
           <a href="{{ url("library:books_owned") }}" class="badge badge-info">owned</a>
-        {% elif book.was_borrowed and book.borrowed_from == 'Sara' %}
+        {% elif book.owned_by_sara %}
           <a href="{{ url("library:books_borrowed") }}" class="badge badge-info">shared</a>
         {% elif book.was_borrowed and book.borrowed_from == 'public domain' %}
           <a href="{{ url("library:books_borrowed") }}" class="badge badge-info">public domain</a>
@@ -55,7 +55,7 @@
           <a href="{{ url("library:books_borrowed") }}" class="badge badge-info">borrowed</a>
         {% endif %}
 
-        {% if book.edition_format and (book.owned or book.was_borrowed or book.currently_reading) %}
+        {% if book.edition_format and (book.owned_by or book.was_borrowed or book.currently_reading) %}
           <a href="{{ url("library:books_owned", args=[book.get_edition_format_display().lower()]) }}" class="badge badge-info">{{ book.get_edition_format_display() | lower }}</a>
           {% if book.get_edition_format_display().lower() != "ebook" and book.has_ebook_edition %}
           <a href="{{ url("library:books_owned", args=["ebook"]) }}" class="badge badge-info">ebook</a>
@@ -64,7 +64,7 @@
 
         {% if book.currently_reading %}
             <a href="{{ url("library:books_currently_reading") }}" class="badge badge-info">reading</a>
-        {% elif book.want_to_read and (book.owned or book.was_borrowed) %}
+        {% elif book.want_to_read and (book.owned_by or book.was_borrowed) %}
             <a href="{{ url("library:books_unread") }}" class="badge badge-info">to read</a>
         {% elif book.want_to_read and not book.was_borrowed %}
             <a href="{{ url("library:books_unowned") }}" class="badge badge-info">wishlist</a>

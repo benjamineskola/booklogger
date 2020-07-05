@@ -6,6 +6,7 @@ import requests
 import unidecode
 import xmltodict
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
@@ -225,11 +226,17 @@ class Book(models.Model):
     edition_title = models.CharField(max_length=255, blank=True)  # if translated
     edition_subtitle = models.CharField(max_length=255, blank=True)  # if translated
 
-    owned = models.BooleanField(db_index=True, default=False)
     acquired_date = models.DateField(blank=True, null=True)
     alienated_date = models.DateField(blank=True, null=True)
     was_borrowed = models.BooleanField(db_index=True, default=False)
     borrowed_from = models.CharField(max_length=255, blank=True)
+    owned_by = models.ForeignKey(
+        User,
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        related_name="owned_books",
+    )
 
     image_url = models.URLField(blank=True)
     publisher_url = models.URLField(blank=True)
@@ -499,6 +506,14 @@ class Book(models.Model):
         new_isbn = [int(i) for i in self.isbn[3:-1]]
         check_digit = 11 - sum([(10 - i) * new_isbn[i] for i in range(9)]) % 11
         return "".join([str(i) for i in new_isbn]) + str(check_digit)
+
+    @property
+    def owned(self) -> bool:
+        return self.owned_by is not None and self.owned_by.username == "ben"
+
+    @property
+    def owned_by_sara(self) -> bool:
+        return self.owned_by is not None and self.owned_by.username == "sara"
 
 
 class BookAuthor(models.Model):

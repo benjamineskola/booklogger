@@ -74,7 +74,7 @@ class IndexView(GenericIndexView):
 
 
 class OwnedIndexView(GenericIndexView):
-    filter_by = {"owned": True}
+    filter_by = {"owned_by__username": "ben"}
     page_title = "Owned Books"
 
     def get_queryset(self):
@@ -83,7 +83,7 @@ class OwnedIndexView(GenericIndexView):
 
 class OwnedByDateView(GenericIndexView):
     template_name = "books/list_by_date.html"
-    filter_by = {"owned": True}
+    filter_by = {"owned_by__username": "ben"}
     page_title = "Owned Books by Date"
 
     def get_queryset(self):
@@ -108,12 +108,12 @@ class OwnedByDateView(GenericIndexView):
 
 
 class UnownedIndexView(GenericIndexView):
-    filter_by = {"owned": False, "was_borrowed": False, "want_to_read": True}
+    filter_by = {"owned_by__isnull": True, "want_to_read": True}
     page_title = "Unowned Books"
 
 
 class BorrowedIndexView(GenericIndexView):
-    filter_by = {"was_borrowed": True}
+    filter_by = {"owned_by__username": "sara"}
     page_title = "Borrowed Books"
 
 
@@ -123,10 +123,8 @@ class UnreadIndexView(GenericIndexView):
 
     def get_queryset(self):
         books = super().get_queryset()
-        books = (
-            books.filter(owned=True)
-            | books.filter(was_borrowed=True)
-            | books.filter(edition_format=Book.Format["WEB"])
+        books = books.filter(owned_by__isnull=False) | books.filter(
+            edition_format=Book.Format["WEB"]
         )
         return books.order_by("edition_format", *Book._meta.ordering,)
 
