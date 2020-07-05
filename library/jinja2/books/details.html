@@ -103,7 +103,7 @@
   {% for entry in book.all_log_entries %}
     <li>{% include "logentries/date_snippet.html" %}
     {% if entry not in book.log_entries.all() %}
-    (<a href="{{ url('library:book_details', args=[entry.book.pk]) }}">{{ entry.book.get_edition_disambiguator() }} edition</a>)
+    (<a href="{{ entry.book.get_absolute_url() }}">{{ entry.book.get_edition_disambiguator() }} edition</a>)
     {% endif %}
     <li>
   {% else %}
