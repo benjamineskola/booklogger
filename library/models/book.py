@@ -157,6 +157,13 @@ class BookQuerySet(models.QuerySet):  # type: ignore [type-arg]
             filter_by &= Q(
                 tags__contains=[tag.strip().lower() for tag in tags.split(",")]
             )
+        if owned := request.GET.get("owned"):
+            if owned == "true":
+                filter_by &= Q(owned_by__isnull=False)
+            elif owned == "false":
+                filter_by &= Q(owned_by__isnull=True)
+            else:
+                filter_by &= Q(owned_by__id=owned)
 
         return self.filter(filter_by)
 
