@@ -2,6 +2,7 @@
 {% block content %}
   {% set items = page_obj %}
 
+  {% if not request.resolver_match.url_name.startswith("books_read") %}
   {% if not format %}
     <p>Formats: <a href="{{ url("library:" + request.resolver_match.url_name) }}">all</a>
     {%- for n, f  in formats if n in counts and counts[n] > 0 -%}
@@ -10,6 +11,7 @@
     , <a href="{{ url("library:" + request.resolver_match.url_name, args=['physical']) }}">physical</a> ({{ counts.get(1) | int + counts.get(2) | int }})</p>
   {% else %}
   <h2>{{ format }}</h2>
+  {% endif %}
   {% endif %}
 
   {% include "books/card_loop.html" %}
