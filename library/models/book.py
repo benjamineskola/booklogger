@@ -47,9 +47,11 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
         query = SearchQuery(pattern)
         vector = SearchVector(
             "title",
+            "subtitle",
             "series",
             "tags",
             "edition_title",
+            "edition_subtitle",
             "first_author__surname",
             "first_author__forenames",
             "additional_authors__surname",
