@@ -346,7 +346,12 @@ class Book(models.Model):
 
     @property
     def display_title(self) -> str:
-        return self.edition_title if self.edition_title else self.title
+        if self.edition_title:
+            return self.edition_title + (
+                ": " + self.edition_subtitle if self.edition_subtitle else ""
+            )
+        else:
+            return self.title + (": " + self.subtitle if self.subtitle else "")
 
     @property
     def display_date(self) -> str:
