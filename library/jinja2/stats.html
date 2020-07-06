@@ -4,7 +4,7 @@
 
 <ul>
 {% for year in books_by_year.keys() | sort | reverse %}
-  {% if books_by_year[year]['count'] > 0 %}
+  {% if books_by_year[year]['count'] %}
   {% set year_books = books_by_year[year] %}
 
   {% if year == "total" %}
@@ -17,12 +17,12 @@
     <li>
       <p>
         In <a href="{{ url_base }}">{{ year | trim("!") }}</a> I read {% if year not in ["total", "!undated"] and year < "2014" %} at least {% endif %}{{ year_books["count"] }} books: {{ year_books["men"] }} by <a href="{{ url_base }}?gender=male">men</a> and {{ year_books["women"] }} by <a href="{{ url_base }}?gender=female">women</a>.
-        {% if year_books["both"] > 0 or year_books["neither"] > 0 %} (
-        {%- if year_books["both"] > 0 -%}
+        {% if year_books["both"] or year_books["neither"] %} (
+        {%- if year_books["both"] -%}
         {{ year_books["both"] }} of those were by both men and women
         {%- endif -%}
-        {%- if year_books["both"] > 0 and year_books["neither"] > 0 %}; {% endif -%}
-        {%- if year_books["neither"] > 0 -%}
+        {%- if year_books["both"] and year_books["neither"] %}; {% endif -%}
+        {%- if year_books["neither"] -%}
         {{ year_books["neither"] }} were by <a href="{{ url_base }}?gender=organization">groups or organizations</a>.
         {%- endif -%}
         ){% endif %}
