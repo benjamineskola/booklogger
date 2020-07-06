@@ -60,13 +60,17 @@
     <dt>Google</dt><dd><a href="https://www.googleapis.com/books/v1/volumes?q={{ book.title | urlencode }}%20{{ book.first_author | urlencode }}">search</a></dd>
     {% endif %}
 
+    <dt>Amazon</dt><dd>
     {% if book.asin %}
-    <dt>Amazon</dt><dd><a href="https://amazon.co.uk/dp/{{ book.asin }}">{{ book.asin }}</a></dd>
+    <a href="https://amazon.co.uk/dp/{{ book.asin }}">{{ book.asin }}</a></dd>
     {% elif book.isbn10 %}
-    <dt>Amazon</dt><dd><a href="https://amazon.co.uk/dp/{{ book.isbn10 }}">{{ book.isbn10 }}</a>
+    <dd><a href="https://amazon.co.uk/dp/{{ book.isbn10 }}">{{ book.isbn10 }}</a>
     or
-    <a href="https://www.amazon.co.uk/s?k={{ book.title | urlencode }}%20{{ book.first_author | urlencode }}&i=stripbooks">search</a></dd>
     {% endif %}
+    {% if not book.asin %}
+    <a href="https://www.amazon.co.uk/s?k={{ book.title | urlencode }}%20{{ book.first_author | urlencode }}&i=stripbooks">search</a>
+    {% endif %}
+    </dd>
     <dt>ISBN</dt><dd>{{ book.isbn }}</dd>
 
     {% if book.has_ebook_edition %}
