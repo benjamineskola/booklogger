@@ -178,6 +178,10 @@ def stats(request):
             books.filter(log_entries__end_date__year=year)
         )
 
+        books_by_year[str(year)]["acquired"] = books.filter(
+            acquired_date__year=year
+        ).count()
+
     books_by_year["total"] = _stats_for_queryset(read_books)
     books_by_year["!undated"] = _stats_for_queryset(
         read_books.exclude(log_entries__isnull=False)

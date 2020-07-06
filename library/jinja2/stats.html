@@ -43,6 +43,10 @@
                              {{ year_books["breakdowns"][genre]["men_count"] }} ({{ year_books["breakdowns"][genre]["percentage_men"] | round(2) }}%) by <a href="{{ url_base}}?tags={{ genre }}&gender=1">men</a>.<br>
         {% endfor %}
       </p>
+      {% if year_books["acquired"] %}<p>
+      I acquired {{ year_books["acquired"] }} more books this year.
+      That's {{ (year_books["count"] - year_books["acquired"]) | abs }} {% if year_books["acquired"] - year_books["count"] >= 0 %}more{% else %}fewer{% endif %} than I read.
+      </p>{% endif %}
     </li>
   {% endif %}
 {% endfor %}
