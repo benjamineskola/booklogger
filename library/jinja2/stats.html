@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-<p>In total I own {{ owned }} books.</p>
+<p>In total I own {{ owned }} books and have read {{ owned_read }} ({{ owned_read_pct | round(2) }}%) of them. I want to read {{ want_to_read }} ({{ want_to_read_pct | round(2) }}%) of them, including rereading {{ reread }} ({{ reread_pct | round(2) }}%) of them.</p>
 
 <ul>
 {% for year in books_by_year.keys() | sort | reverse %}

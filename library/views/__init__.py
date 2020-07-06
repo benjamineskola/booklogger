@@ -158,9 +158,14 @@ def _stats_for_queryset(books):
 def stats(request):
     books = Book.objects.all()
     owned = books.filter(owned_by__username="ben")
+    owned_count = owned.count()
     read_books = books.filter(want_to_read=False) | books.filter(
         log_entries__isnull=False
     )
+    owned_read = (owned & read_books).count()
+    want_to_read = owned.filter(want_to_read=True)
+    want_to_read_count = want_to_read.count()
+    reread = (read_books & want_to_read).count()
 
     books_by_year = {}  # {"all": {"books": books, "count": books.count()}}
 
@@ -192,7 +197,13 @@ def stats(request):
         "stats.html",
         {
             "page_title": f"Library Stats",
-            "owned": owned.count(),
+            "owned": owned_count,
+            "owned_read": owned_read,
+            "owned_read_pct": owned_read / owned_count * 100,
+            "want_to_read": want_to_read_count,
+            "want_to_read_pct": want_to_read_count / owned_count * 100,
+            "reread": reread,
+            "reread_pct": reread / read_books.count() * 100,
             "current_year": current_year,
             "current_week": current_week,
             "predicted_count": predicted_count,
