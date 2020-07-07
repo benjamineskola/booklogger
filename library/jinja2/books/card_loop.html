@@ -1,3 +1,8 @@
+
+{% if stats %}
+<p>{{ stats["total"] }} items, {{ stats["owned"] }} owned, {{ stats["read"] }} read.</p>
+{% endif %}
+
 <div class="row row-cols-1 row-cols-md-2">
 {% for item in items %}
   {% if item.book %}

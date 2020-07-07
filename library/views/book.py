@@ -57,14 +57,18 @@ class GenericIndexView(generic.ListView):
         context = super().get_context_data(**kwargs)
         context["formats"] = Book.Format.choices
         context["format"] = self.kwargs.get("format")
-        context["total"] = self.get_queryset().count()
         context["counts"] = dict(
             self.get_queryset()
             .values_list("edition_format")
             .annotate(count=Count("edition_format"))
             .order_by("edition_format")
         )
-        context["page_title"] = self.page_title + f" ({context['total']})"
+        context["stats"] = {
+            "total": self.get_queryset().count(),
+            "owned": self.get_queryset().filter(owned_by__isnull=False).count(),
+            "read": self.get_queryset().filter(log_entries__isnull=False).count(),
+        }
+        context["page_title"] = self.page_title + f" ({context['stats']['total']})"
         return context
 
 
