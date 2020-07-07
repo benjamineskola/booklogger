@@ -8,10 +8,14 @@
     {% for tag, count in sorted_tags[genre].items() %}
       {% if count %}
         {% if tag == "no other tags" %}
-          <a class="badge badge-secondary" href="{{ url("library:tag_details", args=[genre + "!"]) }}">{{ tag }}: {{ count }}</a>
+          {% set tag_link = genre + "!" %}
+        {% elif tag != genre and genre != "all" %}
+          {% set tag_link = genre + "," + tag %}
         {% else %}
-          <a class="badge badge-{% if tag == genre %}info{% else%}secondary{% endif %}" href="{{ url("library:tag_details", args=[tag]) }}{% if tag != genre and genre != "all" %}?tags={{ genre }}{% endif %}">{{ tag }}: {{ count }}</a>
+          {% set tag_link = tag %}
         {% endif %}
+
+        <a class="badge badge-{% if tag == genre %}info{% else%}secondary{% endif %}" href="{{ url("library:tag_details", args=[tag_link]) }}">{{ tag }}: {{ count }}</a>
       {% endif %}
     {% endfor %}
 
