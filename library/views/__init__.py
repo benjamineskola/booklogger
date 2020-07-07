@@ -102,15 +102,24 @@ def tag_cloud(request):
                 else:
                     tags["all"][tag] = 1
 
+    tags_by_name = {}
+    tags_by_size = {}
+    sorted_tags = {"name": {}, "size": {}}
     for key in ["fiction", "non-fiction", "all"]:
-        tags[key] = {
+        sorted_tags["name"][key] = {
+            k: v for k, v in sorted(tags[key].items(), key=lambda item: item[0])
+        }
+    for key in ["fiction", "non-fiction", "all"]:
+        sorted_tags["size"][key] = {
             k: v
             for k, v in sorted(
                 tags[key].items(), key=lambda item: item[1], reverse=True
             )
         }
 
-    return render(request, "tags/cloud.html", {"page_title": f"Tags", "tags": tags},)
+    return render(
+        request, "tags/cloud.html", {"page_title": f"Tags", "tags": sorted_tags,},
+    )
 
 
 def _stats_for_queryset(books):
