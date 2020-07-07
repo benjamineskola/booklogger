@@ -11,7 +11,7 @@ from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 from django.db import models
-from django.db.models import Q
+from django.db.models import F, Q
 from django.db.models.functions import Lower
 from django.db.models.indexes import Index
 from django.urls import reverse
@@ -301,26 +301,24 @@ class Book(models.Model):
         return {"url": self.get_absolute_url(), "text": self.display_title}
 
     @property
-    def all_authors(self) -> Sequence[Author]:
-        authors = []
-        if self.first_author:
-            authors.append(self.first_author)
-        if self.additional_authors.count():
-            authors += [ba.author for ba in self.bookauthor_set.all()]
+    def all_authors(self) -> "models.QuerySet[Author]":
+        authors = Author.objects.filter(id=self.first_author_id)
 
-        return authors
+        additional_author_ids = self.bookauthor_set.all().values_list("author__id")
+        authors |= Author.objects.filter(id__in=additional_author_ids)
+
+        return authors.order_by(F("bookauthor__order").asc(nulls_first=True)).distinct()
 
     @property
-    def authors(self) -> Sequence[Author]:
-        authors = []
-        if self.first_author:
-            authors.append(self.first_author)
-        if self.additional_authors.count():
-            authors += [
-                ba.author
-                for ba in self.bookauthor_set.filter(role=self.first_author_role)
-            ]
-        return authors
+    def authors(self) -> "models.QuerySet[Author]":
+        authors = Author.objects.filter(id=self.first_author_id)
+
+        additional_author_ids = self.bookauthor_set.filter(
+            role=self.first_author_role
+        ).values_list("author__id")
+        authors |= Author.objects.filter(id__in=additional_author_ids)
+
+        return authors.order_by(F("bookauthor__order").asc(nulls_first=True)).distinct()
 
     @property
     def all_authors_editors(self) -> bool:
