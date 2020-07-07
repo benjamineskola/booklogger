@@ -106,7 +106,7 @@ urlpatterns = [
         name="series_details",
     ),
     path("stats/", views.stats, name="stats"),
-    path("tag/<str:tag_name>/", views.tag_details, name="tag_details"),
+    path("tag/<str:tag_name>/", views.book.TagIndexView.as_view(), name="tag_details"),
     path("tags/", views.tag_cloud, name="tag_cloud"),
     path("report/", views.report, name="report"),
     path("report/<int:page>/", views.report, name="report"),

@@ -11,6 +11,7 @@ from django.views.decorators.http import require_POST
 
 from library.forms import BookForm
 from library.models import Author, Book, BookAuthor, LogEntry
+from library.utils import oxford_comma
 
 
 class GenericIndexView(generic.ListView):
@@ -143,6 +144,27 @@ class SeriesIndexView(GenericIndexView):
         context[
             "page_title"
         ] = f"{self.kwargs['series']} Series ({len(context['page_obj'])} books)"
+        return context
+
+
+class TagIndexView(GenericIndexView):
+    def get_queryset(self):
+        books = super().get_queryset()
+        tags = [tag.strip() for tag in self.kwargs["tag_name"].split(",")]
+        if tags == ["untagged"]:
+            condition = {"tags__len": 0}
+        elif len(tags) == 1 and tags[0].endswith("!"):
+            condition = {"tags": [tags[0][0:-1]]}
+        else:
+            condition = {"tags__contains": tags}
+        books = books.filter(**condition)
+        return books
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context[
+            "page_title"
+        ] = f"{self.get_queryset().count()} books tagged {oxford_comma(self.kwargs['tag_name'].split(','))}"
         return context
 
 

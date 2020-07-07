@@ -10,7 +10,6 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
 from library.models import Author, Book, BookAuthor, LogEntry
-from library.utils import oxford_comma
 
 from . import author, book
 
@@ -39,36 +38,6 @@ def basic_search(request):
             "results": results,
             "query": query,
             "goodreads_result": Book.objects.find_on_goodreads(query),
-        },
-    )
-
-
-def tag_details(request, tag_name):
-    tags = [tag.strip() for tag in tag_name.split(",")]
-    if tags == ["untagged"]:
-        condition = {"tags__len": 0}
-    elif len(tags) == 1 and tags[0].endswith("!"):
-        condition = {"tags": [tags[0][0:-1]]}
-    else:
-        condition = {"tags__contains": tags}
-    books = (
-        Book.objects.select_related("first_author")
-        .prefetch_related("additional_authors", "log_entries")
-        .filter(**condition)
-        .filter_by_request(request)
-    )
-
-    paginator = Paginator(books, 100)
-    page_number = request.GET.get("page")
-    if not page_number:
-        page_number = 1
-    page_obj = paginator.get_page(page_number)
-    return render(
-        request,
-        "books/list.html",
-        {
-            "page_title": f"{books.count()} books tagged {oxford_comma(tags)}",
-            "page_obj": page_obj,
         },
     )
 
