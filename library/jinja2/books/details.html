@@ -76,7 +76,7 @@
     {% if book.has_ebook_edition %}
       <dt>Ebook Acquired</dt><dd>{{ book.ebook_acquired_date or "Unknown" }}</dd>
       {% if book.ebook_asin %}
-      <dt>Amazon</dt><dd><a href="https://amazon.co.uk/dp/{{ book.asin }}">{{ book.asin }}</a></dd>
+      <dt>Amazon</dt><dd><a href="https://amazon.co.uk/dp/{{ book.ebook_asin }}">{{ book.ebook_asin }}</a></dd>
       {% endif %}
       {% if book.ebook_asin %}
       <dt>Ebook ISBN</dt><dd>{{ book.ebook_isbn }}</dd>
