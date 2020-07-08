@@ -231,6 +231,9 @@ def report(request, page=None):
                     "New Socialist",
                     "Jacobin Foundation",
                     "Tribune",
+                    "No Starch Press",
+                    "Pragmatic Bookshelf",
+                    "iTunes",
                 ]
             ),
         ),
