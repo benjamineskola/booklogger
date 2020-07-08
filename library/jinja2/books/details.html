@@ -7,7 +7,7 @@
 
   <div class="col">
     <dl>
-    {% if book.authors | count > 3 or book.authors != book.all_authors %}
+    {% if book.has_full_authors %}
     <dt>Full Authors</dt><dd>
     {{ book.all_authors | map('get_hyperlink', book=book) | list | oxford_comma }}
     {% endif %}

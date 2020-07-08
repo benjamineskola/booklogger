@@ -329,6 +329,10 @@ class Book(models.Model):
         return False
 
     @property
+    def has_full_authors(self) -> bool:
+        return self.authors.count() > 3 or set(self.authors) != set(self.all_authors)
+
+    @property
     def display_authors(self) -> str:
         if len(self.authors) > 3:
             return str(self.authors[0].attribution_for(self)) + " and others"
