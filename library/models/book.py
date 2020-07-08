@@ -473,6 +473,16 @@ class Book(models.Model):
         if not self.slug:
             self.slug = self._generate_slug()
 
+        if len(self.asin) != 10:
+            if (
+                self.asin.startswith("http")
+                and "amazon" in self.asin
+                and (matches := re.search(r"/(?:gp/product|dp)/([^/]+)/", self.asin))
+            ):
+                self.asin = matches[1]
+            else:
+                self.asin = ""
+
         super().save(*args, **kwargs)
 
         self.editions.all().update(
