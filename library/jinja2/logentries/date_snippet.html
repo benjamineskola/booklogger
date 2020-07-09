@@ -1,4 +1,6 @@
-{%- if not entry.start_date or (entry.start_precision == 2 and entry.start_date.year == entry.end_date.year) -%}
+{%- if entry.end_date and entry.end_date.year == 1 %}
+  Read sometime
+{%- elif not entry.start_date or (entry.start_precision == 2 and entry.start_date.year == entry.end_date.year) -%}
   Finished
   {% if entry.end_precision > 0 %} in {% else %} on {% endif %}
   <time datetime="{{entry.end}}"> {{ entry.end_date_display }}</time>

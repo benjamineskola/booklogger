@@ -5,7 +5,14 @@
   {% include "books/card_loop.html" %}
 {% else %}
   {% for group in entries|groupby('end_date.year')|reverse %}
-    <h2 class="mt-4">Read in {{ group.grouper }}</h2>
+    {% if not year %}
+      {% if group.grouper == 1%}
+      <h2 class="mt-4">Read sometime</h2>
+      {% else %}
+      <h2 class="mt-4">Read in {{ group.grouper }}</h2>
+      {% endif %}
+    {% endif %}
+
     {% set items = group.list %}
     {% include "books/card_loop.html" %}
   {% endfor%}

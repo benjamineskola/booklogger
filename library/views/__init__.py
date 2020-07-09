@@ -161,9 +161,6 @@ def stats(request):
         ).count()
 
     books_by_year["total"] = _stats_for_queryset(read_books)
-    books_by_year["!undated"] = _stats_for_queryset(
-        read_books.exclude(log_entries__isnull=False)
-    )
 
     current_year = timezone.now().year
     first_day = timezone.datetime(current_year, 1, 1)

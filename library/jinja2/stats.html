@@ -9,14 +9,17 @@
 
   {% if year == "total" %}
   {% set url_base = url("library:books_read") %}
-  {% elif year == "!undated" %}
-  {% set url_base = url("library:books_read_undated") %}
   {% else %}
   {% set url_base = url("library:books_read", args=[year]) %}
   {% endif %}
     <li>
       <p>
-        In <a href="{{ url_base }}">{{ year | trim("!") }}</a> I read {% if year not in ["total", "!undated"] and year < "2014" %} at least {% endif %}{{ year_books["count"] }} books: {{ year_books["men"] }} by <a href="{{ url_base }}?gender=male">men</a> and {{ year_books["women"] }} by <a href="{{ url_base }}?gender=female">women</a>.
+        {% if year == "1" %}
+          <a href="{{ url_base }}">Sometime</a>
+        {% else %}
+          In <a href="{{ url_base }}">{{ year | trim("!") }}</a>
+        {% endif %}
+        I read {% if year != "total" and year < "2014" %} at least {% endif %}{{ year_books["count"] }} books: {{ year_books["men"] }} by <a href="{{ url_base }}?gender=male">men</a> and {{ year_books["women"] }} by <a href="{{ url_base }}?gender=female">women</a>.
         {% if year_books["both"] or year_books["neither"] %} (
         {%- if year_books["both"] -%}
         {{ year_books["both"] }} of those were by both men and women

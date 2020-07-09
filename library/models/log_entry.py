@@ -99,6 +99,9 @@ class LogEntry(models.Model):
         if not date:
             return ""
 
+        if date.year == 1:
+            return "sometime"
+
         if precision == 2:
             return date.strftime("%Y")
         elif precision == 1:

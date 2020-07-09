@@ -194,9 +194,12 @@ class GenericLogView(generic.ListView):
             .order_by("end_date", "start_date")
         )
 
-        if "year" in self.kwargs:
-            entries = entries.filter(end_date__year=self.kwargs["year"])
-            self.page_title = f"Read in {self.kwargs['year']}"
+        if year := self.kwargs.get("year"):
+            entries = entries.filter(end_date__year=year)
+            if year == 1:
+                self.page_title = f"Read sometime"
+            else:
+                self.page_title = f"Read in {year}"
 
         if self.filter_by:
             entries = entries.filter(**self.filter_by)
@@ -205,6 +208,7 @@ class GenericLogView(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["page_title"] = self.page_title
+        context["year"] = self.kwargs.get("year")
         return context
 
 
@@ -223,20 +227,6 @@ class CurrentlyReadingView(GenericLogView):
 class ReadView(GenericLogView):
     filter_by = {"end_date__isnull": False}
     page_title = "Read Books"
-
-
-class UndatedReadView(GenericIndexView):
-    page_title = "Undated Read Books"
-
-    def get_queryset(self, *args, **kwargs):
-        items = (
-            super()
-            .get_queryset(*args, **kwargs)
-            .filter(want_to_read=False)
-            .exclude(log_entries__isnull=False)
-            .exclude(editions__log_entries__isnull=False)
-        )
-        return items
 
 
 @login_required
