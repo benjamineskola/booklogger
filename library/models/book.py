@@ -80,7 +80,7 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
     def filter_by_request(self, request: str) -> "BookQuerySet":
         return self.get_queryset().filter_by_request(request)
 
-    def find_on_goodreads(self, query: str) -> Optional[Dict[str, Any]]:
+    def find_on_goodreads(self, query: str) -> Optional[Sequence[Dict[str, Any]]]:
         search_url = f"https://www.goodreads.com/search/index.xml?key={os.environ['GOODREADS_KEY']}&q={query}"
         data = requests.get(search_url).text
         xml = xmltodict.parse(data, dict_constructor=dict)
@@ -96,11 +96,20 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
         else:
             results = all_results
 
-        return results[0]
+        return results
 
-    def create_from_goodreads(self, query: str) -> Optional["Book"]:
-        result = self.find_on_goodreads(query)
-        if not result:
+    def create_from_goodreads(
+        self, query: Optional[str] = None, data: Optional[Dict[str, Any]] = None
+    ) -> Optional["Book"]:
+        result = {}
+        if query and not data:
+            results = self.find_on_goodreads(query)
+            if not results:
+                return None
+            result = results[0]
+        elif data and not query:
+            result = data
+        else:
             return None
 
         goodreads_book = result["best_book"]

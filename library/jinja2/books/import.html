@@ -2,11 +2,22 @@
 {% block content %}
 
 {% if query %}
-<p>This might be the following book on Goodreads: <a href="https://www.goodreads.com/book/show/{{ goodreads_result["best_book"]["id"]["#text"] }}">{{ goodreads_result["best_book"]["author"]["name"] }}, <em>{{ goodreads_result["best_book"]["title"] }}</em></a>.</p>
-<form class="form-inline" action="{{url('library:book_import', args=[query])}}" method="post">
+<p>This might be the following books on Goodreads:</P>
+
+<ul>
+{% for goodreads_result in goodreads_results %}
+<li><a href="https://www.goodreads.com/book/show/{{ goodreads_result["best_book"]["id"]["#text"] }}">{{ goodreads_result["best_book"]["author"]["name"] }}, <em>{{ goodreads_result["best_book"]["title"] }}</em></a>.
+
+{% if matches[goodreads_result['id']['#text']] %}This might already be in the library as {{ matches[goodreads_result['id']['#text']].first_author | get_hyperlink }}, <i>{{ matches[goodreads_result['id']['#text']] | get_hyperlink }}</i>.{% endif %}
+</p>
+
+<form class="form-inline" action="{{url('library:book_import')}}" method="post">
   <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+  <input type="hidden" name="data" value="{{ goodreads_result | json }}">
   <input class="form-control-sm btn btn-primary mx-2" type="submit" name="Confirm" value="Confirm" />
-</form>
+</form><br></li>
+{% endfor %}
+</ul>
 {% endif %}
 
 <br>

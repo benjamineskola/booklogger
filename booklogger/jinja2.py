@@ -1,3 +1,5 @@
+import json
+
 import commonmark
 from django.templatetags.static import static
 from django.urls import reverse
@@ -15,5 +17,7 @@ def environment(**options):
     )
     env.filters["markdown"] = lambda text: Markup(commonmark.commonmark(text))
     env.filters["oxford_comma"] = lambda l: Markup(oxford_comma(l))
+
+    env.filters["json"] = json.dumps
 
     return env

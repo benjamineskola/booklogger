@@ -1,3 +1,4 @@
+import json
 import os
 import re
 from random import shuffle
@@ -37,7 +38,6 @@ def basic_search(request):
             "page_title": f"Search{': ' + query if query else ''}",
             "results": results,
             "query": query,
-            "goodreads_result": Book.objects.find_on_goodreads(query),
         },
     )
 
@@ -191,22 +191,36 @@ def stats(request):
 
 @login_required
 def import_book(request, query=None):
-    if request.method == "POST" and not query:
-        query = request.POST.get("query")
+    from pprint import pprint
+
     if request.method == "GET" and not query:
         query = request.GET.get("query")
 
-    if query and request.method == "POST":
-        book = Book.objects.create_from_goodreads(query)
+    if request.method == "POST":
+        data = json.loads(request.POST["data"])
+        book = Book.objects.create_from_goodreads(data=data)
         return redirect("library:book_edit", slug=book.slug)
     else:
-        goodreads_result = None
+        goodreads_results = None
+        matches = {}
         if query:
-            goodreads_result = Book.objects.find_on_goodreads(query)
+            goodreads_results = Book.objects.find_on_goodreads(query)
+
+            for result in goodreads_results:
+                match = Book.objects.search(
+                    f"{result['best_book']['author']['name']} {result['best_book']['title']}"
+                ).first()
+                if match:
+                    matches[result["id"]["#text"]] = match
+
         return render(
             request,
             "books/import.html",
-            {"query": query, "goodreads_result": goodreads_result},
+            {
+                "query": query,
+                "goodreads_results": goodreads_results,
+                "matches": matches,
+            },
         )
 
 
