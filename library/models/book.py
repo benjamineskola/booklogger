@@ -410,6 +410,9 @@ class Book(models.Model):
         entry.progress = progress
         entry.save()
 
+    def mark_read_sometime(self) -> None:
+        entry = self.log_entries.create(start_date=None, end_date="0001-01-01 00:00")
+
     @property
     def currently_reading(self) -> bool:
         entries = self.log_entries.filter(end_date=None).order_by("-start_date")
