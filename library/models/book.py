@@ -430,6 +430,11 @@ class Book(models.Model):
         entry.progress = 100
         entry.save()
 
+        if self.parent_edition:
+            sibling_editions = self.parent_edition.subeditions
+            if sibling_editions.count() == sibling_editions.read().count():
+                self.parent_edition.finish_reading()
+
     def update_progress(self, progress: int) -> None:
         entry = self.log_entries.get(end_date=None)
         entry.progress_date = timezone.now()
@@ -528,6 +533,8 @@ class Book(models.Model):
             series=self.series,
             series_order=self.series_order,
         )
+
+        self.subeditions.all().update(want_to_read=self.want_to_read)
 
     @property
     def all_log_entries(self) -> "models.QuerySet[LogEntry]":
