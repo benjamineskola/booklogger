@@ -184,6 +184,17 @@ class BookQuerySet(models.QuerySet):  # type: ignore [type-arg]
                 filter_by &= Q(owned_by__isnull=True)
             else:
                 filter_by &= Q(owned_by__id=owned)
+        if want_to_read := request.GET.get("want_to_read"):
+            if want_to_read == "true":
+                filter_by &= Q(want_to_read=True)
+            elif want_to_read == "false":
+                filter_by &= Q(want_to_read=False)
+
+        if read := request.GET.get("read"):
+            if read == "true":
+                return self.filter(filter_by).read()
+            elif read == "false":
+                return self.filter(filter_by).unread()
 
         return self.filter(filter_by)
 

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-<p>In total I own {{ owned }} books and have read {{ owned_read }} ({{ owned_read_pct | round(2) }}%) of them. I want to read {{ want_to_read }} ({{ want_to_read_pct | round(2) }}%) of them, including rereading {{ reread }} ({{ reread_pct | round(2) }}%) of them.</p>
+<p>In total I own {{ owned }} books and have read {{ owned_read }} ({{ owned_read_pct | round(2) }}%) of them. I <a href="{{ url("library:books_unread") }}">want to read</a> {{ want_to_read }} ({{ want_to_read_pct | round(2) }}%) of them, including <a href="{{ url("library:books_unread") }}?read=true&owned=true">rereading</a> {{ reread }} ({{ reread_pct | round(2) }}%) of them.</p>
 
 <ul>
 {% for year in books_by_year.keys() | sort | reverse %}
