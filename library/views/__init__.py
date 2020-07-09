@@ -137,13 +137,11 @@ def stats(request):
     books = Book.objects.all()
     owned = books.filter(owned_by__username="ben")
     owned_count = owned.count()
-    read_books = books.filter(want_to_read=False) | books.filter(
-        log_entries__isnull=False
-    )
-    owned_read = (owned & read_books).count()
+    read_books = books.read()
+    owned_read = owned.read().count()
     want_to_read = owned.filter(want_to_read=True)
     want_to_read_count = want_to_read.count()
-    reread = (read_books & want_to_read).count()
+    reread = owned.read().filter(want_to_read=True).count()
 
     books_by_year = {}  # {"all": {"books": books, "count": books.count()}}
 

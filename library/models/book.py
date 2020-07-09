@@ -153,13 +153,13 @@ class BookQuerySet(models.QuerySet):  # type: ignore [type-arg]
         return self.filter(
             Q(log_entries__end_date__isnull=False)
             | Q(parent_edition__log_entries__end_date__isnull=False)
-        )
+        ).distinct()
 
     def unread(self) -> "BookQuerySet":
         return self.filter(
             Q(log_entries__end_date__isnull=True)
             & Q(parent_edition__log_entries__end_date__isnull=True)
-        )
+        ).distinct()
 
     def filter_by_request(self, request: Any) -> "BookQuerySet":
         filter_by = Q()
