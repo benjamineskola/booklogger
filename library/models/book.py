@@ -43,6 +43,12 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
     def nonfiction(self) -> "BookQuerySet":
         return self.get_queryset().nonfiction()
 
+    def read(self) -> "BookQuerySet":
+        return self.get_queryset().read()
+
+    def unread(self) -> "BookQuerySet":
+        return self.get_queryset().unread()
+
     def search(self, pattern: str) -> "BookQuerySet":
         query = SearchQuery(pattern)
         vector = SearchVector(
@@ -142,6 +148,18 @@ class BookQuerySet(models.QuerySet):  # type: ignore [type-arg]
 
     def nonfiction(self) -> "BookQuerySet":
         return self.filter(tags__contains=["non-fiction"])
+
+    def read(self) -> "BookQuerySet":
+        return self.filter(
+            Q(log_entries__end_date__isnull=False)
+            | Q(parent_edition__log_entries__end_date__isnull=False)
+        )
+
+    def unread(self) -> "BookQuerySet":
+        return self.filter(
+            Q(log_entries__end_date__isnull=True)
+            & Q(parent_edition__log_entries__end_date__isnull=True)
+        )
 
     def filter_by_request(self, request: Any) -> "BookQuerySet":
         filter_by = Q()

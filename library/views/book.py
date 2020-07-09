@@ -67,7 +67,7 @@ class GenericIndexView(generic.ListView):
         context["stats"] = {
             "total": self.get_queryset().count(),
             "owned": self.get_queryset().filter(owned_by__isnull=False).count(),
-            "read": self.get_queryset().filter(log_entries__isnull=False).count(),
+            "read": self.get_queryset().read().count(),
         }
         context["page_title"] = self.page_title + f" ({context['stats']['total']})"
         return context
