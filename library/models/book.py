@@ -443,12 +443,7 @@ class Book(models.Model):
         if self.parent_edition:
             return self.parent_edition.read
 
-        if not self.log_entries.count():
-            return False
-        completed_entries = [
-            entry.end_date for entry in self.log_entries.all() if entry.end_date
-        ]
-        return bool(completed_entries)
+        return self.log_entries.filter(end_date__isnull=False).count() > 0
 
     def add_tags(self, tags: Iterable[str]) -> None:
         for tag in tags:
