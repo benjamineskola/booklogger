@@ -25,6 +25,9 @@ class BookForm(ModelForm):
             self.fields["editions"].queryset = Book.objects.filter(
                 first_author=kwargs["instance"].first_author
             )
+            self.fields["parent_edition"].queryset = Book.objects.filter(
+                first_author=kwargs["instance"].first_author
+            )
         else:
             self._meta.exclude += "editions"
 

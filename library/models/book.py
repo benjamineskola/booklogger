@@ -274,6 +274,14 @@ class Book(models.Model):
 
     slug = models.SlugField(blank=True, default="")
 
+    parent_edition = models.ForeignKey(
+        "self",
+        related_name="subeditions",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+
     def __str__(self) -> str:
         if (
             self.editions.count()
@@ -432,6 +440,9 @@ class Book(models.Model):
 
     @property
     def read(self) -> bool:
+        if self.parent_edition:
+            return self.parent_edition.read
+
         if not self.log_entries.count():
             return False
         completed_entries = [

@@ -142,5 +142,21 @@
     </ul>
   </div>
   {% endif %}
+
+  {% if book.parent_edition %}
+  <div class="col">
+    This book is part of {{ book.parent_edition | get_hyperlink }}
+  </div>
+  {% elif book.subeditions.count() %}
+  <div class="col">
+  This book is made up of the following books:
+  <ul>
+  {% for subedition in book.subeditions.all() %}
+    <li>{{ subedition | get_hyperlink }}</li>
+  {% endfor %}
+  </ul>
+  </div>
+  {% endif %}
+
 </div>
 {% endblock content %}
