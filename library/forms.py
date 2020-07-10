@@ -21,15 +21,17 @@ class BookForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(BookForm, self).__init__(*args, **kwargs)
-        if "instance" in kwargs:
-            self.fields["editions"].queryset = Book.objects.filter(
-                first_author=kwargs["instance"].first_author
-            )
-            self.fields["parent_edition"].queryset = Book.objects.filter(
-                first_author=kwargs["instance"].first_author
-            )
+
+        instance = kwargs.get("instance")
+        if instance:
+            qs = instance.first_author.books.exclude(pk=instance.id)
+
+        if instance and qs.count() > 0:
+            self.fields["editions"].queryset = qs
+            self.fields["parent_edition"].queryset = qs
         else:
-            self._meta.exclude += "editions"
+            del self.fields["editions"]
+            del self.fields["parent_edition"]
 
         for field in self.fields:
             widget = self.fields[field].widget
