@@ -32,4 +32,9 @@ class BookForm(ModelForm):
             self._meta.exclude += "editions"
 
         for field in self.fields:
-            self.fields[field].widget.attrs.update({"class": "form-control col-8"})
+            widget = self.fields[field].widget
+            widget.attrs.update({"class": "form-control"})
+            if widget.__class__.__name__ == "CheckboxInput":
+                widget.attrs["class"] += " col-1"
+            else:
+                widget.attrs["class"] += " col-8"

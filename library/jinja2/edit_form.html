@@ -26,7 +26,8 @@
 
 <hr>
 <div class="form-group">
-  <input type="submit" value="Submit">
+  <input type="submit" value="Submit" class="btn btn-primary">
+  <a href="{{ url("library:book_details", args=[item.slug]) }}" class="btn btn-secondary">Cancel</a>
 </div>
 </form>
 
