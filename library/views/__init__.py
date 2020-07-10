@@ -284,6 +284,12 @@ def report(request, page=None):
                 ebook_isbn="", ebook_asin=""
             ),
         ),
+        (
+            "Public domain but no URL",
+            lambda: Book.objects.filter(
+                borrowed_from="public domain", publisher_url=""
+            ),
+        ),
     ]
 
     results = None
