@@ -117,8 +117,14 @@ class UnownedIndexView(GenericIndexView):
 
 
 class BorrowedIndexView(GenericIndexView):
-    filter_by = {"owned_by__username": "sara"}
     page_title = "Borrowed Books"
+
+    def get_queryset(self):
+        books = super().get_queryset()
+        books = books.filter(owned_by__username="sara") | books.filter(
+            was_borrowed=True
+        )
+        return books
 
 
 class UnreadIndexView(GenericIndexView):
