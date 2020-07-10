@@ -2,6 +2,5 @@ language: python
 python: 3.8
 script:
   - pytest
-  - mypy -m library.models  -m library.utils
 services:
   - postgresql
