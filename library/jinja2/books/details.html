@@ -59,21 +59,27 @@
 
   <div class="col">
     <dl>
+    <dt>Goodreads</dt><dd>
     {% if book.goodreads_id %}
-    <dt>Goodreads</dt><dd><a href="https://goodreads.com/book/show/{{ book.goodreads_id }}">{{ book.goodreads_id }}</a></dd>
+    <a href="https://goodreads.com/book/show/{{ book.goodreads_id }}">{{ book.goodreads_id }}</a>
     {% elif book.isbn %}
-    <dt>Goodreads</dt><dd><a href="https://www.goodreads.com/search?q={{ book.isbn }}">{{ book.isbn }}</a></dd>
+    <a href="https://www.goodreads.com/search?q={{ book.isbn }}">{{ book.isbn }}</a>
     {% elif book.asin %}
-    <dt>Goodreads</dt><dd><a href="https://www.goodreads.com/search?q={{ book.asin }}">{{ book.asin }}</a></dd>
-    {% endif %}
-
-    {% if book.google_books_id %}
-    <dt>Google</dt><dd><a href="https://books.google.co.uk/books?id={{ book.google_books_id }}">{{ book.google_books_id }}</a></dd>
-    {% elif book.isbn %}
-    <dt>Google</dt><dd><a href="https://www.googleapis.com/books/v1/volumes?q=isbn:{{ book.isbn }}">{{ book.isbn }}</a></dd>
+    <a href="https://www.goodreads.com/search?q={{ book.asin }}">{{ book.asin }}</a>
     {% else %}
-    <dt>Google</dt><dd><a href="https://www.googleapis.com/books/v1/volumes?q={{ book.title | urlencode }}%20{{ book.first_author | urlencode }}">search</a></dd>
+    <a href="https://www.goodreads.com/search?q={{ book.title | urlencode }}%20{{ book.first_author | urlencode }}">search</a>
     {% endif %}
+    </dd>
+
+    <dt>Google</dt><dd>
+    {% if book.google_books_id %}
+    <a href="https://books.google.co.uk/books?id={{ book.google_books_id }}">{{ book.google_books_id }}</a>
+    {% elif book.isbn %}
+    <a href="https://www.googleapis.com/books/v1/volumes?q=isbn:{{ book.isbn }}">{{ book.isbn }}</a>
+    {% else %}
+    <a href="https://www.googleapis.com/books/v1/volumes?q={{ book.title | urlencode }}%20{{ book.first_author | urlencode }}">search</a>
+    {% endif %}
+    </dd>
 
     <dt>Amazon</dt><dd>
     {% if book.asin %}
