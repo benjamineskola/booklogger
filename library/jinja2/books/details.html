@@ -54,8 +54,9 @@
           {{ book.publisher }}
         {%- endif -%}
       {%- endif -%}.
-    {% endif %}
-    {% if book.page_count %}
+    {%- endif -%}
+    &nbsp;
+    {%- if book.page_count -%}
       {{ book.page_count | int }}pp.
     {% endif %}
     </p>
