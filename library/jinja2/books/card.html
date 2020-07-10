@@ -20,7 +20,7 @@
         {{ book.authors | map('get_hyperlink', book=book) | list | oxford_comma }}
         {% endif %}
         </h6>
-        <p class="card-text mb-0">({{ book.display_date }}){% if book.publisher %} {{ book.publisher }}.{% endif %}{% if book.page_count and book.page_count > 0 %} {{ book.page_count }} pages.{% endif %}
+        <p class="card-text mb-0">({{ book.display_date }}){% if book.edition_number and book.edition_number > 1 %} {{ book.edition_number | ordinal }} edn. {%endif %}{% if book.publisher %} {{ book.publisher }}.{% endif %}{% if book.page_count and book.page_count > 0 %} {{ book.page_count }} pages.{% endif %}
         {% if book.rating %}
           <span class="small" style="display: inline-block">
           {% set rating_floor = book.rating | float | round(0, 'floor') | int %}

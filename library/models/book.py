@@ -6,6 +6,7 @@ import requests
 import unidecode
 import xmltodict
 from django.contrib.auth.models import User
+from django.contrib.humanize.templatetags.humanize import ordinal
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
@@ -416,6 +417,8 @@ class Book(models.Model):
     @property
     def citation(self) -> str:
         citation = f"{self.display_authors} ({self.display_date}) {self.display_title}."
+        if self.edition_number and self.edition_number > 1:
+            citation += f" {ordinal(self.edition_number)} edn."
         if self.publisher:
             citation += f" {self.publisher}."
         return citation
