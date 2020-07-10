@@ -31,26 +31,30 @@
       </em>
     {% endif %}
     in {{ book.first_published }}.
-    This
-    {% if book.edition_format %}
-      {{ book.get_edition_format_display().lower() }}
+    {% if (book.edition_published and book.edition_published != book.first_published) or (book.publisher or book.publisher_url) %}
+      This
+      {% if book.edition_format %}
+        {{ book.get_edition_format_display().lower() }}
+      {% endif %}
+      {% if book.edition_number %}
+        {{ book.edition_number | ordinal }}
+      {% endif %}
+      {% if book.language != book.edition_language %}
+        {{ book.get_edition_language_display() }}
+      {% endif %}
+      edition published
+      {% if book.edition_published and book.edition_published != book.first_published %}
+        in {{ book.edition_published }}
+      {%- endif -%}
+      {% if book.publisher or book.publisher_url %}
+        by
+        {% if book.publisher_url %}
+          <a href="{{ book.publisher_url }}">{{ book.publisher or book.publisher_url }}</a>
+        {%- else -%}
+          {{ book.publisher }}
+        {%- endif -%}
+      {%- endif -%}.
     {% endif %}
-    {% if book.edition_number %}
-      {{ book.edition_number | ordinal }}
-    {% endif %}
-    {% if book.language != book.edition_language %}
-      {{ book.get_edition_language_display() }}
-    {% endif %}
-    edition published
-    {% if book.edition_published and book.edition_published != book.first_published %}
-      in {{ book.edition_published }}
-    {% endif %}
-    by
-    {% if book.publisher_url %}
-      <a href="{{ book.publisher_url }}">{{ book.publisher or book.publisher_url }}</a>
-    {%- else -%}
-      {{ book.publisher }}
-    {%- endif -%}.
     {% if book.page_count %}
       {{ book.page_count | int }}pp.
     {% endif %}
