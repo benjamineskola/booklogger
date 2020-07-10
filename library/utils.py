@@ -1,5 +1,17 @@
 from typing import Any, List
 
+from django.conf import settings
+
+LANGUAGES = sorted(
+    set(
+        [
+            (l, y.split(" ", 1)[-1])
+            for x, y in settings.LANGUAGES
+            if len(l := x.split("-", 1)[0]) == 2
+        ]
+    )
+)
+
 
 def oxford_comma(items: List[str]) -> str:
     if len(items) > 2:

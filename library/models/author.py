@@ -2,13 +2,14 @@ import re
 from typing import Any, Dict, Iterable, MutableMapping, Optional, Tuple
 
 import unidecode
-from django.conf import settings
 from django.contrib.postgres.search import TrigramDistance
 from django.db import models
 from django.db.models import CheckConstraint, F, Q
 from django.db.models.functions import Lower
 from django.db.models.indexes import Index
 from django.urls import reverse
+
+from library.utils import LANGUAGES
 
 Book = models.Model
 
@@ -60,7 +61,6 @@ class Author(models.Model):
 
     slug = models.SlugField(blank=True, default="")
 
-    LANGUAGES = sorted(set([(x, y) for x, y in settings.LANGUAGES if len(x) == 2]))
     primary_language = models.CharField(max_length=2, default="en", choices=LANGUAGES)
 
     def __str__(self) -> str:

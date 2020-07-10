@@ -5,7 +5,6 @@ from typing import Any, Dict, Iterable, Optional, Sequence
 import requests
 import unidecode
 import xmltodict
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.indexes import GinIndex
@@ -17,7 +16,7 @@ from django.db.models.indexes import Index
 from django.urls import reverse
 from django.utils import timezone
 
-from library.utils import oxford_comma
+from library.utils import LANGUAGES, oxford_comma
 
 from .author import Author
 
@@ -245,8 +244,6 @@ class Book(models.Model):
         HARDBACK = 2
         EBOOK = 3
         WEB = 4
-
-    LANGUAGES = sorted(set([(x, y) for x, y in settings.LANGUAGES if len(x) == 2]))
 
     first_published = models.PositiveSmallIntegerField(blank=True, null=True)
     language = models.CharField(max_length=2, default="en", choices=LANGUAGES)
