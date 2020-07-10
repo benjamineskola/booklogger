@@ -6,12 +6,12 @@
   </div>
 
   <div class="col">
-    <dl>
     {% if book.has_full_authors %}
-    <dt>Full Authors</dt><dd>
-    {{ book.all_authors | map('get_hyperlink', book=book) | list | oxford_comma }}
+    <p>
+      <strong>Full Authors</strong>
+      {{ book.all_authors | map('get_hyperlink', book=book) | list | oxford_comma }}
+    </p>
     {% endif %}
-    </dd>
 
     <p>
     {% if book.edition_title or (book.edition_language and book.language != book.edition_language) or (book.first_published != book.edition_published) %}
@@ -58,6 +58,7 @@
   </div>
 
   <div class="col">
+    <dl>
     {% if book.goodreads_id %}
     <dt>Goodreads</dt><dd><a href="https://goodreads.com/book/show/{{ book.goodreads_id }}">{{ book.goodreads_id }}</a></dd>
     {% elif book.isbn %}
@@ -96,6 +97,7 @@
       <dt>Ebook ISBN</dt><dd>{{ book.ebook_isbn }}</dd>
       {% endif %}
     {% endif %}
+    </dl>
   </div>
 
   {% if book.owned_by or book.was_borrowed or book.alienated_date %}
