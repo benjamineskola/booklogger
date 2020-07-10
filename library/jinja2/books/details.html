@@ -11,36 +11,50 @@
     <dt>Full Authors</dt><dd>
     {{ book.all_authors | map('get_hyperlink', book=book) | list | oxford_comma }}
     {% endif %}
-    {% if book.subtitle %}
-    <dt>Subtitle</dt><dd>{{ book.subtitle }}</dd>
-    {% endif %}
-    {% if book.edition_title %}
-    <dt>Original Title</dt><dd>{{ book.title }}</br>
-    {% endif %}
-    <dt>First Published</dt><dd>{{ book.first_published }}</dd>
-    {% if book.first_published != book.edition_published %}
-    <dt>Edition Published</dt><dd>{{ book.edition_published }}</dd>
-    {% endif %}
+    </dd>
 
-    <dt>Publisher</dt>
-    {% if book.publisher_url %}
-    <dd><a href="{{ book.publisher_url }}">{{ book.publisher or book.publisher_url }}</a></dd>
+    <p>
+    {% if book.edition_title or (book.edition_language and book.language != book.edition_language) or (book.first_published != book.edition_published) %}
+      Originally published
     {% else %}
-    <dd>{{ book.publisher }}</dd>
+      Published
     {% endif %}
 
-    <dt>Format</dt><dd>{{ book.get_edition_format_display() }}</dd>
+    {% if book.edition_title or (book.edition_language and book.language != book.edition_language) %}
+      {% if book.edition_language and book.language != book.edition_language %}
+        in {{ book.get_language_display() }}
+      {% endif %}
+      as <em>{{ book.title }}
+      {%- if book.subtitle -%}
+        : {{ book.subtitle }}
+      {%- endif -%}
+      </em>
+    {% endif %}
+    in {{ book.first_published }}.
+    This
+    {% if book.edition_format %}
+      {{ book.get_edition_format_display().lower() }}
+    {% endif %}
     {% if book.edition_number %}
-    <dt>Edition</dt><dd>{{ book.edition_number }}</dd>
+      {{ book.edition_number | ordinal }}
     {% endif %}
-    <dt>Pages</dt><dd>{{ book.page_count }}</dd>
-
-    {% if book.edition_language and book.language != book.edition_language %}
-    <dt>Language</dt><dd>{{ book.get_edition_language_display() }}</dd>
-    <dt>Original language</dt><dd>{{ book.get_language_display() }}</dd>
-    {% else %}
-    <dt>Language</dt><dd>{{ book.get_language_display() }}</dd>
+    {% if book.language != book.edition_language %}
+      {{ book.get_edition_language_display() }}
     {% endif %}
+    edition published
+    {% if book.edition_published and book.edition_published != book.first_published %}
+      in {{ book.edition_published }}
+    {% endif %}
+    by
+    {% if book.publisher_url %}
+      <a href="{{ book.publisher_url }}">{{ book.publisher or book.publisher_url }}</a>
+    {%- else -%}
+      {{ book.publisher }}
+    {%- endif -%}.
+    {% if book.page_count %}
+      {{ book.page_count | int }}pp.
+    {% endif %}
+    </p>
   </div>
 
   <div class="col">

@@ -1,6 +1,7 @@
 import json
 
 import commonmark
+from django.contrib.humanize.templatetags.humanize import ordinal
 from django.templatetags.static import static
 from django.urls import reverse
 
@@ -19,5 +20,7 @@ def environment(**options):
     env.filters["oxford_comma"] = lambda l: Markup(oxford_comma(l))
 
     env.filters["json"] = json.dumps
+
+    env.filters["ordinal"] = ordinal
 
     return env
