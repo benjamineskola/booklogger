@@ -7,6 +7,24 @@
 <label for="{{field.id_for_label}}">{{ field.label_tag() }} {% if field.field.required %}(required){% endif %}</label> {{ field }}
 </div>
 {% endfor %}
+
+{% if inline_formset %}
+<hr>
+{{ inline_formset.management_form }}
+{% for form in inline_formset %}
+<div class="form-row">
+{% for field in form %}
+{% if field.name not in ["id", "book"] %}
+<div class="form-group col">
+<label for="{{field.id_for_label}}">{{ field.label_tag() }} {% if field.field.required %}(required){% endif %}</label> {{ field }}
+</div>
+{% endif %}
+{% endfor %}
+</div>
+{% endfor %}
+{% endif %}
+
+<hr>
 <div class="form-group">
   <input type="submit" value="Submit">
 </div>

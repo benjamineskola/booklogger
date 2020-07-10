@@ -17,7 +17,7 @@ class AuthorForm(ModelForm):
 class BookForm(ModelForm):
     class Meta:
         model = Book
-        exclude = ["created_date"]
+        exclude = ["additional_authors", "created_date"]
 
     def __init__(self, *args, **kwargs):
         super(BookForm, self).__init__(*args, **kwargs)

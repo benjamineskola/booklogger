@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count, F, Q
 from django.db.models.functions import Lower
-from django.forms import modelform_factory
+from django.forms import inlineformset_factory, modelform_factory
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import generic
 from django.views.decorators.http import require_POST
@@ -282,10 +282,17 @@ def add_tags(request, slug):
 @login_required
 def edit(request, slug):
     book = get_object_or_404(Book, slug=slug)
+    BookAuthorForm = inlineformset_factory(
+        Book, BookAuthor, fields=("author", "role", "order",)
+    )
+
     if request.method == "POST":
         form = BookForm(request.POST, instance=book)
-        if form.is_valid():
+        inline_form = BookAuthorForm(request.POST, instance=book)
+
+        if form.is_valid() and inline_form.is_valid():
             book = form.save()
+            inline_form.save()
             return redirect("library:book_details", slug=book.slug)
         else:
             return render(
@@ -296,10 +303,16 @@ def edit(request, slug):
                     "item": book,
                     "type": "book",
                     "page_title": f"Editing {book}",
+                    "inline_formset": inline_formset,
                 },
             )
     else:
         form = BookForm(instance=book)
+        inline_formset = BookAuthorForm(instance=book)
+
+        for subform in inline_formset:
+            for field in subform.fields:
+                subform.fields[field].widget.attrs.update({"class": "form-control"})
 
         return render(
             request,
@@ -309,6 +322,7 @@ def edit(request, slug):
                 "item": book,
                 "type": "book",
                 "page_title": f"Editing {book}",
+                "inline_formset": inline_formset,
             },
         )
 
