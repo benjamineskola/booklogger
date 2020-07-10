@@ -13,7 +13,7 @@
     </p>
     {% endif %}
 
-    <p>
+    <p id="edition-details">
     {% if book.edition_title or (book.edition_language and book.language != book.edition_language) or (book.first_published != book.edition_published) %}
       Originally published
     {% else %}
@@ -55,6 +55,27 @@
       {{ book.page_count | int }}pp.
     {% endif %}
     </p>
+    {% if book.owned_by or book.was_borrowed or book.alienated_date %}
+    <p id="ownership-details">
+      {% if book.owned_by_sara %}
+        Sara owns
+      {% else %}
+        I {% if book.owned %}own{% elif book.was_borrowed %}borrowed{% else %}owned{% endif %}
+      {% endif %}
+      a{% if book.get_edition_format_display().lower()[0] in ['a', 'e', 'i', 'o', 'u'] %}n{% endif %} {{ book.get_edition_format_display().lower() }} edition
+      {%- if book.was_borrowed %} from {{ book.borrowed_from }}{% endif -%}
+        {%- if book.acquired_date or book.alienated_date %} which I
+          {%- if book.acquired_date %}
+            acquired on {{ book.acquired_date.strftime("%d %B, %Y") }}
+            {%- if book.acquired_date and book.alienated_date %} and {% endif -%}
+          {%- endif -%}
+          {%- if book.alienated_date %} disposed of on {{ book.alienated_date.strftime("%d %B, %Y") }}{% endif -%}
+        {%- endif -%}
+        {%- if book.has_ebook_edition -%}
+        , and an ebook edition{% if book.ebook_acquired_date %} which I acquired {% if book.acquired_date == book.ebook_acquired_date %} at the same time{% else %} on {{ book.ebook_acquired_date.strftime("%d %B, %Y") }}{% endif %}{% endif %}
+      {%- endif %}.
+    </p>
+    {% endif %}
   </div>
 
   <div class="col">
@@ -105,28 +126,6 @@
     {% endif %}
     </dl>
   </div>
-
-  {% if book.owned_by or book.was_borrowed or book.alienated_date %}
-  <div class="col" id="ownership-details">
-    {% if book.owned_by_sara %}
-      Sara owns
-    {% else %}
-      I {% if book.owned %}own{% elif book.was_borrowed %}borrowed{% else %}owned{% endif %}
-    {% endif %}
-    a{% if book.get_edition_format_display().lower()[0] in ['a', 'e', 'i', 'o', 'u'] %}n{% endif %} {{ book.get_edition_format_display().lower() }} edition
-    {%- if book.was_borrowed %} from {{ book.borrowed_from }}{% endif -%}
-      {%- if book.acquired_date or book.alienated_date %} which I
-        {%- if book.acquired_date %}
-          acquired on {{ book.acquired_date.strftime("%d %B, %Y") }}
-          {%- if book.acquired_date and book.alienated_date %} and {% endif -%}
-        {%- endif -%}
-        {%- if book.alienated_date %} disposed of on {{ book.alienated_date.strftime("%d %B, %Y") }}{% endif -%}
-      {%- endif -%}
-      {%- if book.has_ebook_edition -%}
-      , and an ebook edition{% if book.ebook_acquired_date %} which I acquired {% if book.acquired_date == book.ebook_acquired_date %} at the same time{% else %} on {{ book.ebook_acquired_date.strftime("%d %B, %Y") }}{% endif %}{% endif %}
-    {%- endif %}.
-  </div>
-  {% endif %}
 
   {% if book.review %}
   <div class="col">
