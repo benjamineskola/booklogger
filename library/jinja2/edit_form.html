@@ -6,6 +6,11 @@
 <div class="form-group">
 <label for="{{field.id_for_label}}">{{ field.label_tag() }} {% if field.field.required %}(required){% endif %}</label> {{ field }}
 </div>
+{% for error in field.errors %}
+  <label for="{{field.id_for_label}}" class="text-danger">
+    {{ error|escape }}
+  </label>
+{% endfor %}
 {% endfor %}
 
 {% if inline_formset %}
@@ -18,6 +23,11 @@
 {% if field.name not in ["id", "book"] %}
 <div class="form-group col">
 <label for="{{field.id_for_label}}">{{ field.label_tag() }} {% if field.field.required %}(required){% endif %}</label> {{ field }}
+{% for error in field.errors %}
+  <label for="{{field.id_for_label}}" class="text-danger">
+    {{ error|escape }}
+  </label>
+{% endfor %}
 </div>
 {% endif %}
 {% endfor %}
