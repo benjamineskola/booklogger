@@ -564,8 +564,11 @@ class Book(models.Model):
         return entries
 
     def _generate_slug(self) -> str:
-        slug = self.first_author.surname.lower() + "-" if self.first_author else ""
-        slug = "-".join(slug.split(" "))
+        slug = (
+            "-".join(self.first_author.slug.split("-")[0:-1]) + "-"
+            if self.first_author
+            else ""
+        )
 
         stopwords = ["a", "an", "and", "at", "in", "is", "of", "on", "to", "for", "the"]
 

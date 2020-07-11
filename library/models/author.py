@@ -164,7 +164,10 @@ class Author(models.Model):
         return {"surname": surname, "forenames": forenames}
 
     def _generate_slug(self) -> str:
-        slug = "-".join(self.name_with_initials.lower().split(" "))
+        words = self.name_with_initials.lower().split(" ")
+        slug = "-".join(
+            [word for word in words if word not in ["von", "van", "der", "le", "de"]]
+        )
         slug = unidecode.unidecode(slug)
         slug = re.sub(r"[^\w-]+", "", slug)
 
