@@ -2,15 +2,17 @@ from typing import Any, List
 
 from django.conf import settings
 
-LANGUAGES = sorted(
+LANGUAGES = dict(
     set(
         [
             (l, y.split(" ", 1)[-1])
             for x, y in settings.LANGUAGES
             if len(l := x.split("-", 1)[0]) == 2
         ]
-    )
+    ),
 )
+LANGUAGES["nb"] = "Norwegian"
+LANGUAGES = sorted(LANGUAGES.items(), key=lambda x: x[1])
 
 
 def oxford_comma(items: List[str]) -> str:
