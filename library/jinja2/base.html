@@ -93,12 +93,12 @@
 
           {% for pageno in page_obj.paginator.page_range %}
 
-            {% if page_obj.paginator.num_pages < 10 or pageno == 1 or pageno == page_obj.paginator.num_pages or (pageno > page_obj.number - 2 and pageno < page_obj.number +2) %}
+            {% if page_obj.paginator.num_pages < 10 or pageno == 1 or pageno == page_obj.paginator.num_pages or (pageno > page_obj.number - 3 and pageno < page_obj.number + 3) %}
               {% if pageno > 1 %}
               {% set new_kwargs = dict(new_kwargs, **{"page": pageno}) %}
               {% endif %}
               <li class="page-item{% if pageno == page_obj.number %} active{% endif %}"><a class="page-link" href="{{ url(request.resolver_match.view_name, kwargs=new_kwargs) }}{% if qs %}?{{ qa }}{% endif %}">{{pageno}}</a></li>
-            {% elif pageno == page_obj.number - 2 or pageno == page_obj.number + 2 %}
+            {% elif pageno == page_obj.number - 3 or pageno == page_obj.number + 3 %}
               <li class="page-item inactive"><span class="page-link">…</span></li>
             {% endif %}
           {% endfor %}
