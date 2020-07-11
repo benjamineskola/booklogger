@@ -13,6 +13,7 @@
 {{ inline_formset.management_form }}
 {% for form in inline_formset %}
 <div class="form-row">
+{{ form.id }}
 {% for field in form %}
 {% if field.name not in ["id", "book"] %}
 <div class="form-group col">
