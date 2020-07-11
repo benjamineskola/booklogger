@@ -40,8 +40,14 @@ urlpatterns = [
         include(
             [
                 path("", views.book.IndexView.as_view(), name="books_all"),
+                path("<int:page>/", views.book.IndexView.as_view(), name="books_all"),
                 path(
                     "borrowed/",
+                    views.book.BorrowedIndexView.as_view(),
+                    name="books_borrowed",
+                ),
+                path(
+                    "borrowed/<int:page>",
                     views.book.BorrowedIndexView.as_view(),
                     name="books_borrowed",
                 ),
@@ -50,14 +56,34 @@ urlpatterns = [
                     views.book.BorrowedIndexView.as_view(),
                     name="books_borrowed",
                 ),
+                path(
+                    "borrowed/<str:format>/<int:page>/",
+                    views.book.BorrowedIndexView.as_view(),
+                    name="books_borrowed",
+                ),
                 path("owned/", views.book.OwnedIndexView.as_view(), name="books_owned"),
+                path(
+                    "owned/<int:page>/",
+                    views.book.OwnedIndexView.as_view(),
+                    name="books_owned",
+                ),
                 path(
                     "owned/bydate/",
                     views.book.OwnedByDateView.as_view(),
                     name="books_owned_by_date",
                 ),
                 path(
+                    "owned/bydate/<int:page>/",
+                    views.book.OwnedByDateView.as_view(),
+                    name="books_owned_by_date",
+                ),
+                path(
                     "owned/<str:format>/",
+                    views.book.OwnedIndexView.as_view(),
+                    name="books_owned",
+                ),
+                path(
+                    "owned/<str:format>/<int:page>/",
                     views.book.OwnedIndexView.as_view(),
                     name="books_owned",
                 ),
@@ -74,7 +100,17 @@ urlpatterns = [
                     "toread/", views.book.UnreadIndexView.as_view(), name="books_unread"
                 ),
                 path(
+                    "toread/<int:page>/",
+                    views.book.UnreadIndexView.as_view(),
+                    name="books_unread",
+                ),
+                path(
                     "toread/<str:format>/",
+                    views.book.UnreadIndexView.as_view(),
+                    name="books_unread",
+                ),
+                path(
+                    "toread/<str:format>/<int:page>/",
                     views.book.UnreadIndexView.as_view(),
                     name="books_unread",
                 ),
@@ -84,7 +120,17 @@ urlpatterns = [
                     name="books_unowned",
                 ),
                 path(
+                    "unowned/<int:page>/",
+                    views.book.UnownedIndexView.as_view(),
+                    name="books_unowned",
+                ),
+                path(
                     "unowned/<str:format>/",
+                    views.book.UnownedIndexView.as_view(),
+                    name="books_unowned",
+                ),
+                path(
+                    "unowned/<str:format>/<int:page>/",
                     views.book.UnownedIndexView.as_view(),
                     name="books_unowned",
                 ),
