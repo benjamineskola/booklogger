@@ -31,7 +31,7 @@
       </em>
     {% endif %}
     in {{ book.first_published }}.
-    {% if (book.edition_published and book.edition_published != book.first_published) or (book.publisher or book.publisher_url) %}
+    {% if (book.edition_published and book.edition_published != book.first_published) or book.publisher or book.publisher_url or (book.edition_title and book.edition_title != book.title) %}
       This
       {% if book.edition_format %}
         {{ book.get_edition_format_display().lower() }}
@@ -43,6 +43,9 @@
         {{ book.get_edition_language_display() }}
       {% endif %}
       edition published
+      {%- if book.edition_title and book.edition_title != book.title %}
+      as <em>{{ book.edition_title }}{% if book.edition_subtitle %}: {{ book.edition_subtitle }}{% endif -%}</em>
+      {%- endif -%}
       {% if book.edition_published and book.edition_published != book.first_published %}
         in {{ book.edition_published }}
       {%- endif -%}
