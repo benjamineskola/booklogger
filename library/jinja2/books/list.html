@@ -6,9 +6,9 @@
   {% if not format %}
     <p>Formats: <a href="{{ url("library:" + request.resolver_match.url_name) }}">all</a>
     {%- for n, f  in formats if n in counts and counts[n] > 0 -%}
-    , <a href="{{ url("library:" + request.resolver_match.url_name, args=[f.lower()]) }}">{{ f | lower }}</a> ({{ counts[n] }})
+    , <a href="{{ url("library:" + request.resolver_match.url_name, kwargs={"format": f.lower()}) }}">{{ f | lower }}</a> ({{ counts[n] }})
     {%- endfor -%}
-    , <a href="{{ url("library:" + request.resolver_match.url_name, args=['physical']) }}">physical</a> ({{ counts.get(1) | int + counts.get(2) | int }})</p>
+    , <a href="{{ url("library:" + request.resolver_match.url_name, kwargs={"format": "physical"}) }}">physical</a> ({{ counts.get(1) | int + counts.get(2) | int }})</p>
   {% else %}
   <h2>{{ format }}</h2>
   {% endif %}

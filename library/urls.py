@@ -16,6 +16,7 @@ urlpatterns = [
         ),
     ),
     path("authors/", views.author.IndexView.as_view(), name="author_list"),
+    path("authors/<int:page>/", views.author.IndexView.as_view(), name="author_list"),
     path("book/import/", views.import_book, name="book_import"),
     path("book/import/<str:query>/", views.import_book, name="book_import"),
     path("book/new/", views.book.new, name="book_new"),

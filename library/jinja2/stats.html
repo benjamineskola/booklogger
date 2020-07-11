@@ -10,7 +10,7 @@
   {% if year == "total" %}
   {% set url_base = url("library:books_read") %}
   {% else %}
-  {% set url_base = url("library:books_read", args=[year]) %}
+  {% set url_base = url("library:books_read", kwargs={"year": year}) %}
   {% endif %}
     <li>
       <p>
