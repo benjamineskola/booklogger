@@ -288,13 +288,17 @@ def edit(request, slug):
 
     if request.method == "POST":
         form = BookForm(request.POST, instance=book)
-        inline_form = BookAuthorForm(request.POST, instance=book)
+        inline_formset = BookAuthorForm(request.POST, instance=book)
 
-        if form.is_valid() and inline_form.is_valid():
+        if form.is_valid() and inline_formset.is_valid():
             book = form.save()
-            inline_form.save()
+            inline_formset.save()
             return redirect("library:book_details", slug=book.slug)
         else:
+            for subform in inline_formset:
+                for field in subform.fields:
+                    subform.fields[field].widget.attrs.update({"class": "form-control"})
+
             return render(
                 request,
                 "edit_form.html",
