@@ -487,6 +487,11 @@ class Book(models.Model):
     def mark_read_sometime(self) -> None:
         entry = self.log_entries.create(start_date=None, end_date="0001-01-01 00:00")
 
+    def mark_owned(self) -> None:
+        self.owned_by = User.objects.get(username="ben")
+        self.acquired_date = timezone.now()
+        self.save()
+
     @property
     def currently_reading(self) -> bool:
         entries = self.log_entries.filter(end_date=None).order_by("-start_date")

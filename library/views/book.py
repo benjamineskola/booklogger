@@ -280,6 +280,14 @@ def add_tags(request, slug):
 
 
 @login_required
+@require_POST
+def mark_owned(request, slug):
+    book = get_object_or_404(Book, slug=slug)
+    book.mark_owned()
+    return redirect("library:book_details", slug=slug)
+
+
+@login_required
 def edit(request, slug):
     book = get_object_or_404(Book, slug=slug)
     BookAuthorForm = inlineformset_factory(

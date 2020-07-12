@@ -1,19 +1,26 @@
 {% if user.is_authenticated %}
-  {% if book.currently_reading %}
-    <form class="form-inline mb-2 " action="{{url('library:book_update_progress', args=[book.slug])}}" method="post">
-      <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-      <input class="form-control-sm col-2 mx-2" type="text" name="pages" placeholder="pages"/>
-      <input class="form-control-sm col-2 mx-2" type="text" name="percentage" placeholder="%"/>
-      <input class="form-control-sm btn btn-primary mx-2" type="submit" name="Update Progress" value="Update Progress" />
-    </form>
-    <form class="form-inline " action="{{url('library:book_finish_reading', args=[book.slug])}}" method="post">
-      <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-      <input class="form-control-sm btn btn-primary mx-2" type="submit" name="Finish Reading" value="Finish Reading" />
-    </form>
+  {% if book.owned or book.owned_by_sara %}
+    {% if book.currently_reading %}
+      <form class="form-inline mb-2 " action="{{url('library:book_update_progress', args=[book.slug])}}" method="post">
+        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+        <input class="form-control-sm col-2 mx-2" type="text" name="pages" placeholder="pages"/>
+        <input class="form-control-sm col-2 mx-2" type="text" name="percentage" placeholder="%"/>
+        <input class="form-control-sm btn btn-primary mx-2" type="submit" name="Update Progress" value="Update Progress" />
+      </form>
+      <form class="form-inline " action="{{url('library:book_finish_reading', args=[book.slug])}}" method="post">
+        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+        <input class="form-control-sm btn btn-primary mx-2" type="submit" name="Finish Reading" value="Finish Reading" />
+      </form>
+    {% else %}
+      <form class="form-inline " action="{{url('library:book_start_reading', args=[book.slug])}}" method="post">
+        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+        <input class="form-control-sm btn btn-primary mx-2" type="submit" name="Start Reading" value="Start Reading" />
+      </form>
+    {% endif %}
   {% else %}
-    <form class="form-inline " action="{{url('library:book_start_reading', args=[book.slug])}}" method="post">
+    <form class="form-inline " action="{{url('library:book_mark_owned', args=[book.slug])}}" method="post">
       <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-      <input class="form-control-sm btn btn-primary mx-2" type="submit" name="Start Reading" value="Start Reading" />
+      <input class="form-control-sm btn btn-primary mx-2" type="submit" name="Mark Owned" value="Mark Owned" />
     </form>
   {% endif %}
   <p class="card-text small p-2"><a class="card-link" href="{{ url('library:book_edit', args=[book.slug]) }}">edit</a></p>
