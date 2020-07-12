@@ -60,7 +60,11 @@ def new(request):
             author = form.save()
             return redirect("library:author_details", slug=author.slug)
         else:
-            return redirect("library:author_new")
+            return render(
+                request,
+                "authors/edit_form.html",
+                {"form": form, "item": author, "page_title": f"Editing {author}",},
+            )
     else:
         form = AuthorForm()
 
