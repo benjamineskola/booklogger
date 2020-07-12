@@ -114,8 +114,26 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
             return None
 
         goodreads_book = result["best_book"]
+
+        title = goodreads_book["title"].strip()
+        series_name = ""
+        series_order = None
+
+        if title.endswith(")"):
+            title, rest = title.split(" (", 2)
+            first_series = rest.split(";")[0]
+            series_name, *rest = first_series.split("#")
+            series_name = series_name.strip(" ,)")
+            if rest:
+                try:
+                    series_order = float(rest[0].strip(")"))
+                except ValueError:
+                    pass
+
         book = Book(
-            title=goodreads_book["title"],
+            title=title,
+            series=series_name,
+            series_order=series_order,
             goodreads_id=goodreads_book["id"]["#text"],
             first_published=result["original_publication_year"].get("#text"),
         )
