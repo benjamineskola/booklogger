@@ -14,7 +14,7 @@
     {% endif %}
 
     <p id="edition-details">
-    {% if book.edition_title or (book.edition_language and book.language != book.edition_language) or (book.first_published != book.edition_published) %}
+    {% if book.edition_title or (book.edition_language and book.language != book.edition_language) or (book.edition_published and book.first_published != book.edition_published) %}
       Originally published
     {% else %}
       Published
@@ -88,37 +88,14 @@
 
   <div class="col">
     <dl>
-    <dt>Goodreads</dt><dd>
-    {% if book.goodreads_id %}
-    <a href="https://goodreads.com/book/show/{{ book.goodreads_id }}">{{ book.goodreads_id }}</a>
-    {% elif book.isbn %}
-    <a href="https://www.goodreads.com/search?q={{ book.isbn }}">{{ book.isbn }}</a>
-    {% elif book.asin %}
-    <a href="https://www.goodreads.com/search?q={{ book.asin }}">{{ book.asin }}</a>
-    {% else %}
-    <a href="https://www.goodreads.com/search?q={{ book.title | urlencode }}%20{{ book.first_author | urlencode }}">search</a>
-    {% endif %}
-    </dd>
-
-    <dt>Google</dt><dd>
-    {% if book.google_books_id %}
-    <a href="https://books.google.co.uk/books?id={{ book.google_books_id }}">{{ book.google_books_id }}</a>
-    {% elif book.isbn %}
-    <a href="https://www.googleapis.com/books/v1/volumes?q=isbn:{{ book.isbn }}">{{ book.isbn }}</a>
-    {% else %}
-    <a href="https://www.googleapis.com/books/v1/volumes?q={{ book.title | urlencode }}%20{{ book.first_author | urlencode }}">search</a>
-    {% endif %}
-    </dd>
-
+    <dt>Goodreads</dt><dd><a href="{{ book.goodreads_url }}">{{ book.goodreads_id or book.isbn or book.asin or "search" }}</a></dd>
+    <dt>Google</dt><dd><a href="{{ book.google_url }}">{{ book.google_books_id or book.isbn or "search" }}</a></dd>
     <dt>Amazon</dt><dd>
     {% if book.asin %}
-    <a href="https://amazon.co.uk/dp/{{ book.asin }}">{{ book.asin }}</a></dd>
-    {% elif book.isbn10 %}
-    <dd><a href="https://amazon.co.uk/dp/{{ book.isbn10 }}">{{ book.isbn10 }}</a>
-    or
-    {% endif %}
-    {% if not book.asin %}
-    <a href="https://www.amazon.co.uk/s?k={{ book.title | urlencode }}%20{{ book.first_author | urlencode }}&i=stripbooks">search</a>
+    <a href="{{ book.amazon_urls[0] }}">{{ book.asin }}</a>
+    {% else %}
+    <a href="{{ book.amazon_urls[0] }}">{{ book.isbn10 }}</a> or 
+    <a href="{{ book.amazon_urls[1] }}">search</a>
     {% endif %}
     </dd>
     <dt>ISBN</dt><dd>{{ book.isbn }}</dd>
@@ -126,9 +103,9 @@
     {% if book.has_ebook_edition %}
       <dt>Ebook Acquired</dt><dd>{{ book.ebook_acquired_date or "Unknown" }}</dd>
       {% if book.ebook_asin %}
-      <dt>Amazon</dt><dd><a href="https://amazon.co.uk/dp/{{ book.ebook_asin }}">{{ book.ebook_asin }}</a></dd>
+      <dt>Amazon</dt><dd><a href="{{ book.ebook_url }}">{{ book.ebook_asin }}</a></dd>
       {% endif %}
-      {% if book.ebook_asin %}
+      {% if book.ebook_isbn %}
       <dt>Ebook ISBN</dt><dd>{{ book.ebook_isbn }}</dd>
       {% endif %}
     {% endif %}

@@ -1,6 +1,7 @@
 import os
 import re
 from typing import Any, Dict, Iterable, Optional, Sequence
+from urllib.parse import quote
 
 import requests
 import unidecode
@@ -605,6 +606,41 @@ class Book(models.Model):
     @property
     def owned_by_sara(self) -> bool:
         return self.owned_by is not None and self.owned_by.username == "sara"
+
+    @property
+    def search_query(self) -> str:
+        return quote(f"{self.title} {self.first_author}")
+
+    @property
+    def goodreads_url(self) -> str:
+        if self.goodreads_id:
+            return f"https://www.goodreads.com/book/show/{self.goodreads_id}"
+        else:
+            return f"https://www.goodreads.com/search?q={self.isbn or self.asin or self.search_query}"
+
+    @property
+    def amazon_urls(self) -> Sequence[str]:
+        if self.asin:
+            return [f"https://amazon.co.uk/dp/{self.asin}"]
+        else:
+            return [
+                f"https://amazon.co.uk/dp/{self.isbn10}",
+                f"https://www.amazon.co.uk/s?k={self.search_query}&i=stripbooks",
+            ]
+
+    @property
+    def google_url(self) -> str:
+        if self.google_books_id:
+            return f"https://books.google.co.uk/books?id={self.google_books_id}"
+        elif self.isbn:
+            return f"https://www.googleapis.com/books/v1/volumes?q=isbn:{self.isbn}"
+        else:
+            return f"https://www.googleapis.com/books/v1/volumes?q={self.search_query}"
+
+    @property
+    def ebook_url(self) -> Optional[str]:
+        if self.ebook_asin:
+            return f"https://amazon.co.uk/dp/{self.ebook_asin}"
 
 
 class BookAuthor(models.Model):
