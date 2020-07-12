@@ -13,6 +13,7 @@
 
 <form class="form-inline" action="{{url('library:book_import')}}" method="post">
   <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+  <input type="hidden" name="query" value="{{ query }}">
   <input type="hidden" name="data" value="{{ goodreads_result | json }}">
   <input class="form-control-sm btn btn-primary mx-2" type="submit" name="Confirm" value="Confirm" />
 </form><br></li>

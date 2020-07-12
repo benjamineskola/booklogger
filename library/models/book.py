@@ -108,7 +108,7 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
             if not results:
                 return None
             result = results[0]
-        elif data and not query:
+        elif data:
             result = data
         else:
             return None
@@ -128,6 +128,10 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
         book.first_author, created = Author.objects.get_or_create_by_single_name(
             goodreads_book["author"]["name"]
         )
+
+        if query and len(query) == 13 and query.startswith("978"):
+            book.isbn = query
+
         book.save()
 
         return book

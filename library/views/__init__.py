@@ -191,14 +191,13 @@ def stats(request):
 
 @login_required
 def import_book(request, query=None):
-    from pprint import pprint
-
     if request.method == "GET" and not query:
         query = request.GET.get("query")
 
     if request.method == "POST":
         data = json.loads(request.POST["data"])
-        book = Book.objects.create_from_goodreads(data=data)
+        query = request.POST.get("query")
+        book = Book.objects.create_from_goodreads(data=data, query=query)
         return redirect("library:book_edit", slug=book.slug)
     else:
         goodreads_results = None
