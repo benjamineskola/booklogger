@@ -536,6 +536,20 @@ class Book(models.Model):
             else:
                 self.asin = ""
 
+        if len(self.ebook_asin) != 10:
+            if (
+                self.ebook_asin.startswith("http")
+                and "amazon" in self.ebook_asin
+                and (
+                    matches := re.search(
+                        r"/(?:gp/product|dp)/([^/]+)/", self.ebook_asin
+                    )
+                )
+            ):
+                self.ebook_asin = matches[1]
+            else:
+                self.ebook_asin = ""
+
         self.image_url = re.sub(r"\._S\w\d+_\.jpg$", ".jpg", self.image_url)
 
         super().save(*args, **kwargs)
