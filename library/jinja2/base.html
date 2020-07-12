@@ -86,7 +86,7 @@
               {% set prev_kwargs = new_kwargs%}
             {% endif %}
 
-            <li class="page-item"><a class="page-link" href="{{ url(request.resolver_match.view_name, kwargs=prev_kwargs) }}{% if qs %}?{{ qa }}{% endif %}">&laquo;</a></li>
+            <li class="page-item"><a class="page-link" href="{{ url(request.resolver_match.view_name, kwargs=prev_kwargs) }}{% if qs %}?{{ qs }}{% endif %}">&laquo;</a></li>
           {% else %}
             <li class="page-item"><span class="page-link">&laquo;</a></li>
           {% endif %}
@@ -97,14 +97,14 @@
               {% if pageno > 1 %}
               {% set new_kwargs = dict(new_kwargs, **{"page": pageno}) %}
               {% endif %}
-              <li class="page-item{% if pageno == page_obj.number %} active{% endif %}"><a class="page-link" href="{{ url(request.resolver_match.view_name, kwargs=new_kwargs) }}{% if qs %}?{{ qa }}{% endif %}">{{pageno}}</a></li>
+              <li class="page-item{% if pageno == page_obj.number %} active{% endif %}"><a class="page-link" href="{{ url(request.resolver_match.view_name, kwargs=new_kwargs) }}{% if qs %}?{{ qs }}{% endif %}">{{pageno}}</a></li>
             {% elif pageno == page_obj.number - 3 or pageno == page_obj.number + 3 %}
               <li class="page-item inactive"><span class="page-link">…</span></li>
             {% endif %}
           {% endfor %}
 
           {% if page_obj.number < page_obj.paginator.num_pages %}
-            <li class="page-item"><a class="page-link" href="{{ url(request.resolver_match.view_name, kwargs=dict(request.resolver_match.kwargs, **{"page": page_obj.next_page_number()})) }}{% if qs %}?{{ qa }}{% endif %}">&raquo;</a></li>
+            <li class="page-item"><a class="page-link" href="{{ url(request.resolver_match.view_name, kwargs=dict(request.resolver_match.kwargs, **{"page": page_obj.next_page_number()})) }}{% if qs %}?{{ qs }}{% endif %}">&raquo;</a></li>
           {% else %}
             <li class="page-item"><span class="page-link">&raquo;</a></li>
           {% endif %}
