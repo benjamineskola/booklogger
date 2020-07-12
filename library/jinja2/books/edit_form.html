@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block content %}
+
+<form method="post">
+  <div class="row row-cols-1 row-cols-md-2">
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+    {% for field_names in [
+      ['title', 'subtitle', 'first_author', 'first_author_role', 'first_published', 'language', 'series', 'series_order', 'slug'],
+      ['edition_title', 'edition_subtitle', 'publisher', 'edition_published', 'edition_format', 'edition_language', 'edition_number', 'page_count'],
+      ['owned_by', 'acquired_date', 'alienated_date', 'was_borrowed', 'borrowed_from', 'want_to_read'],
+      ['goodreads_id', 'google_books_id', 'isbn', 'asin', 'image_url', 'publisher_url'],
+      ['has_ebook_edition', 'ebook_acquired_date', 'ebook_isbn', 'ebook_asin'],
+      ['tags', 'review', 'rating'],
+      ['editions', 'parent_edition'],
+    ] %}
+    <div class="col">
+      <div class="card mb-3">
+        <div class="card-body">
+          {% for field_name in field_names %}
+            {% set field = form[field_name] %}
+            {% if field %}
+              {% include "edit_form_field_snippet.html" %}
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+  </div>
+
+  <div class="col">
+    <div class="card mb-3">
+      <div class="card-body">
+        {{ inline_formset.management_form }}
+        {% for form in inline_formset %}
+        <div class="form-row">
+          {{ form.id }}
+          {% for field in form %}
+          {% if field.name not in ["id", "book"] %}
+          <div class="form-group p-2">
+            <label for="{{field.id_for_label}}">{{ field.label_tag() }} {% if field.field.required %}(required){% endif %}</label> {{ field }}
+            {% for error in field.errors %}
+              <label for="{{field.id_for_label}}" class="text-danger">
+                {{ error|escape }}
+              </label>
+            {% endfor %}
+          </div> {# form-group #}
+          {% endif %}
+        {% endfor %}
+        </div> {# form-row #}
+        {% endfor %}
+      </div> {# card-body #}
+    </div> {# card #}
+  </div> {# col #}
+
+  <div class="form-group">
+    <input type="submit" value="Submit" class="btn btn-primary">
+    <a href="{{ item.get_absolute_url() }}" class="btn btn-secondary">Cancel</a>
+  </div>
+</form>
+
+{% if item %}
+<a href="{{ url("admin:library_book_change", args=[item.id]) }}">Advanced</a>
+{% endif %}
+
+{% endblock content %}

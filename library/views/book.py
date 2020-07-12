@@ -301,11 +301,10 @@ def edit(request, slug):
 
             return render(
                 request,
-                "edit_form.html",
+                "books/edit_form.html",
                 {
                     "form": form,
                     "item": book,
-                    "type": "book",
                     "page_title": f"Editing {book}",
                     "inline_formset": inline_formset,
                 },
@@ -320,11 +319,10 @@ def edit(request, slug):
 
         return render(
             request,
-            "edit_form.html",
+            "books/edit_form.html",
             {
                 "form": form,
                 "item": book,
-                "type": "book",
                 "page_title": f"Editing {book}",
                 "inline_formset": inline_formset,
             },
@@ -344,7 +342,5 @@ def new(request):
         form = BookForm()
 
         return render(
-            request,
-            "edit_form.html",
-            {"form": form, "type": "book", "page_title": "New book"},
+            request, "books/edit_form.html", {"form": form, "page_title": "New book"},
         )

@@ -11,7 +11,12 @@ class AuthorForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(AuthorForm, self).__init__(*args, **kwargs)
         for field in self.fields:
-            self.fields[field].widget.attrs.update({"class": "form-control col-8"})
+            widget = self.fields[field].widget
+            widget.attrs.update({"class": "form-control"})
+            if widget.__class__.__name__ == "CheckboxInput":
+                widget.attrs["class"] += " col-1"
+            else:
+                widget.attrs["class"] += " col-8"
 
 
 class BookForm(ModelForm):
@@ -38,5 +43,3 @@ class BookForm(ModelForm):
             widget.attrs.update({"class": "form-control"})
             if widget.__class__.__name__ == "CheckboxInput":
                 widget.attrs["class"] += " col-1"
-            else:
-                widget.attrs["class"] += " col-8"
