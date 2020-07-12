@@ -92,10 +92,12 @@
     <dt>Google</dt><dd><a href="{{ book.google_url }}">{{ book.google_books_id or book.isbn or "search" }}</a></dd>
     <dt>Amazon</dt><dd>
     {% if book.asin %}
-    <a href="{{ book.amazon_urls[0] }}">{{ book.asin }}</a>
+      <a href="{{ book.amazon_urls[0] }}">{{ book.asin }}</a>
     {% else %}
-    <a href="{{ book.amazon_urls[0] }}">{{ book.isbn10 }}</a> or 
-    <a href="{{ book.amazon_urls[1] }}">search</a>
+      {% if book.isbn10 %}
+        <a href="{{ book.amazon_urls[0] }}">{{ book.isbn10 }}</a> or
+      {% endif %}
+      <a href="{{ book.amazon_urls[1] }}">search</a>
     {% endif %}
     </dd>
     <dt>ISBN</dt><dd>{{ book.isbn }}</dd>
