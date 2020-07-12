@@ -14,14 +14,14 @@
     {% endif %}
 
     <p id="edition-details">
-    {% if book.edition_title or (book.edition_language and book.language != book.edition_language) or (book.edition_published and book.first_published != book.edition_published) %}
+    {% if (not book.has_original_title) or book.is_translated or (not book.is_first_edition) %}
       Originally published
     {% else %}
       Published
     {% endif %}
 
-    {% if book.edition_title or (book.edition_language and book.language != book.edition_language) %}
-      {% if book.edition_language and book.language != book.edition_language %}
+    {% if (not book.has_original_title) or book.is_translated %}
+      {% if book.is_translated %}
         in {{ book.get_language_display() }}
       {% endif %}
       as <em>{{ book.title }}
@@ -31,7 +31,7 @@
       </em>
     {% endif %}
     in {{ book.first_published }}.
-    {% if (book.edition_published and book.edition_published != book.first_published) or book.publisher or book.publisher_url or (book.edition_title and book.edition_title != book.title) %}
+    {% if (not book.is_first_edition) or book.publisher or book.publisher_url or (not book.has_original_title) %}
       This
       {% if book.edition_format %}
         {{ book.get_edition_format_display().lower() }}
@@ -39,14 +39,14 @@
       {% if book.edition_number %}
         {{ book.edition_number | ordinal }}
       {% endif %}
-      {% if book.language != book.edition_language %}
+      {% if book.is_translated %}
         {{ book.get_edition_language_display() }}
       {% endif %}
       edition published
-      {%- if book.edition_title and book.edition_title != book.title %}
+      {%- if (not book.has_original_title) %}
       as <em>{{ book.edition_title }}{% if book.edition_subtitle %}: {{ book.edition_subtitle }}{% endif -%}</em>
       {%- endif -%}
-      {% if book.edition_published and book.edition_published != book.first_published %}
+      {% if (not book.is_first_edition) %}
         in {{ book.edition_published }}
       {%- endif -%}
       {% if book.publisher or book.publisher_url %}

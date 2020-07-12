@@ -642,6 +642,22 @@ class Book(models.Model):
         if self.ebook_asin:
             return f"https://amazon.co.uk/dp/{self.ebook_asin}"
 
+    @property
+    def is_translated(self) -> bool:
+        return (
+            self.edition_language is not None and self.edition_language != self.language
+        )
+
+    @property
+    def has_original_title(self) -> bool:
+        return (not self.edition_title) or self.title == self.edition_title
+
+    @property
+    def is_first_edition(self) -> bool:
+        return (
+            not self.edition_published
+        ) or self.edition_published == self.first_published
+
 
 class BookAuthor(models.Model):
     class Meta:
