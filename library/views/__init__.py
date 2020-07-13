@@ -233,7 +233,9 @@ def report(request, page=None):
             .exclude(
                 first_author__surname__in=["Jacobin", "Tribune", "New Left Review",]
             )
-            .exclude(edition_format=3, asin__length__gt=0),
+            .exclude(edition_format=3, asin__length__gt=0)
+            .exclude(edition_published__lt=1965)
+            .exclude(first_published__lt=1965, edition_published__isnull=True),
         ),
         (
             "Missing ASIN",
