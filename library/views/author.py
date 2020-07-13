@@ -37,6 +37,9 @@ def edit(request, slug):
             author = form.save()
             return redirect("library:author_details", slug=author.slug)
         else:
+            for field in form.errors:
+                form[field].field.widget.attrs["class"] += " is-invalid"
+
             return render(
                 request,
                 "authors/edit_form.html",
@@ -60,6 +63,9 @@ def new(request):
             author = form.save()
             return redirect("library:author_details", slug=author.slug)
         else:
+            for field in form.errors:
+                form[field].field.widget.attrs["class"] += " is-invalid"
+
             return render(
                 request,
                 "authors/edit_form.html",

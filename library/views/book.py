@@ -306,6 +306,11 @@ def edit(request, slug):
             for subform in inline_formset:
                 for field in subform.fields:
                     subform.fields[field].widget.attrs.update({"class": "form-control"})
+                for field in subform.errors:
+                    subform[field].field.widget.attrs["class"] += " is-invalid"
+
+            for field in form.errors:
+                form[field].field.widget.attrs["class"] += " is-invalid"
 
             return render(
                 request,

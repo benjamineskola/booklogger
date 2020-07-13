@@ -1,8 +1,10 @@
 <div class="form-group">
+<div class="custom-control {% if field.errors %}is-invalid{% endif %}">
 <label for="{{field.id_for_label}}">{{ field.label_tag() }} {% if field.field.required %}(required){% endif %}</label> {{ field }}
 </div>
 {% for error in field.errors %}
-  <label for="{{field.id_for_label}}" class="text-danger">
+  <label for="{{field.id_for_label}}" class="invalid-feedback">
     {{ error|escape }}
   </label>
 {% endfor %}
+</div>
