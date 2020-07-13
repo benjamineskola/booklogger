@@ -31,23 +31,21 @@
   {% endfor %}
   </div> {# row #}
 
-  <div class="col">
-    <div class="card mb-3">
-      <div class="card-body">
-        {{ inline_formset.management_form }}
-        {% for form in inline_formset %}
-        <div class="form-row">
-          {{ form.id }}
-          {% for field in form %}
-          {% if field.name not in ["id", "book"] %}
-            {% include "edit_form_field_snippet.html" %}
-          {% endif %}
-        {% endfor %}
-        </div> {# form-row #}
-        {% endfor %}
-      </div> {# card-body #}
-    </div> {# card #}
-  </div> {# col #}
+  <div class="card mb-3">
+    <div class="card-body">
+      {{ inline_formset.management_form }}
+      {% for form in inline_formset %}
+      <div class="form-row">
+        {{ form.id }}
+        {% for field in form %}
+        {% if field.name not in ["id", "book"] %}
+          {% include "edit_form_field_snippet.html" %}
+        {% endif %}
+      {% endfor %}
+      </div> {# form-row #}
+      {% endfor %}
+    </div> {# card-body #}
+  </div> {# card #}
 
   <div class="form-group">
     <input type="submit" value="Submit" class="btn btn-primary">
