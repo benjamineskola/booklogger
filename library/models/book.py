@@ -612,6 +612,19 @@ class Book(models.Model):
 
         self.image_url = re.sub(r"\._S\w\d+_\.jpg$", ".jpg", self.image_url)
 
+        if self.first_published == 0:
+            self.first_published = None
+        if self.edition_published == 0:
+            self.edition_published = None
+        if self.page_count == 0:
+            self.page_count = None
+        if self.edition_number == 0:
+            self.edition_number = None
+        if self.series_order == 0.0:
+            self.series_order = None
+        if self.rating == 0:
+            self.rating = None
+
         super().save(*args, **kwargs)
 
         self.editions.all().update(
