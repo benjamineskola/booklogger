@@ -738,22 +738,32 @@ class Book(models.Model):
         return urls
 
     @property
-    def google_url(self) -> Tuple[str, str]:
+    def google_urls(self) -> Sequence[Tuple[str, str]]:
         if self.google_books_id:
-            return (
-                f"https://books.google.co.uk/books?id={self.google_books_id}",
-                self.google_books_id,
-            )
+            return [
+                (
+                    f"https://books.google.co.uk/books?id={self.google_books_id}",
+                    self.google_books_id,
+                ),
+                (
+                    f"https://www.googleapis.com/books/v1/volumes/{self.google_books_id}",
+                    "json",
+                ),
+            ]
         elif self.isbn:
-            return (
-                f"https://www.googleapis.com/books/v1/volumes?q=isbn:{self.isbn}",
-                self.isbn,
-            )
+            return [
+                (
+                    f"https://www.googleapis.com/books/v1/volumes?q=isbn:{self.isbn}",
+                    "search",
+                )
+            ]
         else:
-            return (
-                f"https://www.googleapis.com/books/v1/volumes?q={self.search_query}",
-                "search",
-            )
+            return [
+                (
+                    f"https://www.googleapis.com/books/v1/volumes?q={self.search_query}",
+                    "search",
+                )
+            ]
 
     @property
     def ebook_url(self) -> Optional[str]:

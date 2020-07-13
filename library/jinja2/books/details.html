@@ -89,7 +89,13 @@
   <div class="col">
     <dl>
     <dt>Goodreads</dt><dd><a href="{{ book.goodreads_url[0] }}">{{ book.goodreads_url[1] }}</a></dd>
-    <dt>Google</dt><dd><a href="{{ book.google_url[0] }}">{{ book.google_url[1] }}</a></dd>
+    <dt>Google</dt><dd>
+    {% set j = joiner("or") %}
+    {% for url, title in book.google_urls %}
+    {{ j() }}
+    <a href="{{ url }}">{{ title }}</a>
+    {% endfor %}
+    </dd>
     <dt>Amazon</dt><dd>
     {% set j = joiner("or") %}
     {% for url, title in book.amazon_urls %}
