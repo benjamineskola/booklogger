@@ -227,7 +227,12 @@ def report(request, page=None):
     categories = {}
 
     categories = [
-        ("Missing ISBN", lambda: owned_books.filter(isbn="", asin="")),
+        (
+            "Missing ISBN",
+            lambda: owned_books.filter(isbn="", asin="").exclude(
+                first_author__surname__in=["Jacobin", "Tribune", "New Left Review",]
+            ),
+        ),
         (
             "Missing ASIN",
             lambda: owned_books.filter(edition_format=3, asin="").exclude(
