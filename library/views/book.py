@@ -350,7 +350,14 @@ def new(request):
             book = form.save()
             return redirect("library:book_details", slug=book.slug)
         else:
-            return redirect("library:book_new")
+            for field in form.errors:
+                form[field].field.widget.attrs["class"] += " is-invalid"
+
+            return render(
+                request,
+                "books/edit_form.html",
+                {"form": form, "item": book, "page_title": f"Editing {book}",},
+            )
     else:
         form = BookForm()
 
