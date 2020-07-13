@@ -72,3 +72,33 @@ class BookForm(ModelForm):
 
     def clean_ebook_asin(self):
         return self._clean_asin(self.cleaned_data["ebook_asin"])
+
+    def clean_isbn(self):
+        isbn = self.cleaned_data["isbn"]
+        if not isbn:
+            return ""
+        if (
+            len(isbn) not in [9, 10, 13]
+            or not isbn[0:-1].isnumeric()
+            or (not isbn[-1].isnumeric() and isbn[-1].upper() != "X")
+        ):
+            raise ValidationError("Not a valid ISBN-13, ISBN-10, or SBN")
+        elif len(isbn) == 13:
+            return isbn
+        else:
+            if len(isbn) == 9:
+                # let's assume it's a pre-ISBN SBN
+                isbn = "0" + isbn
+
+            isbn = "978" + isbn
+            ints = [int(c) for c in isbn[0:-1]]
+
+            checksum = 0
+            for i, j in enumerate(ints):
+                if i % 2 == 0:
+                    checksum += j
+                else:
+                    checksum += j * 3
+            checksum = 10 - checksum % 10
+
+            return "".join([str(c) for c in ints] + [str(checksum)])
