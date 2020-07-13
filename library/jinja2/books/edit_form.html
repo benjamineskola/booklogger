@@ -31,6 +31,7 @@
   {% endfor %}
   </div> {# row #}
 
+  {% if inline_formset %}
   <div class="card mb-3">
     <div class="card-body">
       {{ inline_formset.management_form }}
@@ -46,10 +47,13 @@
       {% endfor %}
     </div> {# card-body #}
   </div> {# card #}
+  {% endif %}
 
   <div class="form-group">
     <input type="submit" value="Submit" class="btn btn-primary">
+    {% if item %}
     <a href="{{ item.get_absolute_url() }}" class="btn btn-secondary">Cancel</a>
+    {% endif %}
   </div>
 </form>
 
