@@ -20,6 +20,9 @@ class AuthorForm(ModelForm):
             else:
                 widget.attrs["class"] += " col-8"
 
+            if self.fields[field].required:
+                self.fields[field].label_suffix = " (required):"
+
 
 class BookForm(ModelForm):
     class Meta:
@@ -45,6 +48,9 @@ class BookForm(ModelForm):
             widget.attrs.update({"class": "form-control"})
             if widget.__class__.__name__ == "CheckboxInput":
                 widget.attrs["class"] += " col-1"
+
+            if self.fields[field].required:
+                self.fields[field].label_suffix = " (required):"
 
     def _clean_asin(self, asin):
         if not asin:

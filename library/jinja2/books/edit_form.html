@@ -41,7 +41,7 @@
           {% for field in form %}
           {% if field.name not in ["id", "book"] %}
           <div class="form-group p-2">
-            <label for="{{field.id_for_label}}">{{ field.label_tag() }} {% if field.field.required %}(required){% endif %}</label> {{ field }}
+            {{ field.label_tag() }} {{ field }}
             {% for error in field.errors %}
               <label for="{{field.id_for_label}}" class="text-danger">
                 {{ error|escape }}
