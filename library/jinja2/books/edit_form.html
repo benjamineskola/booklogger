@@ -40,14 +40,7 @@
           {{ form.id }}
           {% for field in form %}
           {% if field.name not in ["id", "book"] %}
-          <div class="form-group p-2">
-            {{ field.label_tag() }} {{ field }}
-            {% for error in field.errors %}
-              <label for="{{field.id_for_label}}" class="text-danger">
-                {{ error|escape }}
-              </label>
-            {% endfor %}
-          </div> {# form-group #}
+            {% include "edit_form_field_snippet.html" %}
           {% endif %}
         {% endfor %}
         </div> {# form-row #}
