@@ -13,7 +13,7 @@ from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 from django.db import models
 from django.db.models import F, Q
-from django.db.models.functions import Lower
+from django.db.models.functions import Length, Lower
 from django.db.models.indexes import Index
 from django.urls import reverse
 from django.utils import timezone
@@ -23,6 +23,8 @@ from library.utils import LANGUAGES, oxford_comma
 from .author import Author
 
 LogEntry = models.Model
+
+models.CharField.register_lookup(Length)
 
 
 class BookManager(models.Manager):  # type: ignore [type-arg]
