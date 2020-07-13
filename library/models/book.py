@@ -1,5 +1,6 @@
 import os
 import re
+import time
 from typing import Any, Dict, Iterable, Optional, Sequence, Tuple
 from urllib.parse import quote
 
@@ -156,12 +157,66 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
 
         return book
 
+    def find_on_google(
+        self, gbid=None, isbn=None, sleep=2
+    ) -> Optional[Tuple[Dict[Any, Any], str]]:
+        search_url = None
+        if gbid:
+            search_url = f"https://www.googleapis.com/books/v1/volumes/{gbid}"
+        elif isbn:
+            search_url = f"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}"
+
+        data = None
+        try:
+            data = requests.get(search_url).json()
+        except requests.exceptions.ConnectionError:
+            return (None, None)
+        volume = None
+
+        if "error" in data:
+            if data["error"]["status"] == "RESOURCE_EXHAUSTED":
+                print(f"waiting for {sleep}")
+                time.sleep(sleep)
+                return self.find_on_google(gbid=gbid, isbn=isbn, sleep=sleep * 2)
+            else:
+                for error in data["error"]["errors"]:
+                    print(f"error: {error['message']}")
+                return (None, None)
+
+        if "volumeInfo" in data:
+            volume = data["volumeInfo"]
+        elif "items" in data and data["items"]:
+            volume = data["items"][0]["volumeInfo"]
+            gbid = data["items"][0]["id"]
+
+        return (volume, gbid)
+
     def regenerate_all_slugs(self) -> None:
         qs = self.get_queryset()
         qs.update(slug="")
         for book in qs:
             book.slug = book._generate_slug()
             book.save()
+
+    def update_all_from_google(self) -> None:
+        candidates = (
+            self.get_queryset()
+            .exclude(isbn="", google_books_id="")
+            .filter(
+                Q(publisher="")
+                | Q(page_count__isnull=True)
+                | Q(page_count=0)
+                | Q(google_books_id="")
+                | Q(first_published=0)
+                | Q(first_published__isnull=True)
+            )
+        )
+        print(f"updating {candidates.count()} books")
+
+        for candidate in candidates:
+            candidate.update_from_google()
+            print(".", end="", flush=True)
+            time.sleep(0.5)
 
 
 class BookQuerySet(models.QuerySet):  # type: ignore [type-arg]
@@ -719,6 +774,35 @@ class Book(models.Model):
         return (
             not self.edition_published
         ) or self.edition_published == self.first_published
+
+    def update_from_google(self) -> None:
+        data = None
+        if self.google_books_id:
+            data, gbid = Book.objects.find_on_google(gbid=self.google_books_id)
+        elif self.isbn:
+            data, gbid = Book.objects.find_on_google(isbn=self.isbn)
+            if gbid:
+                self.google_books_id = gbid
+        else:
+            return
+
+        if not data:
+            return
+
+        if "publisher" in data and not self.publisher:
+            self.publisher = data["publisher"]
+            self.add_tags(["updated-from-google"])
+        if "pageCount" in data and not self.page_count:
+            self.page_count = data["pageCount"]
+            self.add_tags(["updated-from-google"])
+        if "publishedDate" in data and not self.first_published:
+            try:
+                self.first_published = int(data["publishedDate"].split("-")[0])
+                self.add_tags(["updated-from-google"])
+            except ValueError:
+                pass
+
+        self.save()
 
 
 class BookAuthor(models.Model):
