@@ -88,17 +88,14 @@
 
   <div class="col">
     <dl>
-    <dt>Goodreads</dt><dd><a href="{{ book.goodreads_url }}">{{ book.goodreads_id or book.isbn or book.asin or "search" }}</a></dd>
-    <dt>Google</dt><dd><a href="{{ book.google_url }}">{{ book.google_books_id or book.isbn or "search" }}</a></dd>
+    <dt>Goodreads</dt><dd><a href="{{ book.goodreads_url[0] }}">{{ book.goodreads_url[1] }}</a></dd>
+    <dt>Google</dt><dd><a href="{{ book.google_url[0] }}">{{ book.google_url[1] }}</a></dd>
     <dt>Amazon</dt><dd>
-    {% if book.asin %}
-      <a href="{{ book.amazon_urls[0] }}">{{ book.asin }}</a>
-    {% else %}
-      {% if book.isbn10 %}
-        <a href="{{ book.amazon_urls[0] }}">{{ book.isbn10 }}</a> or
-      {% endif %}
-      <a href="{{ book.amazon_urls[1] }}">search</a>
-    {% endif %}
+    {% set j = joiner("or") %}
+    {% for url, title in book.amazon_urls %}
+    {{ j() }}
+    <a href="{{ url }}">{{ title }}</a>
+    {% endfor %}
     </dd>
     <dt>ISBN</dt><dd>{{ book.isbn }}</dd>
 

@@ -1,6 +1,6 @@
 import os
 import re
-from typing import Any, Dict, Iterable, Optional, Sequence
+from typing import Any, Dict, Iterable, Optional, Sequence, Tuple
 from urllib.parse import quote
 
 import requests
@@ -653,35 +653,54 @@ class Book(models.Model):
         return quote(f"{self.title} {self.first_author}")
 
     @property
-    def goodreads_url(self) -> str:
+    def goodreads_url(self) -> Tuple[str, str]:
         if self.goodreads_id:
-            return f"https://www.goodreads.com/book/show/{self.goodreads_id}"
+            return (
+                f"https://www.goodreads.com/book/show/{self.goodreads_id}",
+                self.goodreads_id,
+            )
         else:
-            return f"https://www.goodreads.com/search?q={self.isbn or self.asin or self.search_query}"
+            return (
+                f"https://www.goodreads.com/search?q={self.isbn or self.asin or self.search_query}",
+                self.isbn or self.asin or "search",
+            )
 
     @property
-    def amazon_urls(self) -> Sequence[str]:
+    def amazon_urls(self) -> Sequence[Tuple[str, str]]:
+        urls = []
         if self.asin:
-            return [f"https://amazon.co.uk/dp/{self.asin}"]
-        else:
-            return [
-                f"https://amazon.co.uk/dp/{self.isbn10}",
+            urls.append((f"https://amazon.co.uk/dp/{self.asin}", self.asin))
+        if self.isbn10:
+            urls.append((f"https://amazon.co.uk/dp/{self.isbn10}", self.isbn10))
+        urls.append(
+            (
                 f"https://www.amazon.co.uk/s?k={self.search_query}&i=stripbooks",
-            ]
+                "search",
+            ),
+        )
+        return urls
 
     @property
-    def google_url(self) -> str:
+    def google_url(self) -> Tuple[str, str]:
         if self.google_books_id:
-            return f"https://books.google.co.uk/books?id={self.google_books_id}"
+            return (
+                f"https://books.google.co.uk/books?id={self.google_books_id}",
+                self.google_books_id,
+            )
         elif self.isbn:
-            return f"https://www.googleapis.com/books/v1/volumes?q=isbn:{self.isbn}"
+            return (
+                f"https://www.googleapis.com/books/v1/volumes?q=isbn:{self.isbn}",
+                self.isbn,
+            )
         else:
-            return f"https://www.googleapis.com/books/v1/volumes?q={self.search_query}"
+            return (
+                f"https://www.googleapis.com/books/v1/volumes?q={self.search_query}",
+                "search",
+            )
 
     @property
     def ebook_url(self) -> Optional[str]:
-        if self.ebook_asin:
-            return f"https://amazon.co.uk/dp/{self.ebook_asin}"
+        return f"https://amazon.co.uk/dp/{self.ebook_asin}" if self.ebook_asin else None
 
     @property
     def is_translated(self) -> bool:
