@@ -259,6 +259,7 @@ def report(request, page=None):
             ).exclude(publisher__contains="University"),
         ),
         ("Missing Goodreads", lambda: Book.objects.filter(goodreads_id="")),
+        ("Missing Google", lambda: owned_books.filter(google_books_id="")),
         ("Missing Image", lambda: owned_books.filter(image_url="")),
         ("Missing Publisher", lambda: owned_books.filter(publisher="")),
         (
