@@ -69,7 +69,7 @@ def new(request):
             return render(
                 request,
                 "authors/edit_form.html",
-                {"form": form, "item": author, "page_title": f"Editing {author}",},
+                {"form": form, "page_title": f"Editing {author}",},
             )
     else:
         form = AuthorForm()

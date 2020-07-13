@@ -317,7 +317,6 @@ def edit(request, slug):
                 "books/edit_form.html",
                 {
                     "form": form,
-                    "item": book,
                     "page_title": f"Editing {book}",
                     "inline_formset": inline_formset,
                 },
@@ -335,7 +334,6 @@ def edit(request, slug):
             "books/edit_form.html",
             {
                 "form": form,
-                "item": book,
                 "page_title": f"Editing {book}",
                 "inline_formset": inline_formset,
             },
