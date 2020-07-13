@@ -755,7 +755,11 @@ class Book(models.Model):
                 (
                     f"https://www.googleapis.com/books/v1/volumes?q=isbn:{self.isbn}",
                     "search",
-                )
+                ),
+                (
+                    f"https://www.googleapis.com/books/v1/volumes?q={self.search_query}",
+                    "search",
+                ),
             ]
         else:
             return [
