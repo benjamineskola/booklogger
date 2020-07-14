@@ -257,8 +257,25 @@ def report(request, page=None):
         (
             "Messy Publisher",
             lambda: Book.objects.filter(
-                Q(publisher__endswith="Books") | Q(publisher__endswith="Press")
-            ).exclude(publisher__contains="University"),
+                Q(publisher__endswith="Books")
+                | Q(publisher__contains="Company")
+                | Q(publisher__contains="Ltd")
+                | Q(publisher__contains="Limited")
+                | Q(publisher__startswith="Bantam ")
+                | Q(publisher__startswith="Bloomsbury ")
+                | Q(publisher__startswith="Doubleday ")
+                | Q(publisher__startswith="Faber ")
+                | Q(publisher__startswith="Harper")
+                | Q(publisher__startswith="Pan ")
+                | Q(publisher__startswith="Penguin ")
+                | Q(publisher__startswith="Simon & Schuster ")
+                | Q(publisher__startswith="Vintage ")
+            ).exclude(
+                Q(publisher__contains="University")
+                | Q(publisher="Faber & Faber")
+                | Q(publisher="HarperCollins")
+                | Q(publisher="Pan Macmillan")
+            ),
         ),
         ("Missing Goodreads", lambda: Book.objects.filter(goodreads_id="")),
         ("Missing Google", lambda: owned_books.filter(google_books_id="")),
