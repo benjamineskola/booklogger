@@ -155,6 +155,16 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
 
         book.save()
 
+        if book.isbn or book.google_books_id:
+            if (
+                (book.isbn and not book.google_books_id)
+                or not book.publisher
+                or not book.page_count
+                or not book.first_published
+            ):
+                book.update_from_google()
+                book.refresh_from_db()
+
         return book
 
     def regenerate_all_slugs(self) -> None:
