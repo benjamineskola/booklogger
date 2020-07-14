@@ -424,17 +424,23 @@ class Book(models.Model):
 
     @property
     def authors(self) -> Sequence[Author]:
-        return [self.first_author] + list(
+        additional_authors = list(
             self.additional_authors.filter(
                 bookauthor__role=self.first_author_role
             ).order_by("bookauthor__order")
         )
+        if self.first_author:
+            return [self.first_author] + additional_authors
+        else:
+            return additional_authors
 
     @property
     def all_authors(self) -> Sequence[Author]:
-        return [self.first_author] + list(
-            self.additional_authors.order_by("bookauthor__order")
-        )
+        additional_authors = list(self.additional_authors.order_by("bookauthor__order"))
+        if self.first_author:
+            return [self.first_author] + additional_authors
+        else:
+            return additional_authors
 
     @property
     def all_authors_editors(self) -> bool:
