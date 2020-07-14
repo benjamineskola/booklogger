@@ -25,7 +25,7 @@ class TestBook:
         return mock_book
 
     def test_book_display(self, mock_book):
-        assert str(mock_book) == "God (n.d.) The Bible."
+        assert str(mock_book) == "God, The Bible"
         assert mock_book.citation == "God (n.d.) The Bible."
 
     def test_book_display_with_date(self, mock_book):

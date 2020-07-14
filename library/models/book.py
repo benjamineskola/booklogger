@@ -376,15 +376,15 @@ class Book(models.Model):
     )
 
     def __str__(self) -> str:
+        result = ", ".join([self.display_authors, self.display_title])
         if (
             self.editions.count()
             and self.edition_format
             and self.edition_title
             in self.editions.all().values_list("edition_title", flat=True)
         ):
-            return self.citation + f" ({self.get_edition_disambiguator()} edition)"
-        else:
-            return self.citation
+            result += f" ({self.get_edition_disambiguator()} edition)"
+        return result
 
     def get_edition_disambiguator(self) -> str:
         if self.editions.exclude(edition_language=self.edition_language).count():
