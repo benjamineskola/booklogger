@@ -11,6 +11,7 @@
   <input type="submit" value="Submit" class="btn btn-primary">
 {% if form.instance.id %}
   <a href="{{ form.instance.get_absolute_url() }}" class="btn btn-secondary">Cancel</a>
+  <a href="{{ url("admin:library_author_delete", args=[form.instance.id]) }}" class="btn btn-danger">Delete</a>
 {% else %}
   <a href="/" class="btn btn-secondary">Cancel</a>
 {% endif %}
