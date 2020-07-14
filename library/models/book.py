@@ -157,40 +157,6 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
 
         return book
 
-    def find_on_google(
-        self, gbid=None, isbn=None, sleep=2
-    ) -> Optional[Tuple[Dict[Any, Any], str]]:
-        search_url = None
-        if gbid:
-            search_url = f"https://www.googleapis.com/books/v1/volumes/{gbid}"
-        elif isbn:
-            search_url = f"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}"
-
-        data = None
-        try:
-            data = requests.get(search_url).json()
-        except requests.exceptions.ConnectionError:
-            return (None, None)
-        volume = None
-
-        if "error" in data:
-            if data["error"]["status"] == "RESOURCE_EXHAUSTED":
-                print(f"waiting for {sleep}")
-                time.sleep(sleep)
-                return self.find_on_google(gbid=gbid, isbn=isbn, sleep=sleep * 2)
-            else:
-                for error in data["error"]["errors"]:
-                    print(f"error: {error['message']}")
-                return (None, None)
-
-        if "volumeInfo" in data:
-            volume = data["volumeInfo"]
-        elif "items" in data and data["items"]:
-            volume = data["items"][0]["volumeInfo"]
-            gbid = data["items"][0]["id"]
-
-        return (volume, gbid)
-
     def regenerate_all_slugs(self) -> None:
         qs = self.get_queryset()
         qs.update(slug="")
@@ -199,7 +165,7 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
             book.save()
 
     def update_all_from_google(self) -> None:
-        candidates = (
+        candidate_ids = list(
             self.get_queryset()
             .exclude(isbn="", google_books_id="")
             .filter(
@@ -210,13 +176,24 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
                 | Q(first_published=0)
                 | Q(first_published__isnull=True)
             )
+            .values_list("id", flat=True)
         )
-        print(f"updating {candidates.count()} books")
+        print(f"updating {len(candidate_ids)} books")
 
-        for candidate in candidates:
-            candidate.update_from_google()
-            print(".", end="", flush=True)
-            time.sleep(0.5)
+        sleep_time = 1
+        while candidate_ids:
+            candidate_id = candidate_ids.pop(0)
+            candidate = Book.objects.get(pk=candidate_id)
+            if candidate.update_from_google():
+                sleep_time = 1
+                print(".", end="", flush=True)
+                if (count := len(candidate_ids)) % 20 == 0:
+                    print(f"{count} remaining")
+            else:
+                candidate_ids.append(candidate_id)
+                print(f"sleeping {sleep_time}")
+                time.sleep(sleep_time)
+                sleep_time *= 2
 
 
 class BookQuerySet(models.QuerySet):  # type: ignore [type-arg]
@@ -779,34 +756,53 @@ class Book(models.Model):
             not self.edition_published
         ) or self.edition_published == self.first_published
 
-    def update_from_google(self) -> None:
-        data = None
+    def update_from_google(self) -> bool:
+        search_url = ""
         if self.google_books_id:
-            data, gbid = Book.objects.find_on_google(gbid=self.google_books_id)
+            search_url = (
+                f"https://www.googleapis.com/books/v1/volumes/{self.google_books_id}"
+            )
         elif self.isbn:
-            data, gbid = Book.objects.find_on_google(isbn=self.isbn)
-            if gbid:
-                self.google_books_id = gbid
+            search_url = (
+                f"https://www.googleapis.com/books/v1/volumes?q=isbn:{self.isbn}"
+            )
         else:
-            return
+            return True
 
-        if not data:
-            return
+        data = {}
+        try:
+            data = requests.get(search_url).json()
+        except requests.exceptions.ConnectionError:
+            return False
 
-        if "publisher" in data and not self.publisher:
-            self.publisher = data["publisher"]
+        if "error" in data and data["error"]["status"] == "RESOURCE_EXHAUSTED":
+            return False
+
+        if "volumeInfo" in data:
+            volume = data["volumeInfo"]
+        elif "items" in data and data["items"]:
+            volume = data["items"][0]["volumeInfo"]
+        else:
+            return True
+
+        if "id" in volume and not self.google_books_id:
+            self.google_books_id = volume["id"]
+
+        if "publisher" in volume and not self.publisher:
+            self.publisher = volume["publisher"]
             self.add_tags(["updated-from-google"])
-        if "pageCount" in data and not self.page_count:
-            self.page_count = data["pageCount"]
+        if "pageCount" in volume and not self.page_count:
+            self.page_count = volume["pageCount"]
             self.add_tags(["updated-from-google"])
-        if "publishedDate" in data and not self.first_published:
+        if "publishedDate" in volume and not self.first_published:
             try:
-                self.first_published = int(data["publishedDate"].split("-")[0])
+                self.first_published = int(volume["publishedDate"].split("-")[0])
                 self.add_tags(["updated-from-google"])
             except ValueError:
                 pass
 
         self.save()
+        return True
 
 
 class BookAuthor(models.Model):
