@@ -423,24 +423,18 @@ class Book(models.Model):
         return {"url": self.get_absolute_url(), "text": self.display_title}
 
     @property
-    def all_authors(self) -> "models.QuerySet[Author]":
-        authors = Author.objects.filter(id=self.first_author_id)
-
-        additional_author_ids = self.bookauthor_set.all().values_list("author__id")
-        authors |= Author.objects.filter(id__in=additional_author_ids)
-
-        return authors.order_by(F("bookauthor__order").asc(nulls_first=True)).distinct()
+    def authors(self) -> Sequence[Author]:
+        return [self.first_author] + list(
+            self.additional_authors.filter(
+                bookauthor__role=self.first_author_role
+            ).order_by("bookauthor__order")
+        )
 
     @property
-    def authors(self) -> "models.QuerySet[Author]":
-        authors = Author.objects.filter(id=self.first_author_id)
-
-        additional_author_ids = self.bookauthor_set.filter(
-            role=self.first_author_role
-        ).values_list("author__id")
-        authors |= Author.objects.filter(id__in=additional_author_ids)
-
-        return authors.order_by(F("bookauthor__order").asc(nulls_first=True)).distinct()
+    def all_authors(self) -> Sequence[Author]:
+        return [self.first_author] + list(
+            self.additional_authors.order_by("bookauthor__order")
+        )
 
     @property
     def all_authors_editors(self) -> bool:
@@ -452,7 +446,7 @@ class Book(models.Model):
 
     @property
     def has_full_authors(self) -> bool:
-        return self.authors.count() > 3 or set(self.authors) != set(self.all_authors)
+        return len(self.authors) > 3 or self.authors != self.all_authors
 
     @property
     def display_authors(self) -> str:
