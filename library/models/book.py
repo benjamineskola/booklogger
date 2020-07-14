@@ -142,9 +142,7 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
         )
 
         if not "nophoto" in goodreads_book["image_url"]:
-            book.image_url = re.sub(
-                r"_S\w\d+_.jpg$", "_SX475_.jpg", goodreads_book["image_url"]
-            )
+            book.image_url = goodreads_book["image_url"]
 
         book.first_author, created = Author.objects.get_or_create_by_single_name(
             goodreads_book["author"]["name"]
@@ -597,7 +595,8 @@ class Book(models.Model):
         if not self.slug:
             self.slug = self._generate_slug()
 
-        self.image_url = re.sub(r"\._S\w\d+_\.jpg$", ".jpg", self.image_url)
+        if "goodreads" in self.image_url or "amazon" in self.image_url:
+            self.image_url = re.sub(r"\._.+_\.jpg$", ".jpg", self.image_url)
 
         if self.first_published == 0:
             self.first_published = None
