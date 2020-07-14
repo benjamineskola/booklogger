@@ -320,6 +320,13 @@ def report(request, page=None):
             "First editions recorded as English for non-English authors",
             lambda: Book.objects.exclude(language=F("first_author__primary_language")),
         ),
+        (
+            "Wished for without ASIN",
+            lambda: Book.objects.filter(owned_by__isnull=True)
+            .filter(want_to_read=True)
+            .filter(asin="")
+            .exclude(was_borrowed=True),
+        ),
     ]
 
     results = None
