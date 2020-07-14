@@ -792,11 +792,10 @@ class Book(models.Model):
             volume = data["volumeInfo"]
         elif "items" in data and data["items"]:
             volume = data["items"][0]["volumeInfo"]
+            if "id" in data["items"][0] and not self.google_books_id:
+                self.google_books_id = data["items"][0]["id"]
         else:
             return True
-
-        if "id" in volume and not self.google_books_id:
-            self.google_books_id = volume["id"]
 
         if "publisher" in volume and not self.publisher:
             self.publisher = volume["publisher"]
