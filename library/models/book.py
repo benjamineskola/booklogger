@@ -144,6 +144,9 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
         if not "nophoto" in goodreads_book["image_url"]:
             book.image_url = goodreads_book["image_url"]
 
+        if not book.image_url:
+            book.image_url = Book.objects.scrape_goodreads_image(book.goodreads_url[0])
+
         book.first_author, created = Author.objects.get_or_create_by_single_name(
             goodreads_book["author"]["name"]
         )
@@ -202,6 +205,16 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
                 print(f"sleeping {sleep_time}")
                 time.sleep(sleep_time)
                 sleep_time *= 2
+
+    def scrape_goodreads_image(self, goodreads_url):
+        text = requests.get(goodreads_url).text
+        meta_tag = re.search(r"<meta[^>]*og:image[^>]*>", text)
+        if meta_tag:
+            image_url = re.search(r"https://.*\.jpg", meta_tag[0])
+            if image_url and not "nophoto" in image_url[0]:
+                return image_url[0]
+
+        return ""
 
 
 class BookQuerySet(models.QuerySet):  # type: ignore [type-arg]
