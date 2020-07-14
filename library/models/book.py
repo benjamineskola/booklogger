@@ -696,7 +696,7 @@ class Book(models.Model):
 
     @property
     def search_query(self) -> str:
-        return quote(f"{self.title} {self.first_author}")
+        return quote(f"{self.edition_title or self.title} {self.first_author.surname}")
 
     @property
     def goodreads_url(self) -> Tuple[str, str]:
