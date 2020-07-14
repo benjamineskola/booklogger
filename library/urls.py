@@ -153,4 +153,5 @@ urlpatterns = [
     path("tags/", views.tag_cloud, name="tag_cloud"),
     path("report/", views.report, name="report"),
     path("report/<int:page>/", views.report, name="report"),
+    path("bulkimport/", views.bulk_import, name="bulk_import"),
 ]

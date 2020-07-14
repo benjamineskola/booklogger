@@ -362,3 +362,36 @@ def series_list(request):
         "books/series_index.html",
         {"all_series": sorted_series, "series_count": series_count},
     )
+
+
+@login_required
+def bulk_import(request):
+    if request.POST:
+        data = request.POST["data"]
+
+        results = []
+
+        for entry in data.split("\n"):
+            title, first_author_name, *additional_author_names = entry.strip(
+                "\r\n"
+            ).split(";")
+
+            book, _ = Book.objects.get_or_create(title=title.strip())
+            first_author, _ = Author.objects.get_or_create_by_single_name(
+                first_author_name.strip()
+            )
+            book.first_author = first_author
+            for order, name in enumerate(additional_author_names, start=1):
+                author, _ = Author.objects.get_or_create_by_single_name(name.strip())
+                if author not in book.additional_authors.all():
+                    book.add_author(author, order=order)
+            book.save()
+            results.append(book)
+
+        return render(
+            request,
+            "bulk_import.html",
+            {"page_title": "Import", "data": data, "results": results},
+        )
+    else:
+        return render(request, "bulk_import.html", {"page_title": "Import"},)

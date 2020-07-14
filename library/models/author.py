@@ -26,7 +26,10 @@ class AuthorManager(models.Manager):  # type: ignore
         return Author.objects.get(**Author.normalise_name(name))
 
     def get_or_create_by_single_name(self, name: str) -> Tuple["Author", bool]:
-        return Author.objects.get_or_create(**Author.normalise_name(name))
+        try:
+            return (Author.objects.get(surname=name, forenames=""), False)
+        except self.model.DoesNotExist:
+            return Author.objects.get_or_create(**Author.normalise_name(name))
 
     def regenerate_all_slugs(self) -> None:
         qs = self.get_queryset()
