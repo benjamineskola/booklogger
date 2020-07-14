@@ -6,14 +6,8 @@
 {% for item in results %}
 <li><a href="{{ item.get_absolute_url() }}">{{ item }}</a>
 <small>(<a href="{{ url('library:book_edit', args=[item.slug]) }}">edit</a>
-{% if item.goodreads_id %}
-&middot; <a href="https://goodreads.com/book/show/{{ item.goodreads_id }}">Goodreads</a>
-{% elif item.isbn %}
-&middot; <a href="https://goodreads.com/search?q={{ item.isbn }}">Goodreads</a>
-{% elif item.asin %}
-&middot; <a href="https://goodreads.com/search?q={{ item.asin }}">Goodreads</a>
-{% endif %}
-{% if item.asin %}&middot; <a href="https://amazon.co.uk/dp/{{ item.asin }}">Amazon</a>{% endif %}
+&middot; <a href="{{ item.goodreads_url[0] }}">Goodreads</a>
+&middot; <a href="{{ item.amazon_urls[0][0] }}">Amazon</a>
 {% if item.publisher_url %}&middot; <a href="{{ item.publisher_url }}">Publisher</a>{% endif -%}
 )</small></li>
 {% endfor %}
