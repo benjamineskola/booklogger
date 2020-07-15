@@ -1,8 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
-  {% if results|count > 0 %}
+  {% if authors %}
+<ul class="list-unstyled">
+  {% for author in authors %}
+    {% include "authors/list_item.html" %}
+  {% endfor %}
+</ul>
+  {% endif %}
+  {% if books %}
 <div class="row row-cols-1 row-cols-md-2">
-    {% for book in results %}
+    {% for book in books %}
       <div class="col">
         {% include "books/card.html" %}
       </div>

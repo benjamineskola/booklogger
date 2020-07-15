@@ -20,23 +20,22 @@ from . import author, book
 def basic_search(request):
     query = request.GET.get("query")
 
-    results = []
+    books = []
     if query:
         if (
-            results := Book.objects.filter(Q(isbn=query) | Q(asin=query))
-        ) and results.count() == 1:
+            books := Book.objects.filter(Q(isbn=query) | Q(asin=query))
+        ) and books.count() == 1:
             return redirect(results[0])
-        results = Book.objects.search(query)
-
-    if results and len(results) == 1:
-        return redirect(results[0])
+        books = Book.objects.search(query)
+        authors = Author.objects.search(query)[0:10]
 
     return render(
         request,
         "search.html",
         {
             "page_title": f"Search{': ' + query if query else ''}",
-            "results": results,
+            "authors": authors,
+            "books": books,
             "query": query,
         },
     )

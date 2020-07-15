@@ -3,24 +3,7 @@
 <p>There are a total of {{ total_authors }} {% if poc == 'white' %}white {%endif %}{% if gender %}{{ gender }}{% endif %} authors{% if poc == 'poc' %} of color{% endif %}.</p>
 <ul class="list-unstyled">
   {% for author in page_obj %}
-    <li>
-      {{ author | get_hyperlink }}
-      <span class="text-muted">(
-      {%- if author.authored_books.count() > 0 -%}
-        Author of {{ author.authored_books.first().display_title }}
-      {%- elif author.edited_books.count() > 0 -%}
-        Editor of {{ author.edited_books.first().display_title }}
-      {%- else -%}
-        Contributor to {{ author.books.first().display_title }}
-      {%- endif %}
-      {%- if author.books.count() > 1 %}
-        and {{ author.books.count() -1 }} other{% if author.books.count() > 2 %}s{% endif %}
-      {%- endif %}.)</span>
-
-      {% if author.primary_language != "en" %}
-      <span class="text-muted">(writes in {{ author.get_primary_language_display() }})</span>
-      {% endif %}
-    </li>
+    {% include "authors/list_item.html" %}
   {% endfor %}
 </ul>
 {% endblock content %}
