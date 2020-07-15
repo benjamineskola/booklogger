@@ -52,7 +52,7 @@ class GenericIndexView(generic.ListView):
             elif sort_by in field_names:
                 books = books.order_by(sort_by)
 
-        return books.filter_by_request(self.request)
+        return books.filter_by_request(self.request).distinct()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
