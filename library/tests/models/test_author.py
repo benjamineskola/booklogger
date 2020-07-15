@@ -60,3 +60,13 @@ class TestAuthor:
         assert Author.objects.get_by_single_name("J.R.R. Tolkien") == author
         assert Author.objects.get_by_single_name("J. R. R. Tolkien") == author
         assert Author.objects.get_by_single_name("John Ronald Reuel Tolkien") == author
+
+    def test_author_get_by_single_name(self, author, transactional_db):
+        author.forenames = "Alan"
+        author.save()
+        assert Author.objects.get_by_single_name("Alan Smithee") == author
+
+    def test_author_get_by_single_name_organisation(self, transactional_db):
+        author = Author(surname="Smithee Books")
+        author.save()
+        assert Author.objects.get_by_single_name("Smithee Books") == author
