@@ -23,11 +23,16 @@ class AuthorManager(models.Manager):  # type: ignore
         ).order_by("distance")
 
     def get_by_single_name(self, name: str) -> "Author":
-        return Author.objects.get(**Author.normalise_name(name))
+        names = Author.normalise_name(name)
+        return Author.objects.get(
+            Q(surname=name, forenames="")
+            | Q(**names)
+            | Q(surname=names["surname"], preferred_forenames=names["forenames"])
+        )
 
     def get_or_create_by_single_name(self, name: str) -> Tuple["Author", bool]:
         try:
-            return (Author.objects.get(surname=name, forenames=""), False)
+            return (Author.objects.get_by_single_name(surname=name), False)
         except self.model.DoesNotExist:
             return Author.objects.get_or_create(**Author.normalise_name(name))
 
@@ -51,6 +56,7 @@ class Author(models.Model):
 
     surname = models.CharField(db_index=True, max_length=255)
     forenames = models.CharField(db_index=True, max_length=255, blank=True)
+    preferred_forenames = models.CharField(db_index=True, max_length=255, blank=True)
     surname_first = models.BooleanField(default=False)
 
     class Gender(models.IntegerChoices):
@@ -67,6 +73,15 @@ class Author(models.Model):
     primary_language = models.CharField(max_length=2, default="en", choices=LANGUAGES)
 
     def __str__(self) -> str:
+        if not self.forenames:
+            return self.surname
+        elif self.surname_first:
+            return self.surname + " " + (self.preferred_forenames or self.forenames)
+        else:
+            return (self.preferred_forenames or self.forenames) + " " + self.surname
+
+    @property
+    def full_name(self) -> str:
         if not self.forenames:
             return self.surname
         elif self.surname_first:
@@ -163,6 +178,7 @@ class Author(models.Model):
             surname = words.pop() + " " + surname
 
         forenames = " ".join(words)
+        forenames = re.sub(r"\. +", ".", forenames)
 
         return {"surname": surname, "forenames": forenames}
 
