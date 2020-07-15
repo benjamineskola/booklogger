@@ -130,9 +130,11 @@ class UnreadIndexView(GenericIndexView):
     page_title = "Unread Books"
 
     def get_queryset(self):
-        books = super().get_queryset()
-        books = books.filter(owned_by__isnull=False) | books.filter(
-            edition_format=Book.Format["WEB"]
+        books = (
+            super()
+            .get_queryset()
+            .filter(Q(owned_by__isnull=False) | Q(edition_format=Book.Format["WEB"]))
+            .exclude(tags__contains=["reference"])
         )
         return books.order_by("edition_format", *Book._meta.ordering,)
 
