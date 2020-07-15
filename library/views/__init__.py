@@ -371,22 +371,41 @@ def bulk_import(request):
 
         results = []
 
-        for entry in data.split("\n"):
-            title, first_author_name, *additional_author_names = entry.strip(
-                "\r\n"
-            ).split(";")
+        for entry in data.strip("\r\n").split("\n"):
+            title, *author_names = entry.strip("\r\n").split(";")
 
-            book, _ = Book.objects.get_or_create(title=title.strip())
-            first_author, _ = Author.objects.get_or_create_by_single_name(
-                first_author_name.strip()
+            book, book_created = Book.objects.get_or_create(title__iexact=title.strip())
+            if book_created:
+                book.title = title.strip()
+
+            first_author_name = author_names.pop(0).strip()
+            first_author_role = ""
+            if ":" in first_author_name:
+                first_author_name, first_author_role = first_author_name.split(":", 1)
+
+            (first_author, fa_created,) = Author.objects.get_or_create_by_single_name(
+                first_author_name
             )
             book.first_author = first_author
-            for order, name in enumerate(additional_author_names, start=1):
-                author, _ = Author.objects.get_or_create_by_single_name(name.strip())
-                if author not in book.additional_authors.all():
-                    book.add_author(author, order=order)
+            book.first_author_role = first_author_role
             book.save()
-            results.append(book)
+
+            results.append((first_author, fa_created))
+
+            for order, name in enumerate(author_names, start=1):
+                role = ""
+                if ":" in name:
+                    name, role = name.split(":", 1)
+
+                author, created = Author.objects.get_or_create_by_single_name(
+                    name.strip()
+                )
+                if author not in book.additional_authors.all():
+                    book.add_author(author, order=order, role=role)
+
+                results.append((author, created))
+
+            results.append((book, book_created))
 
         return render(
             request,
