@@ -27,7 +27,7 @@ def basic_search(request):
         ) and books.count() == 1:
             return redirect(results[0])
         books = Book.objects.search(query)
-        authors = Author.objects.search(query)[0:10]
+        authors = Author.objects.search(query).filter(similarity__gt=0.25)
 
     return render(
         request,

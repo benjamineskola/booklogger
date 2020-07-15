@@ -2,7 +2,7 @@ import re
 from typing import Any, Dict, Iterable, MutableMapping, Optional, Tuple
 
 import unidecode
-from django.contrib.postgres.search import TrigramDistance
+from django.contrib.postgres.search import TrigramSimilarity
 from django.db import models
 from django.db.models import CheckConstraint, F, Q
 from django.db.models.functions import Lower
@@ -16,11 +16,15 @@ Book = models.Model
 
 class AuthorManager(models.Manager):  # type: ignore
     def search(self, pattern: str) -> "models.QuerySet[Author]":
-        return Author.objects.annotate(
-            sn_distance=TrigramDistance("surname", pattern),
-            fn_distance=TrigramDistance("forenames", pattern),
-            distance=F("sn_distance") * F("fn_distance"),
-        ).order_by("distance")
+        return (
+            Author.objects.annotate(
+                sn_similarity=TrigramSimilarity("surname", pattern),
+                fn_similarity=TrigramSimilarity("forenames", pattern),
+                similarity=(F("sn_similarity") + F("fn_similarity")),
+            )
+            .order_by("-similarity")
+            .filter(similarity__gt=0.25)
+        )
 
     def get_by_single_name(self, name: str) -> "Author":
         names = Author.normalise_name(name)
