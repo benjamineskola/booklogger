@@ -4,6 +4,9 @@
   <div class="col">
     <div class="card">
       <div class="card-body">
+        {% if author.preferred_forenames %}
+          <p class="card-text">Full name: {{ author.full_name }}</p>
+        {% endif %}
         <p class="card-text"> Gender: {{ author.get_gender_display() }}</p>
         <p class="card-text"> POC: {{ author.poc }}</p>
         <p class="card-text"> Primarily writes in {{ author.get_primary_language_display() }}</p>
