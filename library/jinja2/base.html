@@ -45,8 +45,11 @@
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="admin-dropdown">
           <a class="dropdown-item" href="{{ url('admin:index') }}">Admin</a>
-          <a class="dropdown-item" href="{{ url('library:book_new') }}">Create</a>
-          <a class="dropdown-item" href="{{ url('library:book_import') }}">Import</a>
+          <a class="dropdown-item" href="{{ url('library:author_new') }}">Create Author</a>
+          <a class="dropdown-item" href="{{ url('library:book_new') }}">Create Book</a>
+          <a class="dropdown-item" href="{{ url('library:book_import') }}">Goodreads Import</a>
+          <a class="dropdown-item" href="{{ url('library:bulk_import') }}">Bulk Import</a>
+          <a class="dropdown-item" href="{{ url('library:report') }}">Reports</a>
         </div>
       </div>
     {% else %}
