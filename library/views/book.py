@@ -80,7 +80,7 @@ class OwnedIndexView(GenericIndexView):
     page_title = "Owned Books"
 
     def get_queryset(self):
-        return super().get_queryset().order_by("edition_format", *Book._meta.ordering)
+        return super().get_queryset()
 
 
 class OwnedByDateView(GenericIndexView):
@@ -136,7 +136,7 @@ class UnreadIndexView(GenericIndexView):
             .filter(Q(owned_by__isnull=False) | Q(edition_format=Book.Format["WEB"]))
             .exclude(tags__contains=["reference"])
         )
-        return books.order_by("edition_format", *Book._meta.ordering,)
+        return books
 
 
 class SeriesIndexView(GenericIndexView):
