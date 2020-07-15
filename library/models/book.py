@@ -64,8 +64,10 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
             "edition_subtitle",
             "first_author__surname",
             "first_author__forenames",
+            "first_author__preferred_forenames",
             "additional_authors__surname",
             "additional_authors__forenames",
+            "additional_authors__preferred_forenames",
         )
 
         return (
