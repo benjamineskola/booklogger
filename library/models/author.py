@@ -36,7 +36,7 @@ class AuthorManager(models.Manager):  # type: ignore
 
     def get_or_create_by_single_name(self, name: str) -> Tuple["Author", bool]:
         try:
-            return (Author.objects.get_by_single_name(surname=name), False)
+            return (Author.objects.get_by_single_name(name), False)
         except self.model.DoesNotExist:
             return Author.objects.get_or_create(**Author.normalise_name(name))
 

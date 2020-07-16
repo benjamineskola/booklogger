@@ -55,7 +55,7 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
 
     def search(self, pattern: str) -> "BookQuerySet":
         return (
-            self.annotate(
+            self.annotate(  # type: ignore [return-value]
                 title_similarity=TrigramSimilarity("title", pattern),
                 subtitle_similarity=TrigramSimilarity("subtitle", pattern),
                 series_similarity=TrigramSimilarity("series", pattern),
@@ -207,7 +207,7 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
                 time.sleep(sleep_time)
                 sleep_time *= 2
 
-    def scrape_goodreads_image(self, goodreads_url):
+    def scrape_goodreads_image(self, goodreads_url: str) -> str:
         text = requests.get(goodreads_url).text
         meta_tag = re.search(r"<meta[^>]*og:image[^>]*>", text)
         if meta_tag:
@@ -684,8 +684,11 @@ class Book(models.Model):
 
         new_isbn = [int(i) for i in self.isbn[3:-1]]
         check_digit = 11 - sum([(10 - i) * new_isbn[i] for i in range(9)]) % 11
-        check_digit = "X" if check_digit == 10 else check_digit
-        return "".join([str(i) for i in new_isbn]) + str(check_digit)
+        return (
+            "".join([str(i) for i in new_isbn]) + "X"
+            if check_digit == 10
+            else str(check_digit)
+        )
 
     @property
     def owned(self) -> bool:
@@ -697,7 +700,9 @@ class Book(models.Model):
 
     @property
     def search_query(self) -> str:
-        return quote(f"{self.edition_title or self.title} {self.first_author.surname}")
+        return quote(
+            f"{self.edition_title or self.title} {self.first_author and self.first_author.surname}"
+        )
 
     @property
     def goodreads_url(self) -> Tuple[str, str]:
