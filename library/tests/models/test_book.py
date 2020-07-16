@@ -1,13 +1,16 @@
 import pytest
 
-from library.factories import *
-from library.models import *
+from library.factories import (  # noqa: F401
+    author_factory,
+    book_author_factory,
+    book_factory,
+)
 
 
 @pytest.mark.django_db
 class TestBook:
     @pytest.fixture
-    def mock_authors(self, author_factory):
+    def mock_authors(self, author_factory):  # noqa: F811
         authors = [
             author_factory(surname="God"),
             author_factory(surname="Jesus"),
@@ -18,7 +21,7 @@ class TestBook:
         return authors
 
     @pytest.fixture
-    def mock_book(self, book_factory, mock_authors, book_author_factory):
+    def mock_book(self, book_factory, mock_authors, book_author_factory):  # noqa: F811
         mock_book = book_factory(title="The Bible")
         mock_book.save()
         mock_book.add_author(mock_authors[0], order=1)

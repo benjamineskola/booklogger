@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from library.models import Author, Book, BookAuthor
+from library.models import Book
 
 
 class Command(BaseCommand):

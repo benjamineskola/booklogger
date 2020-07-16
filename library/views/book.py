@@ -1,16 +1,14 @@
 from itertools import groupby
 
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import PermissionDenied
-from django.db.models import Count, F, Q
-from django.db.models.functions import Lower
-from django.forms import inlineformset_factory, modelform_factory
+from django.db.models import F, Q
+from django.forms import inlineformset_factory
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import generic
 from django.views.decorators.http import require_POST
 
 from library.forms import BookForm
-from library.models import Author, Book, BookAuthor, LogEntry
+from library.models import Book, BookAuthor, LogEntry
 from library.utils import oxford_comma
 
 

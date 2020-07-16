@@ -1,18 +1,14 @@
 import json
-import os
 import re
-from random import shuffle
 
-import requests
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator
 from django.db.models import Count, F, Q
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import redirect, render
 from django.utils import timezone
 
-from library.models import Author, Book, BookAuthor, LogEntry
+from library.models import Author, Book, LogEntry
 
-from . import author, book
+from . import author, book  # noqa: F401
 
 # Create your views here.
 

@@ -1,12 +1,12 @@
 import pytest
 
-from library.factories import *
-from library.models import *
+from library.factories import author_factory  # noqa: F401
+from library.models import Author
 
 
 class TestAuthor:
     @pytest.fixture
-    def author(self, author_factory):
+    def author(self, author_factory):  # noqa: F811
         return author_factory(surname="Smithee")
 
     def test_author_str(self, author):

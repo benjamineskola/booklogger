@@ -1,10 +1,10 @@
 import re
-from typing import Any, Dict, Iterable, MutableMapping, Optional, Tuple
+from typing import Any, Dict, MutableMapping, Optional, Tuple
 
 import unidecode
 from django.contrib.postgres.search import TrigramSimilarity
 from django.db import models
-from django.db.models import CheckConstraint, F, Q
+from django.db.models import F, Q
 from django.db.models.functions import Lower
 from django.db.models.indexes import Index
 from django.urls import reverse

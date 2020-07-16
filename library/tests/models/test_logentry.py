@@ -1,14 +1,14 @@
 import pytest
 from django.utils import timezone
 
-from library.factories import *
-from library.models import *
+from library.factories import book_factory  # noqa: F401
+from library.models import LogEntry
 
 
 @pytest.mark.django_db
 class TestLogEntry:
     @pytest.fixture
-    def mock_book(self, book_factory):
+    def mock_book(self, book_factory):  # noqa: F811
         mock_book = book_factory(title="The Bible")
         mock_book.save()
         return mock_book
