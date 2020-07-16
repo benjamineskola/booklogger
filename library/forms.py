@@ -3,7 +3,7 @@ import re
 from django.forms import Form, ModelForm, ValidationError
 from django_select2 import forms as s2forms
 
-from library.models import Author, Book
+from library.models import Author, Book, BookAuthor
 
 
 class AuthorWidget(s2forms.ModelSelect2Widget):
@@ -136,3 +136,17 @@ class BookForm(BootstrapModelForm):
             checksum = 10 - checksum % 10
 
             return "".join([str(c) for c in ints] + [str(checksum)])
+
+
+class BookAuthorForm(BootstrapModelForm):
+    class Meta:
+        model = BookAuthor
+        fields = [
+            "author",
+            "role",
+            "order",
+        ]
+        widgets = {"author": AuthorWidget}
+
+    def __init__(self, *args, **kwargs):
+        super(BookAuthorForm, self).__init__(*args, **kwargs)

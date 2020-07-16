@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views import generic
 from django.views.decorators.http import require_POST
 
-from library.forms import AuthorWidget, BookForm
+from library.forms import BookAuthorForm, BookForm
 from library.models import Book, BookAuthor, LogEntry
 from library.utils import oxford_comma
 
@@ -288,12 +288,7 @@ def mark_owned(request, slug):
 @login_required
 def edit(request, slug):
     book = get_object_or_404(Book, slug=slug)
-    book_author_formset = inlineformset_factory(
-        Book,
-        BookAuthor,
-        fields=("author", "role", "order",),
-        widgets={"author": AuthorWidget},
-    )
+    book_author_formset = inlineformset_factory(Book, BookAuthor, form=BookAuthorForm,)
 
     if request.method == "POST":
         form = BookForm(request.POST, instance=book)
@@ -305,8 +300,11 @@ def edit(request, slug):
             return redirect("library:book_details", slug=book.slug)
         else:
             for subform in inline_formset:
-                for field in subform.fields:
-                    subform.fields[field].widget.attrs.update({"class": "form-control"})
+                if inline_formset.can_delete:
+                    subform.fields["DELETE"].widget.attrs.update(
+                        {"class": "form-control"}
+                    )
+
                 for field in subform.errors:
                     subform[field].field.widget.attrs["class"] += " is-invalid"
 
@@ -326,9 +324,9 @@ def edit(request, slug):
         form = BookForm(instance=book)
         inline_formset = book_author_formset(instance=book)
 
-        for subform in inline_formset:
-            for field in subform.fields:
-                subform.fields[field].widget.attrs.update({"class": "form-control"})
+        if inline_formset.can_delete:
+            for subform in inline_formset:
+                subform.fields["DELETE"].widget.attrs.update({"class": "form-control"})
 
         return render(
             request,
