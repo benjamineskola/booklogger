@@ -1,4 +1,9 @@
 {% extends "base.html" %}
+{% block header %}
+{{ form.media.css }}
+
+<link href="{{ static("select2-bootstrap4.min.css") }}" type="text/css" media="screen" rel="stylesheet">
+{% endblock header %}
 {% block content %}
 <form method="post">
   <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
@@ -22,3 +27,13 @@
 <a href="{{ url("admin:library_author_change", args=[form.instance.id]) }}">Advanced</a>
 {% endif %}
 {% endblock content %}
+{% block footer %}
+{{ form.media.js }}
+<script>
+$(document).ready(function() {
+  $('.django-select2').djangoSelect2({
+    'theme': 'bootstrap4'
+  })
+})
+</script>
+{% endblock footer %}

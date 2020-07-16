@@ -32,6 +32,9 @@ class AuthorForm(ModelForm):
     class Meta:
         model = Author
         fields = "__all__"
+        widgets = {
+            "primary_language": s2forms.Select2Widget,
+        }
 
     def __init__(self, *args, **kwargs):
         super(AuthorForm, self).__init__(*args, **kwargs)
@@ -51,7 +54,12 @@ class BookForm(ModelForm):
     class Meta:
         model = Book
         exclude = ["additional_authors", "created_date"]
-        widgets = {"first_author": AuthorWidget, "tags": TagWidget}
+        widgets = {
+            "edition_language": s2forms.Select2Widget,
+            "first_author": AuthorWidget,
+            "language": s2forms.Select2Widget,
+            "tags": TagWidget,
+        }
 
     def __init__(self, *args, **kwargs):
         super(BookForm, self).__init__(*args, **kwargs)
