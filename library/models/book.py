@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 from django.contrib.humanize.templatetags.humanize import ordinal
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.indexes import GinIndex
-from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
+from django.contrib.postgres.search import TrigramSimilarity
 from django.db import models
 from django.db.models import F, Q
 from django.db.models.functions import Length, Lower
@@ -54,27 +54,26 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
         return self.get_queryset().unread()
 
     def search(self, pattern: str) -> "BookQuerySet":
-        query = SearchQuery(pattern)
-        vector = SearchVector(
-            "title",
-            "subtitle",
-            "series",
-            "tags",
-            "edition_title",
-            "edition_subtitle",
-            "first_author__surname",
-            "first_author__forenames",
-            "first_author__preferred_forenames",
-            "additional_authors__surname",
-            "additional_authors__forenames",
-            "additional_authors__preferred_forenames",
-        )
-
         return (
-            self.annotate(rank=SearchRank(vector, query))
-            .filter(rank__gte=0.01)
-            .order_by("-rank")
-        ).distinct()  # type: ignore [return-value]
+            self.annotate(
+                title_similarity=TrigramSimilarity("title", pattern),
+                subtitle_similarity=TrigramSimilarity("subtitle", pattern),
+                series_similarity=TrigramSimilarity("series", pattern),
+                edition_title_similarity=TrigramSimilarity("edition_title", pattern),
+                edition_subtitle_similarity=TrigramSimilarity(
+                    "edition_subtitle", pattern
+                ),
+                similarity=(
+                    F("title_similarity")
+                    + F("subtitle_similarity")
+                    + F("series_similarity")
+                    + F("edition_title_similarity")
+                    + F("edition_subtitle_similarity")
+                ),
+            )
+            .order_by("-similarity")
+            .filter(similarity__gt=0.14)
+        )
 
     def rename_tag(self, old_name: str, new_name: str) -> None:
         tagged_books = self.filter(tags__contains=[old_name])
