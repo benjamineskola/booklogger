@@ -1,6 +1,6 @@
 import re
 
-from django.forms import ModelForm, ValidationError
+from django.forms import Form, ModelForm, ValidationError
 from django_select2 import forms as s2forms
 
 from library.models import Author, Book
@@ -28,7 +28,26 @@ class TagWidget(s2forms.Select2TagWidget):
         return [(None, subgroup, 0)]
 
 
-class AuthorForm(ModelForm):
+class BootstrapForm(Form):
+    def __init__(self, *args, **kwargs):
+        super(BootstrapForm, self).__init__(*args, **kwargs)
+        for field_name in self.fields:
+            field = self.fields[field_name]
+            widget = field.widget
+            widget.attrs.update({"class": "form-control"})
+            if widget.__class__.__name__ == "CheckboxInput":
+                widget.attrs["class"] += " col-1"
+
+            if field.required:
+                field.label_suffix = " (required):"
+
+
+class BootstrapModelForm(BootstrapForm, ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(BootstrapModelForm, self).__init__(*args, **kwargs)
+
+
+class AuthorForm(BootstrapModelForm):
     class Meta:
         model = Author
         fields = "__all__"
@@ -38,19 +57,9 @@ class AuthorForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(AuthorForm, self).__init__(*args, **kwargs)
-        for field in self.fields:
-            widget = self.fields[field].widget
-            widget.attrs.update({"class": "form-control"})
-            if widget.__class__.__name__ == "CheckboxInput":
-                widget.attrs["class"] += " col-1"
-            else:
-                widget.attrs["class"] += " col-8"
-
-            if self.fields[field].required:
-                self.fields[field].label_suffix = " (required):"
 
 
-class BookForm(ModelForm):
+class BookForm(BootstrapModelForm):
     class Meta:
         model = Book
         exclude = ["additional_authors", "created_date"]
@@ -74,15 +83,6 @@ class BookForm(ModelForm):
         else:
             del self.fields["editions"]
             del self.fields["parent_edition"]
-
-        for field in self.fields:
-            widget = self.fields[field].widget
-            widget.attrs.update({"class": "form-control"})
-            if widget.__class__.__name__ == "CheckboxInput":
-                widget.attrs["class"] += " col-1"
-
-            if self.fields[field].required:
-                self.fields[field].label_suffix = " (required):"
 
     def _clean_asin(self, asin):
         if not asin:
