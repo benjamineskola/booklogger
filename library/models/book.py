@@ -92,7 +92,7 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
 
         try:
             all_results = xml["GoodreadsResponse"]["search"]["results"]["work"]
-        except:
+        except KeyError:
             return None
 
         results: Sequence[Dict[str, Any]] = []
@@ -142,7 +142,7 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
             first_published=result["original_publication_year"].get("#text"),
         )
 
-        if not "nophoto" in goodreads_book["image_url"]:
+        if "nophoto" not in goodreads_book["image_url"]:
             book.image_url = goodreads_book["image_url"]
 
         if not book.image_url:
@@ -212,7 +212,7 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
         meta_tag = re.search(r"<meta[^>]*og:image[^>]*>", text)
         if meta_tag:
             image_url = re.search(r"https://.*\.jpg", meta_tag[0])
-            if image_url and not "nophoto" in image_url[0]:
+            if image_url and ("nophoto" not in image_url[0]):
                 return image_url[0]
 
         return ""
@@ -541,7 +541,7 @@ class Book(models.Model):
         entry.save()
 
     def mark_read_sometime(self) -> None:
-        entry = self.log_entries.create(start_date=None, end_date="0001-01-01 00:00")
+        self.log_entries.create(start_date=None, end_date="0001-01-01 00:00")
 
     def mark_owned(self) -> None:
         self.owned_by = User.objects.get(username="ben")
@@ -575,7 +575,7 @@ class Book(models.Model):
     def add_tags(self, tags: Iterable[str]) -> None:
         for tag in tags:
             clean_tag = tag.strip().lower()
-            if not clean_tag in self.tags:
+            if clean_tag not in self.tags:
                 self.tags.append(clean_tag)
         self.save()
 

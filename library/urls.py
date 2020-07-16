@@ -17,8 +17,8 @@ urlpatterns = [
     ),
     path("authors/", views.author.IndexView.as_view(), name="author_list"),
     path("authors/<int:page>/", views.author.IndexView.as_view(), name="author_list"),
-    path("book/import/", views.import_book, name="book_import"),
-    path("book/import/<str:query>/", views.import_book, name="book_import"),
+    path("book/import/", views.importer.import_book, name="book_import"),
+    path("book/import/<str:query>/", views.importer.import_book, name="book_import"),
     path("book/new/", views.book.new, name="book_new"),
     path(
         "book/<slug:slug>/",
@@ -151,7 +151,7 @@ urlpatterns = [
     path("stats/", views.stats, name="stats"),
     path("tag/<str:tag_name>/", views.book.TagIndexView.as_view(), name="tag_details"),
     path("tags/", views.tag_cloud, name="tag_cloud"),
-    path("report/", views.report, name="report"),
-    path("report/<int:page>/", views.report, name="report"),
-    path("bulkimport/", views.bulk_import, name="bulk_import"),
+    path("report/", views.report.report, name="report"),
+    path("report/<int:page>/", views.report.report, name="report"),
+    path("bulkimport/", views.importer.bulk_import, name="bulk_import"),
 ]

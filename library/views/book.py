@@ -201,7 +201,7 @@ class GenericLogView(generic.ListView):
         if year := self.kwargs.get("year"):
             entries = entries.filter(end_date__year=year)
             if year == 1:
-                self.page_title = f"Read sometime"
+                self.page_title = "Read sometime"
             else:
                 self.page_title = f"Read in {year}"
 
@@ -288,13 +288,13 @@ def mark_owned(request, slug):
 @login_required
 def edit(request, slug):
     book = get_object_or_404(Book, slug=slug)
-    BookAuthorForm = inlineformset_factory(
+    book_author_formset = inlineformset_factory(
         Book, BookAuthor, fields=("author", "role", "order",)
     )
 
     if request.method == "POST":
         form = BookForm(request.POST, instance=book)
-        inline_formset = BookAuthorForm(request.POST, instance=book)
+        inline_formset = book_author_formset(request.POST, instance=book)
 
         if form.is_valid() and inline_formset.is_valid():
             book = form.save()
@@ -321,7 +321,7 @@ def edit(request, slug):
             )
     else:
         form = BookForm(instance=book)
-        inline_formset = BookAuthorForm(instance=book)
+        inline_formset = book_author_formset(instance=book)
 
         for subform in inline_formset:
             for field in subform.fields:
