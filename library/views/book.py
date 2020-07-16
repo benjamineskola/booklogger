@@ -305,12 +305,6 @@ def edit(request, slug):
                         {"class": "form-control"}
                     )
 
-                for field in subform.errors:
-                    subform[field].field.widget.attrs["class"] += " is-invalid"
-
-            for field in form.errors:
-                form[field].field.widget.attrs["class"] += " is-invalid"
-
             return render(
                 request,
                 "books/edit_form.html",
@@ -347,9 +341,6 @@ def new(request):
             book = form.save()
             return redirect("library:book_details", slug=book.slug)
         else:
-            for field in form.errors:
-                form[field].field.widget.attrs["class"] += " is-invalid"
-
             return render(
                 request,
                 "books/edit_form.html",

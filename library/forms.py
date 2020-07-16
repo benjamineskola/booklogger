@@ -43,6 +43,9 @@ class BootstrapForm(Form):
             if field.required:
                 field.label_suffix = " (required):"
 
+        for field_name in self.errors:
+            self.fields[field_name].widget.attrs["class"] += " is-invalid"
+
 
 class BootstrapModelForm(BootstrapForm, ModelForm):
     def __init__(self, *args, **kwargs):
