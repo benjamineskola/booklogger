@@ -14,6 +14,20 @@ class AuthorWidget(s2forms.ModelSelect2Widget):
     ]
 
 
+class TagWidget(s2forms.Select2TagWidget):
+    def value_from_datadict(self, data, files, name):
+        values = super().value_from_datadict(data, files, name)
+        return ",".join(values)
+
+    def optgroups(self, name, value, attrs=None):
+        values = value[0].split(",") if value[0] else []
+        selected = set(values)
+        subgroup = [
+            self.create_option(name, v, v, selected, i) for i, v in enumerate(values)
+        ]
+        return [(None, subgroup, 0)]
+
+
 class AuthorForm(ModelForm):
     class Meta:
         model = Author
@@ -37,7 +51,7 @@ class BookForm(ModelForm):
     class Meta:
         model = Book
         exclude = ["additional_authors", "created_date"]
-        widgets = {"first_author": AuthorWidget}
+        widgets = {"first_author": AuthorWidget, "tags": TagWidget}
 
     def __init__(self, *args, **kwargs):
         super(BookForm, self).__init__(*args, **kwargs)
