@@ -37,6 +37,8 @@ class BootstrapForm(Form):
             widget.attrs.update({"class": "form-control"})
             if widget.__class__.__name__ == "CheckboxInput":
                 widget.attrs["class"] += " col-1"
+            elif widget.__class__.__name__ == "Select":
+                widget.attrs["class"] += " custom-select"
 
             if field.required:
                 field.label_suffix = " (required):"
