@@ -1,0 +1,6 @@
+[flake8]
+exclude = library/migrations/
+select = C,E,F,W,N,B,B9
+ignore = E501,W503,E203,E231,E701,B950
+max-complexity = 15
+max-line-length = 88

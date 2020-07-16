@@ -1,6 +1,7 @@
 language: python
 python: 3.8
 script:
+  - flake8
   - pytest
   - mypy -m library.models  -m library.utils
 services:
