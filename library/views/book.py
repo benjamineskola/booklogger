@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views import generic
 from django.views.decorators.http import require_POST
 
-from library.forms import BookForm
+from library.forms import AuthorWidget, BookForm
 from library.models import Book, BookAuthor, LogEntry
 from library.utils import oxford_comma
 
@@ -289,7 +289,10 @@ def mark_owned(request, slug):
 def edit(request, slug):
     book = get_object_or_404(Book, slug=slug)
     book_author_formset = inlineformset_factory(
-        Book, BookAuthor, fields=("author", "role", "order",)
+        Book,
+        BookAuthor,
+        fields=("author", "role", "order",),
+        widgets={"author": AuthorWidget},
     )
 
     if request.method == "POST":

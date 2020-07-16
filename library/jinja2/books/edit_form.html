@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+{% block header %}
+{{ form.media.css }}
+{% endblock header %}
 {% block content %}
 
 {% if form.instance.id %}
@@ -46,14 +49,18 @@
     <div class="card-body">
       {{ inline_formset.management_form }}
       {% for form in inline_formset %}
-      <div class="form-row">
+      <div class="form-group">
         {{ form.id }}
-        {% for field in form %}
-        {% if field.name not in ["id", "book"] %}
-          {% include "edit_form_field_snippet.html" %}
-        {% endif %}
-      {% endfor %}
-      </div> {# form-row #}
+        {% set field = form['author'] %}
+        {% include "edit_form_field_snippet.html" %}
+        <div class="form-row">
+          {% for field in form %}
+          {% if field.name not in ["id", "book", "author"] %}
+            {% include "edit_form_field_snippet.html" %}
+          {% endif %}
+        {% endfor %}
+        </div> {# form-row #}
+      </div> {# form-group #}
       {% endfor %}
     </div> {# card-body #}
   </div> {# card #}
@@ -75,3 +82,6 @@
 {% endif %}
 
 {% endblock content %}
+{% block footer %}
+{{ form.media.js }}
+{% endblock footer %}

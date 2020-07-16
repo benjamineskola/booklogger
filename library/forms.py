@@ -1,8 +1,17 @@
 import re
 
 from django.forms import ModelForm, ValidationError
+from django_select2 import forms as s2forms
 
 from library.models import Author, Book
+
+
+class AuthorWidget(s2forms.ModelSelect2Widget):
+    search_fields = [
+        "surname__icontains",
+        "forenames__icontains",
+        "preferred_forenames__icontains",
+    ]
 
 
 class AuthorForm(ModelForm):
@@ -28,6 +37,7 @@ class BookForm(ModelForm):
     class Meta:
         model = Book
         exclude = ["additional_authors", "created_date"]
+        widgets = {"first_author": AuthorWidget}
 
     def __init__(self, *args, **kwargs):
         super(BookForm, self).__init__(*args, **kwargs)
