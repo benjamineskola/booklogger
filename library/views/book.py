@@ -293,9 +293,14 @@ class CreateOrUpdateView(LoginRequiredMixin):
         context = self.get_context_data()
         inline_formset = context["inline_formset"]
         self.object = form.save()
+
         if inline_formset.is_valid():
             inline_formset.instance = self.object
             inline_formset.save()
+            for subform in inline_formset:
+                if inline_formset.data.get(subform.prefix + "-DELETE") == "on":
+                    subform.instance.delete()
+
             return super(CreateOrUpdateView, self).form_valid(form)
         else:
             for subform in inline_formset:
