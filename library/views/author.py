@@ -1,5 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
 from django.views import generic
+
 from library.forms import AuthorForm
 from library.models import Author
 
@@ -61,3 +63,9 @@ class NewView(LoginRequiredMixin, generic.edit.CreateView):
     form_class = AuthorForm
     template_name = "authors/edit_form.html"
     model = Author
+
+
+class DeleteView(LoginRequiredMixin, generic.edit.DeleteView):
+    model = Author
+    success_url = reverse_lazy("library:author_list")
+    template_name = "confirm_delete.html"

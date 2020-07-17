@@ -11,6 +11,7 @@ urlpatterns = [
         include(
             [
                 path("", views.author.DetailView.as_view(), name="author_details"),
+                path("delete", views.author.DeleteView.as_view(), name="author_delete"),
                 path("edit", views.author.EditView.as_view(), name="author_edit"),
             ]
         ),
@@ -31,6 +32,7 @@ urlpatterns = [
                 path(
                     "update/", views.book.update_progress, name="book_update_progress",
                 ),
+                path("delete/", views.book.DeleteView.as_view(), name="book_delete"),
                 path("edit/", views.book.EditView.as_view(), name="book_edit"),
                 path("mark_owned/", views.book.mark_owned, name="book_mark_owned"),
             ]

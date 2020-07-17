@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<p>Delete {{ object }}?</p>
+<form method="POST">
+  <div class="form-group form-inline col col-8 col-md-4">
+  <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+  <input type="submit" value="Delete" class="form-control btn btn-danger px-4 m-2">
+  <a href="{{ object.get_absolute_url() }}" class="btn btn-secondary px-4 m-2" role="button">Cancel</a>
+  </div>
+</form>
+{% endblock content %}

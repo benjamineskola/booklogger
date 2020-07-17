@@ -4,8 +4,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import F, Q
 from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse_lazy
 from django.views import generic
 from django.views.decorators.http import require_POST
+
 from library.forms import BookAuthorFormSet, BookForm
 from library.models import Book, LogEntry
 from library.utils import oxford_comma
@@ -329,3 +331,9 @@ class NewView(CreateOrUpdateView, generic.edit.CreateView):
 
 class EditView(CreateOrUpdateView, generic.edit.UpdateView):
     pass
+
+
+class DeleteView(LoginRequiredMixin, generic.edit.DeleteView):
+    model = Book
+    success_url = reverse_lazy("library:books_all")
+    template_name = "confirm_delete.html"
