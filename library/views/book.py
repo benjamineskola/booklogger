@@ -316,6 +316,10 @@ class CreateOrUpdateView(LoginRequiredMixin):
             )
         else:
             context["inline_formset"] = BookAuthorFormSet(instance=self.object)
+
+        for subform in context["inline_formset"]:
+            subform.fields["DELETE"].widget.attrs["class"] = "form-control"
+
         return context
 
 
