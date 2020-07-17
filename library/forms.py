@@ -46,6 +46,9 @@ class BootstrapForm(Form):
         for field_name in self.errors:
             self.fields[field_name].widget.attrs["class"] += " is-invalid"
 
+    def set_delete_classes(self):
+        self.fields["DELETE"].widget.attrs.update({"class": "form-control"})
+
 
 class BootstrapModelForm(BootstrapForm, ModelForm):
     def __init__(self, *args, **kwargs):

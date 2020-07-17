@@ -300,10 +300,7 @@ def edit(request, slug):
             return redirect("library:book_details", slug=book.slug)
         else:
             for subform in inline_formset:
-                if inline_formset.can_delete:
-                    subform.fields["DELETE"].widget.attrs.update(
-                        {"class": "form-control"}
-                    )
+                subform.set_delete_classes()
 
             return render(
                 request,
@@ -318,9 +315,8 @@ def edit(request, slug):
         form = BookForm(instance=book)
         inline_formset = book_author_formset(instance=book)
 
-        if inline_formset.can_delete:
-            for subform in inline_formset:
-                subform.fields["DELETE"].widget.attrs.update({"class": "form-control"})
+        for subform in inline_formset:
+            subform.set_delete_classes()
 
         return render(
             request,
