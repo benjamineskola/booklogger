@@ -420,9 +420,6 @@ class Book(models.Model):
     def get_absolute_url(self) -> str:
         return reverse("library:book_details", args=[self.slug])
 
-    def get_link_data(self, **kwargs: Dict[str, Any]) -> Dict[str, str]:
-        return {"url": self.get_absolute_url(), "text": self.display_title}
-
     @property
     def authors(self) -> Sequence[Author]:
         additional_authors = list(

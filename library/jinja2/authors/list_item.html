@@ -1,5 +1,6 @@
+{% from "macros.html" import author_link with context %}
 <li>
-  {{ author | get_hyperlink }}
+  {{ author_link(author) }}
   <span class="text-muted">(
   {%- if author.authored_books.count() > 0 -%}
     Author of {{ author.authored_books.first().display_title }}

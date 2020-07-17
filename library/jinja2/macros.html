@@ -1,0 +1,24 @@
+{% macro author_link(author, book=None) -%}
+<a href="{{ author.get_absolute_url() }}">{{ author.attribution_for(book) if book else author }}</a>
+{%- endmacro %}
+
+{% macro author_list(authors, full=False, book=None, show_attribution=False) %}
+{% if full or authors|count < 3 %}
+  {% set comma = joiner(',') %}
+  {% for author in authors %}
+    {%- if authors|count > 2 -%}{{ comma() }}{% endif %}
+    {% if authors|count > 1 and loop.last %} and {% endif %}
+    {{ author_link(author, book if (show_attribution and book) else None) -}}
+  {% endfor %}
+{% else %}
+  {{ author_link(authors|first, book) }} and others
+{% endif %}
+{% endmacro %}
+
+{% macro book_link(book) -%}
+<a href="{{ book.get_absolute_url() }}">{{ book.display_title }}</a>
+{%- endmacro %}
+
+{% macro book_link_with_authors(book) -%}
+<a href="{{ book.get_absolute_url() }}">{{ book.display_authors }}, <em>{{ book.display_title }}</em></a>
+{%- endmacro %}

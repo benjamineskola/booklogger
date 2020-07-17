@@ -1,5 +1,5 @@
 import re
-from typing import Any, Dict, MutableMapping, Optional, Tuple
+from typing import Any, MutableMapping, Tuple
 
 import unidecode
 from django.contrib.postgres.search import TrigramSimilarity
@@ -102,14 +102,6 @@ class Author(models.Model):
 
     def get_absolute_url(self) -> str:
         return reverse("library:author_details", args=[str(self.slug)])
-
-    def get_link_data(
-        self, book: Optional[Book] = None, **kwargs: Dict[str, Any]
-    ) -> Dict[str, str]:
-        return {
-            "url": self.get_absolute_url(),
-            "text": self.attribution_for(book, initials=False) if book else str(self),
-        }
 
     def attribution_for(self, book: "Book", initials: bool = False) -> str:
         role = self._role_for_book(book)

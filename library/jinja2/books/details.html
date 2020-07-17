@@ -1,3 +1,4 @@
+{% from "macros.html" import author_list, book_link with context %}
 {% extends "base.html" %}
 {% block content %}
 <div class="row row-cols-1 row-cols-md-2 mt-4">
@@ -9,7 +10,8 @@
     {% if book.has_full_authors %}
     <p>
       <strong>Full Authors</strong>
-      {{ book.all_authors | map('get_hyperlink', book=book) | list | oxford_comma }}
+        {{ author_list(book.all_authors, full=True, book=book, show_attribution=(not book.all_authors_editors)) }}
+        {%- if book.all_authors_editors %} (eds.){% endif %}
     </p>
     {% endif %}
 
@@ -152,7 +154,7 @@
     <h3>Other Editions</h3>
     <ul>
     {% for edition in book.editions.all() %}
-    <li>{{ edition | get_hyperlink }} ({{ edition.get_edition_disambiguator() }} edition)</li>
+    <li>{{ book_link(edition) }} ({{ edition.get_edition_disambiguator() }} edition)</li>
     {% endfor %}
     </ul>
   </div>
@@ -160,14 +162,14 @@
 
   {% if book.parent_edition %}
   <div class="col">
-    This book is part of {{ book.parent_edition | get_hyperlink }}
+    This book is part of {{ book_link(book.parent_edition) }}
   </div>
   {% elif book.subeditions.count() %}
   <div class="col">
   This book is made up of the following books:
   <ul>
   {% for subedition in book.subeditions.all() %}
-    <li>{{ subedition | get_hyperlink }}</li>
+    <li>{{ book_link(subedition) }}</li>
   {% endfor %}
   </ul>
   </div>
