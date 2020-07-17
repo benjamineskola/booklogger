@@ -1,5 +1,4 @@
-from datetime import datetime
-from typing import Any, Optional
+from typing import Any
 
 from django.db import models
 from django.db.models import Q
@@ -69,9 +68,9 @@ class LogEntry(models.Model):
     def __str__(self) -> str:
         text = str(self.book)
         if self.start_date:
-            text += f" from {self.start_date_display}"
+            text += f" from {self.start_date.strftime('%Y-%m-%d')}"
         if self.end_date:
-            text += f" to {self.end_date_display}"
+            text += f" to {self.end_date.strftime('%Y-%m-%d')}"
         else:
             text += ", unfinished"
         return text
@@ -82,31 +81,3 @@ class LogEntry(models.Model):
             return True
         else:
             return False
-
-    @property
-    def start_date_display(self) -> str:
-        return self._date_with_precision(self.start_date, self.start_precision)
-
-    @property
-    def end_date_display(self) -> str:
-        return self._date_with_precision(self.end_date, self.end_precision)
-
-    @property
-    def progress_date_display(self) -> str:
-        return self._date_with_precision(self.progress_date, 0)
-
-    def _date_with_precision(self, date: Optional[datetime], precision: int) -> str:
-        if not date:
-            return ""
-
-        if date.year == 1:
-            return "sometime"
-
-        if precision == 2:
-            return date.strftime("%Y")
-        elif precision == 1:
-            return date.strftime("%B %Y")
-        elif (timezone.now() - date).days < 270:
-            return date.strftime("%d %B")
-        else:
-            return date.strftime("%d %B, %Y")

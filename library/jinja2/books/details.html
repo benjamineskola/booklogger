@@ -1,4 +1,4 @@
-{% from "macros.html" import author_list, book_link with context %}
+{% from "macros.html" import author_list, book_link, format_date_range with context %}
 {% extends "base.html" %}
 {% block content %}
 <div class="row row-cols-1 row-cols-md-2 mt-4">
@@ -134,11 +134,11 @@
   <h3>Reading History</h3>
   <ul class="list-unstyled">
   {% for entry in book.all_log_entries %}
-    <li>{% include "logentries/date_snippet.html" %}
+    <li>{{ format_date_range(entry.start_date, entry.start_precision, entry.end_date, entry.end_precision) }}
     {% if entry not in book.log_entries.all() %}
     (<a href="{{ entry.book.get_absolute_url() }}">{{ entry.book.get_edition_disambiguator() }} edition</a>)
     {% endif %}
-    <li>
+    </li>
   {% else %}
   <li>No reading history</li>
   {% endfor %}

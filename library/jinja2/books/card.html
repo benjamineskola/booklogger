@@ -1,4 +1,4 @@
-{% from "macros.html" import book_link, author_list with context %}
+{% from "macros.html" import book_link, author_list, format_date, format_date_range with context %}
 {% if not entry and book.log_entries and book.log_entries.count() > 0 %}
   {% set entry = book.log_entries.order_by('end_date').last() %}
 {% endif %}
@@ -80,13 +80,13 @@
         {% endif %}
         </span>
         {% if entry %}
-          <br>{% include "logentries/date_snippet.html" %}
+          <br>{{ format_date_range(entry.start_date, entry.start_precision, entry.end_date, entry.end_precision)  }}
 
           {% if entry.currently_reading %}
             <div class="progress" style="height: 5px">
               <div class="progress-bar" role="progressbar" style="width: {{entry.progress}}%" aria-valuenow="{{ entry.progress }}" aria-valuemin="0" aria-valuemax="100"></div>
             </div>
-            {% if entry.progress %}{{ entry.progress }}% on {{ entry.progress_date_display }}{% endif %}
+            {% if entry.progress %}{{ entry.progress }}% on {{ format_date(entry.progress_date, 0) }}{% endif %}
           {% endif %}
         {% endif %}
 
