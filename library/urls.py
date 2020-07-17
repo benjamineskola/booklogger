@@ -5,13 +5,13 @@ from . import views
 app_name = "library"
 urlpatterns = [
     path("", views.book.CurrentlyReadingView.as_view(), name="index"),
-    path("author/new/", views.author.edit, name="author_new"),
+    path("author/new/", views.author.NewView.as_view(), name="author_new"),
     path(
         "author/<slug:slug>/",
         include(
             [
                 path("", views.author.DetailView.as_view(), name="author_details"),
-                path("edit", views.author.edit, name="author_edit"),
+                path("edit", views.author.EditView.as_view(), name="author_edit"),
             ]
         ),
     ),

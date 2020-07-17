@@ -1,7 +1,5 @@
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import generic
-
 from library.forms import AuthorForm
 from library.models import Author
 
@@ -53,29 +51,13 @@ class IndexView(generic.ListView):
         return context
 
 
-@login_required
-def edit(request, slug=None):
-    if slug:
-        author = get_object_or_404(Author, slug=slug)
-    else:
-        author = None
+class EditView(LoginRequiredMixin, generic.edit.UpdateView):
+    form_class = AuthorForm
+    template_name = "authors/edit_form.html"
+    model = Author
 
-    if request.method == "POST":
-        form = AuthorForm(request.POST, instance=author)
-        if form.is_valid():
-            author = form.save()
-            return redirect("library:author_details", slug=author.slug)
-        else:
-            return render(
-                request,
-                "authors/edit_form.html",
-                {"form": form, "item": author, "page_title": f"Editing {author}",},
-            )
-    else:
-        form = AuthorForm(instance=author)
 
-        return render(
-            request,
-            "authors/edit_form.html",
-            {"form": form, "item": author, "page_title": f"Editing {author}",},
-        )
+class NewView(LoginRequiredMixin, generic.edit.CreateView):
+    form_class = AuthorForm
+    template_name = "authors/edit_form.html"
+    model = Author
