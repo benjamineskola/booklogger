@@ -1,6 +1,7 @@
 import re
 
-from django.forms import Form, ModelForm, ValidationError
+from django.forms import (Form, ModelForm, ValidationError,
+                          inlineformset_factory)
 from django_select2 import forms as s2forms
 
 from library.models import Author, Book, BookAuthor
@@ -158,3 +159,6 @@ class BookAuthorForm(BootstrapModelForm):
 
     def __init__(self, *args, **kwargs):
         super(BookAuthorForm, self).__init__(*args, **kwargs)
+
+
+BookAuthorFormSet = inlineformset_factory(Book, BookAuthor, form=BookAuthorForm,)

@@ -1,14 +1,13 @@
 from itertools import groupby
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import F, Q
-from django.forms import inlineformset_factory
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, redirect
 from django.views import generic
 from django.views.decorators.http import require_POST
-
-from library.forms import BookAuthorForm, BookForm
-from library.models import Book, BookAuthor, LogEntry
+from library.forms import BookAuthorFormSet, BookForm
+from library.models import Book, LogEntry
 from library.utils import oxford_comma
 
 
@@ -285,48 +284,39 @@ def mark_owned(request, slug):
     return redirect("library:book_details", slug=slug)
 
 
-@login_required
-def edit(request, slug=None):
-    if slug:
-        book = get_object_or_404(Book, slug=slug)
-    else:
-        book = None
-    book_author_formset = inlineformset_factory(Book, BookAuthor, form=BookAuthorForm,)
+class CreateOrUpdateView(LoginRequiredMixin):
+    template_name = "books/edit_form.html"
+    form_class = BookForm
+    model = Book
 
-    if request.method == "POST":
-        form = BookForm(request.POST, instance=book)
-        inline_formset = book_author_formset(request.POST, instance=book)
-
-        if form.is_valid() and inline_formset.is_valid():
-            book = form.save()
+    def form_valid(self, form):
+        context = self.get_context_data()
+        inline_formset = context["inline_formset"]
+        self.object = form.save()
+        if inline_formset.is_valid():
+            inline_formset.instance = self.object
             inline_formset.save()
-            return redirect("library:book_details", slug=book.slug)
+            return super(CreateOrUpdateView, self).form_valid(form)
         else:
             for subform in inline_formset:
                 subform.set_delete_classes()
+            return super(CreateOrUpdateView, self).form_invalid(form)
 
-            return render(
-                request,
-                "books/edit_form.html",
-                {
-                    "form": form,
-                    "page_title": f"Editing {book}",
-                    "inline_formset": inline_formset,
-                },
+    def get_context_data(self, *args, **kwargs):
+        context = super(CreateOrUpdateView, self).get_context_data(**kwargs)
+
+        if self.request.POST:
+            context["inline_formset"] = BookAuthorFormSet(
+                self.request.POST, instance=self.object
             )
-    else:
-        form = BookForm(instance=book)
-        inline_formset = book_author_formset(instance=book)
+        else:
+            context["inline_formset"] = BookAuthorFormSet(instance=self.object)
+        return context
 
-        for subform in inline_formset:
-            subform.set_delete_classes()
 
-        return render(
-            request,
-            "books/edit_form.html",
-            {
-                "form": form,
-                "page_title": f"Editing {book}",
-                "inline_formset": inline_formset,
-            },
-        )
+class NewView(CreateOrUpdateView, generic.edit.CreateView):
+    pass
+
+
+class EditView(CreateOrUpdateView, generic.edit.UpdateView):
+    pass
