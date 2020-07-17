@@ -671,10 +671,8 @@ class Book(models.Model):
 
         new_isbn = [int(i) for i in self.isbn[3:-1]]
         check_digit = 11 - sum([(10 - i) * new_isbn[i] for i in range(9)]) % 11
-        return (
-            "".join([str(i) for i in new_isbn]) + "X"
-            if check_digit == 10
-            else str(check_digit)
+        return "".join([str(i) for i in new_isbn]) + (
+            "X" if check_digit == 10 else str(check_digit)
         )
 
     @property
