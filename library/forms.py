@@ -120,7 +120,9 @@ class BookForm(BootstrapModelForm):
         if (
             len(isbn) not in [9, 10, 13]
             or not isbn[0:-1].isnumeric()
-            or (not isbn[-1].isnumeric() and isbn[-1].upper() != "X")
+            or (
+                len(isbn) == 10 and not isbn[-1].isnumeric() and isbn[-1].upper() != "X"
+            )
         ):
             raise ValidationError("Not a valid ISBN-13, ISBN-10, or SBN")
         elif len(isbn) == 13:
