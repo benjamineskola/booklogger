@@ -29,26 +29,12 @@ class TestBook:
 
     def test_book_display(self, mock_book):
         assert str(mock_book) == "God, The Bible"
-        assert mock_book.citation == "God (n.d.) The Bible."
-
-    def test_book_display_with_date(self, mock_book):
-        mock_book.edition_published = 1965
-        assert mock_book.citation == "God (1965) The Bible."
-
-    def test_book_display_with_publisher(self, mock_book):
-        mock_book.publisher = "Vatican Books"
-        assert mock_book.citation == "God (n.d.) The Bible. Vatican Books."
-
-    def test_book_display_with_publisher_and_date(self, mock_book):
-        mock_book.publisher = "Vatican Books"
-        mock_book.edition_published = 1965
-        assert mock_book.citation == "God (1965) The Bible. Vatican Books."
 
     def test_two_authors(self, mock_book, mock_authors):
         mock_book.add_author(mock_authors[1], order=2)
-        assert mock_book.citation == "God and Jesus (n.d.) The Bible."
+        assert str(mock_book) == "God and Jesus, The Bible"
 
     def test_three_authors(self, mock_book, mock_authors):
         mock_book.add_author(mock_authors[1], order=2)
         mock_book.add_author(mock_authors[2], order=3)
-        assert mock_book.citation == "God, Jesus, and Holy Spirit (n.d.) The Bible."
+        assert str(mock_book) == "God, Jesus, and Holy Spirit, The Bible"

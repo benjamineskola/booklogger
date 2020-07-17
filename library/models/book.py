@@ -8,7 +8,6 @@ import requests
 import unidecode
 import xmltodict
 from django.contrib.auth.models import User
-from django.contrib.humanize.templatetags.humanize import ordinal
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import TrigramSimilarity
@@ -489,15 +488,6 @@ class Book(models.Model):
             return str(self.first_published)
         else:
             return "n.d."
-
-    @property
-    def citation(self) -> str:
-        citation = f"{self.display_authors} ({self.display_date}) {self.display_title}."
-        if self.edition_number and self.edition_number > 1:
-            citation += f" {ordinal(self.edition_number)} edn."
-        if self.publisher:
-            citation += f" {self.publisher}."
-        return citation
 
     def add_author(
         self, author: "Author", role: str = "", order: Optional[int] = None
