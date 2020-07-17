@@ -5,7 +5,7 @@ from . import views
 app_name = "library"
 urlpatterns = [
     path("", views.book.CurrentlyReadingView.as_view(), name="index"),
-    path("author/new/", views.author.new, name="author_new"),
+    path("author/new/", views.author.edit, name="author_new"),
     path(
         "author/<slug:slug>/",
         include(
@@ -19,7 +19,7 @@ urlpatterns = [
     path("authors/<int:page>/", views.author.IndexView.as_view(), name="author_list"),
     path("book/import/", views.importer.import_book, name="book_import"),
     path("book/import/<str:query>/", views.importer.import_book, name="book_import"),
-    path("book/new/", views.book.new, name="book_new"),
+    path("book/new/", views.book.edit, name="book_new"),
     path(
         "book/<slug:slug>/",
         include(

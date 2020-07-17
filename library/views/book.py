@@ -286,8 +286,11 @@ def mark_owned(request, slug):
 
 
 @login_required
-def edit(request, slug):
-    book = get_object_or_404(Book, slug=slug)
+def edit(request, slug=None):
+    if slug:
+        book = get_object_or_404(Book, slug=slug)
+    else:
+        book = None
     book_author_formset = inlineformset_factory(Book, BookAuthor, form=BookAuthorForm,)
 
     if request.method == "POST":
@@ -326,25 +329,4 @@ def edit(request, slug):
                 "page_title": f"Editing {book}",
                 "inline_formset": inline_formset,
             },
-        )
-
-
-@login_required
-def new(request):
-    if request.method == "POST":
-        form = BookForm(request.POST)
-        if form.is_valid():
-            book = form.save()
-            return redirect("library:book_details", slug=book.slug)
-        else:
-            return render(
-                request,
-                "books/edit_form.html",
-                {"form": form, "item": book, "page_title": f"Editing {book}",},
-            )
-    else:
-        form = BookForm()
-
-        return render(
-            request, "books/edit_form.html", {"form": form, "page_title": "New book"},
         )

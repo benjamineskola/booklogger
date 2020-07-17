@@ -54,8 +54,12 @@ class IndexView(generic.ListView):
 
 
 @login_required
-def edit(request, slug):
-    author = get_object_or_404(Author, slug=slug)
+def edit(request, slug=None):
+    if slug:
+        author = get_object_or_404(Author, slug=slug)
+    else:
+        author = None
+
     if request.method == "POST":
         form = AuthorForm(request.POST, instance=author)
         if form.is_valid():
@@ -74,30 +78,4 @@ def edit(request, slug):
             request,
             "authors/edit_form.html",
             {"form": form, "item": author, "page_title": f"Editing {author}",},
-        )
-
-
-@login_required
-def new(request):
-    if request.method == "POST":
-        form = AuthorForm(request.POST)
-        if form.is_valid():
-            author = form.save()
-            return redirect("library:author_details", slug=author.slug)
-        else:
-            for field in form.errors:
-                form[field].field.widget.attrs["class"] += " is-invalid"
-
-            return render(
-                request,
-                "authors/edit_form.html",
-                {"form": form, "page_title": f"Editing {author}",},
-            )
-    else:
-        form = AuthorForm()
-
-        return render(
-            request,
-            "authors/edit_form.html",
-            {"form": form, "page_title": "New author"},
         )
