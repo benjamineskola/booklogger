@@ -2,4 +2,4 @@
 set -e
 flake8 library
 pytest -q
-mypy -m library.models -m library.utils
+mypy --show-error-codes -m library.models -m library.utils

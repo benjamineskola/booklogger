@@ -3,6 +3,6 @@ python: 3.8
 script:
   - flake8
   - pytest
-  - mypy -m library.models  -m library.utils
+  - mypy --show-error-codes -m library.models  -m library.utils
 services:
   - postgresql
