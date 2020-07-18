@@ -686,7 +686,7 @@ class Book(models.Model):
         return slug
 
     @property
-    def isbn10(self) -> Optional[str]:
+    def isbn10(self) -> str:
         return isbn_to_isbn10(self.isbn)
 
     @property
@@ -704,8 +704,8 @@ class Book(models.Model):
         )
 
     @property
-    def ebook_url(self) -> Optional[str]:
-        return f"https://amazon.co.uk/dp/{self.ebook_asin}" if self.ebook_asin else None
+    def ebook_url(self) -> str:
+        return f"https://amazon.co.uk/dp/{self.ebook_asin}" if self.ebook_asin else ""
 
     @property
     def is_translated(self) -> bool:
