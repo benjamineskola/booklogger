@@ -104,23 +104,26 @@ class Author(models.Model):
         return reverse("library:author_details", args=[str(self.slug)])
 
     def attribution_for(self, book: "Book", initials: bool = False) -> str:
-        role = self._role_for_book(book)
+        role = self.display_role_for_book(book)
         if initials:
             name = self.name_with_initials
         else:
             name = str(self)
         return name + (f" ({role})" if role else "")
 
-    def _role_for_book(self, book: "Book") -> str:
+    def is_editor_of(self, book: "Book") -> bool:
+        return self.role_for_book(book) == "editor"
+
+    def role_for_book(self, book: "Book") -> str:
         if book.first_author == self:  # type: ignore [attr-defined]
-            if book.first_author_role == "editor":  # type: ignore [attr-defined]
-                return "ed."
-            else:
-                return str(book.first_author_role)  # type: ignore [attr-defined]
-        elif rel := self.bookauthor_set.get(book=book.id):  # type: ignore [attr-defined]
-            return str(rel.display_role)
+            return str(book.first_author_role)  # type: ignore [attr-defined]
+        elif rel := self.bookauthor_set.get(book=book.pk):
+            return rel.role
         else:
             return ""
+
+    def display_role_for_book(self, book: "Book") -> str:
+        return "ed." if (role := self.role_for_book(book)) == "editor" else role
 
     @property
     def initials(self) -> str:

@@ -45,21 +45,22 @@ class TestBookAuthor:
     def test_add_author_and_role(self, mock_book, mock_authors):
         mock_book.add_author(mock_authors[0])
         mock_book.add_author(mock_authors[1])
-        assert str(mock_book) == "Smithee, A. and Smithee, B., Autobiography"
+        assert str(mock_book) == "Alan Smithee and Boris Smithee, Autobiography"
 
     def test_author_role_none(self, mock_book, mock_author):
         mock_book.add_author(mock_author)
-        assert mock_author._role_for_book(mock_book) == ""
+        assert mock_author.role_for_book(mock_book) == ""
         assert mock_author.attribution_for(mock_book, True) == "Smithee, A."
 
     def test_author_role_simple(self, mock_book, mock_author):
         mock_book.add_author(mock_author, role="introduction")
-        assert mock_author._role_for_book(mock_book) == "introduction"
+        assert mock_author.role_for_book(mock_book) == "introduction"
         assert (
             mock_author.attribution_for(mock_book, True) == "Smithee, A. (introduction)"
         )
 
     def test_author_role_editor_abbr(self, mock_book, mock_author):
         mock_book.add_author(mock_author, role="editor")
-        assert mock_author._role_for_book(mock_book) == "ed."
+        assert mock_author.role_for_book(mock_book) == "editor"
+        assert mock_author.display_role_for_book(mock_book) == "ed."
         assert mock_author.attribution_for(mock_book, True) == "Smithee, A. (ed.)"

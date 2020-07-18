@@ -418,7 +418,13 @@ class Book(models.Model):
     )
 
     def __str__(self) -> str:
-        result = ", ".join([self.display_authors, self.display_title])
+        if len(self.authors) > 3:
+            result = str(self.first_author) + " and others"
+        else:
+            result = oxford_comma([str(author) for author in self.authors])
+
+        result += ", " + self.display_title
+
         if (
             self.editions.count()
             and self.edition_format
@@ -462,29 +468,13 @@ class Book(models.Model):
 
     @property
     def all_authors_editors(self) -> bool:
-        if len(self.authors) > 1:
-            attributions = [author._role_for_book(self) for author in self.authors]
-            if set(attributions) == {"ed."}:
-                return True
-        return False
+        return len(self.authors) > 1 and all(
+            (author.is_editor_of(self) for author in self.all_authors)
+        )
 
     @property
     def has_full_authors(self) -> bool:
         return len(self.authors) > 3 or self.authors != self.all_authors
-
-    @property
-    def display_authors(self) -> str:
-        if len(self.authors) > 3:
-            return str(self.authors[0].attribution_for(self)) + " and others"
-        elif self.all_authors_editors:
-            return (
-                oxford_comma([author.name_with_initials for author in self.authors])
-                + " (eds.)"
-            )
-        else:
-            return oxford_comma(
-                [a.attribution_for(self, initials=True) for a in self.authors]
-            )
 
     @property
     def display_title(self) -> str:
@@ -783,7 +773,3 @@ class BookAuthor(models.Model):
 
     def __str__(self) -> str:
         return ": ".join([str(self.author), str(self.role), self.book.title])
-
-    @property
-    def display_role(self) -> str:
-        return "ed." if self.role == "editor" else self.role

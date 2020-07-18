@@ -13,8 +13,7 @@
       <div class="card-body">
         <h5 class="card-title"><i>{{ book_link(book) }}</i>{% if book.display_series %} <a href="{{ url("library:series_details", args=[book.series]) }}" class="text-muted small">({{ book.display_series }})</a>{% endif %}</h5>
         <h6 class="card-subtitle">by
-          {{ author_list(book.authors, book=book, show_attribution=(not book.all_authors_editors)) }}
-          {%- if book.all_authors_editors and book.authors|count < 3 %} (eds.){% endif %}
+          {{ author_list(book.authors, book=book) }}
         </h6>
         <p class="card-text mb-0">({{ book.display_date }}){% if book.edition_number and book.edition_number > 1 %} {{ book.edition_number | ordinal }} edn. {%endif %}{% if book.publisher %} {{ book.publisher }}.{% endif %}{% if book.page_count and book.page_count > 0 %} {{ book.page_count }} pages.{% endif %}
         {% if book.rating %}
