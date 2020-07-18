@@ -84,6 +84,9 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
     def filter_by_request(self, request: str) -> "BookQuerySet":
         return self.get_queryset().filter_by_request(request)
 
+    def filter_by_format(self, edition_format: str) -> "BookQuerySet":
+        return self.get_queryset().filter_by_format(edition_format)
+
     def find_on_goodreads(self, query: str) -> Optional[Sequence[Dict[str, Any]]]:
         search_url = f"https://www.goodreads.com/search/index.xml?key={os.environ['GOODREADS_KEY']}&q={query}"
         data = requests.get(search_url).text
@@ -284,6 +287,23 @@ class BookQuerySet(models.QuerySet):  # type: ignore [type-arg]
                 return self.filter(filter_by).unread()
 
         return self.filter(filter_by)
+
+    def filter_by_format(self, edition_format: str) -> "BookQuerySet":
+        edition_format = edition_format.strip("s").upper()
+        if edition_format == "PHYSICAL":
+            books = self.filter(
+                Q(edition_format=Book.Format["PAPERBACK"])
+                | Q(edition_format=Book.Format["HARDBACK"])
+            )
+        elif edition_format == "EBOOK":
+            books = self.filter(
+                Q(edition_format=Book.Format[edition_format])
+                | Q(has_ebook_edition=True)
+            )
+        else:
+            books = self.filter(edition_format=Book.Format[edition_format])
+
+        return books
 
 
 class Book(models.Model):

@@ -30,19 +30,7 @@ class GenericIndexView(generic.ListView):
             books = books.filter(**self.filter_by)
 
         if edition_format := self.kwargs.get("format"):
-            edition_format = edition_format.strip("s").upper()
-            if edition_format == "PHYSICAL":
-                books = books.filter(
-                    Q(edition_format=Book.Format["PAPERBACK"])
-                    | Q(edition_format=Book.Format["HARDBACK"])
-                )
-            elif edition_format == "EBOOK":
-                books = books.filter(
-                    Q(edition_format=Book.Format[edition_format])
-                    | Q(has_ebook_edition=True)
-                )
-            else:
-                books = books.filter(edition_format=Book.Format[edition_format])
+            books = books.filter_by_format(edition_format)
 
         if sort_by := self.request.GET.get("sort_by"):
             field_names = [f.name for f in Book._meta.get_fields()]
