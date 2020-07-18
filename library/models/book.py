@@ -18,7 +18,7 @@ from django.db.models.indexes import Index
 from django.urls import reverse
 from django.utils import timezone
 
-from library.utils import LANGUAGES, oxford_comma
+from library.utils import LANGUAGES, isbn_to_isbn10, oxford_comma
 
 from .author import Author
 
@@ -686,14 +686,7 @@ class Book(models.Model):
 
     @property
     def isbn10(self) -> Optional[str]:
-        if not self.isbn or len(self.isbn) != 13 or not self.isbn.startswith("978"):
-            return None
-
-        new_isbn = [int(i) for i in self.isbn[3:-1]]
-        check_digit = 11 - sum([(10 - i) * new_isbn[i] for i in range(9)]) % 11
-        return "".join([str(i) for i in new_isbn]) + (
-            "X" if check_digit == 10 else str(check_digit)
-        )
+        return isbn_to_isbn10(self.isbn)
 
     @property
     def owned(self) -> bool:

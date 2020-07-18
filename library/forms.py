@@ -1,10 +1,10 @@
 import re
 
-from django.forms import (Form, ModelForm, ValidationError,
-                          inlineformset_factory)
+from django.forms import Form, ModelForm, ValidationError, inlineformset_factory
 from django_select2 import forms as s2forms
 
 from library.models import Author, Book, BookAuthor
+from library.utils import isbn10_to_isbn
 
 
 class AuthorWidget(s2forms.ModelSelect2Widget):
@@ -118,33 +118,10 @@ class BookForm(BootstrapModelForm):
         isbn = self.cleaned_data["isbn"]
         if not isbn:
             return ""
-        if (
-            len(isbn) not in [9, 10, 13]
-            or not isbn[0:-1].isnumeric()
-            or (
-                len(isbn) == 10 and not isbn[-1].isnumeric() and isbn[-1].upper() != "X"
-            )
-        ):
+        isbn = isbn10_to_isbn(isbn)
+        if not isbn:
             raise ValidationError("Not a valid ISBN-13, ISBN-10, or SBN")
-        elif len(isbn) == 13:
-            return isbn
-        else:
-            if len(isbn) == 9:
-                # let's assume it's a pre-ISBN SBN
-                isbn = "0" + isbn
-
-            isbn = "978" + isbn
-            ints = [int(c) for c in isbn[0:-1]]
-
-            checksum = 0
-            for i, j in enumerate(ints):
-                if i % 2 == 0:
-                    checksum += j
-                else:
-                    checksum += j * 3
-            checksum = 10 - checksum % 10
-
-            return "".join([str(c) for c in ints] + [str(checksum)])
+        return isbn
 
 
 class BookAuthorForm(BootstrapModelForm):
