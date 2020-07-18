@@ -1,4 +1,4 @@
-{% from "macros.html" import author_list, book_link, format_date_range with context %}
+{% from "macros.html" import author_list, book_link, format_date_range, link_amazon, link_goodreads, link_google, link_publisher with context %}
 {% extends "base.html" %}
 {% block content %}
 <div class="row row-cols-1 row-cols-md-2 mt-4">
@@ -90,21 +90,9 @@
 
   <div class="col">
     <dl>
-    <dt>Goodreads</dt><dd><a href="{{ book.goodreads_url[0] }}">{{ book.goodreads_url[1] }}</a></dd>
-    <dt>Google</dt><dd>
-    {% set j = joiner("or") %}
-    {% for url, title in book.google_urls %}
-    {{ j() }}
-    <a href="{{ url }}">{{ title }}</a>
-    {% endfor %}
-    </dd>
-    <dt>Amazon</dt><dd>
-    {% set j = joiner("or") %}
-    {% for url, title in book.amazon_urls %}
-    {{ j() }}
-    <a href="{{ url }}">{{ title }}</a>
-    {% endfor %}
-    </dd>
+    <dt>Amazon</dt><dd>{{ link_amazon(book) }}</dd>
+    <dt>Goodreads</dt><dd>{{ link_goodreads(book) }}</dd>
+    <dt>Google</dt><dd>{{ link_google(book) }}</dd>
     <dt>ISBN</dt><dd>{{ book.isbn }}</dd>
 
     {% if book.has_ebook_edition %}

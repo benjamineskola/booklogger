@@ -53,3 +53,39 @@ Read
 <time datetime="{{ end_date }}"> {{ format_date(end_date, end_precision) }}</time>
 {%- endif -%}
 {% endmacro %}
+
+{% macro link_amazon(book) %}
+{% if book.asin %}
+  <a href="https://amazon.co.uk/dp/{{ book.asin }}">{{ book.asin }}</a>
+  or
+{% elif book.isbn %}
+  <a href="https://amazon.co.uk/dp/{{ book.isbn10 }}">{{ book.isbn10 }}</a>
+  or
+{% endif %}
+  <a href="https://www.amazon.co.uk/s?k={{ book.search_query }}&i=stripbooks">search</a>
+{% endmacro %}
+
+{% macro link_google(book) %}
+{% if book.google_id %}
+  <a href="https://books.google.co.uk/books?id={{ book.google_books_id }}">{{ book.google_books_id }}</a>
+  or
+  <a href="https://www.googleapis.com/books/v1/volumes/{{ book.google_books_id }}">json</a>
+  or
+{% elif book.isbn %}
+  <a href="https://www.googleapis.com/books/v1/volumes?q=isbn:{{ book.isbn }}">search ISBN</a>
+  or
+{% endif %}
+  <a href="https://www.googleapis.com/books/v1/volumes?q={{ book.search_query }}">search</a>
+{% endmacro %}
+
+{% macro link_goodreads(book) %}
+{% if book.goodreads_id %}
+  <a href="https://www.goodreads.com/book/show/{{ book.goodreads_id }}">{{ book.goodreads_id }}</a>
+  or
+{% endif %}
+{% if book.isbn %}
+  <a href="https://www.goodreads.com/search?q={{ book.isbn }}">search ISBN</a>
+  or
+{% endif %}
+  <a href="https://www.goodreads.com/search?q={{ book.search_query }}">search</a>
+{% endmacro %}

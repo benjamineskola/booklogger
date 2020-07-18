@@ -1,7 +1,7 @@
 import os
 import re
 import time
-from typing import Any, Dict, Iterable, Optional, Sequence, Tuple
+from typing import Any, Dict, Iterable, Optional, Sequence
 from urllib.parse import quote
 
 import requests
@@ -148,7 +148,7 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
             book.image_url = goodreads_book["image_url"]
 
         if not book.image_url:
-            book.image_url = Book.objects.scrape_goodreads_image(book.goodreads_url[0])
+            book.image_url = Book.objects.scrape_goodreads_image(book.goodreads_id)
 
         book.first_author, created = Author.objects.get_or_create_by_single_name(
             goodreads_book["author"]["name"]
@@ -209,7 +209,8 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
                 time.sleep(sleep_time)
                 sleep_time *= 2
 
-    def scrape_goodreads_image(self, goodreads_url: str) -> str:
+    def scrape_goodreads_image(self, goodreads_id: str) -> str:
+        goodreads_url = f"https://www.goodreads.com/book/show/{goodreads_id}"
         text = requests.get(goodreads_url).text
         meta_tag = re.search(r"<meta[^>]*og:image[^>]*>", text)
         if meta_tag:
@@ -701,66 +702,6 @@ class Book(models.Model):
         return quote(
             f"{self.edition_title or self.title} {self.first_author and self.first_author.surname}"
         )
-
-    @property
-    def goodreads_url(self) -> Tuple[str, str]:
-        if self.goodreads_id:
-            return (
-                f"https://www.goodreads.com/book/show/{self.goodreads_id}",
-                self.goodreads_id,
-            )
-        else:
-            return (
-                f"https://www.goodreads.com/search?q={self.isbn or self.asin or self.search_query}",
-                self.isbn or self.asin or "search",
-            )
-
-    @property
-    def amazon_urls(self) -> Sequence[Tuple[str, str]]:
-        urls = []
-        if self.asin:
-            urls.append((f"https://amazon.co.uk/dp/{self.asin}", self.asin))
-        if self.isbn10:
-            urls.append((f"https://amazon.co.uk/dp/{self.isbn10}", self.isbn10))
-        urls.append(
-            (
-                f"https://www.amazon.co.uk/s?k={self.search_query}&i=stripbooks",
-                "search",
-            ),
-        )
-        return urls
-
-    @property
-    def google_urls(self) -> Sequence[Tuple[str, str]]:
-        if self.google_books_id:
-            return [
-                (
-                    f"https://books.google.co.uk/books?id={self.google_books_id}",
-                    self.google_books_id,
-                ),
-                (
-                    f"https://www.googleapis.com/books/v1/volumes/{self.google_books_id}",
-                    "json",
-                ),
-            ]
-        elif self.isbn:
-            return [
-                (
-                    f"https://www.googleapis.com/books/v1/volumes?q=isbn:{self.isbn}",
-                    "search",
-                ),
-                (
-                    f"https://www.googleapis.com/books/v1/volumes?q={self.search_query}",
-                    "search",
-                ),
-            ]
-        else:
-            return [
-                (
-                    f"https://www.googleapis.com/books/v1/volumes?q={self.search_query}",
-                    "search",
-                )
-            ]
 
     @property
     def ebook_url(self) -> Optional[str]:

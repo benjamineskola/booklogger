@@ -1,3 +1,4 @@
+{% from "macros.html" import link_amazon, link_goodreads, link_google with context %}
 {% extends "base.html" %}
 {% block header %}
 {{ form.media.css }}
@@ -9,9 +10,9 @@
 {% if form.instance.id %}
 <div class="card mb-3">
   <div class="card-body">
-  <strong>Goodreads</strong> <a href="{{ form.instance.goodreads_url[0] }}">{{ form.instance.goodreads_url[1] }}</a></br>
-  <strong>Amazon</strong> {% set j = joiner(' or ') %}{% for i in form.instance.amazon_urls %}{{ j() }}<a href="{{ i[0] }}">{{ i[1] }}</a>{% endfor %}</br>
-  <strong>Google</strong> {% set j = joiner(' or ') %}{% for i in form.instance.google_urls %}{{ j() }}<a href="{{ i[0] }}">{{ i[1] }}</a>{% endfor %}
+  <strong>Amazon</strong> {{ link_amazon(book) }}</br>
+  <strong>Goodreads</strong> {{ link_goodreads(book)  }}</br>
+  <strong>Google</strong> {{ link_google(book) }}
   </div>
 </div>
 {% endif %}
