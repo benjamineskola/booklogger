@@ -1,4 +1,4 @@
-{% from "macros.html" import book_link, author_list, format_date, format_date_range with context %}
+{% from "macros.html" import book_label, book_link, author_list, format_date, format_date_range with context %}
 {% if not entry and book.log_entries and book.log_entries.count() > 0 %}
   {% set entry = book.log_entries.order_by('end_date').last() %}
 {% endif %}
@@ -45,38 +45,38 @@
             <div class="ui labels tags" id="tags-{{ book.id }}">
               {% for tag in book.tags | sort %}
                 {% if tag %}
-                  <a href="{{ url("library:tag_details", args=[tag]) }}" class="ui label badge-secondary">{{ tag }}</a>
+                  {{ book_label(tag, url("library:tag_details", args=[tag])) }}
                 {% endif %}
               {% else %}
-                <a href="{{ url("library:tag_details", args=['untagged']) }}" class="ui label badge-secondary">untagged</a>
+                {{ book_label("untagged", url("library:tag_details", args=['untagged'])) }}
               {% endfor %}
 
               {% if book.owned %}
-                <a href="{{ url("library:books_owned") }}" class="ui label badge-info">owned</a>
+                {{ book_label("owned", url("library:books_owned"), True) }}
               {% elif book.owned_by_sara %}
-                <a href="{{ url("library:books_borrowed") }}" class="ui label badge-info">shared</a>
+                {{ book_label("shared", url("library:books_borrowed"), True) }}
               {% elif book.was_borrowed and book.borrowed_from == 'public domain' %}
-                <a href="{{ url("library:books_borrowed") }}" class="ui label badge-info">public domain</a>
+                {{ book_label("public domain", url("library:books_borrowed"), True) }}
               {% elif book.was_borrowed %}
-                <a href="{{ url("library:books_borrowed") }}" class="ui label badge-info">borrowed</a>
+                {{ book_label("borrowed", url("library:books_borrowed"), True) }}
               {% endif %}
 
               {% if book.edition_format and (book.owned_by or book.was_borrowed or book.currently_reading) %}
-                <a href="{{ url("library:books_owned", kwargs={"format": book.get_edition_format_display().lower()}) }}" class="ui label badge-info">{{ book.get_edition_format_display() | lower }}</a>
+                {{ book_label(book.get_edition_format_display().lower(), url("library:books_owned", kwargs={"format": book.get_edition_format_display().lower()}), True) }}
                 {% if book.get_edition_format_display().lower() != "ebook" and book.has_ebook_edition %}
-                <a href="{{ url("library:books_owned", kwargs={"format": "ebook"}) }}" class="ui label badge-info">ebook</a>
+                {{ book_label("ebook", url("library:books_owned", kwargs={"format": "ebook"}), True) }}
                 {% endif %}
               {% endif %}
 
               {% if book.currently_reading %}
-                  <a href="{{ url("library:books_currently_reading") }}" class="ui label badge-info">reading</a>
+                  {{ book_label("reading", url("library:books_currently_reading"), True) }}
               {% elif book.want_to_read and (book.owned_by or book.was_borrowed) %}
-                  <a href="{{ url("library:books_unread") }}" class="ui label badge-info">to read</a>
+                  {{ book_label("to read", url("library:books_unread"), True) }}
               {% elif book.want_to_read and not book.was_borrowed %}
-                  <a href="{{ url("library:books_unowned") }}" class="ui label badge-info">wishlist</a>
+                  {{ book_label("wishlist", url("library:books_unowned"), True) }}
               {% endif %}
               {% if book.read %}
-                  <a href="{{ url("library:books_read") }}" class="ui label badge-info">read</a>
+                  {{ book_label("read", url("library:books_read"), True) }}
               {% endif %}
               {% if user.is_authenticated %}
                 <a class="ui label badge-secondary" data-toggle="collapse" data-target="#collapse-addtag-{{ book.id }}" role="button">+</a>

@@ -16,6 +16,10 @@
 {%- endif %}
 {%- endmacro %}
 
+{% macro book_label(label, link, highlight=False) %}
+  <a href="{{ link }}" class="ui label{% if highlight %} teal{% endif %}">{{ label }}</a>
+{% endmacro %}
+
 {% macro book_link(book) -%}
 <a href="{{ book.get_absolute_url() }}">{{ book.display_title }}</a>
 {%- endmacro %}
