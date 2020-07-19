@@ -18,13 +18,12 @@ $(document).ready(function () {
             tags_field.prepend(
               '<a href="/tag/' +
                 new_tag +
-                '" class="badge badge-secondary">' +
+                '" class="ui label">' +
                 new_tag +
                 "</a> "
             );
           }
           input_field.val("");
-          $(form).collapse("hide");
         },
       });
     });
