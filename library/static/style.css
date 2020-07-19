@@ -1,38 +1,16 @@
-@media (prefers-color-scheme: dark) {
-  :root {
-    --dark: rgb(26, 26, 26);
-    --gray-dark: rgb(26, 26, 26);
-  }
-
-  body,
-  .card,
-  .card-body,
-  .page-link,
-  .list-group-item,
-  .list-group-item:hover {
-    background-color: var(--dark);
-    color: var(--light);
-  }
-  .card,
-  .page-link {
-    border-color: var(--gray);
-  }
-
-  .dropdown-menu, .dropdown-item {
-    color: var(--gray);
-    background-color: var(--dark);
-  }
-
-  .dropdown-item:hover, .dropdown-item:focus {
-    color: var(--light);
-    background-color: var(--dark);
-  }
-
-  .dropdown-menu {
-    border: 1px solid var(--gray);
-  }
+.book {
+  padding: 0;
 }
 
-.bg-dark {
-  background-color: var(--dark) !important;
+.book img.image,
+.book .placeholder {
+  float: left;
+  padding-right: 1rem;
+  margin-right: 1rem;
+  animation: none;
+}
+
+.book .header {
+  margin-top: 1rem;
+  padding-right: 1rem;
 }
