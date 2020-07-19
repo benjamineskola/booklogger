@@ -4,13 +4,13 @@
 
   {% if request.resolver_match.url_name not in ["books_read", "books_read_undated", "series_details", "tag_details"] %}
   {% if not format %}
-    <p>Formats: <a href="{{ url("library:" + request.resolver_match.url_name) }}">all</a>
+    <p class="ui top attached segment">Formats: <a href="{{ url("library:" + request.resolver_match.url_name) }}">all</a>
     {%- for n, f  in formats if n in counts and counts[n] > 0 -%}
     , <a href="{{ url("library:" + request.resolver_match.url_name, kwargs={"format": f.lower()}) }}">{{ f | lower }}</a> ({{ counts[n] }})
     {%- endfor -%}
     , <a href="{{ url("library:" + request.resolver_match.url_name, kwargs={"format": "physical"}) }}">physical</a> ({{ counts.get(1) | int + counts.get(2) | int }})</p>
   {% else %}
-  <h2>{{ format }}</h2>
+  <h2 class="ui header">{{ format }}</h2>
   {% endif %}
   {% endif %}
 

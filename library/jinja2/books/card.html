@@ -2,100 +2,117 @@
 {% if not entry and book.log_entries and book.log_entries.count() > 0 %}
   {% set entry = book.log_entries.order_by('end_date').last() %}
 {% endif %}
-<div id="{{ book.slug }}" class="card mb-3" style="">
-  <div class="row no-gutters">
-    {% if book.image_url %}
-    <div class="col-4">
-      <img src="{{ book.image_url }}" class="card-img"/>
-    </div>
-    {% endif %}
-    <div class="col-{% if book.image_url %}8{% else %}12{% endif %}">
-      <div class="card-body">
-        <h5 class="card-title"><i>{{ book_link(book) }}</i>{% if book.display_series %} <a href="{{ url("library:series_details", args=[book.series]) }}" class="text-muted small">({{ book.display_series }})</a>{% endif %}</h5>
-        <h6 class="card-subtitle">by
-          {{ author_list(book.authors, book=book) }}
-        </h6>
-        <p class="card-text mb-0">({{ book.display_date }}){% if book.edition_number and book.edition_number > 1 %} {{ book.edition_number | ordinal }} edn. {%endif %}{% if book.publisher %} {{ book.publisher }}.{% endif %}{% if book.page_count and book.page_count > 0 %} {{ book.page_count }} pages.{% endif %}
-        {% if book.rating %}
-          <span class="small" style="display: inline-block">
-          {% set rating_floor = book.rating | float | round(0, 'floor') | int %}
-          {% set rating_ceil = book.rating | float | round(0, 'ceil') | int %}
 
-          {% for i in range(rating_floor) %}
-            ★
-          {% endfor %}
-          {% if rating_floor != rating_ceil %}
-            ½
+
+<div class="column">
+  <div class="ui segments">
+    <h5 class="ui top attached block header">
+      <i>{{ book_link(book) }}</i>
+      {% if book.display_series %}
+        <a href="{{ url("library:series_details", args=[book.series]) }}" class="text-muted small">({{ book.display_series }})</a>
+      {% endif %}
+      by {{ author_list(book.authors, book=book) }}
+    </h5>
+    <div class="ui attached segment">
+      <div class="row">
+        <div class="ui {% if book.image_url %}two{% else %}one{% endif %} column grid">
+          {% if book.image_url %}
+          <img class="six wide column" src="{{ book.image_url }}" />
           {% endif %}
-          {% for i in range(rating_ceil, 5) %}
-            ☆
-          {% endfor %}
-          </span>
-        {% endif %}
-        </p>
-        <span class="tags" id="tags-{{ book.id }}">
-        {% for tag in book.tags | sort %}
-          {% if tag %}
-            <a href="{{ url("library:tag_details", args=[tag]) }}" class="badge badge-secondary">{{ tag }}</a>
+          <div class="column">
+            ({{ book.display_date }})
+            {% if book.edition_number and book.edition_number > 1 %} {{ book.edition_number | ordinal }} edn. {%endif %}{% if book.publisher %} {{ book.publisher }}.{% endif %}{% if book.page_count and book.page_count > 0 %} {{ book.page_count }}&nbsp;pages.
+            {% endif %}
+
+          {% if book.rating %}
+            <span style="display: inline-block">
+            {% set rating_floor = book.rating | float | round(0, 'floor') | int %}
+            {% set rating_ceil = book.rating | float | round(0, 'ceil') | int %}
+
+            {% for i in range(rating_floor) %}
+              ★
+            {% endfor %}
+            {% if rating_floor != rating_ceil %}
+              ½
+            {% endif %}
+            {% for i in range(rating_ceil, 5) %}
+              ☆
+            {% endfor %}
+            </span>
           {% endif %}
-        {% else %}
-          <a href="{{ url("library:tag_details", args=['untagged']) }}" class="badge badge-secondary">untagged</a>
-        {% endfor %}
 
-        {% if book.owned %}
-          <a href="{{ url("library:books_owned") }}" class="badge badge-info">owned</a>
-        {% elif book.owned_by_sara %}
-          <a href="{{ url("library:books_borrowed") }}" class="badge badge-info">shared</a>
-        {% elif book.was_borrowed and book.borrowed_from == 'public domain' %}
-          <a href="{{ url("library:books_borrowed") }}" class="badge badge-info">public domain</a>
-        {% elif book.was_borrowed %}
-          <a href="{{ url("library:books_borrowed") }}" class="badge badge-info">borrowed</a>
-        {% endif %}
+            <hr class="ui divider" />
+            <div class="ui labels tags" id="tags-{{ book.id }}">
+              {% for tag in book.tags | sort %}
+                {% if tag %}
+                  <a href="{{ url("library:tag_details", args=[tag]) }}" class="ui label badge-secondary">{{ tag }}</a>
+                {% endif %}
+              {% else %}
+                <a href="{{ url("library:tag_details", args=['untagged']) }}" class="ui label badge-secondary">untagged</a>
+              {% endfor %}
 
-        {% if book.edition_format and (book.owned_by or book.was_borrowed or book.currently_reading) %}
-          <a href="{{ url("library:books_owned", kwargs={"format": book.get_edition_format_display().lower()}) }}" class="badge badge-info">{{ book.get_edition_format_display() | lower }}</a>
-          {% if book.get_edition_format_display().lower() != "ebook" and book.has_ebook_edition %}
-          <a href="{{ url("library:books_owned", kwargs={"format": "ebook"}) }}" class="badge badge-info">ebook</a>
-          {% endif %}
-        {% endif %}
+              {% if book.owned %}
+                <a href="{{ url("library:books_owned") }}" class="ui label badge-info">owned</a>
+              {% elif book.owned_by_sara %}
+                <a href="{{ url("library:books_borrowed") }}" class="ui label badge-info">shared</a>
+              {% elif book.was_borrowed and book.borrowed_from == 'public domain' %}
+                <a href="{{ url("library:books_borrowed") }}" class="ui label badge-info">public domain</a>
+              {% elif book.was_borrowed %}
+                <a href="{{ url("library:books_borrowed") }}" class="ui label badge-info">borrowed</a>
+              {% endif %}
 
-        {% if book.currently_reading %}
-            <a href="{{ url("library:books_currently_reading") }}" class="badge badge-info">reading</a>
-        {% elif book.want_to_read and (book.owned_by or book.was_borrowed) %}
-            <a href="{{ url("library:books_unread") }}" class="badge badge-info">to read</a>
-        {% elif book.want_to_read and not book.was_borrowed %}
-            <a href="{{ url("library:books_unowned") }}" class="badge badge-info">wishlist</a>
-        {% endif %}
-        {% if book.read %}
-            <a href="{{ url("library:books_read") }}" class="badge badge-info">read</a>
-        {% endif %}
+              {% if book.edition_format and (book.owned_by or book.was_borrowed or book.currently_reading) %}
+                <a href="{{ url("library:books_owned", kwargs={"format": book.get_edition_format_display().lower()}) }}" class="ui label badge-info">{{ book.get_edition_format_display() | lower }}</a>
+                {% if book.get_edition_format_display().lower() != "ebook" and book.has_ebook_edition %}
+                <a href="{{ url("library:books_owned", kwargs={"format": "ebook"}) }}" class="ui label badge-info">ebook</a>
+                {% endif %}
+              {% endif %}
 
-        {% if user.is_authenticated %}
-          <a class="badge badge-secondary" data-toggle="collapse" data-target="#collapse-addtag-{{ book.id }}" role="button">+</a>
-          <form class="form-addtag collapse" id="collapse-addtag-{{ book.id }}" data-tags="#tags-{{ book.id }}" action="{{url('library:book_add_tags', args=[book.slug]) }}?next={{ request.get_full_path() }}#{{ book.slug }}" method="post">
-            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-            <input class="form-control-sm m-1" name="tags">
-          </form>
-        {% endif %}
-        </span>
-        {% if entry %}
-          <br>{{ format_date_range(entry.start_date, entry.start_precision, entry.end_date, entry.end_precision)  }}
-
-          {% if entry.currently_reading %}
-            <div class="progress" style="height: 5px">
-              <div class="progress-bar" role="progressbar" style="width: {{entry.progress}}%" aria-valuenow="{{ entry.progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+              {% if book.currently_reading %}
+                  <a href="{{ url("library:books_currently_reading") }}" class="ui label badge-info">reading</a>
+              {% elif book.want_to_read and (book.owned_by or book.was_borrowed) %}
+                  <a href="{{ url("library:books_unread") }}" class="ui label badge-info">to read</a>
+              {% elif book.want_to_read and not book.was_borrowed %}
+                  <a href="{{ url("library:books_unowned") }}" class="ui label badge-info">wishlist</a>
+              {% endif %}
+              {% if book.read %}
+                  <a href="{{ url("library:books_read") }}" class="ui label badge-info">read</a>
+              {% endif %}
+              {% if user.is_authenticated %}
+                <a class="ui label badge-secondary" data-toggle="collapse" data-target="#collapse-addtag-{{ book.id }}" role="button">+</a>
+              {% endif %}
             </div>
-            {% if entry.progress %}{{ entry.progress }}% on {{ format_date(entry.progress_date, 0) }}{% endif %}
-          {% endif %}
-        {% endif %}
+          </div> <!-- column -->
+        </div> <!-- two column grid -->
+      </div> <!-- row -->
+    </div> <!-- segment -->
 
-        {% if user.is_authenticated %}
-          <a class="small dropdown-toggle" data-toggle="collapse" data-target="#collapse-logupdate-{{ book.id}}{% if entry and entry.start_date %}-{{ entry.start_date.date() }}{% endif %}" role="button">Update</a>
-          <div class="collapse" id="collapse-logupdate-{{book.id}}{% if entry and entry.start_date %}-{{ entry.start_date.date() }}{% endif %}">
-            {% include "books/update_form_snippet.html" %}
-          </div>
-        {% endif %}
+
+      {% if user.is_authenticated %}
+        <form class="ui attached segment form-addtag collapse" id="collapse-addtag-{{ book.id }}" data-tags="#tags-{{ book.id }}" action="{{url('library:book_add_tags', args=[book.slug]) }}?next={{ request.get_full_path() }}#{{ book.slug }}" method="post">
+          <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+          <input class="form-control-sm m-1" name="tags">
+        </form>
+      {% endif %}
+    {% if entry %}
+      <p class="ui attached segment">
+      {{ format_date_range(entry.start_date, entry.start_precision, entry.end_date, entry.end_precision)  }}
+
+      {% if entry.currently_reading %}
+        <div class="ui attached segment progress" style="height: 5px">
+          <div class="progress-bar" role="progressbar" style="width: {{entry.progress}}%" aria-valuenow="{{ entry.progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        {% if entry.progress %}{{ entry.progress }}% on {{ format_date(entry.progress_date, 0) }}{% endif %}
+      {% endif %}
+    {% endif %}
+
+    <div class="ui bottom attached segment">
+    {% if user.is_authenticated %}
+      <a class="small dropdown-toggle" data-toggle="collapse" data-target="#collapse-logupdate-{{ book.id}}{% if entry and entry.start_date %}-{{ entry.start_date.date() }}{% endif %}" role="button">Update</a>
+      <div class="collapse" id="collapse-logupdate-{{book.id}}{% if entry and entry.start_date %}-{{ entry.start_date.date() }}{% endif %}">
+        {% include "books/update_form_snippet.html" %}
       </div>
+    {% endif %}
     </div>
   </div>
 </div>

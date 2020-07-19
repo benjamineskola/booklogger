@@ -1,19 +1,23 @@
 
 {% if stats %}
-<p>{{ stats["total"] }} items, {{ stats["owned"] }} owned, {{ stats["read"] }} read.</p>
+<p class="ui bottom attached segment">{{ stats["total"] }} items, {{ stats["owned"] }} owned, {{ stats["read"] }} read.</p>
 {% endif %}
 
-<div class="row row-cols-1 row-cols-md-2">
-{% for item in items %}
-  {% if item.book %}
-    {% set entry = item %}
-    {% set book = item.book %}
-  {% else %}
-    {% set book = item %}
-  {% endif %}
+<div class="row">
+  <div class="column">
+    <div class="ui stackable two column grid">
+    {% for item in items %}
+      {% if item.book %}
+        {% set entry = item %}
+        {% set book = item.book %}
+      {% else %}
+        {% set book = item %}
+      {% endif %}
 
-  <div class="col">
-  {% include "books/card.html" %}
+      <div class="column">
+      {% include "books/card.html" %}
+      </div>
+    {% endfor %}
+    </div>
   </div>
-{% endfor %}
 </div>

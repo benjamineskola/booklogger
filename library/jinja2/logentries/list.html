@@ -7,9 +7,9 @@
   {% for group in entries|groupby('end_date.year')|reverse %}
     {% if not year %}
       {% if group.grouper == 1%}
-      <h2 class="mt-4">Read sometime</h2>
+      <h2 class="ui dividing header">Read sometime</h2>
       {% else %}
-      <h2 class="mt-4">Read in {{ group.grouper }}</h2>
+      <h2 class="ui dividing header">Read in {{ group.grouper }}</h2>
       {% endif %}
     {% endif %}
 

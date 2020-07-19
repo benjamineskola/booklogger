@@ -1,8 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
-<p>In total I own {{ owned }} books and have read {{ owned_read }} ({{ owned_read_pct | round(2) }}%) of them. I <a href="{{ url("library:books_unread") }}">want to read</a> {{ want_to_read }} ({{ want_to_read_pct | round(2) }}%) of them, including <a href="{{ url("library:books_unread") }}?read=true&owned=true">rereading</a> {{ reread }} ({{ reread_pct | round(2) }}%) of them.</p>
+<p class="ui top attached segment">In total I own {{ owned }} books and have read {{ owned_read }} ({{ owned_read_pct | round(2) }}%) of them. I <a href="{{ url("library:books_unread") }}">want to read</a> {{ want_to_read }} ({{ want_to_read_pct | round(2) }}%) of them, including <a href="{{ url("library:books_unread") }}?read=true&owned=true">rereading</a> {{ reread }} ({{ reread_pct | round(2) }}%) of them.</p>
 
-<ul>
 {% for year in books_by_year.keys() | sort | reverse %}
   {% if books_by_year[year]['count'] %}
   {% set year_books = books_by_year[year] %}
@@ -12,7 +11,7 @@
   {% else %}
   {% set url_base = url("library:books_read", kwargs={"year": year}) %}
   {% endif %}
-    <li>
+    <div class="ui {% if year == 1 %}bottom {% endif %}attached segment">
       <p>
         {% if year == "1" %}
           <a href="{{ url_base }}">Sometime</a>
@@ -50,8 +49,7 @@
       I acquired {{ year_books["acquired"] }} more books this year.
       That's {{ (year_books["count"] - year_books["acquired"]) | abs }} {% if year_books["acquired"] - year_books["count"] >= 0 %}more{% else %}fewer{% endif %} than I read.
       </p>{% endif %}
-    </li>
+    </div>
   {% endif %}
 {% endfor %}
-</ul>
 {% endblock %}

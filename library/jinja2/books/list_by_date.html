@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 {% for date, items in page_groups %}
-<h2>{{ date }}</h2>
+<h2 class="ui header">{{ date }}</h2>
 {% include "books/card_loop.html" -%}
 {% endfor %}
 {% endblock content %}
