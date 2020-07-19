@@ -24,22 +24,9 @@
             {% if book.edition_number and book.edition_number > 1 %} {{ book.edition_number | ordinal }} edn. {%endif %}{% if book.publisher %} {{ book.publisher }}.{% endif %}{% if book.page_count and book.page_count > 0 %} {{ book.page_count }}&nbsp;pages.
             {% endif %}
 
-          {% if book.rating %}
-            <span style="display: inline-block">
-            {% set rating_floor = book.rating | float | round(0, 'floor') | int %}
-            {% set rating_ceil = book.rating | float | round(0, 'ceil') | int %}
-
-            {% for i in range(rating_floor) %}
-              ★
-            {% endfor %}
-            {% if rating_floor != rating_ceil %}
-              ½
-            {% endif %}
-            {% for i in range(rating_ceil, 5) %}
-              ☆
-            {% endfor %}
+            <span class="ui rating" data-rating="{% if book.rating %}{{ book.rating | round }}{% endif %}" data-max-rating="5">
+            {% for i in range(book.rating | int) %}★{% endfor %}
             </span>
-          {% endif %}
 
             <hr class="ui divider" />
             <div class="ui labels tags" id="tags-{{ book.id }}">
