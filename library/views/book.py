@@ -310,6 +310,11 @@ class CreateOrUpdateView(LoginRequiredMixin):
         for subform in context["inline_formset"]:
             subform.fields["DELETE"].widget.attrs["class"] = "form-control"
 
+        if self.object:
+            context["page_title"] = f"Editing {self.object}"
+        else:
+            context["page_title"] = "New book"
+
         return context
 
 

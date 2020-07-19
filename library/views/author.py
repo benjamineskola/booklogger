@@ -58,11 +58,21 @@ class EditView(LoginRequiredMixin, generic.edit.UpdateView):
     template_name = "authors/edit_form.html"
     model = Author
 
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = f"Editing {self.object}"
+        return context
+
 
 class NewView(LoginRequiredMixin, generic.edit.CreateView):
     form_class = AuthorForm
     template_name = "authors/edit_form.html"
     model = Author
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_title"] = "New author"
+        return context
 
 
 class DeleteView(LoginRequiredMixin, generic.edit.DeleteView):
