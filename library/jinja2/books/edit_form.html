@@ -34,7 +34,7 @@
     {% if 'editions' not in field_names or ('editions' in form.fields or 'parent_edition' in form.fields) %}
       <div class="column">
         <div class="ui segment">
-          <div class="ui form">
+          <div class="ui form{% if form.errors %} error{% endif %}">
             {% for field_name in field_names %}
               {% set field = form[field_name] %}
               {% if field %}
@@ -56,11 +56,9 @@
         <div class="four fields">
         {{ form.id }}
           {% for field in form %}
-          <div class="field">
           {% if field.name not in ["id", "book"] %}
             {% include "edit_form_field_snippet.html" %}
           {% endif %}
-          </div> {# field #}
         {% endfor %}
         </div> {# four fields #}
       </div> {# form #}
