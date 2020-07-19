@@ -8,13 +8,8 @@
 </ul>
   {% endif %}
   {% if books %}
-<div class="row row-cols-1 row-cols-md-2">
-    {% for book in books %}
-      <div class="col">
-        {% include "books/card.html" %}
-      </div>
-    {% endfor %}
-    </div>
+    {% set items = books %}
+    {% include "books/card_loop.html" %}
   {% else %}
     <form class="form-inline my-2 my-lg-0" action="{{url('library:basic_search')}}">
       <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="query">
