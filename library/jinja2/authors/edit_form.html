@@ -5,6 +5,15 @@
 <link href="{{ static("select2-bootstrap4.min.css") }}" type="text/css" media="screen" rel="stylesheet">
 {% endblock header %}
 {% block content %}
+
+{% if form.errors %}
+<div class="ui segment error message">
+{% for error in form.errors %}
+<p><strong>{{ error }}:</strong> {{ form.errors[error] | join('; ') }}</p>
+{% endfor %}
+</div>
+{% endif %}
+
 <form method="post">
   <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 <div class="ui segment">
