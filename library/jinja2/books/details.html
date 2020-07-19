@@ -1,12 +1,14 @@
 {% from "macros.html" import author_list, book_link, format_date_range, link_amazon, link_goodreads, link_google, link_publisher with context %}
 {% extends "base.html" %}
 {% block content %}
-<div class="row row-cols-1 row-cols-md-2 mt-4">
-  <div class="col">
+<div class="row">
+<div class="column">
+<div class="ui stackable two column grid">
+  <div class="column">
 {% include "books/card.html" %}
   </div>
 
-  <div class="col">
+  <div class="column">
     {% if book.has_full_authors %}
     <p>
       <strong>Full Authors</strong>
@@ -87,7 +89,7 @@
     {% endif %}
   </div>
 
-  <div class="col">
+  <div class="column">
     <dl>
     <dt>Amazon</dt><dd>{{ link_amazon(book) }}</dd>
     <dt>Goodreads</dt><dd>{{ link_goodreads(book) }}</dd>
@@ -111,13 +113,13 @@
   </div>
 
   {% if book.review %}
-  <div class="col">
+  <div class="column">
     <h3>Review</h3>
     {{ book.review | markdown }}
   </div>
   {% endif %}
 
-  <div class="col">
+  <div class="column">
   <h3>Reading History</h3>
   <ul class="list-unstyled">
   {% for entry in book.all_log_entries %}
@@ -132,12 +134,12 @@
   </ul>
   </div>
 
-  <div class="col">
+  <div class="column">
     {% include "books/update_form_snippet.html" %}
   </div>
 
   {% if book.editions.all() | count > 0 %}
-  <div class="col">
+  <div class="column">
     <h3>Other Editions</h3>
     <ul>
     {% for edition in book.editions.all() %}
@@ -148,11 +150,11 @@
   {% endif %}
 
   {% if book.parent_edition %}
-  <div class="col">
+  <div class="column">
     This book is part of {{ book_link(book.parent_edition) }}
   </div>
   {% elif book.subeditions.count() %}
-  <div class="col">
+  <div class="column">
   This book is made up of the following books:
   <ul>
   {% for subedition in book.subeditions.all() %}
@@ -162,5 +164,7 @@
   </div>
   {% endif %}
 
+</div>
+</div>
 </div>
 {% endblock content %}
