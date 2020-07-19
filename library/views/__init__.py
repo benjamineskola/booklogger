@@ -14,6 +14,7 @@ from . import author, book, importer, report  # noqa: F401
 def basic_search(request):
     query = request.GET.get("query")
 
+    authors = []
     books = []
     if query:
         if (
