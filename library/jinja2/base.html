@@ -26,41 +26,84 @@
     {% endblock %}
   </head>
   <body>
-<div class="ui inverted menu">
-  <a class="header item" href="{{ url('library:index')  }}">Booklogger</a>
-  {% for page in pages %}
-  <a class="{% if page[1] == request.resolver_match.view_name %}active {% endif %}item" href="{{url(page[1])}}">{{ page[0] }}</a>
-  {% endfor %}
-  <div class="right menu">
-    <div class="item">
-      <form class="ui icon input" action="{{url('library:basic_search')}}">
-        <input type="search" placeholder="Search" aria-label="Search" name="query">
-        <i class="search link icon"></i>
-      </form>
-    </div>
-    {% if user.is_authenticated %}
-      <div class="ui simple dropdown item">
-        Admin
-        <i class="dropdown icon"></i>
-        <div class="simple menu">
-          <a class="item" href="{{ url('admin:index') }}">Admin</a>
-          <a class="item" href="{{ url('library:author_new') }}">Create Author</a>
-          <a class="item" href="{{ url('library:book_new') }}">Create Book</a>
-          <a class="item" href="{{ url('library:book_import') }}">Goodreads Import</a>
-          <a class="item" href="{{ url('library:bulk_import') }}">Bulk Import</a>
-          <a class="item" href="{{ url('library:report') }}">Reports</a>
-          {% if request.get_host() == "booklogger.eskola.uk" %}
-          <a class="item" href="http://localhost:8000{{ url(request.resolver_match.view_name, kwargs=request.resolver_match.kwargs) }}">Development</a>
+<div class="ui grid">
+  <div class="computer only row">
+    <div class="column">
+      <div class="ui inverted menu">
+        <a class="header item" href="{{ url('library:index')  }}">Booklogger</a>
+        {% for page in pages %}
+        <a class="{% if page[1] == request.resolver_match.view_name %}active {% endif %}computer only item" href="{{url(page[1])}}">{{ page[0] }}</a>
+        {% endfor %}
+        <div class="right menu">
+          <div class="item">
+            <form class="ui icon input" action="{{url('library:basic_search')}}">
+              <input type="search" placeholder="Search" aria-label="Search" name="query">
+              <i class="search link icon"></i>
+            </form>
+          </div>
+          {% if user.is_authenticated %}
+            <div class="ui simple dropdown item">
+              Admin
+              <i class="dropdown icon"></i>
+              <div class="simple menu">
+                <a class="item" href="{{ url('admin:index') }}">Admin</a>
+                <a class="item" href="{{ url('library:author_new') }}">Create Author</a>
+                <a class="item" href="{{ url('library:book_new') }}">Create Book</a>
+                <a class="item" href="{{ url('library:book_import') }}">Goodreads Import</a>
+                <a class="item" href="{{ url('library:bulk_import') }}">Bulk Import</a>
+                <a class="item" href="{{ url('library:report') }}">Reports</a>
+                {% if request.get_host() == "booklogger.eskola.uk" %}
+                <a class="item" href="http://localhost:8000{{ url(request.resolver_match.view_name, kwargs=request.resolver_match.kwargs) }}">Development</a>
+                {% else %}
+                <a class="item" href="http://booklogger.eskola.uk{{ url(request.resolver_match.view_name, kwargs=request.resolver_match.kwargs) }}">Production</a>
+                {% endif %}
+              </div> <!-- simple menu -->
+            </div> <!-- dropdown -->
           {% else %}
-          <a class="item" href="http://booklogger.eskola.uk{{ url(request.resolver_match.view_name, kwargs=request.resolver_match.kwargs) }}">Production</a>
+            <a class="item" href="{{ url('admin:login') }}?next={{ request.get_full_path () }}">Log In</a>
           {% endif %}
-        </div>
-      </div>
-    {% else %}
-      <a class="item" href="{{ url('admin:login') }}?next={{ request.get_full_path () }}">Log In</a>
-    {% endif %}
-  </div>
-</div>
+        </div> <!-- right menu -->
+      </div> <!-- menu -->
+    </div> <!-- column -->
+  </div> <!-- row -->
+  <div class="tablet mobile only row">
+    <div class="column">
+      <div class="ui inverted menu">
+        <a class="header item">Booklogger</a>
+        <div class="ui simple dropdown item"><i class="bars icon"></i>
+          <div class="inverted sidebar menu">
+            {% for page in pages %}
+              <a class="{% if page[1] == request.resolver_match.view_name %}active {% endif %}computer only item" href="{{url(page[1])}}">{{ page[0] }}</a>
+            {% endfor %}
+            <div class="item">
+              <form class="ui icon input" action="{{url('library:basic_search')}}">
+                <input type="search" placeholder="Search" aria-label="Search" name="query">
+                <i class="search link icon"></i>
+              </form>
+            </div>
+            {% if user.is_authenticated %}
+              <div class="divider"></div>
+              <span class="header item">Admin</span>
+              <a class="item" href="{{ url('admin:index') }}">Admin</a>
+              <a class="item" href="{{ url('library:author_new') }}">Create Author</a>
+              <a class="item" href="{{ url('library:book_new') }}">Create Book</a>
+              <a class="item" href="{{ url('library:book_import') }}">Goodreads Import</a>
+              <a class="item" href="{{ url('library:bulk_import') }}">Bulk Import</a>
+              <a class="item" href="{{ url('library:report') }}">Reports</a>
+              {% if request.get_host() == "booklogger.eskola.uk" %}
+              <a class="item" href="http://localhost:8000{{ url(request.resolver_match.view_name, kwargs=request.resolver_match.kwargs) }}">Development</a>
+              {% else %}
+              <a class="item" href="http://booklogger.eskola.uk{{ url(request.resolver_match.view_name, kwargs=request.resolver_match.kwargs) }}">Production</a>
+              {% endif %}
+            {% else %}
+              <a class="item" href="{{ url('admin:login') }}?next={{ request.get_full_path () }}">Log In</a>
+            {% endif %}
+          </div> <!-- simple menu -->
+        </div> <!-- dropdown -->
+      </div> <!-- menu -->
+    </div> <!-- column -->
+  </div> <!-- row -->
+</div> <!-- grid -->
 
 <div class="ui main container" style="margin-bottom: 2em">
   {% if page_title and request.resolver_match.url_name != 'book_details' %}
@@ -75,7 +118,7 @@
     {% set params = request.GET.copy() %}
     {% set qs = params.urlencode() %}
       <div class="ui center aligned container" style="margin-top: 2em">
-      <nav class="ui pagination menu">
+      <nav class="ui stackable pagination menu">
           {% if request.resolver_match.kwargs["format"] %}
             {% set new_kwargs= {"format": request.resolver_match.kwargs["format"]} %}
           {% else %}
