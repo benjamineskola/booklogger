@@ -1,22 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="row row-cols-1 row-cols-md-2 mb-4">
-  <div class="col">
-    <div class="card">
-      <div class="card-body">
-        {% if author.preferred_forenames %}
-          <p class="card-text">Full name: {{ author.full_name }}</p>
-        {% endif %}
-        <p class="card-text"> Gender: {{ author.get_gender_display() }}</p>
-        <p class="card-text"> POC: {{ author.poc }}</p>
-        <p class="card-text"> Primarily writes in {{ author.get_primary_language_display() }}</p>
-      </div>
-    </div>
-  </div>
+<div class="ui segment">
+  {% if author.preferred_forenames %}
+    <p>Full name: {{ author.full_name }}</p>
+  {% endif %}
+  <p>Gender: {{ author.get_gender_display() }}</p>
+  <p>POC: {{ author.poc }}</p>
+  <p>Primarily writes in {{ author.get_primary_language_display() }}</p>
+  <a href="{{ url('library:author_edit', args=[author.slug]) }}">edit</a>
 </div>
 
 <h2>Books</h2>
 {% set items = author.books %}
 {% include "books/card_loop.html" %}
-<a href="{{ url('library:author_edit', args=[author.slug]) }}">edit</a>
 {% endblock content %}
