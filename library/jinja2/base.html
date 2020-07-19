@@ -49,6 +49,11 @@
           <a class="item" href="{{ url('library:book_import') }}">Goodreads Import</a>
           <a class="item" href="{{ url('library:bulk_import') }}">Bulk Import</a>
           <a class="item" href="{{ url('library:report') }}">Reports</a>
+          {% if request.get_host() == "booklogger.eskola.uk" %}
+          <a class="item" href="http://localhost:8000{{ url(request.resolver_match.view_name, kwargs=request.resolver_match.kwargs) }}">Development</a>
+          {% else %}
+          <a class="item" href="http://booklogger.eskola.uk{{ url(request.resolver_match.view_name, kwargs=request.resolver_match.kwargs) }}">Production</a>
+          {% endif %}
         </div>
       </div>
     {% else %}
