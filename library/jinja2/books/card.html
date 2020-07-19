@@ -90,29 +90,25 @@
 
   <hr class="ui divider" />
 
-  {% if entry %}
-  {% endif %}
-  <div class="ui column grid">
+  <div>
     {% if entry %}
-      <div class="twelve wide column">
-        {{ format_date_range(entry.start_date, entry.start_precision, entry.end_date, entry.end_precision) }}
-        {% if entry.currently_reading %}
-        <div class="ui progress">
-          <div class="bar" role="progressbar" style="width: {{entry.progress}}%" aria-valuenow="{{ entry.progress }}" aria-valuemin="0" aria-valuemax="100"></div>
-        </div>
-        {% if entry.progress %}{{ entry.progress }}% on {{ format_date(entry.progress_date, 0) }}{% endif %}
-        {% endif %}
-      </div> {# 12 column#}
+      {{ format_date_range(entry.start_date, entry.start_precision, entry.end_date, entry.end_precision) }}
+      {%- if entry.currently_reading and entry.progress -%}
+      ; {{ entry.progress }}% on {{ format_date(entry.progress_date, 0) }}
+      {%- endif %}.
     {% endif %}
     {% if user.is_authenticated %}
-    <div class="column">
-      <div class="ui simple dropdown">
+      <div class="ui simple dropdown" style="float: right; padding-right: 1rem;">
         <span class="text">Update</span>
         <i class="dropdown icon"></i>
         {% include "books/update_form_snippet.html" %}
       </div> {# dropdown #}
-    </div> {# column#}
     {% endif %}
-  </div> {# grid #}
-  <div style="clear: both; margin-top: 1rem;"></div>
+  </div>
+{% if entry.currently_reading %}
+<div class="ui progress bottom attached blue">
+  <div class="bar" role="progressbar" style="width: {{entry.progress}}%" aria-valuenow="{{ entry.progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+</div>
+{% endif %}
+  <div style="clear: both; padding-bottom: 1rem;"></div>
 </div> {# segment #}

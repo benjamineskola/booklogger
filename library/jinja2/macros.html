@@ -29,13 +29,13 @@
 {%- endmacro %}
 
 {% macro format_date(date, precision) %}
-{% if precision == 2 %}
+{%- if precision == 2 -%}
   {{ date.strftime("%Y") }}
-{% elif precision == 1 %}
+{%- elif precision == 1 -%}
   {{ date.strftime("%B %Y") }}
-{% else %}
+{%- else -%}
   {{ date.strftime("%d %B, %Y") }}
-{% endif %}
+{%- endif -%}
 {% endmacro %}
 
 {% macro format_date_range(start_date=None, start_precision=None, end_date=None, end_precision=None) %}
@@ -50,7 +50,7 @@
   {% if start_precision > 0 %} in {% else %} on {% endif %}
   <time datetime="{{start_date}}"> {{ format_date(start_date, start_precision) }}</time>
 {%- elif not end_date -%}
-Reading since <time datetime="{{ start_date }}"> {{ format_date(start_date, start_precision) }}</time>
+Reading since <time datetime="{{ start_date }}">{{ format_date(start_date, start_precision) }}</time>
 {%- else -%}
 Read
 <time datetime="{{ start_date }}"> {{ format_date(start_date, start_precision) }}</time>
