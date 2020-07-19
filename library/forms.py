@@ -1,6 +1,6 @@
 import re
 
-from django.forms import Form, ModelForm, ValidationError, inlineformset_factory
+from django.forms import ModelForm, ValidationError, inlineformset_factory
 from django_select2 import forms as s2forms
 
 from library.models import Author, Book, BookAuthor
@@ -29,34 +29,7 @@ class TagWidget(s2forms.Select2TagWidget):
         return [(None, subgroup, 0)]
 
 
-class BootstrapForm(Form):
-    def __init__(self, *args, **kwargs):
-        super(BootstrapForm, self).__init__(*args, **kwargs)
-        for field_name in self.fields:
-            field = self.fields[field_name]
-            widget = field.widget
-            widget.attrs.update({"class": "form-control"})
-            if widget.__class__.__name__ == "CheckboxInput":
-                widget.attrs["class"] += " col-1"
-            elif widget.__class__.__name__ == "Select":
-                widget.attrs["class"] += " custom-select"
-
-            if field.required:
-                field.label_suffix = " (required):"
-
-        for field_name in self.errors:
-            self.fields[field_name].widget.attrs["class"] += " is-invalid"
-
-    def set_delete_classes(self):
-        self.fields["DELETE"].widget.attrs.update({"class": "form-control"})
-
-
-class BootstrapModelForm(BootstrapForm, ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(BootstrapModelForm, self).__init__(*args, **kwargs)
-
-
-class AuthorForm(BootstrapModelForm):
+class AuthorForm(ModelForm):
     class Meta:
         model = Author
         fields = "__all__"
@@ -68,7 +41,7 @@ class AuthorForm(BootstrapModelForm):
         super(AuthorForm, self).__init__(*args, **kwargs)
 
 
-class BookForm(BootstrapModelForm):
+class BookForm(ModelForm):
     class Meta:
         model = Book
         exclude = ["additional_authors", "created_date"]
@@ -124,7 +97,7 @@ class BookForm(BootstrapModelForm):
         return isbn
 
 
-class BookAuthorForm(BootstrapModelForm):
+class BookAuthorForm(ModelForm):
     class Meta:
         model = BookAuthor
         fields = [

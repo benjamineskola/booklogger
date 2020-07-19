@@ -293,8 +293,6 @@ class CreateOrUpdateView(LoginRequiredMixin):
 
             return super(CreateOrUpdateView, self).form_valid(form)
         else:
-            for subform in inline_formset:
-                subform.set_delete_classes()
             return super(CreateOrUpdateView, self).form_invalid(form)
 
     def get_context_data(self, *args, **kwargs):
@@ -306,9 +304,6 @@ class CreateOrUpdateView(LoginRequiredMixin):
             )
         else:
             context["inline_formset"] = BookAuthorFormSet(instance=self.object)
-
-        for subform in context["inline_formset"]:
-            subform.fields["DELETE"].widget.attrs["class"] = "form-control"
 
         if self.object:
             context["page_title"] = f"Editing {self.object}"
