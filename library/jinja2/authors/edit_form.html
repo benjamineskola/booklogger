@@ -7,19 +7,24 @@
 {% block content %}
 <form method="post">
   <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+<div class="ui segment">
+<div class="ui form">
 {% for field in form %}
 {% include "edit_form_field_snippet.html" %}
 {% endfor %}
+</div>
+</div>
 
-<hr>
-<div class="form-group">
-  <input type="submit" value="Submit" class="btn btn-primary">
+<div class="ui segment">
+<div class="ui form">
+  <input type="submit" value="Submit" class="ui button primary">
 {% if form.instance.id %}
-  <a href="{{ form.instance.get_absolute_url() }}" class="btn btn-secondary" role="button">Cancel</a>
-    <a href="{{ url("library:author_delete", args=[form.instance.slug]) }}" class="btn btn-danger" role="button">Delete</a>
+  <a href="{{ form.instance.get_absolute_url() }}" class="ui button" role="button">Cancel</a>
+    <a href="{{ url("library:author_delete", args=[form.instance.slug]) }}" class="ui button negative" role="button">Delete</a>
 {% else %}
-  <a href="/" class="btn btn-secondary">Cancel</a>
+  <a href="/" class="ui button">Cancel</a>
 {% endif %}
+</div>
 </div>
 </form>
 
@@ -30,10 +35,8 @@
 {% block footer %}
 {{ form.media.js }}
 <script>
-$(document).ready(function() {
-  $('.django-select2').djangoSelect2({
-    'theme': 'bootstrap4'
+  $(document).ready(function() {
+    $('select').dropdown();
   })
-})
 </script>
 {% endblock footer %}
