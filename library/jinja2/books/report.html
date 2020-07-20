@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 {% if page %}
-<h3>{{ categories[page - 1][0] }} ({{ results.count() }})</h3>
+<h3>{{ categories[page | int - 1][0] }} ({{ results.count() }})</h3>
 <ul>
 {% for item in results %}
 <li><a href="{{ item.get_absolute_url() }}">{{ item }}</a>

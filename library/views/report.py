@@ -114,7 +114,7 @@ def report(request, page=None):
 
     if page:
         owned_books = Book.objects.filter(owned_by__isnull=False)
-        results = categories[page - 1][1]()
+        results = categories[int(page) - 1][1]()
 
     if order_by := request.GET.get("order_by"):
         results = results.order_by(order_by)

@@ -1,4 +1,4 @@
-from django.urls import include, path
+from django.urls import include, path, re_path
 
 from . import views
 
@@ -16,10 +16,16 @@ urlpatterns = [
             ]
         ),
     ),
-    path("authors/", views.author.IndexView.as_view(), name="author_list"),
-    path("authors/<int:page>/", views.author.IndexView.as_view(), name="author_list"),
-    path("book/import/", views.importer.import_book, name="book_import"),
-    path("book/import/<str:query>/", views.importer.import_book, name="book_import"),
+    re_path(
+        r"^authors/(?:(?P<page>\d+)/)?",
+        views.author.IndexView.as_view(),
+        name="author_list",
+    ),
+    re_path(
+        r"^book/import/(?:(?P<query>\w+)/)?",
+        views.importer.import_book,
+        name="book_import",
+    ),
     path("book/new/", views.book.NewView.as_view(), name="book_new"),
     path(
         "book/<slug:slug>/",
@@ -42,106 +48,45 @@ urlpatterns = [
         "books/",
         include(
             [
-                path("", views.book.IndexView.as_view(), name="books_all"),
-                path("<int:page>/", views.book.IndexView.as_view(), name="books_all"),
-                path(
-                    "borrowed/",
-                    views.book.BorrowedIndexView.as_view(),
-                    name="books_borrowed",
-                ),
-                path(
-                    "borrowed/<int:page>",
-                    views.book.BorrowedIndexView.as_view(),
-                    name="books_borrowed",
-                ),
-                path(
-                    "borrowed/<str:format>/",
-                    views.book.BorrowedIndexView.as_view(),
-                    name="books_borrowed",
-                ),
-                path(
-                    "borrowed/<str:format>/<int:page>/",
-                    views.book.BorrowedIndexView.as_view(),
-                    name="books_borrowed",
-                ),
-                path("owned/", views.book.OwnedIndexView.as_view(), name="books_owned"),
-                path(
-                    "owned/<int:page>/",
-                    views.book.OwnedIndexView.as_view(),
-                    name="books_owned",
-                ),
-                path(
-                    "owned/bydate/",
-                    views.book.OwnedByDateView.as_view(),
-                    name="books_owned_by_date",
-                ),
-                path(
-                    "owned/bydate/<int:page>/",
-                    views.book.OwnedByDateView.as_view(),
-                    name="books_owned_by_date",
-                ),
-                path(
-                    "owned/<str:format>/",
-                    views.book.OwnedIndexView.as_view(),
-                    name="books_owned",
-                ),
-                path(
-                    "owned/<str:format>/<int:page>/",
-                    views.book.OwnedIndexView.as_view(),
-                    name="books_owned",
-                ),
-                path("read/", views.book.ReadView.as_view(), name="books_read"),
-                path(
-                    "read/<int:year>/", views.book.ReadView.as_view(), name="books_read"
-                ),
                 path(
                     "reading/",
                     views.book.CurrentlyReadingView.as_view(),
                     name="books_currently_reading",
                 ),
-                path(
-                    "toread/", views.book.UnreadIndexView.as_view(), name="books_unread"
+                re_path(
+                    r"^borrowed/(?:(?P<format>[a-z]\w+)/)?(?:(?P<page>\d+)/)?",
+                    views.book.BorrowedIndexView.as_view(),
+                    name="books_borrowed",
                 ),
-                path(
-                    "toread/<int:page>/",
+                re_path(
+                    r"^owned/bydate/(?:(?P<page>\d+)/)?",
+                    views.book.OwnedByDateView.as_view(),
+                    name="books_owned_by_date",
+                ),
+                re_path(
+                    r"^owned/(?:(?P<format>[a-z]\w+)/)?(?:(?P<page>\d+)/)?",
+                    views.book.OwnedIndexView.as_view(),
+                    name="books_owned",
+                ),
+                re_path(
+                    r"^read/(?:(?P<year>\d+)/)?",
+                    views.book.ReadView.as_view(),
+                    name="books_read",
+                ),
+                re_path(
+                    r"^toread/(?:(?P<format>[a-z]\w+)/)?(?:(?P<page>\d+)/)?",
                     views.book.UnreadIndexView.as_view(),
                     name="books_unread",
                 ),
-                path(
-                    "toread/<str:format>/",
-                    views.book.UnreadIndexView.as_view(),
-                    name="books_unread",
-                ),
-                path(
-                    "toread/<str:format>/<int:page>/",
-                    views.book.UnreadIndexView.as_view(),
-                    name="books_unread",
-                ),
-                path(
-                    "unowned/",
+                re_path(
+                    r"^unowned/(?:(?P<format>[a-z]\w+)/)?(?:(?P<page>\d+)/)?",
                     views.book.UnownedIndexView.as_view(),
                     name="books_unowned",
                 ),
-                path(
-                    "unowned/<int:page>/",
-                    views.book.UnownedIndexView.as_view(),
-                    name="books_unowned",
-                ),
-                path(
-                    "unowned/<str:format>/",
-                    views.book.UnownedIndexView.as_view(),
-                    name="books_unowned",
-                ),
-                path(
-                    "unowned/<str:format>/<int:page>/",
-                    views.book.UnownedIndexView.as_view(),
-                    name="books_unowned",
-                ),
-                path(
-                    "<str:format>/", views.book.IndexView.as_view(), name="books_all",
-                ),
-                path(
-                    "<str:format>/<int:page>/", views.book.IndexView.as_view(), name="books_all",
+                re_path(
+                    r"^(?:(?P<format>[a-z]\w+)/)?(?:(?P<page>\d+)/)?",
+                    views.book.IndexView.as_view(),
+                    name="books_all",
                 ),
             ]
         ),
@@ -156,7 +101,6 @@ urlpatterns = [
     path("stats/", views.stats, name="stats"),
     path("tag/<str:tag_name>/", views.book.TagIndexView.as_view(), name="tag_details"),
     path("tags/", views.tag_cloud, name="tag_cloud"),
-    path("report/", views.report.report, name="report"),
-    path("report/<int:page>/", views.report.report, name="report"),
+    re_path(r"^report/(?:(?P<page>\d+)/?)?", views.report.report, name="report"),
     path("bulkimport/", views.importer.bulk_import, name="bulk_import"),
 ]
