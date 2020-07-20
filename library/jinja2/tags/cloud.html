@@ -1,9 +1,11 @@
+{% from "macros.html" import book_label with context %}
 {% extends "base.html" %}
 {% block content %}
 
 {% for genre in ["all", "fiction", "non-fiction"] %}
   <h2>{{ genre.title() }}</h2>
   {% for sort_type, sorted_tags in tags.items() %}
+    <div class="ui labels">
     <strong>By {{ sort_type }}:</strong>
     {% for tag, count in sorted_tags[genre].items() %}
       {% if count %}
@@ -15,9 +17,10 @@
           {% set tag_link = tag %}
         {% endif %}
 
-        <a class="badge badge-{% if tag == genre %}info{% else%}secondary{% endif %}" href="{{ url("library:tag_details", args=[tag_link]) }}">{{ tag }}: {{ count }}</a>
+        {{ book_label(tag + ": " + count | string, url("library:tag_details", args=[tag_link]), tag == genre) }}
       {% endif %}
     {% endfor %}
+    </div>
 
     {% if genre == "all" and sorted_tags["untagged"] %}
       <a class="badge badge-secondary" href="{{ url("library:tag_details", args=["untagged"]) }}">untagged: {{ sorted_tags["untagged"] }}</a>
