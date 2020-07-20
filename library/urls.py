@@ -140,6 +140,9 @@ urlpatterns = [
                 path(
                     "<str:format>/", views.book.IndexView.as_view(), name="books_all",
                 ),
+                path(
+                    "<str:format>/<int:page>/", views.book.IndexView.as_view(), name="books_all",
+                ),
             ]
         ),
     ),
