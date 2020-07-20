@@ -1,3 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans&display=swap');
+body, .ui.button, .ui.header, .ui.menu, .ui.card > .content > .header, .ui.cards > .card > .content > .header {
+  font-family: "IBM Plex Sans", serif;
+}
+
 .ui.grid {
   padding: 0 !important;
 }
