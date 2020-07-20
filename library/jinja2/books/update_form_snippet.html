@@ -1,5 +1,5 @@
 {% if user.is_authenticated %}
-  <div class="menu">
+  <div class="{% if not entry %}ui {% endif %}menu">
     {% if book.currently_reading %}
     <div class="item">
       <form class="form" action="{{url('library:book_update_progress', args=[book.slug])}}" method="post">
@@ -34,6 +34,6 @@
       </div>
   {% endif %}
   <div class="divider"></div>
-  <p class="item"><a class="card-link" href="{{ url('library:book_edit', args=[book.slug]) }}">edit</a></p>
+  <div class="item"><a class="card-link" href="{{ url('library:book_edit', args=[book.slug]) }}">edit</a></div>
   </div>
 {% endif %}

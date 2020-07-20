@@ -1,14 +1,10 @@
 {% from "macros.html" import author_list, book_link, format_date_range, link_amazon, link_goodreads, link_google, link_publisher with context %}
 {% extends "base.html" %}
 {% block content %}
-<div class="row">
-<div class="column">
-<div class="ui stackable two column grid">
-  <div class="column">
+<div class="ui two doubling cards">
 {% include "books/card.html" %}
-  </div>
 
-  <div class="column">
+  <div class="card"><div class="content">
     {% if book.has_full_authors %}
     <p>
       <strong>Full Authors</strong>
@@ -88,8 +84,9 @@
     </p>
     {% endif %}
   </div>
+  </div>
 
-  <div class="column">
+  <div class="card"><div class="content">
     <dl>
     <dt>Amazon</dt><dd>{{ link_amazon(book) }}</dd>
     <dt>Goodreads</dt><dd>{{ link_goodreads(book) }}</dd>
@@ -111,16 +108,19 @@
       <iframe src="https://uk.ereaderiq.com/extensions/injector/?url=https%3A%2F%2Fwww.amazon.co.uk%2Fdp%2F{{ book.asin }}&amp;type=ebook" frameborder="0" seamless="seamless" scrolling="no" style="visibility: visible; width: 100%; height: 408px; border: none;"></iframe>
     {% endif %}
   </div>
+  </div>
 
   {% if book.review %}
-  <div class="column">
+  <div class="card"><div class="content">
     <h3>Review</h3>
     {{ book.review | markdown }}
   </div>
+  </div>
   {% endif %}
 
-  <div class="column">
-  <h3>Reading History</h3>
+  <div class="card">
+  <div class="content">
+  <h3 class="header">Reading History</h3>
   <ul class="list-unstyled">
   {% for entry in book.all_log_entries %}
     <li>{{ format_date_range(entry.start_date, entry.start_precision, entry.end_date, entry.end_precision) }}
@@ -133,13 +133,15 @@
   {% endfor %}
   </ul>
   </div>
+  </div>
 
-  <div class="column">
+  <div class="card"><div class="content">
     {% include "books/update_form_snippet.html" %}
+  </div>
   </div>
 
   {% if book.editions.all() | count > 0 %}
-  <div class="column">
+  <<div class="card"><div class="content">
     <h3>Other Editions</h3>
     <ul>
     {% for edition in book.editions.all() %}
@@ -147,14 +149,16 @@
     {% endfor %}
     </ul>
   </div>
+  </div>
   {% endif %}
 
   {% if book.parent_edition %}
-  <div class="column">
+  <div class="card"><div class="content">
     This book is part of {{ book_link(book.parent_edition) }}
   </div>
+  </div>
   {% elif book.subeditions.count() %}
-  <div class="column">
+  <div class="card"><div class="content">
   This book is made up of the following books:
   <ul>
   {% for subedition in book.subeditions.all() %}
@@ -162,9 +166,7 @@
   {% endfor %}
   </ul>
   </div>
+  </div>
   {% endif %}
-
-</div>
-</div>
 </div>
 {% endblock content %}
