@@ -33,7 +33,7 @@
       </span>
     </p>
 
-    <div class="ui labels tags" id="tags-{{ book.id }}">
+    <div class="ui tiny labels tags" id="tags-{{ book.id }}">
       {% for tag in book.tags | sort %}
         {% if tag %}
           {{ book_label(tag, url("library:tag_details", args=[tag])) }}
