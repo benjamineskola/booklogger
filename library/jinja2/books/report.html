@@ -1,3 +1,4 @@
+{% from "macros.html" import link_amazon, link_goodreads with context %}
 {% extends "base.html" %}
 {% block content %}
 {% if page %}
@@ -6,8 +7,8 @@
 {% for item in results %}
 <li><a href="{{ item.get_absolute_url() }}">{{ item }}</a>
 <small>(<a href="{{ url('library:book_edit', args=[item.slug]) }}">edit</a>
-&middot; <a href="{{ item.goodreads_url[0] }}">Goodreads</a>
-&middot; <a href="{{ item.amazon_urls[0][0] }}">Amazon</a>
+&middot; goodreads {{ link_goodreads(item) }}
+&middot; amazon {{ link_amazon(item) }}
 {% if item.publisher_url %}&middot; <a href="{{ item.publisher_url }}">Publisher</a>{% endif -%}
 )</small></li>
 {% endfor %}
