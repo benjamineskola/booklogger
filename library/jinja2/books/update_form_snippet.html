@@ -1,39 +1,65 @@
 {% if user.is_authenticated %}
-  <div class="{% if not entry %}ui {% endif %}menu">
+  <div class="ui segment">
     {% if book.currently_reading %}
     <div class="item">
-      <form class="form" action="{{url('library:book_update_progress', args=[book.slug])}}" method="post">
-        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-        <div class="ui form">
-            <div class="ui field"> <input type="text" name="pages" placeholder="pages"/> </div>
-            <div class="ui field"> <input type="text" name="percentage" placeholder="%"/></div>
-            <div class="ui field"> <input class="ui button primary" type="submit" name="Update Progress" value="Update Progress" /> </div>
+      <div class="ui form">
+          <form class="form" action="{{url('library:book_update_progress', args=[book.slug])}}" method="post">
+          <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+            <div class="inline fields">
+              <div class="three wide field">
+                <input type="text" name="value" placeholder="#"/>
+              </div>
+              <div class="field">
+                <div class="ui radio checkbox">
+                  <input type="radio" name="progress_type" value="pages" checked="checked">
+                  <label>pages</label>
+                </div>
+              </div>
+              <div class="field">
+                <div class="ui radio checkbox">
+                  <input type="radio" name="progress_type" value="percentage">
+                  <label>%</label>
+                </div>
+              </div>
+              <div class="field">
+                <input class="ui button primary" type="submit" value="Update" />
+              </div>
+            </div>
+          </form>
+          <hr class="ui divider"/>
+          <div class="inline fields">
+            <form class="form" action="{{url('library:book_finish_reading', args=[book.slug])}}" method="post">
+              <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+              <div class="field">
+                <input class="ui button primary" type="submit" value="Finish" />
+              </div>
+            </form>
+          </div>
         </div>
-      </form>
-    </div>
-    <div class="item">
-      <form class="form" action="{{url('library:book_finish_reading', args=[book.slug])}}" method="post">
-        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-        <input class="ui button primary" type="submit" name="Finish Reading" value="Finish Reading" />
-      </form>
     </div>
     {% else %}
+    <div class="item">
       <div class="item">
         <form class="form" action="{{url('library:book_start_reading', args=[book.slug])}}" method="post">
           <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-          <input class="ui button primary" type="submit" name="Start Reading" value="Start Reading" />
+          <div class="field">
+            <input class="ui button primary" type="submit" value="Start" />
+          </div>
         </form>
       </div>
+    </div>
     {% endif %}
   {% if not book.owned and not book.owned_by_sara %}
       <div class="item">
         <form class="form" action="{{url('library:book_mark_owned', args=[book.slug])}}" method="post">
           <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-          <input class="ui button primary" type="submit" name="Mark Owned" value="Mark Owned" />
+          <div class="field">
+            <input class="ui button primary" type="submit" name="Mark Owned" value="Mark Owned" />
+          </div>
         </form>
       </div>
   {% endif %}
-  <div class="divider"></div>
-  <div class="item"><a class="card-link" href="{{ url('library:book_edit', args=[book.slug]) }}">edit</a></div>
+    <div class="divider"></div>
+    <div class="item"><a class="card-link" href="{{ url('library:book_edit', args=[book.slug]) }}">edit</a></div>
   </div>
 {% endif %}

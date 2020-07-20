@@ -94,10 +94,11 @@
         {%- endif %}.
       {% endif %}
     {% if user.is_authenticated %}
-      <div class="ui simple right floated dropdown button">
-        <span class="text">Update</span>
-        <i class="dropdown icon"></i>
+      <div class="ui accordion">
+        <span class="title">Update <i class="dropdown icon"></i></span>
+        <div class="content">
         {% include "books/update_form_snippet.html" %}
+        </div>
       </div> {# dropdown #}
     {% endif %}
     </div>

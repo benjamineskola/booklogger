@@ -242,13 +242,15 @@ def finish_reading(request, slug):
 @require_POST
 def update_progress(request, slug):
     book = get_object_or_404(Book, slug=slug)
-    progress = 0
-    if request.POST["pages"] and book.page_count:
-        progress = int(int(request.POST["pages"]) / book.page_count * 100)
-    elif request.POST["percentage"]:
-        progress = int(request.POST["percentage"])
+
+    if request.POST['progress_type'] == 'pages':
+        progress = int(int(request.POST["value"]) / book.page_count * 100)
+    else:
+        progress = int(request.POST["value"])
+
     if progress:
         book.update_progress(progress)
+
     return redirect("library:book_details", slug=slug)
 
 
