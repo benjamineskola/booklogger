@@ -8,10 +8,15 @@ class AuthorFactory(factory.Factory):
     class Meta:
         model = Author
 
+    surname = factory.Faker("last_name")
+    forenames = factory.Faker("first_name")
+
 
 class BookFactory(factory.Factory):
     class Meta:
         model = Book
+
+    title = factory.Faker("sentence", nb_words=4)
 
 
 class BookAuthorFactory(factory.Factory):
