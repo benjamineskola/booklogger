@@ -184,11 +184,12 @@ class GenericLogView(generic.ListView):
         )
 
         if year := self.kwargs.get("year"):
-            entries = entries.filter(end_date__year=year)
-            if year == 1:
+            if year == "sometime" or str(year) == "1":
                 self.page_title = "Read sometime"
+                entries = entries.filter(end_date__year=1)
             else:
                 self.page_title = f"Read in {year}"
+                entries = entries.filter(end_date__year=year)
 
         if self.filter_by:
             entries = entries.filter(**self.filter_by)

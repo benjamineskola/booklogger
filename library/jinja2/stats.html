@@ -11,7 +11,7 @@
       {% if year == "total" %}
         {% set url_base = url("library:books_read") %}
       {% else %}
-        {% set url_base = url("library:books_read", kwargs={"year": year}) %}
+        {% set url_base = url("library:books_read", kwargs={"year": ("sometime" if year == '1' else year)}) %}
       {% endif %}
       <hr class="ui divider" />
       <div class="ui basic segment">

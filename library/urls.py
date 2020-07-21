@@ -69,7 +69,7 @@ urlpatterns = [
                     name="books_owned",
                 ),
                 re_path(
-                    r"^read/(?:(?P<year>\d+)/)?",
+                    r"^read/(?:(?P<year>(\d+|sometime))/)?",
                     views.book.ReadView.as_view(),
                     name="books_read",
                 ),

@@ -44,7 +44,7 @@
                   {% endfor %}
                   <a class="{% if page[1] == request.resolver_match.view_name and request.resolver_match.kwargs['year'] == '2007' %}active {% endif %}item" href="{{url(page[1], args=[2007])}}">Read in 2007</a>
                   <a class="{% if page[1] == request.resolver_match.view_name and request.resolver_match.kwargs['year'] == '2004' %}active {% endif %}item" href="{{url(page[1], args=[2004])}}">Read in 2004</a>
-                  <a class="{% if page[1] == request.resolver_match.view_name and request.resolver_match.kwargs['year'] == '1' %}active {% endif %}item" href="{{url(page[1], args=[1])}}">Read sometime</a>
+                  <a class="{% if page[1] == request.resolver_match.view_name and request.resolver_match.kwargs['year'] == '1' %}active {% endif %}item" href="{{url(page[1], args=['sometime'])}}">Read sometime</a>
                 </div>
               </div>
             {% else %}
