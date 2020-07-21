@@ -26,11 +26,12 @@
     {% endblock %}
   </head>
   <body>
-    <div class="ui large stackable menu">
+    <div id="navbar" class="ui large stackable menu">
       <a class="header item" href="{{ url("library:index") }}">Booklogger</a>
-      <div class="ui simple dropdown item">
+      <div class="ui dropdown item">
         Books
-        <div class="simple menu">
+        <i class="dropdown icon"></i>
+        <div class="menu">
           {% for page in pages %}
           <a class="{% if page[1] == request.resolver_match.view_name %}active {% endif %}item" href="{{url(page[1])}}">{{ page[0] }}</a>
           {% endfor %}
@@ -45,10 +46,10 @@
           </form>
         </div>
         {% if user.is_authenticated %}
-          <div class="ui simple dropdown item">
+          <div class="ui dropdown item">
             Admin
             <i class="dropdown icon"></i>
-            <div class="simple menu">
+            <div class="menu">
               <a class="item" href="{{ url('admin:index') }}">Admin</a>
               <a class="item" href="{{ url('library:author_new') }}">Create Author</a>
               <a class="item" href="{{ url('library:book_new') }}">Create Book</a>
@@ -130,6 +131,7 @@
         $('.ui.rating').rating();
         $('.ui.accordion').accordion();
       });
+      $('#navbar .ui.dropdown').dropdown();
     </script>
     {% block footer %}
     {% endblock footer %}
