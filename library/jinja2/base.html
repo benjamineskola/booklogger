@@ -33,7 +33,23 @@
         <i class="dropdown icon"></i>
         <div class="menu">
           {% for page in pages %}
-            <a class="{% if page[1] == request.resolver_match.view_name %}active {% endif %}item" href="{{url(page[1])}}">{{ page[0] }}</a>
+            {% if page[0] == 'Read' %}
+              <div class="ui search selection dropdown item{% if page[1] == request.resolver_match.view_name %} active{%endif %}">
+                Read
+                <i class="dropdown icon"></i>
+                <div class="ui menu">
+                  <a class="{% if page[1] == request.resolver_match.view_name and request.resolver_match.kwargs == {} %}active {% endif %}item" href="{{url(page[1])}}">All</a>
+                  {% for year in range(2020, 2004, -1) %}
+                    <a class="{% if page[1] == request.resolver_match.view_name and request.resolver_match.kwargs['year'] == year | string %}active {% endif %}item" href="{{url(page[1], args=[year])}}">Read in {{ year }}</a>
+                  {% endfor %}
+                  <a class="{% if page[1] == request.resolver_match.view_name and request.resolver_match.kwargs['year'] == '2007' %}active {% endif %}item" href="{{url(page[1], args=[2007])}}">Read in 2007</a>
+                  <a class="{% if page[1] == request.resolver_match.view_name and request.resolver_match.kwargs['year'] == '2004' %}active {% endif %}item" href="{{url(page[1], args=[2004])}}">Read in 2004</a>
+                  <a class="{% if page[1] == request.resolver_match.view_name and request.resolver_match.kwargs['year'] == '1' %}active {% endif %}item" href="{{url(page[1], args=[1])}}">Read sometime</a>
+                </div>
+              </div>
+            {% else %}
+              <a class="{% if page[1] == request.resolver_match.view_name %}active {% endif %}item" href="{{url(page[1])}}">{{ page[0] }}</a>
+            {% endif %}
           {% endfor %}
         </div>
       </div>
