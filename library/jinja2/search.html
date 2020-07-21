@@ -11,10 +11,19 @@
   {% if books %}
     {{ book_list(books) }}
   {% else %}
-    <form class="form-inline my-2 my-lg-0" action="{{url('library:basic_search')}}">
-      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="query">
-      <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
-    </form>
+    <div class="ui form">
+      <form action="{{url('library:basic_search')}}">
+        <div class="two fields">
+          <div class="ui fifteen wide icon input field">
+            <input type="search" placeholder="Search" aria-label="Search" name="query">
+            <i class="search link icon"></i>
+          </div>
+          <div class="ui field">
+            <button class="ui button primary" type="submit">Search</button>
+          </div>
+        </div>
+      </form>
+    </div>
   {% endif %}
 
   {% if user.is_authenticated %}

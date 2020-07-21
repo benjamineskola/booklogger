@@ -80,7 +80,7 @@
               <a href="{{ form.instance.get_absolute_url() }}" class="ui button" role="button">Cancel</a>
               <a href="{{ url("library:book_delete", args=[form.instance.slug]) }}" class="ui button negative" role="button">Delete</a>
             {% else %}
-              <a href="/" class="btn btn-secondary">Cancel</a>
+              <a href="/" class="ui button">Cancel</a>
             {% endif %}
           </div> {# form #}
         </div> {# segment #}

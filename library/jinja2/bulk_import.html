@@ -8,9 +8,17 @@
     </ul>
   {% endif %}
 
-  <form class="form-inline" action="{{url('library:bulk_import')}}" method="POST">
-    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-    <textarea class="form-control mx-2" name="data" rows="25" cols="80"></textarea>
-    <input class="form-control btn btn-primary mx-2" type="submit" value="Import" />
-  </form>
+  <div class="ui form">
+    <form action="{{url('library:bulk_import')}}" method="POST">
+      <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+      <div class="two fields">
+        <div class="ui fifteen wide field">
+          <textarea name="data" rows="25" cols="80"></textarea>
+        </div>
+        <div class="ui field">
+          <input class="ui button primary" type="submit" value="Import" />
+        </div>
+      </div>
+    </form>
+  </div>
 {% endblock content %}
