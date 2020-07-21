@@ -1,4 +1,4 @@
-{% set pages = [
+{% set book_pages = [
 ('All', 'library:books_all'),
 ('Owned', 'library:books_owned'),
 ('By Date', 'library:books_owned_by_date'),
@@ -7,6 +7,8 @@
 ('Read', 'library:books_read'),
 ('To Read', 'library:books_unread'),
 ('Wishlist', 'library:books_unowned'),
+] %}
+{% set other_pages = [
 ('Authors', 'library:author_list'),
 ('Series', 'library:series_index'),
 ('Tags', 'library:tag_cloud'),
@@ -32,7 +34,7 @@
         Books
         <i class="dropdown icon"></i>
         <div class="menu">
-          {% for page in pages %}
+          {% for page in book_pages %}
             {% if page[0] == 'Read' %}
               <div class="ui search selection dropdown item{% if page[1] == request.resolver_match.view_name %} active{%endif %}">
                 Read
@@ -50,6 +52,16 @@
             {% else %}
               <a class="{% if page[1] == request.resolver_match.view_name %}active {% endif %}item" href="{{url(page[1])}}">{{ page[0] }}</a>
             {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="ui dropdown item">
+        Collections
+        <i class="dropdown icon"></i>
+        <div class="menu">
+          {% for page in other_pages %}
+            <a class="{% if page[1] == request.resolver_match.view_name %}active {% endif %}item" href="{{url(page[1])}}">{{ page[0] }}</a>
           {% endfor %}
         </div>
       </div>
