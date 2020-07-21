@@ -1,14 +1,12 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views import generic
-
 from library.forms import AuthorForm
 from library.models import Author
 
 
 class DetailView(generic.DetailView):
     model = Author
-    template_name = "authors/details.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -17,7 +15,6 @@ class DetailView(generic.DetailView):
 
 
 class IndexView(generic.ListView):
-    template_name = "authors/list.html"
     model = Author
     paginate_by = 100
 
@@ -55,7 +52,6 @@ class IndexView(generic.ListView):
 
 class EditView(LoginRequiredMixin, generic.edit.UpdateView):
     form_class = AuthorForm
-    template_name = "authors/edit_form.html"
     model = Author
 
     def get_context_data(self, *args, **kwargs):
@@ -66,7 +62,6 @@ class EditView(LoginRequiredMixin, generic.edit.UpdateView):
 
 class NewView(LoginRequiredMixin, generic.edit.CreateView):
     form_class = AuthorForm
-    template_name = "authors/edit_form.html"
     model = Author
 
     def get_context_data(self, *args, **kwargs):

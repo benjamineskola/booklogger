@@ -2,7 +2,6 @@ import json
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
-
 from library.models import Author, Book
 
 
@@ -31,7 +30,7 @@ def import_book(request, query=None):
 
         return render(
             request,
-            "books/import.html",
+            "import.html",
             {
                 "query": query,
                 "goodreads_results": goodreads_results,

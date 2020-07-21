@@ -7,14 +7,12 @@ from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views import generic
 from django.views.decorators.http import require_POST
-
 from library.forms import BookAuthorFormSet, BookForm
 from library.models import Book, LogEntry
 from library.utils import oxford_comma
 
 
 class GenericIndexView(generic.ListView):
-    template_name = "books/list.html"
     paginate_by = 100
 
     filter_by = {}
@@ -71,7 +69,7 @@ class OwnedIndexView(GenericIndexView):
 
 
 class OwnedByDateView(GenericIndexView):
-    template_name = "books/list_by_date.html"
+    template_name = "book_list_by_date.html"
     filter_by = {"owned_by__username": "ben"}
     page_title = "Owned Books by Date"
 
@@ -163,7 +161,6 @@ class TagIndexView(GenericIndexView):
 
 class DetailView(generic.DetailView):
     model = Book
-    template_name = "books/details.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -173,7 +170,6 @@ class DetailView(generic.DetailView):
 
 
 class GenericLogView(generic.ListView):
-    template_name = "logentries/list.html"
     context_object_name = "entries"
 
     filter_by = {}
@@ -243,7 +239,7 @@ def finish_reading(request, slug):
 def update_progress(request, slug):
     book = get_object_or_404(Book, slug=slug)
 
-    if request.POST['progress_type'] == 'pages':
+    if request.POST["progress_type"] == "pages":
         progress = int(int(request.POST["value"]) / book.page_count * 100)
     else:
         progress = int(request.POST["value"])
@@ -277,7 +273,6 @@ def mark_owned(request, slug):
 
 
 class CreateOrUpdateView(LoginRequiredMixin):
-    template_name = "books/edit_form.html"
     form_class = BookForm
     model = Book
 

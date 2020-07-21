@@ -3,7 +3,6 @@ import re
 from django.db.models import Count, Q
 from django.shortcuts import redirect, render
 from django.utils import timezone
-
 from library.models import Author, Book, LogEntry
 
 from . import author, book, importer, report  # noqa: F401
@@ -79,7 +78,7 @@ def tag_cloud(request):
         }
 
     return render(
-        request, "tags/cloud.html", {"page_title": "Tags", "tags": sorted_tags,},
+        request, "tag_list.html", {"page_title": "Tags", "tags": sorted_tags,},
     )
 
 
@@ -195,6 +194,6 @@ def series_list(request):
 
     return render(
         request,
-        "books/series_index.html",
+        "series_list.html",
         {"all_series": sorted_series, "series_count": series_count},
     )

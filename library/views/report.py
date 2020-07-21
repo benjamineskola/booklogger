@@ -1,6 +1,5 @@
 from django.db.models import F, Q
 from django.shortcuts import render
-
 from library.models import Book
 
 
@@ -121,6 +120,6 @@ def report(request, page=None):
 
     return render(
         request,
-        "books/report.html",
+        "report.html",
         {"categories": categories, "results": results, "page": page},
     )
