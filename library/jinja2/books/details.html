@@ -1,8 +1,9 @@
 {% from "macros.html" import author_list, book_link, format_date_range, link_amazon, link_goodreads, link_google, link_publisher with context %}
+{% from "macros/card.html" import book_card with context %}
 {% extends "base.html" %}
 {% block content %}
 <div class="ui two doubling cards">
-{% include "books/card.html" %}
+  {{ book_card(book) }}
 
   <div class="card"><div class="content">
     {% if book.has_full_authors %}

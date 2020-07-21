@@ -1,3 +1,4 @@
+{% from "macros/card.html" import book_list with context %}
 {% extends "base.html" %}
 {% block content %}
   {% if authors %}
@@ -8,8 +9,7 @@
 </div>
   {% endif %}
   {% if books %}
-    {% set items = books %}
-    {% include "books/card_loop.html" %}
+    {{ book_list(books) }}
   {% else %}
     <form class="form-inline my-2 my-lg-0" action="{{url('library:basic_search')}}">
       <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="query">

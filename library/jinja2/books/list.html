@@ -1,7 +1,6 @@
+{% from "macros/card.html" import book_list with context %}
 {% extends "base.html" %}
 {% block content %}
-  {% set items = page_obj %}
-
   {% if request.resolver_match.url_name not in ["books_read", "books_read_undated", "series_details", "tag_details"] %}
   {% if not format %}
     <p class="ui top attached segment">Formats: <a href="{{ url("library:" + request.resolver_match.url_name) }}">all</a>
@@ -18,5 +17,5 @@
   <p class="ui bottom attached segment">{{ stats["total"] }} items, {{ stats["owned"] }} owned, {{ stats["read"] }} read.</p>
   {% endif %}
 
-  {% include "books/card_loop.html" %}
+  {{ book_list(page_obj) }}
 {% endblock content %}

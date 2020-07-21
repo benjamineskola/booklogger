@@ -1,8 +1,8 @@
+{% from "macros/card.html" import book_list with context %}
 {% extends "base.html" %}
 {% block content %}
 {% if entries[0].currently_reading %}
-  {% set items = entries %}
-  {% include "books/card_loop.html" %}
+    {{ book_list(entries) }}
 {% else %}
   {% for group in entries|groupby('end_date.year')|reverse %}
     {% if not year %}
@@ -13,8 +13,7 @@
       {% endif %}
     {% endif %}
 
-    {% set items = group.list %}
-    {% include "books/card_loop.html" %}
+    {{ book_list(group.list) }}
   {% endfor%}
 {% endif %}
 {% endblock content %}

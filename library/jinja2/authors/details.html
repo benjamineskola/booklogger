@@ -1,3 +1,4 @@
+{% from "macros/card.html" import book_list with context %}
 {% extends "base.html" %}
 {% block content %}
 <div class="ui segment">
@@ -11,6 +12,5 @@
 </div>
 
 <h2>Books</h2>
-{% set items = author.books %}
-{% include "books/card_loop.html" %}
+{{ book_list(author.books) }}
 {% endblock content %}
