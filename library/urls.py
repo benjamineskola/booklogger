@@ -92,7 +92,7 @@ urlpatterns = [
         ),
     ),
     path("search/", views.basic_search, name="basic_search"),
-    path("series/", views.series_list, name="series_index"),
+    path("series/", views.series.list, name="series_index"),
     path(
         "series/<path:series>/",
         views.book.SeriesIndexView.as_view(),

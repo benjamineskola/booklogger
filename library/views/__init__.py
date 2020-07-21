@@ -1,11 +1,9 @@
-import re
-
-from django.db.models import Count, Q
+from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.utils import timezone
 from library.models import Author, Book, LogEntry
 
-from . import author, book, importer, report  # noqa: F401
+from . import author, book, importer, report, series  # noqa: F401
 
 # Create your views here.
 
@@ -177,23 +175,4 @@ def stats(request):
             "predicted_count": predicted_count,
             "books_by_year": books_by_year,
         },
-    )
-
-
-def series_list(request):
-    all_series = (
-        Book.objects.exclude(series="")
-        .values_list("series")
-        .annotate(count=Count("series"))
-        .order_by("series")
-    )
-    series_count = all_series.count()
-    sorted_series = sorted(
-        all_series, key=lambda s: re.sub(r"^(A|The) (.*)", r"\2, \1", s[0])
-    )
-
-    return render(
-        request,
-        "series_list.html",
-        {"all_series": sorted_series, "series_count": series_count},
     )
