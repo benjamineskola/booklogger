@@ -1,8 +1,3 @@
-
-{% if stats %}
-<p class="ui bottom attached segment">{{ stats["total"] }} items, {{ stats["owned"] }} owned, {{ stats["read"] }} read.</p>
-{% endif %}
-
 <div class="ui two doubling cards">
 {% for item in items %}
   {% if item.book %}

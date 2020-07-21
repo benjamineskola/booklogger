@@ -14,5 +14,9 @@
   {% endif %}
   {% endif %}
 
+  {% if stats %}
+  <p class="ui bottom attached segment">{{ stats["total"] }} items, {{ stats["owned"] }} owned, {{ stats["read"] }} read.</p>
+  {% endif %}
+
   {% include "books/card_loop.html" %}
 {% endblock content %}
