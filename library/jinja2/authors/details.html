@@ -1,16 +1,16 @@
 {% from "macros/card.html" import book_list with context %}
 {% extends "base.html" %}
 {% block content %}
-<div class="ui segment">
-  {% if author.preferred_forenames %}
-    <p>Full name: {{ author.full_name }}</p>
-  {% endif %}
-  <p>Gender: {{ author.get_gender_display() }}</p>
-  <p>POC: {{ author.poc }}</p>
-  <p>Primarily writes in {{ author.get_primary_language_display() }}</p>
-  <a href="{{ url('library:author_edit', args=[author.slug]) }}">edit</a>
-</div>
+  <div class="ui segment">
+    {% if author.preferred_forenames %}
+      <p>Full name: {{ author.full_name }}</p>
+    {% endif %}
+    <p>Gender: {{ author.get_gender_display() }}</p>
+    <p>POC: {{ author.poc }}</p>
+    <p>Primarily writes in {{ author.get_primary_language_display() }}</p>
+    <a href="{{ url('library:author_edit', args=[author.slug]) }}">edit</a>
+  </div>
 
-<h2>Books</h2>
-{{ book_list(author.books) }}
+  <h2>Books</h2>
+  {{ book_list(author.books) }}
 {% endblock content %}

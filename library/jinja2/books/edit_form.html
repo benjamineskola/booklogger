@@ -1,102 +1,103 @@
 {% from "macros.html" import link_amazon, link_goodreads, link_google with context %}
 {% extends "base.html" %}
 {% block header %}
-{{ form.media.css }}
+  {{ form.media.css }}
 
-<link href="{{ static("select2-bootstrap4.min.css") }}" type="text/css" media="screen" rel="stylesheet">
+  <link href="{{ static("select2-bootstrap4.min.css") }}" type="text/css" media="screen" rel="stylesheet">
 {% endblock header %}
+
 {% block content %}
-
-{% if form.instance.id %}
-<div class="ui segment">
-  <strong>Amazon</strong> {{ link_amazon(book) }}</br>
-  <strong>Goodreads</strong> {{ link_goodreads(book)  }}</br>
-  <strong>Google</strong> {{ link_google(book) }}
-</div>
-{% endif %}
-
-{% if form.errors %}
-<div class="ui segment error message">
-{% for error in form.errors %}
-<p><strong>{{ error }}:</strong> {{ form.errors[error] | join('; ') }}</p>
-{% endfor %}
-</div>
-{% endif %}
-
-<form method="post">
-<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-
-<div class="row">
-  <div class="column">
-    <div class="ui stackable two column grid">
-
-    {% for field_names in [
-      ['title', 'subtitle', 'first_author', 'first_author_role', 'first_published', 'language', 'series', 'series_order', 'slug'],
-      ['edition_title', 'edition_subtitle', 'publisher', 'edition_published', 'edition_format', 'edition_language', 'edition_number', 'page_count'],
-      ['owned_by', 'acquired_date', 'alienated_date', 'was_borrowed', 'borrowed_from', 'want_to_read'],
-      ['goodreads_id', 'google_books_id', 'isbn', 'asin', 'image_url', 'publisher_url'],
-      ['has_ebook_edition', 'ebook_acquired_date', 'ebook_isbn', 'ebook_asin'],
-      ['tags', 'review', 'rating'],
-      ['editions', 'parent_edition'],
-    ] %}
-    {% if 'editions' not in field_names or ('editions' in form.fields or 'parent_edition' in form.fields) %}
-      <div class="column">
-        <div class="ui segment">
-          <div class="ui form{% if form.errors %} error{% endif %}">
-            {% for field_name in field_names %}
-              {% set field = form[field_name] %}
-              {% if field %}
-                {% include "edit_form_field_snippet.html" %}
-              {% endif %}
-            {% endfor %}
-          </div> {# form #}
-        </div> {# segment #}
-      </div> {# column #}
-    {% endif %}
-  {% endfor %}
-  </div> {# two column grid #}
-
-  {% if inline_formset %}
+  {% if form.instance.id %}
     <div class="ui segment">
-      {{ inline_formset.management_form }}
-      {% for form in inline_formset %}
-      <div class="ui form">
-        <div class="four fields">
-        {{ form.id }}
-          {% for field in form %}
-          {% if field.name not in ["id", "book"] %}
-            {% include "edit_form_field_snippet.html" %}
-          {% endif %}
-        {% endfor %}
-        </div> {# four fields #}
-      </div> {# form #}
-      {% endfor %}
-    </div> {# segment #}
+      <strong>Amazon</strong> {{ link_amazon(book) }}<br/>
+      <strong>Goodreads</strong> {{ link_goodreads(book)  }}<br/>
+      <strong>Google</strong> {{ link_google(book) }}
+    </div>
   {% endif %}
 
-  <div class="ui segment">
-    <div class="ui form">
-      <input type="submit" value="Submit" class="ui button primary">
-      {% if form.instance.id %}
-      <a href="{{ form.instance.get_absolute_url() }}" class="ui button" role="button">Cancel</a>
-      <a href="{{ url("library:book_delete", args=[form.instance.slug]) }}" class="ui button negative" role="button">Delete</a>
-      {% else %}
-      <a href="/" class="btn btn-secondary">Cancel</a>
-      {% endif %}
+  {% if form.errors %}
+    <div class="ui segment error message">
+      {% for error in form.errors %}
+        <p><strong>{{ error }}:</strong> {{ form.errors[error] | join('; ') }}</p>
+      {% endfor %}
     </div>
-  </div>
-</form>
+  {% endif %}
 
-{% if form.instance.id %}
-<a href="{{ url("admin:library_book_change", args=[form.instance.id]) }}">Advanced</a>
-{% endif %}
+  <form method="post">
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
+    <div class="row">
+      <div class="column">
+        <div class="ui stackable two column grid">
+          {% for field_names in [
+            ['title', 'subtitle', 'first_author', 'first_author_role', 'first_published', 'language', 'series', 'series_order', 'slug'],
+            ['edition_title', 'edition_subtitle', 'publisher', 'edition_published', 'edition_format', 'edition_language', 'edition_number', 'page_count'],
+            ['owned_by', 'acquired_date', 'alienated_date', 'was_borrowed', 'borrowed_from', 'want_to_read'],
+            ['goodreads_id', 'google_books_id', 'isbn', 'asin', 'image_url', 'publisher_url'],
+            ['has_ebook_edition', 'ebook_acquired_date', 'ebook_isbn', 'ebook_asin'],
+            ['tags', 'review', 'rating'],
+            ['editions', 'parent_edition'],
+          ] %}
+            {% if 'editions' not in field_names or ('editions' in form.fields or 'parent_edition' in form.fields) %}
+              <div class="column">
+                <div class="ui segment">
+                  <div class="ui form{% if form.errors %} error{% endif %}">
+                    {% for field_name in field_names %}
+                      {% set field = form[field_name] %}
+                      {% if field %}
+                        {% include "edit_form_field_snippet.html" %}
+                      {% endif %}
+                    {% endfor %}
+                  </div> {# form #}
+                </div> {# segment #}
+              </div> {# column #}
+            {% endif %}
+          {% endfor %}
+        </div> {# two column grid #}
+
+        {% if inline_formset %}
+          <div class="ui segment">
+            {{ inline_formset.management_form }}
+            {% for form in inline_formset %}
+              <div class="ui form">
+                <div class="four fields">
+                  {{ form.id }}
+                  {% for field in form %}
+                    {% if field.name not in ["id", "book"] %}
+                      {% include "edit_form_field_snippet.html" %}
+                    {% endif %}
+                  {% endfor %}
+                </div> {# four fields #}
+              </div> {# form #}
+            {% endfor %}
+          </div> {# segment #}
+        {% endif %}
+
+        <div class="ui segment">
+          <div class="ui form">
+            <input type="submit" value="Submit" class="ui button primary">
+            {% if form.instance.id %}
+              <a href="{{ form.instance.get_absolute_url() }}" class="ui button" role="button">Cancel</a>
+              <a href="{{ url("library:book_delete", args=[form.instance.slug]) }}" class="ui button negative" role="button">Delete</a>
+            {% else %}
+              <a href="/" class="btn btn-secondary">Cancel</a>
+            {% endif %}
+          </div> {# form #}
+        </div> {# segment #}
+      </div>
+    </div>
+  </form>
+
+  {% if form.instance.id %}
+    <a href="{{ url("admin:library_book_change", args=[form.instance.id]) }}">Advanced</a>
+  {% endif %}
 {% endblock content %}
+
 {% block footer %}
-{{ form.media.js }}
-<script>
-  $(document).ready(function() {
-    $('select').dropdown();
-  })
-</script>
+  {{ form.media.js }}
+  <script>
+    $(document).ready(function() {
+      $('select').dropdown();
+    })
+  </script>
 {% endblock footer %}

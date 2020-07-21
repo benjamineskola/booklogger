@@ -1,31 +1,30 @@
 {% from "macros.html" import book_label with context %}
 {% extends "base.html" %}
 {% block content %}
+  {% for genre in ["all", "fiction", "non-fiction"] %}
+    <h2>{{ genre.title() }}</h2>
+    {% for sort_type, sorted_tags in tags.items() %}
+      <div class="ui labels">
+        <strong>By {{ sort_type }}:</strong>
+        {% for tag, count in sorted_tags[genre].items() %}
+          {% if count %}
+            {% if tag == "no other tags" %}
+              {% set tag_link = genre + "!" %}
+            {% elif tag != genre and genre != "all" %}
+              {% set tag_link = genre + "," + tag %}
+            {% else %}
+              {% set tag_link = tag %}
+            {% endif %}
 
-{% for genre in ["all", "fiction", "non-fiction"] %}
-  <h2>{{ genre.title() }}</h2>
-  {% for sort_type, sorted_tags in tags.items() %}
-    <div class="ui labels">
-    <strong>By {{ sort_type }}:</strong>
-    {% for tag, count in sorted_tags[genre].items() %}
-      {% if count %}
-        {% if tag == "no other tags" %}
-          {% set tag_link = genre + "!" %}
-        {% elif tag != genre and genre != "all" %}
-          {% set tag_link = genre + "," + tag %}
-        {% else %}
-          {% set tag_link = tag %}
-        {% endif %}
+            {{ book_label(tag + ": " + count | string, url("library:tag_details", args=[tag_link]), tag == genre) }}
+          {% endif %}
+        {% endfor %}
+      </div>
 
-        {{ book_label(tag + ": " + count | string, url("library:tag_details", args=[tag_link]), tag == genre) }}
+      {% if genre == "all" and sorted_tags["untagged"] %}
+        <a class="badge badge-secondary" href="{{ url("library:tag_details", args=["untagged"]) }}">untagged: {{ sorted_tags["untagged"] }}</a>
       {% endif %}
+      <br>
     {% endfor %}
-    </div>
-
-    {% if genre == "all" and sorted_tags["untagged"] %}
-      <a class="badge badge-secondary" href="{{ url("library:tag_details", args=["untagged"]) }}">untagged: {{ sorted_tags["untagged"] }}</a>
-    {% endif %}
-    <br>
   {% endfor %}
-{% endfor %}
 {% endblock content %}

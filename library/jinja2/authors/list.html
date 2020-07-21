@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
-<p>There are a total of {{ total_authors }} {% if poc == 'white' %}white {%endif %}{% if gender %}{{ gender }}{% endif %} authors{% if poc == 'poc' %} of color{% endif %}.</p>
-<div class="ui items">
-  {% for author in page_obj %}
-    {% include "authors/list_item.html" %}
-  {% endfor %}
-</div>
+  <p>There are a total of {{ total_authors }} {% if poc == 'white' %}white {%endif %}{% if gender %}{{ gender }}{% endif %} authors{% if poc == 'poc' %} of color{% endif %}.</p>
+  <div class="ui items">
+    {% for author in page_obj %}
+      {% include "authors/list_item.html" %}
+    {% endfor %}
+  </div>
 {% endblock content %}

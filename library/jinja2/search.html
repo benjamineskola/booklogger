@@ -2,11 +2,11 @@
 {% extends "base.html" %}
 {% block content %}
   {% if authors %}
-<div class="ui items">
-  {% for author in authors %}
-    {% include "authors/list_item.html" %}
-  {% endfor %}
-</div>
+    <div class="ui items">
+      {% for author in authors %}
+        {% include "authors/list_item.html" %}
+      {% endfor %}
+    </div>
   {% endif %}
   {% if books %}
     {{ book_list(books) }}
@@ -17,8 +17,8 @@
     </form>
   {% endif %}
 
-{% if user.is_authenticated %}
-<br>
-<p>Or try <a href="{{ url("library:book_import", args=[query]) }}">importing it</a>.</p>
-{% endif %}
+  {% if user.is_authenticated %}
+    <br>
+    <p>Or try <a href="{{ url("library:book_import", args=[query]) }}">importing it</a>.</p>
+  {% endif %}
 {% endblock content %}

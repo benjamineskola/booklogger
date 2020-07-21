@@ -33,7 +33,7 @@
         <i class="dropdown icon"></i>
         <div class="menu">
           {% for page in pages %}
-          <a class="{% if page[1] == request.resolver_match.view_name %}active {% endif %}item" href="{{url(page[1])}}">{{ page[0] }}</a>
+            <a class="{% if page[1] == request.resolver_match.view_name %}active {% endif %}item" href="{{url(page[1])}}">{{ page[0] }}</a>
           {% endfor %}
         </div>
       </div>
@@ -57,9 +57,9 @@
               <a class="item" href="{{ url('library:bulk_import') }}">Bulk Import</a>
               <a class="item" href="{{ url('library:report') }}">Reports</a>
               {% if request.get_host() == "booklogger.eskola.uk" %}
-              <a class="item" href="http://localhost:8000{{ url(request.resolver_match.view_name, kwargs=request.resolver_match.kwargs) }}">Development</a>
+                <a class="item" href="http://localhost:8000{{ url(request.resolver_match.view_name, kwargs=request.resolver_match.kwargs) }}">Development</a>
               {% else %}
-              <a class="item" href="http://booklogger.eskola.uk{{ url(request.resolver_match.view_name, kwargs=request.resolver_match.kwargs) }}">Production</a>
+                <a class="item" href="http://booklogger.eskola.uk{{ url(request.resolver_match.view_name, kwargs=request.resolver_match.kwargs) }}">Production</a>
               {% endif %}
             </div> <!-- simple menu -->
           </div> <!-- dropdown -->
@@ -69,59 +69,59 @@
       </div> <!-- right menu -->
     </div> <!-- menu -->
 
-<div class="ui main container" style="margin-bottom: 2em">
-  {% if page_title and request.resolver_match.url_name != 'book_details' %}
-    <h1 class="ui header">
-    {{ page_title }}
-    </h1>
-  {% endif %}
-  {% block content %}
-  {% endblock %}
+    <div class="ui main container" style="margin-bottom: 2em">
+      {% if page_title and request.resolver_match.url_name != 'book_details' %}
+        <h1 class="ui header">
+          {{ page_title }}
+        </h1>
+      {% endif %}
+      {% block content %}
+      {% endblock %}
 
-    {% if page_obj and page_obj.paginator and page_obj.paginator.num_pages > 1 %}
-    {% set params = request.GET.copy() %}
-    {% set qs = params.urlencode() %}
-      <div class="ui center aligned container" style="margin-top: 2em">
-      <nav class="ui stackable pagination menu">
-          {% if request.resolver_match.kwargs["format"] %}
-            {% set new_kwargs= {"format": request.resolver_match.kwargs["format"]} %}
-          {% else %}
-            {% set new_kwargs = {} %}
-          {% endif %}
-
-          {% if page_obj.number > 1 %}
-            {% if page_obj.previous_page_number() > 1 %}
-              {% set prev_kwargs = dict(new_kwargs, **{"page": page_obj.previous_page_number()}) %}
+      {% if page_obj and page_obj.paginator and page_obj.paginator.num_pages > 1 %}
+        {% set params = request.GET.copy() %}
+        {% set qs = params.urlencode() %}
+        <div class="ui center aligned container" style="margin-top: 2em">
+          <nav class="ui stackable pagination menu">
+            {% if request.resolver_match.kwargs["format"] %}
+              {% set new_kwargs= {"format": request.resolver_match.kwargs["format"]} %}
             {% else %}
-              {% set prev_kwargs = new_kwargs%}
+              {% set new_kwargs = {} %}
             {% endif %}
 
-            <a class="item" href="{{ url(request.resolver_match.view_name, kwargs=prev_kwargs) }}{% if qs %}?{{ qs }}{% endif %}">&laquo;</a>
-          {% else %}
-            <span class="disabled item">&laquo;</span>
-          {% endif %}
-
-          {% for pageno in page_obj.paginator.page_range %}
-
-            {% if page_obj.paginator.num_pages < 10 or pageno == 1 or pageno == page_obj.paginator.num_pages or (pageno > page_obj.number - 3 and pageno < page_obj.number + 3) %}
-              {% if pageno > 1 %}
-              {% set new_kwargs = dict(new_kwargs, **{"page": pageno}) %}
+            {% if page_obj.number > 1 %}
+              {% if page_obj.previous_page_number() > 1 %}
+                {% set prev_kwargs = dict(new_kwargs, **{"page": page_obj.previous_page_number()}) %}
+              {% else %}
+                {% set prev_kwargs = new_kwargs%}
               {% endif %}
-              <a class="item{% if pageno == page_obj.number %} active{% endif %}" href="{{ url(request.resolver_match.view_name, kwargs=new_kwargs) }}{% if qs %}?{{ qs }}{% endif %}">{{pageno}}</a>
-            {% elif pageno == page_obj.number - 3 or pageno == page_obj.number + 3 %}
-              <span class="disabled item">…</span>
-            {% endif %}
-          {% endfor %}
 
-          {% if page_obj.number < page_obj.paginator.num_pages %}
-            <a class="item" href="{{ url(request.resolver_match.view_name, kwargs=dict(request.resolver_match.kwargs, **{"page": page_obj.next_page_number()})) }}{% if qs %}?{{ qs }}{% endif %}">&raquo;</a>
-          {% else %}
-            <span class="disabled item">&raquo;</span>
-          {% endif %}
-    </nav>
+              <a class="item" href="{{ url(request.resolver_match.view_name, kwargs=prev_kwargs) }}{% if qs %}?{{ qs }}{% endif %}">&laquo;</a>
+            {% else %}
+              <span class="disabled item">&laquo;</span>
+            {% endif %}
+
+            {% for pageno in page_obj.paginator.page_range %}
+
+              {% if page_obj.paginator.num_pages < 10 or pageno == 1 or pageno == page_obj.paginator.num_pages or (pageno > page_obj.number - 3 and pageno < page_obj.number + 3) %}
+                {% if pageno > 1 %}
+                  {% set new_kwargs = dict(new_kwargs, **{"page": pageno}) %}
+                {% endif %}
+                <a class="item{% if pageno == page_obj.number %} active{% endif %}" href="{{ url(request.resolver_match.view_name, kwargs=new_kwargs) }}{% if qs %}?{{ qs }}{% endif %}">{{pageno}}</a>
+              {% elif pageno == page_obj.number - 3 or pageno == page_obj.number + 3 %}
+                <span class="disabled item">…</span>
+              {% endif %}
+            {% endfor %}
+
+            {% if page_obj.number < page_obj.paginator.num_pages %}
+              <a class="item" href="{{ url(request.resolver_match.view_name, kwargs=dict(request.resolver_match.kwargs, **{"page": page_obj.next_page_number()})) }}{% if qs %}?{{ qs }}{% endif %}">&raquo;</a>
+            {% else %}
+              <span class="disabled item">&raquo;</span>
+            {% endif %}
+          </nav>
+        </div>
+      {% endif %}
     </div>
-    {% endif %}
-</div>
 
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>

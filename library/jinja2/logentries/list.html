@@ -1,19 +1,19 @@
 {% from "macros/card.html" import book_list with context %}
 {% extends "base.html" %}
 {% block content %}
-{% if entries[0].currently_reading %}
+  {% if entries[0].currently_reading %}
     {{ book_list(entries) }}
-{% else %}
-  {% for group in entries|groupby('end_date.year')|reverse %}
-    {% if not year %}
-      {% if group.grouper == 1%}
-      <h2 class="ui dividing header">Read sometime</h2>
-      {% else %}
-      <h2 class="ui dividing header">Read in {{ group.grouper }}</h2>
+  {% else %}
+    {% for group in entries|groupby('end_date.year')|reverse %}
+      {% if not year %}
+        {% if group.grouper == 1%}
+          <h2 class="ui dividing header">Read sometime</h2>
+        {% else %}
+          <h2 class="ui dividing header">Read in {{ group.grouper }}</h2>
+        {% endif %}
       {% endif %}
-    {% endif %}
 
-    {{ book_list(group.list) }}
-  {% endfor%}
-{% endif %}
+      {{ book_list(group.list) }}
+    {% endfor%}
+  {% endif %}
 {% endblock content %}

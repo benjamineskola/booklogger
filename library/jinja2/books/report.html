@@ -1,25 +1,27 @@
 {% from "macros.html" import link_amazon, link_goodreads with context %}
 {% extends "base.html" %}
 {% block content %}
-{% if page %}
-<h3>{{ categories[page | int - 1][0] }} ({{ results.count() }})</h3>
-<ul>
-{% for item in results %}
-<li><a href="{{ item.get_absolute_url() }}">{{ item }}</a>
-<small>(<a href="{{ url('library:book_edit', args=[item.slug]) }}">edit</a>
-&middot; goodreads {{ link_goodreads(item) }}
-&middot; amazon {{ link_amazon(item) }}
-{% if item.publisher_url %}&middot; <a href="{{ item.publisher_url }}">Publisher</a>{% endif -%}
-)</small></li>
-{% endfor %}
-</ul>
-{% endif %}
+  {% if page %}
+    <h3>{{ categories[page | int - 1][0] }} ({{ results.count() }})</h3>
+    <ul>
+      {% for item in results %}
+        <li>
+          <a href="{{ item.get_absolute_url() }}">{{ item }}</a>
+          <small>(<a href="{{ url('library:book_edit', args=[item.slug]) }}">edit</a>
+            &middot; goodreads {{ link_goodreads(item) }}
+            &middot; amazon {{ link_amazon(item) }}
+            {% if item.publisher_url %}&middot; <a href="{{ item.publisher_url }}">Publisher</a>{% endif -%}
+            )
+          </small>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
 
-<h3>Reports</h3>
-<ul>
-{% for i in categories %}
-<li><a href="/report/{{ loop.index }}">{{ i[0] }}</a></li>
-{% endfor %}
-</ul>
-
+  <h3>Reports</h3>
+  <ul>
+    {% for i in categories %}
+      <li><a href="/report/{{ loop.index }}">{{ i[0] }}</a></li>
+    {% endfor %}
+  </ul>
 {% endblock %}

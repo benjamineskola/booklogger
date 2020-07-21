@@ -17,7 +17,7 @@
 {%- endmacro %}
 
 {% macro book_label(label, link, highlight=False) %}
-  <a href="{{ link }}" class="ui label{% if highlight %} teal{% endif %}">{{ label }}</a>
+<a href="{{ link }}" class="ui label{% if highlight %} teal{% endif %}">{{ label }}</a>
 {% endmacro %}
 
 {% macro book_link(book) -%}
@@ -48,14 +48,14 @@
 {%- elif start_date == end_date -%}
   Read
   {% if start_precision > 0 %} in {% else %} on {% endif %}
-  <time datetime="{{start_date}}"> {{ format_date(start_date, start_precision) }}</time>
+  <time datetime="{{start_date}}">{{ format_date(start_date, start_precision) }}</time>
 {%- elif not end_date -%}
-Reading since <time datetime="{{ start_date }}">{{ format_date(start_date, start_precision) }}</time>
+  Reading since <time datetime="{{ start_date }}">{{ format_date(start_date, start_precision) }}</time>
 {%- else -%}
-Read
-<time datetime="{{ start_date }}"> {{ format_date(start_date, start_precision) }}</time>
-&ndash;
-<time datetime="{{ end_date }}"> {{ format_date(end_date, end_precision) }}</time>
+  Read
+  <time datetime="{{ start_date }}"> {{ format_date(start_date, start_precision) }}</time>
+  &ndash;
+  <time datetime="{{ end_date }}"> {{ format_date(end_date, end_precision) }}</time>
 {%- endif -%}
 {% endmacro %}
 
@@ -67,7 +67,7 @@ Read
   <a href="https://amazon.co.uk/dp/{{ book.isbn10 }}">{{ book.isbn10 }}</a>
   or
 {% endif %}
-  <a href="https://www.amazon.co.uk/s?k={{ book.search_query }}&i=stripbooks">search</a>
+<a href="https://www.amazon.co.uk/s?k={{ book.search_query }}&i=stripbooks">search</a>
 {% endmacro %}
 
 {% macro link_google(book) %}
@@ -80,7 +80,7 @@ Read
   <a href="https://www.googleapis.com/books/v1/volumes?q=isbn:{{ book.isbn }}">search ISBN</a>
   or
 {% endif %}
-  <a href="https://www.googleapis.com/books/v1/volumes?q={{ book.search_query }}">search</a>
+<a href="https://www.googleapis.com/books/v1/volumes?q={{ book.search_query }}">search</a>
 {% endmacro %}
 
 {% macro link_goodreads(book) %}
@@ -92,5 +92,5 @@ Read
   <a href="https://www.goodreads.com/search?q={{ book.isbn }}">search ISBN</a>
   or
 {% endif %}
-  <a href="https://www.goodreads.com/search?q={{ book.search_query }}">search</a>
+<a href="https://www.goodreads.com/search?q={{ book.search_query }}">search</a>
 {% endmacro %}

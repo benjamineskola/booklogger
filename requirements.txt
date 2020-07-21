@@ -1,5 +1,6 @@
 bpython
 commonmark
+curlylint
 Django >=3.0.2,<4.0
 django-stubs
 django-select2

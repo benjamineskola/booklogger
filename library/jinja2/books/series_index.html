@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
-<p>There are a total of {{ series_count }} series.</p>
-<div class="ui items">
-  {% for series, count in all_series %}
-    <div class="item">
-      <div class="content">
-        <a class="header" href="{{ url("library:series_details", args=[series]) }}">{{ series }}</a> <span class="meta">({{ count }} book{% if count > 1 %}s{% endif %})</span>
+  <p>There are a total of {{ series_count }} series.</p>
+  <div class="ui items">
+    {% for series, count in all_series %}
+      <div class="item">
+        <div class="content">
+          <a class="header" href="{{ url("library:series_details", args=[series]) }}">{{ series }}</a> <span class="meta">({{ count }} book{% if count > 1 %}s{% endif %})</span>
+        </div>
       </div>
-    </div>
-  {% endfor %}
-</div>
+    {% endfor %}
+  </div>
 {% endblock content %}

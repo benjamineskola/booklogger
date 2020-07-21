@@ -1,17 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
+  {% if results %}
+    <ul>
+      {% for result, created in results %}
+        <li>{% if created %}Created{% else %}Updated{% endif %} {{ result.__class__.__name__.lower() }} <a href="{{ result.get_absolute_url() }}">{{ result }}</a></li>
+      {% endfor %}
+    </ul>
+  {% endif %}
 
-{% if results %}
-<ul>
-{% for result, created in results %}
-<li>{% if created %}Created{% else %}Updated{% endif %} {{ result.__class__.__name__.lower() }} <a href="{{ result.get_absolute_url() }}">{{ result }}</a></li>
-{% endfor %}
-</ul>
-{% endif %}
-
-<form class="form-inline" action="{{url('library:bulk_import')}}" method="POST">
-  <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-  <textarea class="form-control mx-2" name="data" rows="25" cols="80"></textarea>
-  <input class="form-control btn btn-primary mx-2" type="submit" value="Import" />
-</form>
+  <form class="form-inline" action="{{url('library:bulk_import')}}" method="POST">
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    <textarea class="form-control mx-2" name="data" rows="25" cols="80"></textarea>
+    <input class="form-control btn btn-primary mx-2" type="submit" value="Import" />
+  </form>
 {% endblock content %}
