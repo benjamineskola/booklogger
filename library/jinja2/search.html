@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
   {% if authors %}
-<ul class="list-unstyled">
+<div class="ui items">
   {% for author in authors %}
     {% include "authors/list_item.html" %}
   {% endfor %}
-</ul>
+</div>
   {% endif %}
   {% if books %}
     {% set items = books %}
