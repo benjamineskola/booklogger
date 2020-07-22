@@ -3,7 +3,7 @@
     {% if book.currently_reading %}
       <div class="item">
         <div class="ui form">
-          <form class="form" action="{{url('library:book_update_progress', args=[book.slug])}}" method="post">
+          <form class="form update-progress" data-page-count="{{ book.page_count }}" data-book="{{ book.id }}" action="{{url('library:book_update_progress', args=[book.slug])}}" method="post">
             <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
             <div class="inline fields">
               <div class="three wide field">

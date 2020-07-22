@@ -17,7 +17,7 @@
   {% set entry = book.log_entries.order_by('end_date').last() %}
 {% endif %}
 
-<div class="ui card book">
+<div class="ui card book" id="book-{{ book.id }}">
   <div class="content">
     {% if book.image_url %}
       <a href="{{ book.get_absolute_url() }}">
@@ -100,9 +100,9 @@
 
   <div class="extra content">
     {% if entry %}
-      {{ format_date_range(entry.start_date, entry.start_precision, entry.end_date, entry.end_precision) }}
+      <span class="read-dates">{{ format_date_range(entry.start_date, entry.start_precision, entry.end_date, entry.end_precision) }}</span>
       {%- if entry.currently_reading and entry.progress -%}
-        ; {{ entry.progress }}% on {{ format_date(entry.progress_date, 0) }}
+        ; <span class="progress-date">{{ entry.progress }}% on {{ format_date(entry.progress_date, 0) }}</span>
       {%- endif %}.
     {% endif %}
     {% if user.is_authenticated %}
