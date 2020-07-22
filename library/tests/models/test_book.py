@@ -1,9 +1,7 @@
 import pytest
-from library.factories import (  # noqa: F401
-    author_factory,
-    book_author_factory,
-    book_factory,
-)
+
+from library.factories import (author_factory,  # noqa: F401
+                               book_author_factory, book_factory)
 
 
 @pytest.mark.django_db
