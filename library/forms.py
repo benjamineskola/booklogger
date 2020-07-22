@@ -1,7 +1,12 @@
 import re
 
-from django.forms import (ModelForm, Select, SelectMultiple, ValidationError,
-                          inlineformset_factory)
+from django.forms import (
+    ModelForm,
+    Select,
+    SelectMultiple,
+    ValidationError,
+    inlineformset_factory,
+)
 
 from library.models import Author, Book, BookAuthor
 from library.utils import isbn10_to_isbn
@@ -30,10 +35,13 @@ class TagWidget(SelectMultiple):
         super().__init__(*args, **kwargs)
         self.attrs.update({"class": "ui search multiple selection dropdown"})
         tags = Book.objects.exclude(tags=[]).values_list("tags", flat=True)
-        tags_choices = [
-            {"name": i, "value": i}
-            for i in set([item for sublist in tags for item in sublist])
-        ]
+        tags_choices = sorted(
+            [
+                {"name": i, "value": i}
+                for i in set([item for sublist in tags for item in sublist])
+            ],
+            key=lambda i: i["name"],
+        )
         self.values_dict = tags_choices
 
 

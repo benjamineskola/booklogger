@@ -1,6 +1,7 @@
 from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.utils import timezone
+
 from library.models import Author, Book, LogEntry
 
 from . import author, book, importer, report, series  # noqa: F401
@@ -76,7 +77,7 @@ def tag_cloud(request):
         }
 
     return render(
-        request, "tag_list.html", {"page_title": "Tags", "tags": sorted_tags,},
+        request, "tag_list.html", {"page_title": "Tags", "tags": sorted_tags},
     )
 
 

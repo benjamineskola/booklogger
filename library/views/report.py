@@ -1,5 +1,6 @@
 from django.db.models import F, Q
 from django.shortcuts import render
+
 from library.models import Book
 
 
@@ -11,7 +12,7 @@ def report(request, page=None):
             "Missing ISBN",
             lambda: owned_books.filter(isbn="")
             .exclude(
-                first_author__surname__in=["Jacobin", "Tribune", "New Left Review",]
+                first_author__surname__in=["Jacobin", "Tribune", "New Left Review"]
             )
             .exclude(edition_format=3, asin__length__gt=0)
             .exclude(edition_published__lt=1965)

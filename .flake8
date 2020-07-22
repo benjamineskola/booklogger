@@ -1,6 +1,11 @@
 [flake8]
 exclude = library/migrations/
 select = C,E,F,W,N,B,B9
-ignore = E501,W503,E203,E231,E701,B950
-max-complexity = 15
+extend-ignore =
+	# incompatible with black
+	E203,
+	# superseded by flake8-bugbear B950
+	E501,
+	# incompatible with black
+	W503
 max-line-length = 88
