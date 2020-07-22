@@ -41,6 +41,7 @@ urlpatterns = [
                 path("delete/", views.book.DeleteView.as_view(), name="book_delete"),
                 path("edit/", views.book.EditView.as_view(), name="book_edit"),
                 path("mark_owned/", views.book.mark_owned, name="book_mark_owned"),
+                path("rate/", views.book.rate, name="book_rate"),
             ]
         ),
     ),

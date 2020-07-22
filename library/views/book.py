@@ -285,6 +285,17 @@ def mark_owned(request, slug):
     return redirect("library:book_details", slug=slug)
 
 
+@login_required
+@require_POST
+def rate(request, slug):
+    book = get_object_or_404(Book, slug=slug)
+    if rating := request.POST["rating"]:
+        book.rating = rating
+        book.save()
+
+    return redirect("library:book_details", slug=slug)
+
+
 class CreateOrUpdateView(LoginRequiredMixin):
     form_class = BookForm
     model = Book

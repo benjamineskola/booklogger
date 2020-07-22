@@ -40,7 +40,7 @@
       {% if book.edition_number and book.edition_number > 1 %} {{ book.edition_number | ordinal }} edn. {%endif %}{% if book.publisher %} {{ book.publisher }}.{% endif %}{% if book.page_count and book.page_count > 0 %} {{ book.page_count }}&nbsp;pages.
       {% endif %}
 
-      <span class="ui rating" data-rating="{% if book.rating %}{{ book.rating | round }}{% endif %}" data-max-rating="5">
+      <span class="ui rating" data-rating="{% if book.rating %}{{ book.rating | round }}{% endif %}" data-max-rating="5" data-book="{{ book.slug }}">
         {% for i in range(book.rating | int) %}★{% endfor %}
       </span>
     </p>
