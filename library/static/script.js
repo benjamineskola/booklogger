@@ -84,3 +84,7 @@ $(document).ready(function () {
     });
   });
 });
+
+$('.ui.rating').rating();
+$('.ui.accordion').accordion();
+$('#navbar .ui.dropdown').dropdown();
