@@ -90,7 +90,7 @@
 {% block footer %}
   <script>
     $(document).ready(function() {
-      $('#id_tags').dropdown({'allowAdditions': true});
+      $('#id_tags').dropdown({'allowAdditions': true, 'values': {{ form.fields['tags'].widget.values_dict | json | safe }}});
       $('select').dropdown();
     })
   </script>

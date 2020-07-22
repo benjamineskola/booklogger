@@ -29,6 +29,12 @@ class TagWidget(SelectMultiple):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.attrs.update({"class": "ui search multiple selection dropdown"})
+        tags = Book.objects.exclude(tags=[]).values_list("tags", flat=True)
+        tags_choices = [
+            {"name": i, "value": i}
+            for i in set([item for sublist in tags for item in sublist])
+        ]
+        self.values_dict = tags_choices
 
 
 class AuthorForm(ModelForm):
