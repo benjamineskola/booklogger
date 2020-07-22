@@ -1,10 +1,13 @@
+import json
 from itertools import groupby
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import F, Q
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.views import generic
 from django.views.decorators.http import require_POST
 
@@ -249,7 +252,15 @@ def update_progress(request, slug):
     if progress:
         book.update_progress(progress)
 
-    return redirect("library:book_details", slug=slug)
+    response = HttpResponse(
+        json.dumps(
+            {
+                "progress": progress,
+                "progress_text": f"{progress}% on {timezone.now().strftime('%d %B, %Y')}",
+            }
+        ),
+    )
+    return response
 
 
 @login_required
