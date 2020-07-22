@@ -1,21 +1,19 @@
 import re
 
-from django.forms import ModelForm, ValidationError, inlineformset_factory
-from django_select2 import forms as s2forms
+from django.forms import (ModelForm, Select, SelectMultiple, ValidationError,
+                          inlineformset_factory)
 
 from library.models import Author, Book, BookAuthor
 from library.utils import isbn10_to_isbn
 
 
-class AuthorWidget(s2forms.ModelSelect2Widget):
-    search_fields = [
-        "surname__icontains",
-        "forenames__icontains",
-        "preferred_forenames__icontains",
-    ]
+class AuthorWidget(Select):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.attrs.update({"class": "ui search selection dropdown"})
 
 
-class TagWidget(s2forms.Select2TagWidget):
+class TagWidget(SelectMultiple):
     def value_from_datadict(self, data, files, name):
         values = super().value_from_datadict(data, files, name)
         return ",".join(values)
@@ -28,14 +26,15 @@ class TagWidget(s2forms.Select2TagWidget):
         ]
         return [(None, subgroup, 0)]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.attrs.update({"class": "ui search multiple selection dropdown"})
+
 
 class AuthorForm(ModelForm):
     class Meta:
         model = Author
         fields = "__all__"
-        widgets = {
-            "primary_language": s2forms.Select2Widget,
-        }
 
     def __init__(self, *args, **kwargs):
         super(AuthorForm, self).__init__(*args, **kwargs)
@@ -46,9 +45,7 @@ class BookForm(ModelForm):
         model = Book
         exclude = ["additional_authors", "created_date"]
         widgets = {
-            "edition_language": s2forms.Select2Widget,
             "first_author": AuthorWidget,
-            "language": s2forms.Select2Widget,
             "tags": TagWidget,
         }
 

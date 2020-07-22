@@ -1,11 +1,5 @@
 {% from "macros.html" import link_amazon, link_goodreads, link_google with context %}
 {% extends "base.html" %}
-{% block header %}
-  {{ form.media.css }}
-
-  <link href="{{ static("select2-bootstrap4.min.css") }}" type="text/css" media="screen" rel="stylesheet">
-{% endblock header %}
-
 {% block content %}
   {% if form.instance.id %}
     <div class="ui segment">
@@ -94,9 +88,9 @@
 {% endblock content %}
 
 {% block footer %}
-  {{ form.media.js }}
   <script>
     $(document).ready(function() {
+      $('#id_tags').dropdown({'allowAdditions': true});
       $('select').dropdown();
     })
   </script>

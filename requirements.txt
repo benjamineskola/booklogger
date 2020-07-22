@@ -3,7 +3,6 @@ commonmark
 curlylint
 Django >=3.0.2,<4.0
 django-stubs
-django-select2
 django_heroku
 flake8
 flake8-bugbear

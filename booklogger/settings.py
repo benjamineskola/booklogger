@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.postgres",
-    "django_select2",
 ]
 
 MIDDLEWARE = [
@@ -139,14 +138,6 @@ USE_TZ = True
 STATIC_URL = "/static/"
 
 LOGIN_URL = "/admin/login/"
-
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
-        "LOCATION": "select2_cache",
-    }
-}
-SELECT2_CACHE_BACKEND = "default"
 
 if os.environ.get("DYNO"):
     import django_heroku
