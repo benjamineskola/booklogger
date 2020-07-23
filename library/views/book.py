@@ -4,6 +4,7 @@ from itertools import groupby
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import F, Q
+from django.db.models.functions import Lower
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
@@ -191,8 +192,15 @@ class GenericLogView(generic.ListView):
 
         if year := self.kwargs.get("year"):
             if year == "sometime" or str(year) == "1":
+                ordering = [
+                    Lower(F("book__first_author__surname")),
+                    Lower(F("book__first_author__forenames")),
+                    "book__series",
+                    "book__series_order",
+                    "book__title",
+                ]
                 self.page_title = "Read sometime"
-                entries = entries.filter(end_date__year=1)
+                entries = entries.filter(end_date__year=1).order_by(*ordering)
             else:
                 self.page_title = f"Read in {year}"
                 entries = entries.filter(end_date__year=year)
