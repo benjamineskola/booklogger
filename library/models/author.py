@@ -1,5 +1,5 @@
 import re
-from typing import Any, MutableMapping, Tuple
+from typing import Any, MutableMapping, Tuple, Set
 
 import unidecode
 from django.contrib.postgres.search import TrigramSimilarity
@@ -75,6 +75,14 @@ class Author(models.Model):
     slug = models.SlugField(blank=True, default="")
 
     primary_language = models.CharField(max_length=2, default="en", choices=LANGUAGES)
+
+    primary_identity = models.ForeignKey(
+        "self",
+        related_name="pseudonyms",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
 
     def __str__(self) -> str:
         if not self.forenames:
@@ -162,6 +170,17 @@ class Author(models.Model):
             | self.first_authored_books.filter(first_author_role="editor").distinct()
         )
         return books
+
+    @property
+    def identities(self) -> Set["Author"]:
+        identities = set(self.pseudonyms.all())
+        if self.primary_identity:
+            identities.add(self.primary_identity)
+            identities |= self.primary_identity.identities
+
+        if self in identities:
+            identities.remove(self)
+        return identities
 
     @staticmethod
     def normalise_name(name: str) -> MutableMapping[str, str]:

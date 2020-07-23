@@ -1,4 +1,4 @@
-{% from "macros.html" import author_link with context %}
+{% from "macros.html" import author_link, author_list with context %}
 <div class="item">
   <div class="content">
     <span class="header">{{ author_link(author) }}</span>
@@ -13,6 +13,10 @@
       {%- if author.books.count() > 1 %}
         and {{ author.books.count() -1 }} other{% if author.books.count() > 2 %}s{% endif %}
       {%- endif %}.
+
+      {% if author.identities %}
+        Also writes as {{ author_list(author.identities, full=True) }}.
+      {% endif %}
 
       {% if author.primary_language != "en" %}
         (writes in {{ author.get_primary_language_display() }})

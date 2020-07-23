@@ -49,6 +49,9 @@ class AuthorForm(ModelForm):
     class Meta:
         model = Author
         fields = "__all__"
+        widgets = {
+            "primary_identity": AuthorWidget,
+        }
 
     def __init__(self, *args, **kwargs):
         super(AuthorForm, self).__init__(*args, **kwargs)
