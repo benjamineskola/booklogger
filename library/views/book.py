@@ -204,9 +204,6 @@ class GenericLogView(generic.ListView):
             else:
                 self.page_title = f"Read in {year}"
                 entries = entries.filter(end_date__year=year)
-        else:
-            year = entries.last().end_date.year
-            entries = entries.filter(end_date__year=year)
 
         return entries.filter_by_request(self.request).distinct()
 
@@ -232,6 +229,11 @@ class CurrentlyReadingView(GenericLogView):
 class ReadView(GenericLogView):
     filter_by = {"end_date__isnull": False}
     page_title = "Read Books"
+
+    def get_queryset(self, *args, **kwargs):
+        entries = super().get_queryset(*args, **kwargs)
+        year = entries.last().end_date.year
+        return entries.filter(end_date__year=year)
 
 
 @login_required
