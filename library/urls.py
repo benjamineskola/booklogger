@@ -75,6 +75,11 @@ urlpatterns = [
                     name="books_read",
                 ),
                 re_path(
+                    r"^reviewed/(?:(?P<page>\d+)/)?",
+                    views.book.ReviewedView.as_view(),
+                    name="books_reviewed",
+                ),
+                re_path(
                     r"^toread/(?:(?P<format>[a-z]\w+)/)?(?:(?P<page>\d+)/)?",
                     views.book.UnreadIndexView.as_view(),
                     name="books_unread",
@@ -83,6 +88,11 @@ urlpatterns = [
                     r"^unowned/(?:(?P<format>[a-z]\w+)/)?(?:(?P<page>\d+)/)?",
                     views.book.UnownedIndexView.as_view(),
                     name="books_unowned",
+                ),
+                re_path(
+                    r"^unreviewed/(?:(?P<page>\d+)/)?",
+                    views.book.UnreviewedView.as_view(),
+                    name="books_unreviewed",
                 ),
                 re_path(
                     r"^(?:(?P<format>[a-z]\w+)/)?(?:(?P<page>\d+)/)?",

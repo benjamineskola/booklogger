@@ -1,7 +1,7 @@
 {% from "macros/card.html" import book_list with context %}
 {% extends "base.html" %}
 {% block content %}
-  {% if request.resolver_match.url_name not in ["books_read", "books_read_undated", "series_details", "tag_details"] %}
+  {% if request.resolver_match.url_name not in ["books_read", "books_read_undated", "series_details", "tag_details", "books_reviewed", "books_unreviewed"] %}
     {% if not format %}
       <p class="ui top attached segment">
         Formats: <a href="{{ url("library:" + request.resolver_match.url_name) }}">all</a>

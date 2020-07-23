@@ -163,6 +163,20 @@ class TagIndexView(GenericIndexView):
         return context
 
 
+class ReviewedView(GenericIndexView):
+    page_title = "Reviewed Books"
+
+    def get_queryset(self):
+        return super().get_queryset().exclude(review="")
+
+
+class UnreviewedView(GenericIndexView):
+    page_title = "Unreviewed Books"
+
+    def get_queryset(self):
+        return super().get_queryset().filter(review="").read()
+
+
 class DetailView(generic.DetailView):
     model = Book
 
