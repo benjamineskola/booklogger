@@ -63,24 +63,45 @@ $(document).ready(function () {
       });
     });
   });
+
+  $(".ui.rating").rating({
+    clearable: true,
+    onRate: function (value) {
+      $.ajax({
+        type: "POST",
+        url: "/book/" + $(this).data("book") + "/rate/",
+        data: "rating=" + Number(value),
+        dataType: "json",
+        beforeSend: function (xhr, settings) {
+          xhr.setRequestHeader(
+            "X-CSRFToken",
+            $("[name=csrfmiddlewaretoken]").val()
+          );
+        },
+      });
+    },
+  });
+  $(".ui.accordion").accordion();
+  $("#navbar .ui.dropdown").dropdown();
 });
 
-$(".ui.rating").rating({
-  clearable: true,
-  onRate: function (value) {
-    $.ajax({
-      type: "POST",
-      url: "/book/" + $(this).data("book") + "/rate/",
-      data: "rating=" + Number(value),
-      dataType: "json",
-      beforeSend: function (xhr, settings) {
-        xhr.setRequestHeader(
-          "X-CSRFToken",
-          $("[name=csrfmiddlewaretoken]").val()
-        );
-      },
-    });
-  },
-});
-$(".ui.accordion").accordion();
-$("#navbar .ui.dropdown").dropdown();
+function load_next_page(year, url) {
+  $(".loader").visibility({
+    onTopVisible: function (calculations) {
+      var placeholder = $(this);
+      $.ajax({
+        type: "GET",
+        url: url,
+        success: function (data) {
+          var body = $(data).find(".two.doubling.cards").parent();
+          console.log(body);
+          placeholder.html(body);
+          placeholder.attr("class", "");
+        },
+        error: function () {
+          placeholder.text("Failed to load " + year);
+        },
+      });
+    },
+  });
+}

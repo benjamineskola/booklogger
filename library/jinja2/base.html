@@ -24,6 +24,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
     <link rel="stylesheet" href="{{ static("style.css") }}">
     <title>{% if page_title %}{{ page_title }} — {% endif %}Booklogger</title>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+    <script src="{{ static("script.js") }}"></script>
     {% block header %}
     {% endblock %}
   </head>
@@ -151,9 +154,6 @@
       {% endif %}
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.1.1.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
-    <script src="{{ static("script.js") }}"></script>
     {% block footer %}
     {% endblock footer %}
   </body>

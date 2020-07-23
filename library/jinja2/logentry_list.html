@@ -4,16 +4,38 @@
   {% if entries[0].currently_reading %}
     {{ book_list(entries) }}
   {% else %}
-    {% for group in entries|groupby('end_date.year')|reverse %}
-      {% if not year %}
-        {% if group.grouper == 1%}
-          <h2 class="ui dividing header">Read sometime</h2>
-        {% else %}
-          <h2 class="ui dividing header">Read in {{ group.grouper }}</h2>
-        {% endif %}
+    {% set display_year = entries.first().end_date.year %}
+    {% if not year %}
+      {% if display_year == 1%}
+        <h2 class="ui dividing header">Read sometime</h2>
+      {% else %}
+        <h2 class="ui dividing header">Read in {{ display_year }}</h2>
+      {% endif %}
+    {% endif %}
+
+    {{ book_list(entries) }}
+
+    {% if not year or request.GET.get('infinite') == 'true' %}
+      {% if display_year > 2010 %}
+        {% set next_year = display_year - 1 %}
+      {% elif display_year == 2010 %}
+        {% set next_year = 2007 %}
+      {% elif display_year == 2007 %}
+        {% set next_year = 2004 %}
+      {% else %}
+        {% set next_year = "sometime" %}
       {% endif %}
 
-      {{ book_list(group.list) }}
-    {% endfor%}
+      {% if display_year > 1 %}
+        <div class="loader" style="margin-top: 2rem;">
+          Loading {{ next_year }}
+        </div>
+        <script>
+          setTimeout(function() {
+            load_next_page("{{ next_year }}", "{{ url("library:books_read", kwargs={"year": next_year}) }}?infinite=true");
+          }, 2*1000);
+        </script>
+      {% endif%}
+    {% endif %}
   {% endif %}
 {% endblock content %}
