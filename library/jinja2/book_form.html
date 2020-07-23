@@ -91,7 +91,7 @@
   <script>
     $(document).ready(function() {
       $('#id_tags').dropdown({'allowAdditions': true, 'values': {{ form.fields['tags'].widget.values_dict | json | safe }}});
-      $('select').dropdown();
+      $("select").dropdown({ fullTextSearch: true });
     })
   </script>
 {% endblock footer %}

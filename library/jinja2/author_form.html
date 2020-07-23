@@ -38,8 +38,8 @@
 
 {% block footer %}
   <script>
-    $(document).ready(function() {
-      $('select').dropdown();
-    })
+    $(document).ready(function () {
+      $("select").dropdown({ fullTextSearch: true });
+    });
   </script>
 {% endblock footer %}
