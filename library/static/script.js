@@ -99,7 +99,8 @@ function load_next_page(year, url) {
           placeholder.attr("class", "");
         },
         error: function () {
-          placeholder.text("Failed to load " + year);
+          placeholder.find(".message").addClass("hidden");
+          placeholder.find(".error.message").removeClass("hidden");
         },
       });
     },

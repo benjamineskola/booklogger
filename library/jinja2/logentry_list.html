@@ -28,12 +28,26 @@
 
       {% if display_year > 1 %}
         <div class="loader" style="margin-top: 2rem;">
-          Loading {{ next_year }}
+          <div id="loading-{{ next_year }}" class="ui icon message">
+            <i class="spinner loading icon"></i>
+            Loading {{ next_year }}
+          </div>
+          <div id="error-{{ next_year }}" class="ui error icon message hidden">
+            <i class="exclamation circle icon"></i>
+            <div class="content">
+              <div class="header">Failed to load {{ next_year }}.</div>
+              <p><span class="ui basic negative button">Retry?</span></p>
+            </div>
+          </div>
         </div>
         <script>
-          setTimeout(function() {
+          setTimeout(function () {
             load_next_page("{{ next_year }}", "{{ url("library:books_read", kwargs={"year": next_year}) }}?infinite=true");
-          }, 2*1000);
+          }, 2 * 1000);
+
+          $(".error.message .button").on("click", function () {
+            load_next_page("{{ next_year }}", "{{ url("library:books_read", kwargs={"year": next_year}) }}?infinite=true");
+          });
         </script>
       {% endif%}
     {% endif %}
