@@ -8,7 +8,7 @@ from django.forms import (
     inlineformset_factory,
 )
 
-from library.models import Author, Book, BookAuthor
+from library.models import Author, Book, BookAuthor, LogEntry
 from library.utils import isbn10_to_isbn
 
 
@@ -122,4 +122,11 @@ class BookAuthorForm(ModelForm):
         super(BookAuthorForm, self).__init__(*args, **kwargs)
 
 
-BookAuthorFormSet = inlineformset_factory(Book, BookAuthor, form=BookAuthorForm,)
+class LogEntryForm(ModelForm):
+    class Meta:
+        model = BookAuthor
+        fields = "__all__"
+
+
+BookAuthorFormSet = inlineformset_factory(Book, BookAuthor, form=BookAuthorForm)
+LogEntryFormSet = inlineformset_factory(Book, LogEntry, form=LogEntryForm, extra=0)

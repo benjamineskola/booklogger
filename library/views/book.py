@@ -10,8 +10,7 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views import generic
 from django.views.decorators.http import require_POST
-
-from library.forms import BookAuthorFormSet, BookForm
+from library.forms import BookAuthorFormSet, BookForm, LogEntryFormSet
 from library.models import Book, LogEntry
 from library.utils import oxford_comma
 
@@ -306,15 +305,24 @@ class CreateOrUpdateView(LoginRequiredMixin):
 
     def form_valid(self, form):
         context = self.get_context_data()
-        inline_formset = context["inline_formset"]
+        bookauthor_formset = context["bookauthor_formset"]
+        logentry_formset = context["logentry_formset"]
         self.object = form.save()
 
-        if inline_formset.is_valid():
-            inline_formset.instance = self.object
-            inline_formset.save()
-            for subform in inline_formset:
-                if inline_formset.data.get(subform.prefix + "-DELETE") == "on":
-                    subform.instance.delete()
+        if bookauthor_formset.is_valid() and logentry_formset.is_valid():
+            bookauthor_formset.instance = self.object
+            bookauthor_formset.save()
+            logentry_formset.instance = self.object
+            logentry_formset.save()
+
+            for subform in bookauthor_formset:
+                if bookauthor_formset.data.get(subform.prefix + "-DELETE") == "on":
+                    if subform.instance.id:
+                        subform.instance.delete()
+            for subform in logentry_formset:
+                if logentry_formset.data.get(subform.prefix + "-DELETE") == "on":
+                    if subform.instance.id:
+                        subform.instance.delete()
 
             return super(CreateOrUpdateView, self).form_valid(form)
         else:
@@ -324,11 +332,15 @@ class CreateOrUpdateView(LoginRequiredMixin):
         context = super(CreateOrUpdateView, self).get_context_data(**kwargs)
 
         if self.request.POST:
-            context["inline_formset"] = BookAuthorFormSet(
+            context["bookauthor_formset"] = BookAuthorFormSet(
+                self.request.POST, instance=self.object
+            )
+            context["logentry_formset"] = LogEntryFormSet(
                 self.request.POST, instance=self.object
             )
         else:
-            context["inline_formset"] = BookAuthorFormSet(instance=self.object)
+            context["bookauthor_formset"] = BookAuthorFormSet(instance=self.object)
+            context["logentry_formset"] = LogEntryFormSet(instance=self.object)
 
         if self.object:
             context["page_title"] = f"Editing {self.object}"

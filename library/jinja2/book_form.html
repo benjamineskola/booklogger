@@ -49,7 +49,7 @@
           {% endfor %}
         </div> {# two column grid #}
 
-        {% if inline_formset %}
+        {% for inline_formset in [bookauthor_formset, logentry_formset] %}
           <div class="ui segment">
             {{ inline_formset.management_form }}
             {% for form in inline_formset %}
@@ -65,7 +65,7 @@
               </div> {# form #}
             {% endfor %}
           </div> {# segment #}
-        {% endif %}
+        {% endfor %}
 
         <div class="ui segment">
           <div class="ui form">
