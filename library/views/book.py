@@ -36,10 +36,22 @@ class GenericIndexView(generic.ListView):
 
         if sort_by := self.request.GET.get("sort_by"):
             field_names = [f.name for f in Book._meta.get_fields()]
-            if sort_by.startswith("-") and sort_by[1:] in field_names:
-                books = books.order_by(F(sort_by[1:]).desc(nulls_last=True))
-            elif sort_by in field_names:
-                books = books.order_by(sort_by)
+            field_names.append("read_date")
+
+            if sort_by.startswith("-"):
+                sort_by = sort_by[1:]
+                reverse_sort = True
+            else:
+                reverse_sort = False
+
+            if sort_by in field_names:
+                if sort_by == "read_date":
+                    sort_by = "log_entries__end_date"
+
+                if reverse_sort:
+                    books = books.order_by(F(sort_by).desc(nulls_last=True))
+                else:
+                    books = books.order_by(sort_by)
 
         return books.filter_by_request(self.request).distinct()
 
