@@ -49,9 +49,11 @@ class GenericIndexView(generic.ListView):
                     sort_by = "log_entries__end_date"
 
                 if reverse_sort:
-                    books = books.order_by(F(sort_by).desc(nulls_last=True))
+                    books = books.order_by(
+                        F(sort_by).desc(nulls_last=True), *Book._meta.ordering
+                    )
                 else:
-                    books = books.order_by(sort_by)
+                    books = books.order_by(sort_by, *Book._meta.ordering)
 
         return books.filter_by_request(self.request).distinct()
 
