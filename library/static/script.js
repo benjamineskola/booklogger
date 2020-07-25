@@ -42,7 +42,7 @@ $(document).ready(function () {
         dataType: "json",
         success: function (data) {
           var progress_bar = $("#book-" + form.data("book") + " .bar");
-          progress_bar.css("width", data["progress"] + "%");
+          progress_bar.css("width", data["percentage"] + "%");
 
           var progress_text = $(
             "#book-" + form.data("book") + " .extra.content .progress-date"

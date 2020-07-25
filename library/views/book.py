@@ -284,20 +284,22 @@ def update_progress(request, slug):
     book = get_object_or_404(Book, slug=slug)
 
     if request.POST["progress_type"] == "pages":
-        progress = int(int(request.POST["value"]) / book.page_count * 100)
+        page = int(request.POST["value"])
+        percentage = None
     else:
-        progress = int(request.POST["value"])
+        page = None
+        percentage = int(request.POST["value"])
 
-    if progress:
-        book.update_progress(progress)
+    percentage = book.update_progress(percentage=percentage, page=page)
+
+    if page and book.page_count:
+        progress_text = f"on page {page} of {book.page_count} ({percentage}% done)"
+    else:
+        progress_text = f"{percentage}% done"
+    progress_text += f" on {timezone.now().strftime('%d %B, %Y')}"
 
     response = HttpResponse(
-        json.dumps(
-            {
-                "progress": progress,
-                "progress_text": f"{progress}% on {timezone.now().strftime('%d %B, %Y')}",
-            }
-        ),
+        json.dumps({"percentage": percentage, "progress_text": progress_text})
     )
     return response
 

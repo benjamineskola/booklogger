@@ -50,7 +50,8 @@ class LogEntry(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="log_entries")
     start_date = models.DateTimeField(default=timezone.now, blank=True, null=True)
     end_date = models.DateTimeField(db_index=True, blank=True, null=True)
-    progress = models.PositiveSmallIntegerField(default=0)
+    progress_percentage = models.PositiveSmallIntegerField(default=0)
+    progress_page = models.PositiveSmallIntegerField(default=0)
     progress_date = models.DateTimeField(db_index=True, default=timezone.now)
 
     class DatePrecision(models.IntegerChoices):

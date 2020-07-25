@@ -101,8 +101,14 @@
   <div class="extra content">
     {% if entry %}
       <span class="read-dates">{{ format_date_range(entry.start_date, entry.start_precision, entry.end_date, entry.end_precision) }}</span>
-      {%- if entry.currently_reading and entry.progress -%}
-        ; <span class="progress-date">{{ entry.progress }}% on {{ format_date(entry.progress_date, 0) }}</span>
+      {%- if entry.currently_reading and entry.progress_percentage -%}
+        ; <span class="progress-date">
+        {%- if entry.progress_page and book.page_count -%}
+          on page {{ entry.progress_page }} of {{ book.page_count }} ({{ entry.progress_percentage }}% done)
+        {%- else -%}
+          {{ entry.progress_percentage }}% done
+        {%- endif %}
+        on {{ format_date(entry.progress_date, 0) }}</span>
       {%- endif %}.
     {% endif %}
     {% if user.is_authenticated %}

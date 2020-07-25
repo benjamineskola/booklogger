@@ -522,9 +522,8 @@ class Book(models.Model):
 
     def finish_reading(self) -> None:
         entry = self.log_entries.get(end_date=None)
+        self.update_progress(percentage=100, page=self.page_count)
         entry.end_date = timezone.now()
-        entry.progress_date = timezone.now()
-        entry.progress = 100
         entry.save()
 
         if self.parent_edition:
@@ -532,11 +531,24 @@ class Book(models.Model):
             if sibling_editions.count() == sibling_editions.read().count():
                 self.parent_edition.finish_reading()
 
-    def update_progress(self, progress: int) -> None:
+    def update_progress(
+        self, percentage: Optional[int] = None, page: Optional[int] = None
+    ) -> int:
+        if not percentage:
+            if not page:
+                raise ValueError("Must specify percentage or page")
+            elif not self.page_count:
+                raise ValueError("Must specify percentage when page count is unset")
+            else:
+                percentage = int(page / self.page_count * 100)
+
         entry = self.log_entries.get(end_date=None)
         entry.progress_date = timezone.now()
-        entry.progress = progress
+
+        entry.progress_page = page or 0
+        entry.progress_percentage = percentage
         entry.save()
+        return percentage
 
     def mark_read_sometime(self) -> None:
         self.log_entries.create(start_date=None, end_date="0001-01-01 00:00")
