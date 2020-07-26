@@ -87,7 +87,11 @@ urlpatterns = [
                 ),
                 re_path(
                     r"^unowned/(?:(?P<format>[a-z]\w+)/)?(?:(?P<page>\d+)/)?",
-                    views.book.UnownedIndexView.as_view(),
+                    views.book.IndexView.as_view(),
+                    {
+                        "filter_by": {"owned_by__isnull": True, "want_to_read": True},
+                        "page_title": "Unowned Books",
+                    },
                     name="books_unowned",
                 ),
                 re_path(

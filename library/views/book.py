@@ -17,12 +17,12 @@ from library.models import Book, LogEntry
 from library.utils import oxford_comma
 
 
-class GenericIndexView(generic.ListView):
+class IndexView(generic.ListView):
     paginate_by = 100
 
     filter_by = {}
     sort_by = None
-    page_title = ""
+    page_title = "All Books"
 
     def get_queryset(self):
         books = (
@@ -81,6 +81,9 @@ class GenericIndexView(generic.ListView):
             "owned": self.get_queryset().filter(owned_by__isnull=False).count(),
             "read": self.get_queryset().read().count(),
         }
+
+        if "page_title" in self.kwargs:
+            self.page_title = self.kwargs["page_title"]
         context["page_title"] = self.page_title + f" ({context['stats']['total']})"
         if self.sort_by:
             context["page_title"] += f" by {re.sub(r'_', ' ', self.sort_by.title())}"
@@ -99,24 +102,12 @@ class GenericIndexView(generic.ListView):
         return context
 
 
-class IndexView(GenericIndexView):
-    page_title = "All Books"
-
-
-class OwnedIndexView(GenericIndexView):
+class OwnedIndexView(IndexView):
     filter_by = {"owned_by__username": "ben"}
     page_title = "Owned Books"
 
-    def get_queryset(self):
-        return super().get_queryset()
 
-
-class UnownedIndexView(GenericIndexView):
-    filter_by = {"owned_by__isnull": True, "want_to_read": True}
-    page_title = "Unowned Books"
-
-
-class BorrowedIndexView(GenericIndexView):
+class BorrowedIndexView(IndexView):
     page_title = "Borrowed Books"
 
     def get_queryset(self):
@@ -127,7 +118,7 @@ class BorrowedIndexView(GenericIndexView):
         return books
 
 
-class UnreadIndexView(GenericIndexView):
+class UnreadIndexView(IndexView):
     filter_by = {"want_to_read": True}
     page_title = "Unread Books"
 
@@ -141,7 +132,7 @@ class UnreadIndexView(GenericIndexView):
         return books
 
 
-class SeriesIndexView(GenericIndexView):
+class SeriesIndexView(IndexView):
     def get_queryset(self):
         books = super().get_queryset()
         books = books.filter(series=self.kwargs["series"])
@@ -155,7 +146,7 @@ class SeriesIndexView(GenericIndexView):
         return context
 
 
-class TagIndexView(GenericIndexView):
+class TagIndexView(IndexView):
     def get_queryset(self):
         books = super().get_queryset()
         tags = [tag.strip() for tag in self.kwargs["tag_name"].split(",")]
@@ -176,14 +167,14 @@ class TagIndexView(GenericIndexView):
         return context
 
 
-class ReviewedView(GenericIndexView):
+class ReviewedView(IndexView):
     page_title = "Reviewed Books"
 
     def get_queryset(self):
         return super().get_queryset().exclude(review="")
 
 
-class UnreviewedView(GenericIndexView):
+class UnreviewedView(IndexView):
     page_title = "Unreviewed Books"
 
     def get_queryset(self):
