@@ -17,7 +17,7 @@ urlpatterns = [
         ),
     ),
     re_path(
-        r"^authors/(?:(?P<page>\d+)/)?",
+        r"^authors(?:/(?P<page>d+))?/",
         views.author.IndexView.as_view(),
         name="author_list",
     ),
@@ -55,38 +55,38 @@ urlpatterns = [
                     name="books_currently_reading",
                 ),
                 re_path(
-                    r"^borrowed/(?:(?P<format>[a-z]\w+)/)?(?:(?P<page>\d+)/)?",
+                    r"^borrowed(?:/(?P<format>[a-z]+))?(?:/(?P<page>d+))?/",
                     views.book.BorrowedIndexView.as_view(),
                     name="books_borrowed",
                 ),
                 re_path(
-                    r"^owned/bydate/(?:(?P<page>\d+)/)?",
+                    r"^owned/bydate(?:/(?P<page>d+))?/",
                     views.book.OwnedIndexView.as_view(),
                     {"sort_by": "-acquired_date"},
                     name="books_owned_by_date",
                 ),
                 re_path(
-                    r"^owned/(?:(?P<format>[a-z]\w+)/)?(?:(?P<page>\d+)/)?",
+                    r"^owned(?:/(?P<format>[a-z]+))?(?:/(?P<page>d+))?/",
                     views.book.OwnedIndexView.as_view(),
                     name="books_owned",
                 ),
                 re_path(
-                    r"^read/(?:(?P<year>(\d+|sometime))/)?",
+                    r"^read(?:/(?P<year>(\d+|sometime)))?/",
                     views.book.ReadView.as_view(),
                     name="books_read",
                 ),
                 re_path(
-                    r"^reviewed/(?:(?P<page>\d+)/)?",
+                    r"^reviewed(?:/(?P<page>d+))?/",
                     views.book.ReviewedView.as_view(),
                     name="books_reviewed",
                 ),
                 re_path(
-                    r"^toread/(?:(?P<format>[a-z]\w+)/)?(?:(?P<page>\d+)/)?",
+                    r"^toread(?:/(?P<format>[a-z]+))?(?:/(?P<page>d+))?/",
                     views.book.UnreadIndexView.as_view(),
                     name="books_unread",
                 ),
                 re_path(
-                    r"^unowned/(?:(?P<format>[a-z]\w+)/)?(?:(?P<page>\d+)/)?",
+                    r"^unowned(?:/(?P<format>[a-z]+))?(?:/(?P<page>d+))?/",
                     views.book.IndexView.as_view(),
                     {
                         "filter_by": {"owned_by__isnull": True, "want_to_read": True},
@@ -95,12 +95,12 @@ urlpatterns = [
                     name="books_unowned",
                 ),
                 re_path(
-                    r"^unreviewed/(?:(?P<page>\d+)/)?",
+                    r"^unreviewed(?:/(?P<page>d+))?/",
                     views.book.UnreviewedView.as_view(),
                     name="books_unreviewed",
                 ),
                 re_path(
-                    r"^(?:(?P<format>[a-z]\w+)/)?(?:(?P<page>\d+)/)?",
+                    r"^(?:(?P<format>[a-z]+)/)?(?:(?P<page>d+)/)?",
                     views.book.IndexView.as_view(),
                     name="books_all",
                 ),
@@ -117,6 +117,6 @@ urlpatterns = [
     path("stats/", views.stats, name="stats"),
     path("tag/<str:tag_name>/", views.book.TagIndexView.as_view(), name="tag_details"),
     path("tags/", views.tag_cloud, name="tag_cloud"),
-    re_path(r"^report/(?:(?P<page>\d+)/?)?", views.report.report, name="report"),
+    re_path(r"^report(?:/(?P<page>d+))?/", views.report.report, name="report"),
     path("bulkimport/", views.importer.bulk_import, name="bulk_import"),
 ]
