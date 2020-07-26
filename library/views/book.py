@@ -1,3 +1,4 @@
+import re
 import json
 from itertools import groupby
 
@@ -20,6 +21,7 @@ class GenericIndexView(generic.ListView):
     paginate_by = 100
 
     filter_by = {}
+    sort_by = None
     page_title = ""
 
     def get_queryset(self):
@@ -28,32 +30,41 @@ class GenericIndexView(generic.ListView):
             .prefetch_related("additional_authors", "log_entries")
             .all()
         )
+
+        if "filter_by" in self.kwargs:
+            self.filter_by = self.kwargs["filter_by"]
+
         if self.filter_by:
             books = books.filter(**self.filter_by)
 
         if edition_format := self.kwargs.get("format"):
             books = books.filter_by_format(edition_format)
 
-        if sort_by := self.request.GET.get("sort_by"):
+        if "sort_by" in self.request.GET:
+            self.sort_by = self.request.GET["sort_by"]
+        elif "sort_by" in self.kwargs:
+            self.sort_by = self.kwargs["sort_by"]
+
+        if self.sort_by:
             field_names = [f.name for f in Book._meta.get_fields()]
             field_names.append("read_date")
 
-            if sort_by.startswith("-"):
-                sort_by = sort_by[1:]
+            if self.sort_by.startswith("-"):
+                self.sort_by = self.sort_by[1:]
                 reverse_sort = True
             else:
                 reverse_sort = False
 
-            if sort_by in field_names:
-                if sort_by == "read_date":
-                    sort_by = "log_entries__end_date"
+            if self.sort_by in field_names:
+                if self.sort_by == "read_date":
+                    self.sort_by = "log_entries__end_date"
 
                 if reverse_sort:
                     books = books.order_by(
-                        F(sort_by).desc(nulls_last=True), *Book._meta.ordering
+                        F(self.sort_by).desc(nulls_last=True), *Book._meta.ordering
                     )
                 else:
-                    books = books.order_by(sort_by, *Book._meta.ordering)
+                    books = books.order_by(self.sort_by, *Book._meta.ordering)
 
         return books.filter_by_request(self.request).distinct()
 
@@ -71,6 +82,20 @@ class GenericIndexView(generic.ListView):
             "read": self.get_queryset().read().count(),
         }
         context["page_title"] = self.page_title + f" ({context['stats']['total']})"
+        if self.sort_by:
+            context["page_title"] += f" by {re.sub(r'_', ' ', self.sort_by.title())}"
+
+            if self.sort_by in ["edition_format", "rating"] or "date" in self.sort_by:
+                self.template_name = "book_list_grouped.html"
+                context["group_by"] = self.sort_by
+                context["page_groups"] = [
+                    (d, list(l))
+                    for d, l in groupby(
+                        context["page_obj"].object_list,
+                        lambda b: getattr(b, self.sort_by) or None,
+                    )
+                ]
+
         return context
 
 
@@ -84,32 +109,6 @@ class OwnedIndexView(GenericIndexView):
 
     def get_queryset(self):
         return super().get_queryset()
-
-
-class OwnedByDateView(GenericIndexView):
-    template_name = "book_list_by_date.html"
-    filter_by = {"owned_by__username": "ben"}
-    page_title = "Owned Books by Date"
-
-    def get_queryset(self):
-        books = (
-            super()
-            .get_queryset()
-            .order_by(F("acquired_date").desc(nulls_last=True), *Book._meta.ordering)
-        )
-        return books
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        context["page_groups"] = [
-            (d, list(l))
-            for d, l in groupby(
-                context["page_obj"].object_list, lambda b: b.acquired_date or "Undated"
-            )
-        ]
-
-        return context
 
 
 class UnownedIndexView(GenericIndexView):

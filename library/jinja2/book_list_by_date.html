@@ -1,8 +1,0 @@
-{% from "macros/card.html" import book_list with context %}
-{% extends "base.html" %}
-{% block content %}
-  {% for date, items in page_groups %}
-    <h2 class="ui header">{{ date }}</h2>
-    {{ book_list(items) }}
-  {% endfor %}
-{% endblock content %}
