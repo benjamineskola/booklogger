@@ -177,3 +177,11 @@ def stats(request):
             "books_by_year": books_by_year,
         },
     )
+
+
+def add_slash(request, *args, **kwargs):
+    url = request.path + "/"
+    if request.GET:
+        url += "?" + request.GET.urlencode()
+
+    return redirect(url, permanent=True)
