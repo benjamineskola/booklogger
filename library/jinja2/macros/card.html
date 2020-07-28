@@ -123,7 +123,7 @@
 
   {% if entry and entry.currently_reading %}
     <div class="ui progress bottom attached blue">
-      <div class="bar" role="progressbar" style="width: {{entry.progress}}%" aria-valuenow="{{ entry.progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+      <div class="bar" role="progressbar" style="width: {{ entry.progress_percentage }}%" aria-valuenow="{{ entry.progress_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
     </div>
   {% endif %}
 </div> {# card #}
