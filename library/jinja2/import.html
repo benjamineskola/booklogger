@@ -15,7 +15,7 @@
             {% endif %}
 
             <div class="ui form extra">
-              <form action="{{url('library:book_import')}}" method="post">
+              <form action="{{ url('library:book_import') }}" method="post">
                 <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
                 <input type="hidden" name="query" value="{{ query }}">
                 <input type="hidden" name="data" value="{{ goodreads_result | json }}">
@@ -29,7 +29,7 @@
   {% endif %}
 
   <div class="ui form">
-    <form action="{{url('library:book_import')}}" method="get">
+    <form action="{{ url('library:book_import') }}" method="get">
       <div class="two fields">
         <div class="ui field">
           <input type="text" name="query" placeholder="Search" />

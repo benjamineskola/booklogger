@@ -2,7 +2,7 @@
   {{ field.label_tag() }} {{ field }}
 </div>
 {% for error in field.errors %}
-  <label for="{{field.id_for_label}}" class="ui error message">
+  <label for="{{ field.id_for_label }}" class="ui error message">
     {{ error|escape }}
   </label>
 {% endfor %}

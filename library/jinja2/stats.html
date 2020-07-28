@@ -43,14 +43,14 @@
 
           {% for gender, n in [("men", 1), ("women", 2)] %}
             By {{ gender }}:
-            {{ year_books["breakdowns"][gender]["fiction_count"] }} ({{ year_books["breakdowns"][gender]["percentage_fiction"] | round(2)}}%) <a href="{{ url_base}}?tags=fiction&gender={{n}}">fiction</a>, 
-            {{ year_books["breakdowns"][gender]["nonfiction_count"] }} ({{ year_books["breakdowns"][gender]["percentage_nonfiction"] | round(2)}}%) <a href="{{ url_base}}?tags=fiction&gender={{n}}">non-fiction</a>.<br>
+            {{ year_books["breakdowns"][gender]["fiction_count"] }} ({{ year_books["breakdowns"][gender]["percentage_fiction"] | round(2) }}%) <a href="{{ url_base }}?tags=fiction&gender={{ n }}">fiction</a>,
+            {{ year_books["breakdowns"][gender]["nonfiction_count"] }} ({{ year_books["breakdowns"][gender]["percentage_nonfiction"] | round(2) }}%) <a href="{{ url_base }}?tags=fiction&gender={{ n }}">non-fiction</a>.<br>
           {% endfor %}
 
           {% for genre in ["fiction", "non-fiction"] %}
             {{ genre.title() }}:
-            {{ year_books["breakdowns"][genre]["women_count"] }} ({{ year_books["breakdowns"][genre]["percentage_women"] | round(2) }}%) by <a href="{{ url_base}}?tags={{ genre }}&gender=2">women</a>, 
-            {{ year_books["breakdowns"][genre]["men_count"] }} ({{ year_books["breakdowns"][genre]["percentage_men"] | round(2) }}%) by <a href="{{ url_base}}?tags={{ genre }}&gender=1">men</a>.<br>
+            {{ year_books["breakdowns"][genre]["women_count"] }} ({{ year_books["breakdowns"][genre]["percentage_women"] | round(2) }}%) by <a href="{{ url_base }}?tags={{ genre }}&gender=2">women</a>,
+            {{ year_books["breakdowns"][genre]["men_count"] }} ({{ year_books["breakdowns"][genre]["percentage_men"] | round(2) }}%) by <a href="{{ url_base }}?tags={{ genre }}&gender=1">men</a>.<br>
           {% endfor %}
         </p>
         {% if year_books["acquired"] %}

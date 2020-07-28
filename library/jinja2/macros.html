@@ -48,7 +48,7 @@
 {%- elif start_date == end_date -%}
   Read
   {% if start_precision > 0 %} in {% else %} on {% endif %}
-  <time datetime="{{start_date}}">{{ format_date(start_date, start_precision) }}</time>
+  <time datetime="{{ start_date }}">{{ format_date(start_date, start_precision) }}</time>
 {%- elif not end_date -%}
   Reading since <time datetime="{{ start_date }}">{{ format_date(start_date, start_precision) }}</time>
 {%- else -%}

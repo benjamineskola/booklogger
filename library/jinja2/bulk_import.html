@@ -9,7 +9,7 @@
   {% endif %}
 
   <div class="ui form">
-    <form action="{{url('library:bulk_import')}}" method="POST">
+    <form action="{{ url('library:bulk_import') }}" method="POST">
       <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
       <div class="two fields">
         <div class="ui fifteen wide field">

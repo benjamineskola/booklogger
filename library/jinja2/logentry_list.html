@@ -6,7 +6,7 @@
   {% else %}
     {% set display_year = entries.first().end_date.year %}
     {% if not year %}
-      {% if display_year == 1%}
+      {% if display_year == 1 %}
         <h2 class="ui dividing header">Read sometime</h2>
       {% else %}
         <h2 class="ui dividing header">Read in {{ display_year }}</h2>
@@ -49,7 +49,7 @@
             load_next_page("{{ next_year }}", "{{ url("library:books_read", kwargs={"year": next_year}) }}?infinite=true");
           });
         </script>
-      {% endif%}
+      {% endif %}
     {% endif %}
   {% endif %}
 {% endblock content %}

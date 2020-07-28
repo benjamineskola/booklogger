@@ -37,7 +37,7 @@
     </h3>
     <p class="meta">
       ({{ book.display_date }})
-      {% if book.edition_number and book.edition_number > 1 %} {{ book.edition_number | ordinal }} edn. {%endif %}{% if book.publisher %} {{ book.publisher }}.{% endif %}{% if book.page_count and book.page_count > 0 %} {{ book.page_count }}&nbsp;pages.
+      {% if book.edition_number and book.edition_number > 1 %} {{ book.edition_number | ordinal }} edn. {% endif %}{% if book.publisher %} {{ book.publisher }}.{% endif %}{% if book.page_count and book.page_count > 0 %} {{ book.page_count }}&nbsp;pages.
       {% endif %}
 
       <span class="ui rating" data-rating="{% if book.rating %}{{ book.rating | round }}{% endif %}" data-max-rating="5" data-book="{{ book.slug }}">
@@ -87,7 +87,7 @@
           <i class="add icon"></i>
           <div class="menu">
             <div class="item">
-              <form class="ui form form-addtag" id="form-addtag-{{ book.id }}" data-tags="#tags-{{ book.id }}" action="{{url('library:book_add_tags', args=[book.slug]) }}?next={{ request.get_full_path() }}#{{ book.slug }}" method="post">
+              <form class="ui form form-addtag" id="form-addtag-{{ book.id }}" data-tags="#tags-{{ book.id }}" action="{{ url('library:book_add_tags', args=[book.slug]) }}?next={{ request.get_full_path() }}#{{ book.slug }}" method="post">
                 <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
                 <input class="ui field" name="tags">
               </form>

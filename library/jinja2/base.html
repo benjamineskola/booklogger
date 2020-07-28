@@ -15,7 +15,7 @@
 ('Series', 'library:series_index'),
 ('Tags', 'library:tag_cloud'),
 ('Stats', 'library:stats')
-]%}
+] %}
 <!doctype html>
 <html lang="en">
   <head>
@@ -41,21 +41,21 @@
         <div class="menu">
           {% for page in book_pages %}
             {% if page[0] == 'Read' %}
-              <div class="ui search selection dropdown item{% if page[1] == request.resolver_match.view_name %} active{%endif %}">
+              <div class="ui search selection dropdown item{% if page[1] == request.resolver_match.view_name %} active{% endif %}">
                 Read
                 <i class="dropdown icon"></i>
                 <div class="ui menu">
-                  <a class="{% if page[1] == request.resolver_match.view_name and request.resolver_match.kwargs == {} %}active {% endif %}item" href="{{url(page[1])}}">All</a>
+                  <a class="{% if page[1] == request.resolver_match.view_name and request.resolver_match.kwargs == {} %}active {% endif %}item" href="{{ url(page[1]) }}">All</a>
                   {% for year in range(2020, 2004, -1) %}
-                    <a class="{% if page[1] == request.resolver_match.view_name and request.resolver_match.kwargs['year'] == year | string %}active {% endif %}item" href="{{url(page[1], args=[year])}}">Read in {{ year }}</a>
+                    <a class="{% if page[1] == request.resolver_match.view_name and request.resolver_match.kwargs['year'] == year | string %}active {% endif %}item" href="{{ url(page[1], args=[year]) }}">Read in {{ year }}</a>
                   {% endfor %}
-                  <a class="{% if page[1] == request.resolver_match.view_name and request.resolver_match.kwargs['year'] == '2007' %}active {% endif %}item" href="{{url(page[1], args=[2007])}}">Read in 2007</a>
-                  <a class="{% if page[1] == request.resolver_match.view_name and request.resolver_match.kwargs['year'] == '2004' %}active {% endif %}item" href="{{url(page[1], args=[2004])}}">Read in 2004</a>
-                  <a class="{% if page[1] == request.resolver_match.view_name and request.resolver_match.kwargs['year'] == '1' %}active {% endif %}item" href="{{url(page[1], args=['sometime'])}}">Read sometime</a>
+                  <a class="{% if page[1] == request.resolver_match.view_name and request.resolver_match.kwargs['year'] == '2007' %}active {% endif %}item" href="{{ url(page[1], args=[2007]) }}">Read in 2007</a>
+                  <a class="{% if page[1] == request.resolver_match.view_name and request.resolver_match.kwargs['year'] == '2004' %}active {% endif %}item" href="{{ url(page[1], args=[2004]) }}">Read in 2004</a>
+                  <a class="{% if page[1] == request.resolver_match.view_name and request.resolver_match.kwargs['year'] == '1' %}active {% endif %}item" href="{{ url(page[1], args=['sometime']) }}">Read sometime</a>
                 </div>
               </div>
             {% else %}
-              <a class="{% if page[1] == request.resolver_match.view_name %}active {% endif %}item" href="{{url(page[1])}}">{{ page[0] }}</a>
+              <a class="{% if page[1] == request.resolver_match.view_name %}active {% endif %}item" href="{{ url(page[1]) }}">{{ page[0] }}</a>
             {% endif %}
           {% endfor %}
         </div>
@@ -66,14 +66,14 @@
         <i class="dropdown icon"></i>
         <div class="menu">
           {% for page in other_pages %}
-            <a class="{% if page[1] == request.resolver_match.view_name %}active {% endif %}item" href="{{url(page[1])}}">{{ page[0] }}</a>
+            <a class="{% if page[1] == request.resolver_match.view_name %}active {% endif %}item" href="{{ url(page[1]) }}">{{ page[0] }}</a>
           {% endfor %}
         </div>
       </div>
 
       <div class="right menu">
         <div class="item">
-          <form class="ui icon input" action="{{url('library:basic_search')}}">
+          <form class="ui icon input" action="{{ url('library:basic_search') }}">
             <input type="search" placeholder="Search" aria-label="Search" name="query">
             <i class="search link icon"></i>
           </form>
@@ -126,7 +126,7 @@
               {% if page_obj.previous_page_number() > 1 %}
                 {% set prev_kwargs = dict(new_kwargs, **{"page": page_obj.previous_page_number()}) %}
               {% else %}
-                {% set prev_kwargs = new_kwargs%}
+                {% set prev_kwargs = new_kwargs %}
               {% endif %}
 
               <a class="item" href="{{ url(request.resolver_match.view_name, kwargs=prev_kwargs) }}{% if qs %}?{{ qs }}{% endif %}">&laquo;</a>
@@ -140,7 +140,7 @@
                 {% if pageno > 1 %}
                   {% set new_kwargs = dict(new_kwargs, **{"page": pageno}) %}
                 {% endif %}
-                <a class="item{% if pageno == page_obj.number %} active{% endif %}" href="{{ url(request.resolver_match.view_name, kwargs=new_kwargs) }}{% if qs %}?{{ qs }}{% endif %}">{{pageno}}</a>
+                <a class="item{% if pageno == page_obj.number %} active{% endif %}" href="{{ url(request.resolver_match.view_name, kwargs=new_kwargs) }}{% if qs %}?{{ qs }}{% endif %}">{{ pageno }}</a>
               {% elif pageno == page_obj.number - 3 or pageno == page_obj.number + 3 %}
                 <span class="disabled item">…</span>
               {% endif %}

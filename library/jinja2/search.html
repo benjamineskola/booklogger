@@ -12,7 +12,7 @@
     {{ book_list(books) }}
   {% else %}
     <div class="ui form">
-      <form action="{{url('library:basic_search')}}">
+      <form action="{{ url('library:basic_search') }}">
         <div class="two fields">
           <div class="ui fifteen wide icon input field">
             <input type="search" placeholder="Search" aria-label="Search" name="query">
