@@ -118,6 +118,8 @@
           <nav class="ui stackable pagination menu">
             {% if request.resolver_match.kwargs["format"] %}
               {% set new_kwargs= {"format": request.resolver_match.kwargs["format"]} %}
+            {% elif request.resolver_match.kwargs["tag_name"] %}
+              {% set new_kwargs= {"tag_name": request.resolver_match.kwargs["tag_name"]} %}
             {% else %}
               {% set new_kwargs = {} %}
             {% endif %}

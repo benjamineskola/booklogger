@@ -116,7 +116,11 @@ urlpatterns = [
         name="series_details",
     ),
     path("stats/", views.stats, name="stats"),
-    path("tag/<str:tag_name>/", views.book.TagIndexView.as_view(), name="tag_details"),
+    re_path(
+        r"^tag(?:/(?P<tag_name>[a-z]+))?(?:/(?P<page>d+))?/",
+        views.book.TagIndexView.as_view(),
+        name="tag_details",
+    ),
     path("tags/", views.tag_cloud, name="tag_cloud"),
     re_path(r"^report(?:/(?P<page>d+))?/", views.report.report, name="report"),
     path("bulkimport/", views.importer.bulk_import, name="bulk_import"),
