@@ -1,0 +1,39 @@
+image: python:3.8
+
+stages:
+  - test
+  - deploy
+
+test:
+  stage: test
+  before_script:
+    - pip install pipenv
+    - pipenv install --dev
+  script:
+    - export DATABASE_URL=postgres://postgres:@postgres:5432/test_booklogger
+    - "pipenv run find library/jinja2/ -type f -exec curlylint --rule 'indent: 2' {} +"
+    - pipenv run flake8
+    - pipenv run pytest
+    - pipenv run mypy --show-error-codes -m library.models  -m library.utils
+
+deploy:
+  stage: deploy
+  script:
+    - "git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/eskola-booklogger.git"
+    - git fetch --all --unshallow
+    - git push -f heroku HEAD:refs/heads/master
+
+services:
+  - postgres:12.2-alpine
+
+variables:
+  POSTGRES_DB: test_booklogger
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: ""
+  POSTGRES_HOST_AUTH_METHOD: trust
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+cache:
+  paths:
+    - .cache/pip
+    - .local/share/virtualenvs

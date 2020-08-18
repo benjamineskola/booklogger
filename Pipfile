@@ -28,6 +28,7 @@ Django = "*"
 Jinja2 = "*"
 PyYAML = "*"
 Unidecode = "*"
+dj-database-url = "*"
 
 [requires]
 python_version = "3.8"
