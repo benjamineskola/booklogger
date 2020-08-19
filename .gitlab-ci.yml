@@ -22,6 +22,9 @@ deploy:
     - "git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/eskola-booklogger.git"
     - git fetch --all --unshallow
     - git push -f heroku HEAD:refs/heads/master
+  only:
+    refs:
+      - main
 
 services:
   - postgres:12.2-alpine
