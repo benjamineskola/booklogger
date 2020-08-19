@@ -27,7 +27,7 @@ deploy:
       - main
 
 services:
-  - postgres:12.2-alpine
+  - postgres:12.4-alpine
 
 variables:
   POSTGRES_DB: test_booklogger
