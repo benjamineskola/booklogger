@@ -1,5 +1,5 @@
 [flake8]
-exclude = library/migrations/
+exclude = library/migrations/,.venv
 select = C,E,F,W,N,B,B9
 extend-ignore =
 	# incompatible with black
