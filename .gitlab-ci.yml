@@ -10,7 +10,7 @@ test:
     - pip install pipenv
     - pipenv install --dev
   script:
-    - export DATABASE_URL=postgres://postgres:@postgres:5432/test_booklogger
+    - export DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:5432/$POSTGRES_DB
     - "pipenv run find library/jinja2/ -type f -exec curlylint --rule 'indent: 2' {} +"
     - pipenv run flake8
     - pipenv run pytest
@@ -30,9 +30,6 @@ services:
   - postgres:12.4-alpine
 
 variables:
-  POSTGRES_DB: test_booklogger
-  POSTGRES_USER: postgres
-  POSTGRES_PASSWORD: ""
   POSTGRES_HOST_AUTH_METHOD: trust
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
 
