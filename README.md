@@ -1,4 +1,5 @@
-# booklogger [![travis-ci](https://travis-ci.org/benjamineskola/booklogger.svg?branch=master)](https://travis-ci.org/benjamineskola/booklogger)
+# booklogger [![travis-ci](https://gitlab.com/benjamineskola/booklogger/badges/main/pipeline.svg)](https://gitlab.com/benjamineskola/booklogger/-/commits/main)
+
 Track the books I own and read
 
 ## Licence
