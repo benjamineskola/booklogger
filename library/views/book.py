@@ -133,6 +133,8 @@ class UnreadIndexView(IndexView):
 
 
 class SeriesIndexView(IndexView):
+    sort_by = "series_order"
+
     def get_queryset(self):
         books = super().get_queryset()
         books = books.filter(series=self.kwargs["series"])
