@@ -2,7 +2,6 @@ import json
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
-
 from library.models import Author, Book
 
 
@@ -50,18 +49,22 @@ def bulk_import(request):
         for entry in data.strip("\r\n").split("\n"):
             title, *author_names = entry.strip("\r\n").split(";")
 
+            author_names = [i for i in author_names if i]
+
             book, book_created = Book.objects.get_or_create(title__iexact=title.strip())
             if book_created:
                 book.title = title.strip()
 
             first_author_name = author_names.pop(0).strip()
             first_author_role = ""
+
             if ":" in first_author_name:
                 first_author_name, first_author_role = first_author_name.split(":", 1)
 
-            (first_author, fa_created,) = Author.objects.get_or_create_by_single_name(
-                first_author_name
-            )
+            (
+                first_author,
+                fa_created,
+            ) = Author.objects.get_or_create_by_single_name(first_author_name)
             book.first_author = first_author
             book.first_author_role = first_author_role
             book.save()
@@ -89,4 +92,8 @@ def bulk_import(request):
             {"page_title": "Import", "data": data, "results": results},
         )
     else:
-        return render(request, "bulk_import.html", {"page_title": "Import"},)
+        return render(
+            request,
+            "bulk_import.html",
+            {"page_title": "Import"},
+        )
