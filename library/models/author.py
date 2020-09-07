@@ -1,5 +1,5 @@
 import re
-from typing import Any, MutableMapping, Tuple, Set
+from typing import Any, MutableMapping, Set, Tuple
 
 import unidecode
 from django.contrib.postgres.search import TrigramSimilarity

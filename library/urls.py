@@ -33,11 +33,25 @@ urlpatterns = [
         include(
             [
                 path("", views.book.DetailView.as_view(), name="book_details"),
-                path("add_tags/", views.book.add_tags, name="book_add_tags",),
-                path("finish/", views.book.finish_reading, name="book_finish_reading",),
-                path("start/", views.book.start_reading, name="book_start_reading",),
                 path(
-                    "update/", views.book.update_progress, name="book_update_progress",
+                    "add_tags/",
+                    views.book.add_tags,
+                    name="book_add_tags",
+                ),
+                path(
+                    "finish/",
+                    views.book.finish_reading,
+                    name="book_finish_reading",
+                ),
+                path(
+                    "start/",
+                    views.book.start_reading,
+                    name="book_start_reading",
+                ),
+                path(
+                    "update/",
+                    views.book.update_progress,
+                    name="book_update_progress",
                 ),
                 path("delete/", views.book.DeleteView.as_view(), name="book_delete"),
                 path("edit/", views.book.EditView.as_view(), name="book_edit"),

@@ -77,7 +77,9 @@ def tag_cloud(request):
         }
 
     return render(
-        request, "tag_list.html", {"page_title": "Tags", "tags": sorted_tags},
+        request,
+        "tag_list.html",
+        {"page_title": "Tags", "tags": sorted_tags},
     )
 
 

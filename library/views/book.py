@@ -1,5 +1,5 @@
-import re
 import json
+import re
 from itertools import groupby
 
 from django.contrib.auth.decorators import login_required
@@ -12,6 +12,7 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views import generic
 from django.views.decorators.http import require_POST
+
 from library.forms import BookAuthorFormSet, BookForm, LogEntryFormSet
 from library.models import Book, LogEntry
 from library.utils import oxford_comma
