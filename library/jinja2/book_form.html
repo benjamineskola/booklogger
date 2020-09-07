@@ -51,6 +51,13 @@
 
         {% for inline_formset in [bookauthor_formset, logentry_formset] %}
           <div class="ui segment">
+            {% if inline_formset.errors %}
+              <div class="ui segment error message">
+                {% for error in inline_formset.errors %}
+                  <p><strong>{{ error }}:</strong> {{ inline_formset.errors[error] | join('; ') }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
             {{ inline_formset.management_form }}
             {% for form in inline_formset %}
               <div class="ui form">
