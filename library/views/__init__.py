@@ -18,7 +18,7 @@ def basic_search(request):
         if (
             books := Book.objects.filter(Q(isbn=query) | Q(asin=query))
         ) and books.count() == 1:
-            return redirect(book[0])
+            return redirect(books[0])
         books = Book.objects.search(query)
         authors = Author.objects.search(query).filter(similarity__gt=0.25)
 
