@@ -122,7 +122,7 @@ urlpatterns = [
             ]
         ),
     ),
-    path("search/", views.basic_search, name="basic_search"),
+    path("search/", views.search.basic_search, name="basic_search"),
     path("series/", views.series.list, name="series_index"),
     path(
         "series/<path:series>/",
