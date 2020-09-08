@@ -1,7 +1,7 @@
 import os
 import re
 import time
-from typing import Any, Dict, Iterable, Optional, Sequence
+from typing import Any, Dict, Iterable, Optional, Sequence, Union
 from urllib.parse import quote
 
 import requests
@@ -17,7 +17,6 @@ from django.db.models.functions import Length, Lower
 from django.db.models.indexes import Index
 from django.urls import reverse
 from django.utils import timezone
-
 from library.utils import LANGUAGES, isbn_to_isbn10, oxford_comma
 
 from .author import Author
@@ -532,7 +531,7 @@ class Book(models.Model):
                 self.parent_edition.finish_reading()
 
     def update_progress(
-        self, percentage: Optional[int] = None, page: Optional[int] = None
+        self, percentage: Optional[Union[int, float]] = None, page: Optional[int] = None
     ) -> int:
         if not percentage:
             if not page:
@@ -540,7 +539,9 @@ class Book(models.Model):
             elif not self.page_count:
                 raise ValueError("Must specify percentage when page count is unset")
             else:
-                percentage = int(page / self.page_count * 100)
+                percentage = page / self.page_count * 100
+
+        percentage = round(percentage)
 
         entry = self.log_entries.get(end_date=None)
         entry.progress_date = timezone.now()
