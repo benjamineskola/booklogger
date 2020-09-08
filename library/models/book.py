@@ -1,7 +1,7 @@
 import os
 import re
 import time
-from typing import Any, Dict, Iterable, Optional, Sequence, Union
+from typing import Any, Dict, Iterable, Optional, Sequence
 from urllib.parse import quote
 
 import requests
@@ -531,8 +531,8 @@ class Book(models.Model):
                 self.parent_edition.finish_reading()
 
     def update_progress(
-        self, percentage: Optional[Union[int, float]] = None, page: Optional[int] = None
-    ) -> int:
+        self, percentage: Optional[float] = None, page: Optional[int] = None
+    ) -> float:
         if not percentage:
             if not page:
                 raise ValueError("Must specify percentage or page")
@@ -540,8 +540,6 @@ class Book(models.Model):
                 raise ValueError("Must specify percentage when page count is unset")
             else:
                 percentage = page / self.page_count * 100
-
-        percentage = round(percentage)
 
         entry = self.log_entries.get(end_date=None)
         entry.progress_date = timezone.now()

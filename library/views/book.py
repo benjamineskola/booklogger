@@ -287,9 +287,9 @@ def update_progress(request, slug):
     percentage = book.update_progress(percentage=percentage, page=page)
 
     if page and book.page_count:
-        progress_text = f"on page {page} of {book.page_count} ({percentage}% done)"
+        progress_text = f"on page {page} of {book.page_count} ({percentage:.4g}% done)"
     else:
-        progress_text = f"{percentage}% done"
+        progress_text = f"{percentage:.4g}% done"
     progress_text += f" on {timezone.now().strftime('%d %B, %Y')}"
 
     response = HttpResponse(
