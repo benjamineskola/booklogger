@@ -12,7 +12,6 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views import generic
 from django.views.decorators.http import require_POST
-
 from library.forms import BookAuthorFormSet, BookForm, LogEntryFormSet
 from library.models import Book, LogEntry
 from library.utils import oxford_comma
@@ -283,7 +282,7 @@ def update_progress(request, slug):
         percentage = None
     else:
         page = None
-        percentage = int(request.POST["value"])
+        percentage = float(request.POST["value"])
 
     percentage = book.update_progress(percentage=percentage, page=page)
 
