@@ -256,6 +256,27 @@ class ReadView(GenericLogView):
         return entries.filter(end_date__year=year)
 
 
+class MarkdownReadView(GenericLogView):
+    template_name = "logentry_list_markdown.md"
+    content_type = "text/plain; charset=utf-8"
+    filter_by = {"end_date__isnull": False}
+
+    def get_queryset(self, *args, **kwargs):
+        return (
+            super()
+            .get_queryset()
+            .order_by(
+                "-end_date__year",
+                "end_date",
+                "book__first_author__surname",
+                "book__first_author__forenames",
+                "book__series",
+                "book__series_order",
+                "book__title",
+            )
+        )
+
+
 @login_required
 @require_POST
 def start_reading(request, slug):
