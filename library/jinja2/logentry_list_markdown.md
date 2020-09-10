@@ -11,6 +11,6 @@
 
 {% endif -%}
 {%- endif -%}
-- {{ entry.book | safe }}
+- {{ entry.book.first_author | safe }}, _{{ entry.book.display_title | safe }}_
 {% endfor -%}
 {%- endblock content -%}

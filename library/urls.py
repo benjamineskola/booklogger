@@ -5,7 +5,7 @@ from . import views
 app_name = "library"
 urlpatterns = [
     path("", views.book.CurrentlyReadingView.as_view(), name="index"),
-    re_path(r"/[^./]+[^/]$", views.add_slash),
+    re_path(r".*/[^./]+[^/]$", views.add_slash),
     path("author/new/", views.author.NewView.as_view(), name="author_new"),
     path(
         "author/<slug:slug>/",
