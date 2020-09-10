@@ -4,10 +4,11 @@
 {%- if loop.first or loop.previtem.end_date.year != entry.end_date.year -%}
 {%- if entry.end_date.year > 1 -%}
 # Read in {{ entry.end_date.year }}
-{% else -%}
+{%- else -%}
 # Read sometime
-{% endif -%}
+{%- endif -%}
 {%- endif %}
+
 - **{{ entry.end_date.strftime("%B") }}**
 {%- endif %}
   - {{ entry.book.first_author | safe }}, _{{ entry.book.display_title | safe }}_
