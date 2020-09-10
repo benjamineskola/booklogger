@@ -258,7 +258,7 @@ class ReadView(GenericLogView):
 
 class MarkdownReadView(GenericLogView):
     template_name = "logentry_list_markdown.md"
-    content_type = "text/markdown; charset=utf-8"
+    content_type = "text/plain; charset=utf-8"
     filter_by = {"end_date__isnull": False}
 
     def get_queryset(self, *args, **kwargs):
