@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.utils import timezone
 from library.models import Book, LogEntry
@@ -59,6 +60,9 @@ def tag_cloud(request):
 def _stats_for_queryset(books):
     fiction = books.fiction()
     nonfiction = books.nonfiction()
+    poc = books.filter(
+        Q(first_author__poc=True) | Q(additional_authors__poc=True)
+    ).distinct()
     result = {
         "count": books.count(),
         "men": books.by_men().count(),
@@ -69,6 +73,8 @@ def _stats_for_queryset(books):
         .count(),
         "fiction": fiction.count(),
         "nonfiction": nonfiction.count(),
+        "poc": poc.count(),
+        "poc_percentage": poc.count() / books.count() * 100,
         "breakdowns": {},
     }
     for gender, i in [("men", 1), ("women", 2)]:

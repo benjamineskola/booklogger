@@ -53,6 +53,9 @@
             {{ year_books["breakdowns"][genre]["men_count"] }} ({{ year_books["breakdowns"][genre]["percentage_men"] | round(2) }}%) by <a href="{{ url_base }}?tags={{ genre }}&gender=1">men</a>.<br>
           {% endfor %}
         </p>
+        <p>
+          I read {{ year_books["poc"] }} ({{ year_books['poc_percentage'] | round(2) }}%) books by <a href="{{ url_base }}?poc=1">POC</a>.
+        </p>
         {% if year_books["acquired"] %}
           <p>
             I acquired {{ year_books["acquired"] }} more books this year.
