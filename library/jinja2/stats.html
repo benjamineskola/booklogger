@@ -35,7 +35,15 @@
             )
           {% endif %}
           <br>That's {% if year == current_year | string %}{{ (year_books["count"] / current_week) | round(1) }}{% else %}{{ (year_books["count"] / 52) | round(1) }}{% endif %} per week.
-          {% if year == current_year | string %}(It's currently week {{ current_week }}.) On track to read {{ predicted_count | round(0, 'floor') | int }} this year.{% endif %}
+          {% if year == current_year | string %}
+            (It's currently week {{ current_week }}.) On track to read {{ predicted_count | round(0, 'floor') | int }} this year.
+            {% if target_counts %}
+              <br>
+              {% for target, target_count in target_counts.items() %}
+                To reach {{ target }} books I'd have to read {{ target_count | round(1) }} per week.
+              {% endfor %}
+            {% endif %}
+          {% endif %}
         </p>
         <p>
           {{ year_books["fiction"] }} were <a href="{{ url_base }}?tags=fiction">fiction</a>,

@@ -140,6 +140,18 @@ def stats(request):
     current_year_count = books.filter(log_entries__end_date__year=current_year).count()
     predicted_count = current_year_count / current_day * year_days
 
+    remaining_weeks = 52 - current_week
+    target_counts = {}
+    for target in range(
+        max(
+            26, current_year_count - (current_year_count % 26) + 26
+        ),  # rounding to nearest 26
+        min(208, max(26, current_year_count * 4))
+        + 1,  # enough to add at least one more
+        26,
+    ):
+        target_counts[target] = (target - current_year_count) / remaining_weeks
+
     return render(
         request,
         "stats.html",
@@ -156,6 +168,7 @@ def stats(request):
             "current_week": current_week,
             "predicted_count": predicted_count,
             "books_by_year": books_by_year,
+            "target_counts": target_counts,
         },
     )
 
