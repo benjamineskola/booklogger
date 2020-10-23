@@ -1,3 +1,4 @@
+from math import floor, log
 from typing import List
 
 # fmt: off
@@ -58,3 +59,11 @@ def oxford_comma(items: List[str]) -> str:
         return ", ".join(items)
     else:
         return " and ".join(items)
+
+
+def round_trunc(number: float, digits: int = 2) -> str:
+    if number:
+        num_digits = int(floor(log(number, 10) + 1))
+    else:
+        num_digits = 1 + digits
+    return f"{{:.{num_digits + digits}g}}".format(number)

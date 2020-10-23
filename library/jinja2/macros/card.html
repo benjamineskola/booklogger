@@ -104,9 +104,9 @@
       {%- if entry.currently_reading and entry.progress_percentage -%}
         ; <span class="progress-date">
         {%- if entry.progress_page and book.page_count -%}
-          on page {{ entry.progress_page }} of {{ book.page_count }} ({{  "%.4g" | format(entry.progress_percentage)  }}% done)
+          on page {{ entry.progress_page }} of {{ book.page_count }} ({{  entry.progress_percentage | round_trunc(2) }}% done)
         {%- else -%}
-          {{ "%.4g" | format(entry.progress_percentage) }}% done
+          {{ entry.progress_percentage | round_trunc(2) }}% done
         {%- endif %}
         on {{ format_date(entry.progress_date, 0) }}</span>
       {%- endif %}.
