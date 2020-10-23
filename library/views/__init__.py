@@ -142,15 +142,11 @@ def stats(request):
 
     remaining_weeks = 52 - current_week
     target_counts = {}
-    for target in range(
-        max(
-            26, current_year_count - (current_year_count % 26) + 26
-        ),  # rounding to nearest 26
-        min(208, max(26, current_year_count * 4))
-        + 1,  # enough to add at least one more
-        26,
-    ):
-        target_counts[target] = (target - current_year_count) / remaining_weeks
+    for target in [26, 39, 52, 78, 104, 208]:
+        if target > current_year_count:
+            target_counts[target] = (target - current_year_count) / remaining_weeks
+        if len(target_counts.keys()) >= 3:
+            break
 
     return render(
         request,
