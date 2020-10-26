@@ -555,6 +555,8 @@ class Book(models.Model):
     def mark_owned(self) -> None:
         self.owned_by = User.objects.get(username="ben")
         self.acquired_date = timezone.now()
+        self.was_borrowed = False
+        self.borrowed_from = ""
         self.save()
 
     @property
