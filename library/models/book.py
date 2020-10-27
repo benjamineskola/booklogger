@@ -153,8 +153,12 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
             goodreads_book["author"]["name"]
         )
 
-        if query and len(query) == 13 and query.startswith("978"):
-            book.isbn = query
+        if query:
+            if len(query) == 13 and query.startswith("978"):
+                book.isbn = query
+            elif re.match(r"^B[A-Z0-9]{9}$", query):
+                book.asin = query
+                book.edition_format = Book.Format.EBOOK
 
         book.save()
 
