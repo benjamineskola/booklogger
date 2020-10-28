@@ -21,7 +21,7 @@
   <h3>Reports</h3>
   <ul>
     {% for i in categories %}
-      <li><a href="/report/{{ loop.index }}">{{ i[0] }}</a></li>
+      <li><a href="/report/{{ loop.index }}/">{{ i[0] }}</a></li>
     {% endfor %}
   </ul>
 {% endblock %}
