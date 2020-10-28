@@ -136,7 +136,7 @@ urlpatterns = [
     ),
     path("stats/", views.stats, name="stats"),
     re_path(
-        r"^tag(?:/(?P<tag_name>[a-z]+))?(?:/(?P<page>\d+))?/",
+        r"^tag(?:/(?P<tag_name>[a-z0-9:-]+))?(?:/(?P<page>\d+))?/",
         views.book.TagIndexView.as_view(),
         name="tag_details",
     ),
