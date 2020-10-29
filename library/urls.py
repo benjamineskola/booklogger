@@ -12,8 +12,10 @@ urlpatterns = [
         include(
             [
                 path("", views.author.DetailView.as_view(), name="author_details"),
-                path("delete", views.author.DeleteView.as_view(), name="author_delete"),
-                path("edit", views.author.EditView.as_view(), name="author_edit"),
+                path(
+                    "delete/", views.author.DeleteView.as_view(), name="author_delete"
+                ),
+                path("edit/", views.author.EditView.as_view(), name="author_edit"),
             ]
         ),
     ),
