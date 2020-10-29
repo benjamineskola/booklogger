@@ -589,7 +589,7 @@ class Book(models.Model):
 
     def add_tags(self, tags: Iterable[str]) -> None:
         for tag in tags:
-            clean_tag = tag.strip().lower()
+            clean_tag = tag.strip().lower().replace(",", "").replace("/", "")
             if clean_tag not in self.tags:
                 self.tags.append(clean_tag)
         self.save()
