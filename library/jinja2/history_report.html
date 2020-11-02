@@ -1,0 +1,42 @@
+{% from "macros.html" import link_amazon, link_goodreads with context %}
+{% extends "base.html" %}
+{% block content %}
+  <ol>
+    {% for tag, tag_groups in results.items() | sort %}
+      <li>
+        {{ tag }}
+        <ol>
+          {% for group, books in tag_groups %}
+            <li>
+              {% if group == ["history", 'non-fiction'] %}
+                {{ group | join(', ') }}
+              {% else %}
+                {{ group | reject('eq', 'non-fiction') | reject('eq', 'history') | join(', ') }}
+              {% endif %}
+              <ul>
+                {% for book in books %}
+                  <li>
+                    <a href="{{ book.get_absolute_url() }}">{{ book }}</a>
+                    <small>(<a href="{{ url('library:book_edit', args=[book.slug]) }}">edit</a>
+                      &middot; goodreads {{ link_goodreads(book) }}
+                      &middot; amazon {{ link_amazon(book) }}
+                      {% if book.publisher_url %}&middot; <a href="{{ book.publisher_url }}">Publisher</a>{% endif -%}
+                      )
+                    </small>
+                  </li>
+                {% endfor %}
+              </ul>
+            </li>
+          {% endfor %}
+        </ol>
+      </li>
+    {% endfor %}
+  </ol>
+
+  <h3>Reports</h3>
+  <ul>
+    {% for i in categories %}
+      <li><a href="/report/{{ loop.index }}/">{{ i[0] }}</a></li>
+    {% endfor %}
+  </ul>
+{% endblock %}

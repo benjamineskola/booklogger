@@ -1,3 +1,5 @@
+from itertools import groupby
+
 from django.db.models import F, Q
 from django.shortcuts import render
 
@@ -108,6 +110,12 @@ def report(request, page=None):
             .filter(asin="")
             .exclude(was_borrowed=True),
         ),
+        (
+            "History without sufficient tags",
+            lambda: Book.objects.filter(
+                tags__contains=["history", "non-fiction"]
+            ).filter(tags__contained_by=["history", "non-fiction"]),
+        ),
     ]
 
     results = None
@@ -124,3 +132,28 @@ def report(request, page=None):
         "report.html",
         {"categories": categories, "results": results, "page": page},
     )
+
+
+def history(request):
+    books = Book.objects.filter(tags__contains=["non-fiction", "history"]).order_by(
+        "tags"
+    )
+    toplevel_tags = set(
+        sum(books.filter(tags__len__gte=3).values_list("tags", flat=True), [])
+    ) - set(["non-fiction", "history", "updated-from-google", "needs contributors"])
+
+    results = {
+        tag: sorted(
+            [
+                (sorted(tags), list(tagged_books))
+                for tags, tagged_books in groupby(
+                    books.filter(tags__contains=[tag]),
+                    key=lambda book: sorted(book.tags),
+                )
+            ],
+            key=lambda b: b[0],
+        )
+        for tag in toplevel_tags
+    }
+
+    return render(request, "history_report.html", {"results": results})
