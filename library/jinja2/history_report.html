@@ -8,11 +8,7 @@
         <ol>
           {% for group, books in tag_groups %}
             <li>
-              {% if group == ["history", 'non-fiction'] %}
-                {{ group | join(', ') }}
-              {% else %}
-                {{ group | reject('eq', 'non-fiction') | reject('eq', 'history') | join(', ') }}
-              {% endif %}
+              {{ group | join(', ') }}
               <ul>
                 {% for book in books %}
                   <li>

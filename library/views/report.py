@@ -145,7 +145,10 @@ def history(request):
     results = {
         tag: sorted(
             [
-                (sorted(tags), list(tagged_books))
+                (
+                    [t for t in sorted(tags) if t not in ["non-fiction", "history"]],
+                    list(tagged_books),
+                )
                 for tags, tagged_books in groupby(
                     books.filter(tags__contains=[tag]),
                     key=lambda book: sorted(book.tags),
