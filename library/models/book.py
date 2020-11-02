@@ -592,6 +592,7 @@ class Book(models.Model):
             clean_tag = tag.strip().lower().replace(",", "").replace("/", "")
             if clean_tag not in self.tags:
                 self.tags.append(clean_tag)
+        self.tags.sort()
         self.save()
 
     def create_new_edition(self, edition_format: int) -> None:
