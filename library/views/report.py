@@ -134,19 +134,17 @@ def report(request, page=None):
     )
 
 
-def history(request):
-    books = Book.objects.filter(tags__contains=["non-fiction", "history"]).order_by(
-        "tags"
-    )
+def tags(request):
+    books = Book.objects.filter(tags__contains=["non-fiction"]).order_by("tags")
     toplevel_tags = set(
-        sum(books.filter(tags__len__gte=3).values_list("tags", flat=True), [])
-    ) - set(["non-fiction", "history", "updated-from-google", "needs contributors"])
+        sum(books.filter(tags__len__gte=2).values_list("tags", flat=True), [])
+    ) - set(["non-fiction", "updated-from-google", "needs contributors"])
 
     results = {
         tag: sorted(
             [
                 (
-                    [t for t in sorted(tags) if t not in ["non-fiction", "history"]],
+                    [t for t in sorted(tags) if t != "non-fiction"],
                     list(tagged_books),
                 )
                 for tags, tagged_books in groupby(
