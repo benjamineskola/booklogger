@@ -8,7 +8,9 @@
         <ol>
           {% for group, books in tag_groups %}
             <li>
-              {{ group | join(', ') }}
+              {{ tag }}
+              {%- if group | length > 1 %}, {% endif %}
+              {{ group | reject('eq', tag) | join(', ') }}
               <ul>
                 {% for book in books %}
                   <li>
