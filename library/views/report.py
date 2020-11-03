@@ -138,7 +138,7 @@ def tags(request):
     books = Book.objects.filter(tags__contains=["non-fiction"]).order_by("tags")
     toplevel_tags = set(
         sum(books.filter(tags__len__gte=2).values_list("tags", flat=True), [])
-    ) - set(["non-fiction", "updated-from-google", "needs contributors"])
+    ) - set(["non-fiction", "updated-from-google", "needs contributors", "anthology"])
 
     results = {
         tag: sorted(
