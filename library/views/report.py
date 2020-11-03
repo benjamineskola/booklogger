@@ -135,16 +135,19 @@ def report(request, page=None):
 
 
 def tags(request):
-    books = Book.objects.filter(tags__contains=["non-fiction"]).order_by("tags")
-    toplevel_tags = set(
-        sum(books.filter(tags__len__gte=2).values_list("tags", flat=True), [])
-    ) - set(["non-fiction", "updated-from-google", "needs contributors", "anthology"])
+    base_tags = ["non-fiction"]
+    excluded_tags = set(
+        base_tags + ["updated-from-google", "needs contributors", "anthology"]
+    )
+
+    books = Book.objects.filter(tags__contains=base_tags).order_by("tags")
+    toplevel_tags = set(sum(books.values_list("tags", flat=True), [])) - excluded_tags
 
     results = {
         tag: sorted(
             [
                 (
-                    [t for t in sorted(tags) if t != "non-fiction"],
+                    sorted(set(tags) - excluded_tags),
                     list(tagged_books),
                 )
                 for tags, tagged_books in groupby(
