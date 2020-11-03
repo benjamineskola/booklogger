@@ -10,7 +10,7 @@
           <small>(<a href="{{ url('library:book_edit', args=[item.slug]) }}">edit</a>
             &middot; goodreads {{ link_goodreads(item) }}
             &middot; amazon {{ link_amazon(item) }}
-            {% if item.publisher_url %}&middot; <a href="{{ item.publisher_url }}">Publisher</a>{% endif -%}
+            {%- if item.publisher_url %} &middot; <a href="{{ item.publisher_url }}">Publisher</a>{% endif -%}
             )
           </small>
         </li>

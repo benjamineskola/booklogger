@@ -68,7 +68,7 @@
   or
 {% endif %}
 <a href="https://www.amazon.co.uk/s?k={{ book.search_query }}&i=stripbooks">search</a>
-{% endmacro %}
+{%- endmacro %}
 
 {% macro link_google(book) %}
 {% if book.google_id %}
@@ -81,7 +81,7 @@
   or
 {% endif %}
 <a href="https://www.googleapis.com/books/v1/volumes?q={{ book.search_query }}">search</a>
-{% endmacro %}
+{%- endmacro %}
 
 {% macro link_goodreads(book) %}
 {% if book.goodreads_id %}
@@ -93,4 +93,4 @@
   or
 {% endif %}
 <a href="https://www.goodreads.com/search?q={{ book.search_query }}">search</a>
-{% endmacro %}
+{%- endmacro %}
