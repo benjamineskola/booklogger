@@ -146,13 +146,10 @@ def tags(request):
     results = {
         tag: sorted(
             [
-                (
-                    sorted(set(tags) - excluded_tags),
-                    list(tagged_books),
-                )
+                (tags, list(tagged_books))
                 for tags, tagged_books in groupby(
                     books.filter(tags__contains=[tag]),
-                    key=lambda book: sorted(book.tags),
+                    key=lambda book: sorted(set(book.tags) - excluded_tags),
                 )
             ],
             key=lambda b: b[0],
