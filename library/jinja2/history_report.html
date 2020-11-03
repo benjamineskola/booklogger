@@ -2,17 +2,17 @@
 {% extends "base.html" %}
 {% block content %}
   <ol>
-    {% for tag, tag_groups in results.items() | sort %}
+    {% for tag, books in results.items() | sort %}
       <li>
         {{ tag }}
         <ol>
-          {% for group, books in tag_groups %}
+          {% for tags, tagged_books in books | groupby('tags') %}
             <li>
               {{ tag }}
-              {%- if group | length > 1 %}, {% endif %}
-              {{ group | reject('eq', tag) | join(', ') }}
+              {%- if tags | reject('in', excluded_tags) | list | length > 1 %}, {% endif %}
+              {{ tags | reject('in', excluded_tags) | reject('eq', tag) | join(', ') }}
               <ul>
-                {% for book in books %}
+                {% for book in tagged_books %}
                   <li>
                     <a href="{{ book.get_absolute_url() }}">{{ book }}</a>
                     <small>(<a href="{{ url('library:book_edit', args=[book.slug]) }}">edit</a>

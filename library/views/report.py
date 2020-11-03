@@ -1,5 +1,3 @@
-from itertools import groupby
-
 from django.db.models import F, Q
 from django.shortcuts import render
 
@@ -143,21 +141,10 @@ def tags(request):
     books = Book.objects.filter(tags__contains=base_tags).order_by("tags")
     toplevel_tags = set(sum(books.values_list("tags", flat=True), [])) - excluded_tags
 
-    results = {
-        tag: sorted(
-            [
-                (tags, list(tagged_books))
-                for tags, tagged_books in groupby(
-                    sorted(
-                        books.filter(tags__contains=[tag]),
-                        key=lambda book: sorted(set(book.tags) - excluded_tags),
-                    ),
-                    key=lambda book: sorted(set(book.tags) - excluded_tags),
-                )
-            ],
-            key=lambda b: b[0],
-        )
-        for tag in toplevel_tags
-    }
+    results = {tag: books.filter(tags__contains=[tag]) for tag in toplevel_tags}
 
-    return render(request, "history_report.html", {"results": results})
+    return render(
+        request,
+        "history_report.html",
+        {"results": results, "excluded_tags": excluded_tags},
+    )
