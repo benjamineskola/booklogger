@@ -148,7 +148,10 @@ def tags(request):
             [
                 (tags, list(tagged_books))
                 for tags, tagged_books in groupby(
-                    books.filter(tags__contains=[tag]),
+                    sorted(
+                        books.filter(tags__contains=[tag]),
+                        key=lambda book: sorted(set(book.tags) - excluded_tags),
+                    ),
                     key=lambda book: sorted(set(book.tags) - excluded_tags),
                 )
             ],
