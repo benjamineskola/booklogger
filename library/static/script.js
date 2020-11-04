@@ -97,6 +97,7 @@ $(document).ready(function () {
           "X-CSRFToken",
           $("[name=csrfmiddlewaretoken]").val()
         );
+        return confirm("Remove tag " + tag + "?");
       },
       success: function (data) {
         label.remove();
