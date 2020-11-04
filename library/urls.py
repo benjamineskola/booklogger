@@ -41,6 +41,11 @@ urlpatterns = [
                     name="book_add_tags",
                 ),
                 path(
+                    "remove_tags/",
+                    views.book.remove_tags,
+                    name="book_remove_tags",
+                ),
+                path(
                     "finish/",
                     views.book.finish_reading,
                     name="book_finish_reading",

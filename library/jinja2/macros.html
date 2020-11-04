@@ -16,8 +16,13 @@
 {%- endif %}
 {%- endmacro %}
 
-{% macro book_label(label, link, highlight=False) %}
-<a href="{{ link }}" class="ui label{% if highlight %} teal{% endif %}">{{ label }}</a>
+{% macro book_label(label, link, highlight=False, removable=False) %}
+<span class="ui label{% if highlight %} teal{% endif %}">
+  <a href="{{ link }}">{{ label }}</a>
+  {% if removable %}
+    <a class="remove-tag" data-tag="{{ label }}">✖</a>
+  {% endif %}
+</span>
 {% endmacro %}
 
 {% macro book_link(book) -%}

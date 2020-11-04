@@ -595,6 +595,12 @@ class Book(models.Model):
         self.tags.sort()
         self.save()
 
+    def remove_tags(self, tags: Iterable[str]) -> None:
+        for tag in tags:
+            clean_tag = tag.strip().lower().replace(",", "").replace("/", "")
+            self.tags.remove(clean_tag)
+        self.save()
+
     def create_new_edition(self, edition_format: int) -> None:
         edition = Book(
             title=self.title,

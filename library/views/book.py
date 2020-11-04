@@ -335,6 +335,20 @@ def add_tags(request, slug):
 
 @login_required
 @require_POST
+def remove_tags(request, slug):
+    book = get_object_or_404(Book, slug=slug)
+    tags = request.POST.get("tags").split(",")
+    if tags:
+        book.remove_tags(tags)
+
+    if next := request.GET.get("next"):
+        return redirect(next)
+    else:
+        return redirect("library:book_details", slug=slug)
+
+
+@login_required
+@require_POST
 def mark_owned(request, slug):
     book = get_object_or_404(Book, slug=slug)
     book.mark_owned()

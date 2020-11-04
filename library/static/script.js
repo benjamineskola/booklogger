@@ -83,6 +83,28 @@ $(document).ready(function () {
   });
   $(".ui.accordion").accordion();
   $("#navbar .ui.dropdown").dropdown();
+
+  $("a.remove-tag").click(function () {
+    var tag = $(this).data("tag");
+    var label = $(this).parent();
+    var book = label.parent().parent().parent().data("book");
+    $.ajax({
+      type: "POST",
+      url: "/book/" + book + "/remove_tags/",
+      data: { tags: tag },
+      dataType: "html",
+      beforeSend: function (xhr, settings) {
+        xhr.setRequestHeader(
+          "X-CSRFToken",
+          $("[name=csrfmiddlewaretoken]").val()
+        );
+      },
+      success: function (data) {
+        console.log(label);
+        label.remove();
+      },
+    });
+  });
 });
 
 function load_next_page(year, url) {

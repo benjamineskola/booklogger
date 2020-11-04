@@ -17,7 +17,7 @@
   {% set entry = book.log_entries.order_by('end_date').last() %}
 {% endif %}
 
-<div class="ui card book" id="book-{{ book.id }}">
+<div class="ui card book" id="book-{{ book.id }}" data-book="{{ book.slug }}">
   <div class="content">
     {% if book.image_url %}
       <a href="{{ book.get_absolute_url() }}">
@@ -48,7 +48,7 @@
     <div class="ui tiny labels tags" id="tags-{{ book.id }}">
       {% for tag in book.tags | sort %}
         {% if tag %}
-          {{ book_label(tag, url("library:tag_details", args=[tag])) }}
+          {{ book_label(tag, url("library:tag_details", args=[tag]), removable=True) }}
         {% endif %}
       {% else %}
         {{ book_label("untagged", url("library:tag_details", args=['untagged'])) }}
