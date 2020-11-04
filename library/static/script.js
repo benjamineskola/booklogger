@@ -92,7 +92,6 @@ $(document).ready(function () {
       type: "POST",
       url: "/book/" + book + "/remove_tags/",
       data: { tags: tag },
-      dataType: "html",
       beforeSend: function (xhr, settings) {
         xhr.setRequestHeader(
           "X-CSRFToken",
@@ -100,7 +99,6 @@ $(document).ready(function () {
         );
       },
       success: function (data) {
-        console.log(label);
         label.remove();
       },
     });
@@ -116,7 +114,6 @@ function load_next_page(year, url) {
         url: url,
         success: function (data) {
           var body = $(data).find(".two.doubling.cards").parent();
-          console.log(body);
           placeholder.html(body);
           placeholder.attr("class", "");
         },
