@@ -16,11 +16,11 @@ $(document).ready(function () {
           for (var i in new_tags) {
             new_tag = new_tags[i].trim();
             tags_field.prepend(
-              '<a href="/tag/' +
+              '<span class="ui label"><a href="/tag/' +
                 new_tag +
-                '" class="ui label">' +
+                '">' +
                 new_tag +
-                "</a> "
+                "</a></span> "
             );
           }
           input_field.val("");
