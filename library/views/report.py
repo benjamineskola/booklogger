@@ -145,6 +145,6 @@ def tags(request):
 
     return render(
         request,
-        "history_report.html",
+        "report_tag_combinations.html",
         {"results": results, "excluded_tags": excluded_tags},
     )
