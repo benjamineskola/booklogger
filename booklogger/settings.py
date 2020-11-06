@@ -149,7 +149,7 @@ if os.environ.get("DYNO"):
 
     django_heroku.settings(locals())
 
-if not "HEROKU_RELEASE_VERSION" in os.environ:
+if "HEROKU_RELEASE_VERSION" not in os.environ:
     from time import time
 
     os.environ["HEROKU_RELEASE_VERSION"] = str(int(time()))
