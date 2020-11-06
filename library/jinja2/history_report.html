@@ -3,14 +3,15 @@
 {% block content %}
   <ol>
     {% for tag, books in results.items() | sort %}
-      <li>
+      <li id="{{ tag | replace(" ", "_") }}">
         {{ tag }}
         <ol>
           {% for tags, tagged_books in books | groupby('tags') %}
             <li>
               {{ tag }}
-              {%- if tags | reject('in', excluded_tags) | list | length > 1 %}, {% endif %}
-              {{ tags | reject('in', excluded_tags) | reject('eq', tag) | join(', ') }}
+              {%- for i in tags | reject('in', excluded_tags) | reject('eq', tag) -%}
+                , <a href="#{{ i  | replace(' ', '_') }}">{{ i }}</a>
+              {%- endfor %}
               <ul>
                 {% for book in tagged_books %}
                   <li>
