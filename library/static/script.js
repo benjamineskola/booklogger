@@ -1,66 +1,62 @@
 $(document).ready(function () {
-  $(".form-addtag").each(function (i, form) {
-    $(form).submit(function (event) {
-      event.preventDefault();
-      var form = $(this);
-      var url = form.attr("action");
+  $(".form-addtag").submit(function (event) {
+    event.preventDefault();
+    var form = $(this);
+    var url = form.attr("action");
 
-      $.ajax({
-        type: "POST",
-        url: url,
-        data: form.serialize(),
-        success: function (data) {
-          var tags_field = $(form.data("tags"));
-          var input_field = form.find('input[name="tags"]');
-          var new_tags = input_field.val().split(",");
-          for (var i in new_tags) {
-            new_tag = new_tags[i].trim();
-            tags_field.prepend(
-              '<span class="ui label"><a href="/tag/' +
-                new_tag +
-                '">' +
-                new_tag +
-                "</a></span> "
-            );
-          }
-          input_field.val("");
-        },
-      });
+    $.ajax({
+      type: "POST",
+      url: url,
+      data: form.serialize(),
+      success: function (data) {
+        var tags_field = $(form.data("tags"));
+        var input_field = form.find('input[name="tags"]');
+        var new_tags = input_field.val().split(",");
+        for (var i in new_tags) {
+          new_tag = new_tags[i].trim();
+          tags_field.prepend(
+            '<span class="ui label"><a href="/tag/' +
+              new_tag +
+              '">' +
+              new_tag +
+              "</a></span> "
+          );
+        }
+        input_field.val("");
+      },
     });
   });
 
-  $(".form.update-progress").each(function (i, form) {
-    $(form).submit(function (event) {
-      event.preventDefault();
-      var form = $(this);
-      var url = form.attr("action");
+  $(".form.update-progress").submit(function (event) {
+    event.preventDefault();
+    var form = $(this);
+    var url = form.attr("action");
 
-      $.ajax({
-        type: "POST",
-        url: url,
-        data: form.serialize(),
-        dataType: "json",
-        success: function (data) {
-          var progress_bar = $("#book-" + form.data("book") + " .bar");
-          progress_bar.css("width", data["percentage"] + "%");
+    $.ajax({
+      type: "POST",
+      url: url,
+      data: form.serialize(),
+      dataType: "json",
+      success: function (data) {
+        var progress_bar = $("#book-" + form.data("book") + " .bar");
+        progress_bar.css("width", data["percentage"] + "%");
 
+        var progress_text = $(
+          "#book-" + form.data("book") + " .extra.content .progress-date"
+        );
+        if (progress_text.length == 0) {
           var progress_text = $(
-            "#book-" + form.data("book") + " .extra.content .progress-date"
+            "#book-" + form.data("book") + " .extra.content .read-dates"
           );
-          if (progress_text.length == 0) {
-            var progress_text = $(
-              "#book-" + form.data("book") + " .extra.content .read-dates"
-            );
-            progress_text.text(
-              progress_text.text() + "; " + data["progress_text"]
-            );
-          } else {
-            progress_text.text(data["progress_text"]);
-          }
+          progress_text.text(
+            progress_text.text() + "; " + data["progress_text"]
+          );
+        } else {
+          progress_text.text(data["progress_text"]);
+        }
 
-          form.find('input[name="value"]').val("");
-        },
-      });
+        form.find('input[name="value"]').val("");
+      },
     });
   });
 
