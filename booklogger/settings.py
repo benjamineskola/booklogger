@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+
 import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -147,3 +148,8 @@ if os.environ.get("DYNO"):
     import django_heroku
 
     django_heroku.settings(locals())
+
+if not "HEROKU_RELEASE_VERSION" in os.environ:
+    from time import time
+
+    os.environ["HEROKU_RELEASE_VERSION"] = str(int(time()))
