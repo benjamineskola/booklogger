@@ -1,36 +1,34 @@
 {% from "macros.html" import link_amazon, link_goodreads with context %}
 {% extends "base.html" %}
 {% block content %}
-  <ol>
-    {% for tag, books in results.items() | sort %}
-      <li id="{{ tag | replace(" ", "_") }}">
-        {{ tag }}
-        <ol>
-          {% for tags, tagged_books in books | groupby('tags') %}
-            <li>
-              {{ tag }}
-              {%- for i in tags | reject('in', excluded_tags) | reject('eq', tag) -%}
-                , <a href="#{{ i  | replace(' ', '_') }}">{{ i }}</a>
-              {%- endfor %}
-              <ul>
-                {% for book in tagged_books %}
-                  <li>
-                    <a href="{{ book.get_absolute_url() }}">{{ book }}</a>
-                    <small>(<a href="{{ url('library:book_edit', args=[book.slug]) }}">edit</a>
-                      &middot; goodreads {{ link_goodreads(book) }}
-                      &middot; amazon {{ link_amazon(book) }}
-                      {%- if book.publisher_url %} &middot; <a href="{{ book.publisher_url }}">Publisher</a>{% endif -%}
-                      )
-                    </small>
-                  </li>
-                {% endfor %}
-              </ul>
-            </li>
-          {% endfor %}
-        </ol>
-      </li>
-    {% endfor %}
-  </ol>
+  {% for tag, books in results.items() | sort %}
+    <h2 id="{{ tag | replace(" ", "_") }}">
+      {{ tag }}
+    </h2>
+    <ol>
+      {% for tags, tagged_books in books | groupby('tags') %}
+        <li>
+          {{ tag }}
+          {%- for i in tags | reject('in', excluded_tags) | reject('eq', tag) -%}
+            , <a href="#{{ i  | replace(' ', '_') }}">{{ i }}</a>
+          {%- endfor %}
+          <ul>
+            {% for book in tagged_books %}
+              <li>
+                <a href="{{ book.get_absolute_url() }}">{{ book }}</a>
+                <small>(<a href="{{ url('library:book_edit', args=[book.slug]) }}">edit</a>
+                  &middot; goodreads {{ link_goodreads(book) }}
+                  &middot; amazon {{ link_amazon(book) }}
+                  {%- if book.publisher_url %} &middot; <a href="{{ book.publisher_url }}">Publisher</a>{% endif -%}
+                  )
+                </small>
+              </li>
+            {% endfor %}
+          </ul>
+        </li>
+      {% endfor %}
+    </ol>
+  {% endfor %}
 
   <h3>Reports</h3>
   <ul>
