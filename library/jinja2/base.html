@@ -28,7 +28,7 @@
     <title>{% if page_title %}{{ page_title }} — {% endif %}Booklogger</title>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
-    <script src="{{ static("script.js") }}?_v={{ request.META["HEROKU_RELEASE_VERSION"] }}"></script>
+    <script src="{{ static("script.js") }}?_v={{ VERSION_NUMBER }}"></script>
     {% block header %}
     {% endblock %}
   </head>
@@ -96,10 +96,10 @@
               {% endif %}
               <div class="divider"></div>
               <div class="header">Release
-                {% if request.META["HEROKU_RELEASE_VERSION"] %}
-                  {{ request.META["HEROKU_RELEASE_VERSION"] }}
-                  {% if request.META["HEROKU_SLUG_DESCRIPTION"] %}
-                    ({{ request.META["HEROKU_SLUG_DESCRIPTION"] }})
+                {% if VERSION_NUMBER %}
+                  {{ VERSION_NUMBER }}
+                  {% if COMMIT_ID %}
+                    ({{ COMMIT_ID }})
                   {% endif %}
                 {% else %}
                   unknown

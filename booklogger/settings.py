@@ -72,6 +72,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "library.context_processors.export_vars",
             ],
         },
     },
@@ -149,7 +150,10 @@ if os.environ.get("DYNO"):
 
     django_heroku.settings(locals())
 
-if "HEROKU_RELEASE_VERSION" not in os.environ:
+if "HEROKU_RELEASE_VERSION" in os.environ:
+    os.environ["VERSION_NUMBER"] = os.environ["HEROKU_RELEASE_VERSION"]
+    os.environ["COMMIT_ID"] = os.environ["HEROKU_SLUG_COMMIT"][0:7]
+else:
     from time import time
 
-    os.environ["HEROKU_RELEASE_VERSION"] = str(int(time()))
+    os.environ["VERSION_NUMBER"] = str(int(time()))
