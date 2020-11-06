@@ -98,7 +98,9 @@
               <div class="header">Release
                 {% if request.META["HEROKU_RELEASE_VERSION"] %}
                   {{ request.META["HEROKU_RELEASE_VERSION"] }}
-                  ({{ request.META["HEROKU_SLUG_DESCRIPTION"] }})
+                  {% if request.META["HEROKU_SLUG_DESCRIPTION"] %}
+                    ({{ request.META["HEROKU_SLUG_DESCRIPTION"] }})
+                  {% endif %}
                 {% else %}
                   unknown
                 {% endif %}
