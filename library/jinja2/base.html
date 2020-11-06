@@ -94,6 +94,15 @@
               {% else %}
                 <a class="item" href="http://booklogger.eskola.uk{{ url(request.resolver_match.view_name, kwargs=request.resolver_match.kwargs) }}">Production</a>
               {% endif %}
+              <div class="divider"></div>
+              <div class="header">Release
+                {% if request.META["HEROKU_RELEASE_VERSION"] %}
+                  {{ request.META["HEROKU_RELEASE_VERSION"] }}
+                  ({{ request.META["HEROKU_SLUG_DESCRIPTION"] }})
+                {% else %}
+                  unknown
+                {% endif %}
+              </div>
             </div> <!-- simple menu -->
           </div> <!-- dropdown -->
         {% else %}
