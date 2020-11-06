@@ -15,11 +15,7 @@ $(document).ready(function () {
         for (var i in new_tags) {
           new_tag = new_tags[i].trim();
           tags_field.prepend(
-            '<span class="ui label"><a href="/tag/' +
-              new_tag +
-              '">' +
-              new_tag +
-              "</a></span> "
+            `<span class="ui label"><a href="/tag/${new_tag}">${new_tag}</a></span> `
           );
         }
         input_field.val("");
@@ -31,6 +27,7 @@ $(document).ready(function () {
     event.preventDefault();
     var form = $(this);
     var url = form.attr("action");
+    var book = form.data("book");
 
     $.ajax({
       type: "POST",
@@ -38,18 +35,14 @@ $(document).ready(function () {
       data: form.serialize(),
       dataType: "json",
       success: function (data) {
-        var progress_bar = $("#book-" + form.data("book") + " .bar");
-        progress_bar.css("width", data["percentage"] + "%");
+        var progress_bar = $(`#book-${book} .bar`);
+        progress_bar.css("width", `${data["percentage"]}%`);
 
-        var progress_text = $(
-          "#book-" + form.data("book") + " .extra.content .progress-date"
-        );
+        var progress_text = $(`#book-${book} .extra.content .progress-date`);
         if (progress_text.length == 0) {
-          var progress_text = $(
-            "#book-" + form.data("book") + " .extra.content .read-dates"
-          );
+          var progress_text = $(`#book-${book} .extra.content .read-dates"`);
           progress_text.text(
-            progress_text.text() + "; " + data["progress_text"]
+            `${progress_text.text()}; ${data["progress_text"]}`
           );
         } else {
           progress_text.text(data["progress_text"]);
@@ -63,10 +56,12 @@ $(document).ready(function () {
   $(".ui.rating").rating({
     clearable: true,
     onRate: function (value) {
+      var book = $(this).data("book");
+
       $.ajax({
         type: "POST",
-        url: "/book/" + $(this).data("book") + "/rate/",
-        data: "rating=" + Number(value),
+        url: `/book/${book}/rate/`,
+        data: { rating: Number(value) },
         dataType: "json",
         beforeSend: function (xhr, settings) {
           xhr.setRequestHeader(
@@ -86,14 +81,14 @@ $(document).ready(function () {
     var book = label.parent().parent().parent().data("book");
     $.ajax({
       type: "POST",
-      url: "/book/" + book + "/remove_tags/",
+      url: `/book/${book}/remove_tags/`,
       data: { tags: tag },
       beforeSend: function (xhr, settings) {
         xhr.setRequestHeader(
           "X-CSRFToken",
           $("[name=csrfmiddlewaretoken]").val()
         );
-        return confirm("Remove tag " + tag + "?");
+        return confirm(`Remove tag ${tag}?`);
       },
       success: function (data) {
         label.remove();
