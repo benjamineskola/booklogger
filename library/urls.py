@@ -148,6 +148,7 @@ urlpatterns = [
         name="tag_details",
     ),
     path("tags/", views.tag_cloud, name="tag_cloud"),
+    path("report/tags/related/", views.report.related_tags, name="report_related_tags"),
     path("report/tags/", views.report.tags, name="report_tags"),
     re_path(r"^report(?:/(?P<page>\d+))?/", views.report.report, name="report"),
     path("bulkimport/", views.importer.bulk_import, name="bulk_import"),

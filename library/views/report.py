@@ -1,3 +1,5 @@
+from itertools import groupby
+
 from django.db.models import F, Q
 from django.shortcuts import render
 
@@ -146,5 +148,39 @@ def tags(request):
     return render(
         request,
         "report_tag_combinations.html",
+        {"results": results, "excluded_tags": excluded_tags},
+    )
+
+
+def related_tags(request):
+    base_tags = ["non-fiction"]
+    excluded_tags = set(
+        base_tags + ["updated-from-google", "needs contributors", "anthology"]
+    )
+
+    books = Book.objects.filter(tags__contains=base_tags).order_by("tags")
+    toplevel_tags = set(sum(books.values_list("tags", flat=True), [])) - excluded_tags
+
+    results = {}
+    for tag in toplevel_tags:
+        tagged_books = books.filter(tags__contains=[tag])
+        related_tags = sorted(
+            sum(
+                tagged_books.values_list("tags", flat=True),
+                [],
+            )
+        )
+        results[tag] = {
+            related_tag: len(list(books))
+            for related_tag, books in groupby(related_tags)
+        }
+        results[tag]["total"] = tagged_books.count()
+        results[tag][tag] = tagged_books.filter(tags__len__gt=2).count()
+
+    # {tag: books.filter(tags__contains=[tag]) for tag in toplevel_tags}
+
+    return render(
+        request,
+        "report_related_tags.html",
         {"results": results, "excluded_tags": excluded_tags},
     )

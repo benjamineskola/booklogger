@@ -1,0 +1,32 @@
+{% from "macros.html" import link_amazon, link_goodreads with context %}
+{% extends "base.html" %}
+{% block content %}
+  {% for tag, related_tags in results.items() | sort %}
+    {% if related_tags.keys() | sort != [tag, "non-fiction"] | sort %}
+      <h2 id="{{ tag | replace(" ", "_") }}">
+        {{ tag }}
+      </h2>
+      <a href="{{ url("library:tag_details", args=[tag]) }}">{{ related_tags['total'] }} tagged books</a>
+      <ul>
+        {% for related_tag, count in related_tags.items() %}
+          {% if related_tag not in [tag, "non-fiction", "total"] %}
+            <li>
+              <a href="{{ url("library:tag_details", args=[tag + "," + related_tag]) }}">{{ related_tag }}</a>: {{ count }} books
+              {%- if count == related_tags['total'] -%}
+                *
+              {% endif %}
+              <a href="#{{ related_tag | replace(" ", "_") }}">#</a>
+            </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endfor %}
+
+  <h3>Reports</h3>
+  <ul>
+    {% for i in categories %}
+      <li><a href="/report/{{ loop.index }}/">{{ i[0] }}</a></li>
+    {% endfor %}
+  </ul>
+{% endblock %}
