@@ -9,7 +9,7 @@
       <a href="{{ url("library:tag_details", args=[tag]) }}">{{ related_tags['total'] }} tagged books</a>
       <ul>
         {% for related_tag, count in related_tags.items() %}
-          {% if related_tag not in [tag, "non-fiction", "total"] %}
+          {% if related_tag not in excluded_tags | list + [tag, "total"] %}
             <li>
               <a href="{{ url("library:tag_details", args=[tag + "," + related_tag]) }}">{{ related_tag }}</a>: {{ count }} books
               {%- if count == related_tags['total'] -%}
