@@ -1,19 +1,17 @@
-{%- block content -%}
-{%- for entry in entries -%}
-{%- if loop.changed(entry.end_date.strftime("%B %Y")) %}
-{%- if loop.first or loop.previtem.end_date.year != entry.end_date.year -%}
-{%- if entry.end_date.year > 1 -%}
-# Read in {{ entry.end_date.year }}
-{%- else -%}
+{% block content %}
+{% for year, year_entries in entries | groupby('end_date.year') | sort | reverse %}
+{% if year > 1 %}
+# Read in {{ year }}
+{% else %}
 # Read sometime
-{%- endif -%}
-{%- endif %}
+{% endif %}
+{% for month, month_entries in year_entries | groupby('end_date.month') %}
 
-- **{{ entry.end_date.strftime("%B") }}**
-{%- endif %}
+- **{{ month_entries[0].end_date.strftime("%B") }}**
+{% for entry in month_entries %}
   - {{ entry.book.first_author | safe }}, _{{ entry.book.display_title | safe }}_
-{%- if not loop.last and loop.nextitem.end_date.year != entry.end_date.year %}
+{% endfor %}
+{% endfor %}
 
-{% endif -%}
-{%- endfor %}
-{%- endblock content -%}
+{% endfor %}
+{% endblock content %}

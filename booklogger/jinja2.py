@@ -10,7 +10,7 @@ from jinja2 import Environment, Markup
 
 
 def environment(**options):
-    env = Environment(**options)
+    env = Environment(**options, trim_blocks=True, lstrip_blocks=True)
     env.globals.update({"static": static, "url": reverse})
 
     env.filters["markdown"] = lambda text: Markup(commonmark.commonmark(text))
