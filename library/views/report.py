@@ -146,7 +146,7 @@ def tags(request, base_tag="non-fiction"):
     if base_tag not in ["fiction", "non-fiction"]:
         excluded_tags |= set(["fiction", "non-fiction"])
 
-    books = Book.objects.filter(tags__contains=[base_tag]).order_by("tags")
+    books = Book.objects.filter(tags__contains=[base_tag])
     toplevel_tags = set(sum(books.values_list("tags", flat=True), [])) - excluded_tags
 
     results = {tag: books.filter(tags__contains=[tag]) for tag in toplevel_tags}
@@ -170,7 +170,7 @@ def related_tags(request, base_tag="non-fiction"):
     if base_tag not in ["fiction", "non-fiction"]:
         excluded_tags |= set(["fiction", "non-fiction"])
 
-    books = Book.objects.filter(tags__contains=[base_tag]).order_by("tags")
+    books = Book.objects.filter(tags__contains=[base_tag])
     toplevel_tags = set(sum(books.values_list("tags", flat=True), [])) - excluded_tags
 
     results = {}
