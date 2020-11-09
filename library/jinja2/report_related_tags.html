@@ -6,12 +6,12 @@
       <h2 id="{{ tag | replace(" ", "_") }}">
         {{ tag }}
       </h2>
-      <a href="{{ url("library:tag_details", args=[tag]) }}">{{ related_tags['total'] }} tagged books</a>
+      <a href="{{ url("library:tag_details", args=[base_tag + "," + tag]) }}">{{ related_tags['total'] }} tagged books</a>
       <ul>
         {% for related_tag, count in related_tags.items() %}
           {% if related_tag not in excluded_tags | list + [tag, "total"] %}
             <li>
-              <a href="{{ url("library:tag_details", args=[tag + "," + related_tag]) }}">{{ related_tag }}</a>: {{ count }} books
+              <a href="{{ url("library:tag_details", args=[base_tag + "," + tag + "," + related_tag]) }}">{{ related_tag }}</a>: {{ count }} books
               {%- if count == related_tags['total'] -%}
                 *
               {% endif %}

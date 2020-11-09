@@ -180,5 +180,5 @@ def related_tags(request, base_tag="non-fiction"):
     return render(
         request,
         "report_related_tags.html",
-        {"results": results, "excluded_tags": excluded_tags},
+        {"results": results, "base_tag": base_tag, "excluded_tags": excluded_tags},
     )
