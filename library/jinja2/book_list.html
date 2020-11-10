@@ -18,6 +18,8 @@
       <br>
     {% endif %}
 
+    {% set current_url = url(request.resolver_match.view_name, kwargs=request.resolver_match.kwargs) %}
+
     {% set gender_params = request.GET.copy() %}
     {% set _ = gender_params.update({'gender': gender_params.get('gender')}) %}
     {% set _ = gender_params.pop('gender') %}
@@ -27,38 +29,38 @@
     {% else %}
       {% set gender_qs = '?' %}
     {% endif %}
-    Gender: <a href="{{ url(request.resolver_match.view_name) }}{{ gender_qs.strip('&') }}">all</a>,
-    <a href="{{ url(request.resolver_match.view_name) }}{{ gender_qs  }}gender=male">male</a>,
-    <a href="{{ url(request.resolver_match.view_name) }}{{ gender_qs  }}gender=female">female</a>,
-    <a href="{{ url(request.resolver_match.view_name) }}{{ gender_qs  }}gender=both">both</a>,
-    <a href="{{ url(request.resolver_match.view_name) }}{{ gender_qs  }}gender=organization">groups/organisations</a>
+    Gender: <a href="{{ current_url }}{{ gender_qs.strip('&') }}">all</a>,
+    <a href="{{ current_url }}{{ gender_qs  }}gender=male">male</a>,
+    <a href="{{ current_url }}{{ gender_qs  }}gender=female">female</a>,
+    <a href="{{ current_url }}{{ gender_qs  }}gender=both">both</a>,
+    <a href="{{ current_url }}{{ gender_qs  }}gender=organization">groups/organisations</a>
     <br>
     {% set poc_params = request.GET.copy() %}
     {% set _ = poc_params.update({'poc': poc_params.get('poc')}) %}
     {% set _ = poc_params.pop('poc') %}
-    {% set poc_qs = poc_params.urlencode() %}
+    {% set poc_qs = poc_params.current_url %}
     {% if poc_qs %}
       {% set poc_qs = '?' + poc_qs + '&' %}
     {% else %}
       {% set poc_qs = '?' %}
     {% endif %}
-    POC: <a href="{{ url(request.resolver_match.view_name) }}{{ poc_qs.strip('&') }}">any</a>,
-    <a href="{{ url(request.resolver_match.view_name) }}{{ poc_qs }}poc=1">yes</a>,
-    <a href="{{ url(request.resolver_match.view_name) }}{{ poc_qs }}poc=0">no</a>
+    POC: <a href="{{ current_url }}{{ poc_qs.strip('&') }}">any</a>,
+    <a href="{{ current_url }}{{ poc_qs }}poc=1">yes</a>,
+    <a href="{{ current_url }}{{ poc_qs }}poc=0">no</a>
     <br>
 
     {% set subject_params = request.GET.copy() %}
     {% set _ = subject_params.update({'tags': subject_params.get('tags')}) %}
     {% set _ = subject_params.pop('tags') %}
-    {% set subject_qs = subject_params.urlencode() %}
+    {% set subject_qs = subject_params.current_url %}
     {% if subject_qs %}
       {% set subject_qs = '?' + subject_qs + '&' %}
     {% else %}
       {% set subject_qs = '?' %}
     {% endif %}
-    Subject: <a href="{{ url(request.resolver_match.view_name) }}{{ subject_qs.strip('&') }}">any</a>,
-    <a href="{{ url(request.resolver_match.view_name) }}{{ subject_qs }}tags=fiction">fiction</a>,
-    <a href="{{ url(request.resolver_match.view_name) }}{{ subject_qs }}tags=non-fiction">non-fiction</a>
+    Subject: <a href="{{ current_url }}{{ subject_qs.strip('&') }}">any</a>,
+    <a href="{{ current_url }}{{ subject_qs }}tags=fiction">fiction</a>,
+    <a href="{{ current_url }}{{ subject_qs }}tags=non-fiction">non-fiction</a>
   </p>
 
   {% if stats %}
