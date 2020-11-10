@@ -41,7 +41,12 @@
   {% set _ = params.pop(parameter_name) %}
 {% endif %}
 
-{{ title }}: <a href="{{ current_url }}{% if params %}?{{ params.urlencode() }}{% endif %}">any</a>
+{{ title }}:
+{% if not parameter_name in request.GET -%}
+  <span>any</span>
+{%- else -%}
+  <a href="{{ current_url }}{% if params %}?{{ params.urlencode() }}{% endif %}">any</a>
+{%- endif -%}
 
 {%- for option_title, option_value in parameter_options.items() -%}
   {%- if parameter_name in params -%}
@@ -50,7 +55,11 @@
 
   {%- set _ = params.update({ parameter_name: option_value }) -%}
 
-  , <a href="{{ current_url }}?{{ params.urlencode() }}">{{ option_title }}</a>
+  {%- if  request.GET[parameter_name] == option_value -%}
+    , <span>{{ option_title }}</span>
+  {%- else -%}
+    , <a href="{{ current_url }}?{{ params.urlencode() }}">{{ option_title }}</a>
+  {%- endif -%}
 {%- endfor %}
 {% endmacro %}
 
