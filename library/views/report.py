@@ -146,14 +146,14 @@ def tags(request, base_tag="non-fiction"):
     if base_tag not in ["fiction", "non-fiction"]:
         excluded_tags |= set(["fiction", "non-fiction"])
 
-    books = (
-        Book.objects.filter(tags__contains=[base_tag])
-        .select_related("first_author")
-        .prefetch_related("additional_authors")
+    books = Book.objects.filter(tags__contains=[base_tag]).select_related(
+        "first_author"
     )
     toplevel_tags = set(sum(books.values_list("tags", flat=True), [])) - excluded_tags
 
-    results = {tag: books.filter(tags__contains=[tag]) for tag in toplevel_tags}
+    results = {
+        tag: [book for book in books if tag in book.tags] for tag in toplevel_tags
+    }
 
     return render(
         request,
@@ -174,19 +174,15 @@ def related_tags(request, base_tag="non-fiction"):
     if base_tag not in ["fiction", "non-fiction"]:
         excluded_tags |= set(["fiction", "non-fiction"])
 
-    books = (
-        Book.objects.filter(tags__contains=[base_tag])
-        .select_related("first_author")
-        .prefetch_related("additional_authors")
-    )
+    books = Book.objects.filter(tags__contains=[base_tag])
     toplevel_tags = set(sum(books.values_list("tags", flat=True), [])) - excluded_tags
 
     results = {}
     for tag in toplevel_tags:
-        tagged_books = books.filter(tags__contains=[tag])
+        tagged_books = [book for book in books if tag in book.tags]
         related_tags = sorted(
             sum(
-                tagged_books.values_list("tags", flat=True),
+                [book.tags for book in tagged_books],
                 [],
             )
         )
@@ -194,8 +190,8 @@ def related_tags(request, base_tag="non-fiction"):
             related_tag: len(list(books))
             for related_tag, books in groupby(related_tags)
         }
-        results[tag]["total"] = tagged_books.count()
-        results[tag][tag] = tagged_books.filter(tags__len__gt=2).count()
+        results[tag]["total"] = len(tagged_books)
+        results[tag][tag] = len([book for book in tagged_books if len(book.tags) > 2])
 
     # {tag: books.filter(tags__contains=[tag]) for tag in toplevel_tags}
 
