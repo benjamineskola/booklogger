@@ -20,11 +20,16 @@ class LogEntryQuerySet(models.QuerySet):  # type: ignore [type-arg]
     def filter_by_request(self, request: Any) -> "LogEntryQuerySet":
         filter_by = Q()
         if gender := request.GET.get("gender"):
-            if not gender.isdigit():
-                gender = Author.Gender[gender.upper()]
-            filter_by &= Q(book__first_author__gender=gender) | Q(
-                book__additional_authors__gender=gender
-            )
+            if gender.lower() == "both":
+                filter_by &= Q(
+                    book__first_author__gender=1, book__additional_authors__gender=2
+                ) | Q(book__first_author__gender=2, book__additional_authors__gender=1)
+            else:
+                if not gender.isdigit():
+                    gender = Author.Gender[gender.upper()]
+                filter_by &= Q(book__first_author__gender=gender) | Q(
+                    book__additional_authors__gender=gender
+                )
         if poc := request.GET.get("poc"):
             filter_by &= Q(book__first_author__poc=bool(int(poc))) | Q(
                 book__additional_authors__poc=bool(int(poc))
