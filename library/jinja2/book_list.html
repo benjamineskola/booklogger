@@ -8,12 +8,12 @@
   <p class="ui top attached segment">
     {% if request.resolver_match.url_name not in ["books_read", "books_read_undated", "series_details", "tag_details", "books_reviewed", "books_unreviewed"] %}
       {% set qs = '?' + request.GET.urlencode() %}
-      Formats: <a href="{{ url("library:" + request.resolver_match.url_name) }}{{ qs }}">all</a>
+      Formats: <a href="{{ url(request.resolver_match.view_name) }}{{ qs }}">all</a>
       {% if not format %}
         {%- for n, f  in formats if n in counts and counts[n] > 0 -%}
-          , <a href="{{ url("library:" + request.resolver_match.url_name, kwargs={"format": f.lower()}) }}{{ qs }}">{{ f | lower }}</a> ({{ counts[n] }})
+          , <a href="{{ url(request.resolver_match.view_name, kwargs={"format": f.lower()}) }}{{ qs }}">{{ f | lower }}</a> ({{ counts[n] }})
         {%- endfor -%}
-        , <a href="{{ url("library:" + request.resolver_match.url_name, kwargs={"format": "physical"}) }}{{ qs }}">physical</a> ({{ counts.get(1) | int + counts.get(2) | int }})
+        , <a href="{{ url(request.resolver_match.view_name, kwargs={"format": "physical"}) }}{{ qs }}">physical</a> ({{ counts.get(1) | int + counts.get(2) | int }})
       {% endif %}
       <br>
     {% endif %}
@@ -27,11 +27,11 @@
     {% else %}
       {% set gender_qs = '?' %}
     {% endif %}
-    Gender: <a href="{{ url("library:" + request.resolver_match.url_name) }}{{ gender_qs.strip('&') }}">all</a>,
-    <a href="{{ url("library:" + request.resolver_match.url_name) }}{{ gender_qs  }}gender=male">male</a>,
-    <a href="{{ url("library:" + request.resolver_match.url_name) }}{{ gender_qs  }}gender=female">female</a>,
-    <a href="{{ url("library:" + request.resolver_match.url_name) }}{{ gender_qs  }}gender=both">both</a>,
-    <a href="{{ url("library:" + request.resolver_match.url_name) }}{{ gender_qs  }}gender=organization">groups/organisations</a>
+    Gender: <a href="{{ url(request.resolver_match.view_name) }}{{ gender_qs.strip('&') }}">all</a>,
+    <a href="{{ url(request.resolver_match.view_name) }}{{ gender_qs  }}gender=male">male</a>,
+    <a href="{{ url(request.resolver_match.view_name) }}{{ gender_qs  }}gender=female">female</a>,
+    <a href="{{ url(request.resolver_match.view_name) }}{{ gender_qs  }}gender=both">both</a>,
+    <a href="{{ url(request.resolver_match.view_name) }}{{ gender_qs  }}gender=organization">groups/organisations</a>
     <br>
     {% set poc_params = request.GET.copy() %}
     {% set _ = poc_params.update({'poc': poc_params.get('poc')}) %}
@@ -42,9 +42,9 @@
     {% else %}
       {% set poc_qs = '?' %}
     {% endif %}
-    POC: <a href="{{ url("library:" + request.resolver_match.url_name) }}{{ poc_qs.strip('&') }}">any</a>,
-    <a href="{{ url("library:" + request.resolver_match.url_name) }}{{ poc_qs }}poc=1">yes</a>,
-    <a href="{{ url("library:" + request.resolver_match.url_name) }}{{ poc_qs }}poc=0">no</a>
+    POC: <a href="{{ url(request.resolver_match.view_name) }}{{ poc_qs.strip('&') }}">any</a>,
+    <a href="{{ url(request.resolver_match.view_name) }}{{ poc_qs }}poc=1">yes</a>,
+    <a href="{{ url(request.resolver_match.view_name) }}{{ poc_qs }}poc=0">no</a>
     <br>
 
     {% set subject_params = request.GET.copy() %}
@@ -56,9 +56,9 @@
     {% else %}
       {% set subject_qs = '?' %}
     {% endif %}
-    Subject: <a href="{{ url("library:" + request.resolver_match.url_name) }}{{ subject_qs.strip('&') }}">any</a>,
-    <a href="{{ url("library:" + request.resolver_match.url_name) }}{{ subject_qs }}tags=fiction">fiction</a>,
-    <a href="{{ url("library:" + request.resolver_match.url_name) }}{{ subject_qs }}tags=non-fiction">non-fiction</a>
+    Subject: <a href="{{ url(request.resolver_match.view_name) }}{{ subject_qs.strip('&') }}">any</a>,
+    <a href="{{ url(request.resolver_match.view_name) }}{{ subject_qs }}tags=fiction">fiction</a>,
+    <a href="{{ url(request.resolver_match.view_name) }}{{ subject_qs }}tags=non-fiction">non-fiction</a>
   </p>
 
   {% if stats %}
