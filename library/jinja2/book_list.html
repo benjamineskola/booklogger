@@ -1,19 +1,65 @@
 {% from "macros/card.html" import book_list with context %}
 {% extends "base.html" %}
 {% block content %}
-  {% if request.resolver_match.url_name not in ["books_read", "books_read_undated", "series_details", "tag_details", "books_reviewed", "books_unreviewed"] %}
-    {% if not format %}
-      <p class="ui top attached segment">
-        Formats: <a href="{{ url("library:" + request.resolver_match.url_name) }}">all</a>
-        {%- for n, f  in formats if n in counts and counts[n] > 0 -%}
-          , <a href="{{ url("library:" + request.resolver_match.url_name, kwargs={"format": f.lower()}) }}">{{ f | lower }}</a> ({{ counts[n] }})
-        {%- endfor -%}
-        , <a href="{{ url("library:" + request.resolver_match.url_name, kwargs={"format": "physical"}) }}">physical</a> ({{ counts.get(1) | int + counts.get(2) | int }})
-      </p>
-    {% else %}
-      <h2 class="ui header">{{ format }}</h2>
-    {% endif %}
+  {% if format %}
+    <h2 class="ui header">{{ format }}</h2>
   {% endif %}
+
+  <p class="ui top attached segment">
+    {% if request.resolver_match.url_name not in ["books_read", "books_read_undated", "series_details", "tag_details", "books_reviewed", "books_unreviewed"] %}
+      {% set qs = '?' + request.GET.urlencode() %}
+      Formats: <a href="{{ url("library:" + request.resolver_match.url_name) }}{{ qs }}">all</a>
+      {% if not format %}
+        {%- for n, f  in formats if n in counts and counts[n] > 0 -%}
+          , <a href="{{ url("library:" + request.resolver_match.url_name, kwargs={"format": f.lower()}) }}{{ qs }}">{{ f | lower }}</a> ({{ counts[n] }})
+        {%- endfor -%}
+        , <a href="{{ url("library:" + request.resolver_match.url_name, kwargs={"format": "physical"}) }}{{ qs }}">physical</a> ({{ counts.get(1) | int + counts.get(2) | int }})
+      {% endif %}
+      <br>
+    {% endif %}
+
+    {% set gender_params = request.GET.copy() %}
+    {% set _ = gender_params.update({'gender': gender_params.get('gender')}) %}
+    {% set _ = gender_params.pop('gender') %}
+    {% set gender_qs = gender_params.urlencode() %}
+    {% if gender_qs %}
+      {% set gender_qs = '?' + gender_qs + '&' %}
+    {% else %}
+      {% set gender_qs = '?' %}
+    {% endif %}
+    Gender: <a href="{{ url("library:" + request.resolver_match.url_name) }}{{ gender_qs.strip('&') }}">all</a>,
+    <a href="{{ url("library:" + request.resolver_match.url_name) }}{{ gender_qs  }}gender=male">male</a>,
+    <a href="{{ url("library:" + request.resolver_match.url_name) }}{{ gender_qs  }}gender=female">female</a>,
+    <a href="{{ url("library:" + request.resolver_match.url_name) }}{{ gender_qs  }}gender=both">both</a>,
+    <a href="{{ url("library:" + request.resolver_match.url_name) }}{{ gender_qs  }}gender=organization">groups/organisations</a>
+    <br>
+    {% set poc_params = request.GET.copy() %}
+    {% set _ = poc_params.update({'poc': poc_params.get('poc')}) %}
+    {% set _ = poc_params.pop('poc') %}
+    {% set poc_qs = poc_params.urlencode() %}
+    {% if poc_qs %}
+      {% set poc_qs = '?' + poc_qs + '&' %}
+    {% else %}
+      {% set poc_qs = '?' %}
+    {% endif %}
+    POC: <a href="{{ url("library:" + request.resolver_match.url_name) }}{{ poc_qs.strip('&') }}">any</a>,
+    <a href="{{ url("library:" + request.resolver_match.url_name) }}{{ poc_qs }}poc=1">yes</a>,
+    <a href="{{ url("library:" + request.resolver_match.url_name) }}{{ poc_qs }}poc=0">no</a>
+    <br>
+
+    {% set subject_params = request.GET.copy() %}
+    {% set _ = subject_params.update({'tags': subject_params.get('tags')}) %}
+    {% set _ = subject_params.pop('tags') %}
+    {% set subject_qs = subject_params.urlencode() %}
+    {% if subject_qs %}
+      {% set subject_qs = '?' + subject_qs + '&' %}
+    {% else %}
+      {% set subject_qs = '?' %}
+    {% endif %}
+    Subject: <a href="{{ url("library:" + request.resolver_match.url_name) }}{{ subject_qs.strip('&') }}">any</a>,
+    <a href="{{ url("library:" + request.resolver_match.url_name) }}{{ subject_qs }}tags=fiction">fiction</a>,
+    <a href="{{ url("library:" + request.resolver_match.url_name) }}{{ subject_qs }}tags=non-fiction">non-fiction</a>
+  </p>
 
   {% if stats %}
     <p class="ui bottom attached segment">
