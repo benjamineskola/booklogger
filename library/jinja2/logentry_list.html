@@ -1,10 +1,15 @@
 {% from "macros/card.html" import book_list with context %}
 {% extends "base.html" %}
 {% block content %}
-  {% if entries[0].currently_reading %}
+  {% if entries and entries[0].currently_reading %}
     {{ book_list(entries) }}
   {% else %}
-    {% set display_year = entries.first().end_date.year %}
+    {% if entries %}
+      {% set display_year = entries.first().end_date.year %}
+    {% else %}
+      {% set display_year = request.resolver_match.kwargs.get('year') | int %}
+    {% endif %}
+
     {% if not year %}
       {% if display_year == 1 %}
         <h2 class="ui dividing header">Read sometime</h2>
@@ -42,11 +47,15 @@
         </div>
         <script>
           setTimeout(function () {
-            load_next_page("{{ next_year }}", "{{ url("library:books_read", kwargs={"year": next_year}) }}?infinite=true");
+          {% set params = request.GET.copy() %}
+          {% if not 'infinite' in params %}
+            {% set _ = params.update({'infinite': 'true'}) %}
+          {% endif %}
+            load_next_page("{{ next_year }}", "{{ url("library:books_read", kwargs={"year": next_year}) }}?{{ params.urlencode() | safe }}");
           }, 2 * 1000);
 
           $(".error.message .button").on("click", function () {
-            load_next_page("{{ next_year }}", "{{ url("library:books_read", kwargs={"year": next_year}) }}?infinite=true");
+            load_next_page("{{ next_year }}", "{{ url("library:books_read", kwargs={"year": next_year}) }}?{{ params.urlencode() | safe }}");
           });
         </script>
       {% endif %}
