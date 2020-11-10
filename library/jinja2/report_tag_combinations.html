@@ -27,8 +27,14 @@
 
   <h3>Reports</h3>
   <ul>
-    {% for i in categories %}
-      <li><a href="/report/{{ loop.index }}/">{{ i[0] }}</a></li>
-    {% endfor %}
+    <li><a href="/report/">Reports</a></li>
+    <li>
+      <a href="/report/tags/">Tag combinations</a>
+      <a href="/report/tags/fiction/">(fiction)</a>
+    </li>
+    <li>
+      <a href="/report/tags/related/">Related tags</a>
+      <a href="/report/tags/related/fiction/">(fiction)</a>
+    </li>
   </ul>
 {% endblock %}
