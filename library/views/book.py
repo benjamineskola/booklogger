@@ -154,12 +154,17 @@ class TagIndexView(IndexView):
         books = super().get_queryset()
         tags = [tag.strip() for tag in self.kwargs["tag_name"].split(",")]
         if tags == ["untagged"]:
-            condition = {"tags__len": 0}
+            condition = Q(tags__len=0)
         elif len(tags) == 1 and tags[0].endswith("!"):
-            condition = {"tags": [tags[0][0:-1]]}
+            tag = tags[0][0:-1]
+            condition = (
+                Q(tags=[tag])
+                | Q(tags=sorted(["fiction", tag]))
+                | Q(tags=sorted(["non-fiction", tag]))
+            )
         else:
-            condition = {"tags__contains": tags}
-        books = books.filter(**condition)
+            condition = Q(tags__contains=tags)
+        books = books.filter(condition)
         return books
 
     def get_context_data(self, **kwargs):
