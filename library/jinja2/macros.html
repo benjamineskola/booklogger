@@ -33,6 +33,27 @@
 {{- author_list(book.authors, book=book) -}}, <em><a href="{{ book.get_absolute_url() }}">{{ book.display_title }}</a></em>
 {%- endmacro %}
 
+{% macro filter_list(title, parameter_name, parameter_options) %}
+{% set params = request.GET.copy() %}
+{% set current_url = url(request.resolver_match.view_name, kwargs=request.resolver_match.kwargs) %}
+
+{% if parameter_name in params %}
+  {% set _ = params.pop(parameter_name) %}
+{% endif %}
+
+{{ title }}: <a href="{{ current_url }}{% if params %}?{{ params.urlencode() }}{% endif %}">any</a>
+
+{%- for option_title, option_value in parameter_options.items() -%}
+  {%- if parameter_name in params -%}
+    {%- set _ = params.pop(parameter_name) -%}
+  {%- endif -%}
+
+  {%- set _ = params.update({ parameter_name: option_value }) -%}
+
+  , <a href="{{ current_url }}?{{ params.urlencode() }}">{{ option_title }}</a>
+{%- endfor %}
+{% endmacro %}
+
 {% macro format_date(date, precision) %}
 {%- if precision == 2 -%}
   {{ date.strftime("%Y") }}
