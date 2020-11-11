@@ -1,6 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans&display=swap');
 body, .ui.button, .ui.header, .ui.menu, .ui.card > .content > .header, .ui.cards > .card > .content > .header {
-  font-family: "IBM Plex Sans", serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, serif;
+  font-weight: 300;
 }
 
 .ui.grid {
