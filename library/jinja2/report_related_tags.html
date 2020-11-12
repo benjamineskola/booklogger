@@ -1,6 +1,13 @@
 {% from "macros.html" import link_amazon, link_goodreads with context %}
 {% extends "base.html" %}
 {% block content %}
+  <p>
+    {% set comma = joiner(',') %}
+    {% for tag in results.keys() | sort -%}
+      {{ comma() }}
+      <a href="#{{ tag | replace(' ', '_') }}">{{ tag }}</a>
+    {%- endfor %}
+  </p>
   {% for tag, related_tags in results.items() | sort %}
     {% if related_tags.keys() | sort != [tag, "non-fiction"] | sort %}
       <h2 id="{{ tag | replace(" ", "_") }}">

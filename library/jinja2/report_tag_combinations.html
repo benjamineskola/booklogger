@@ -1,6 +1,13 @@
 {% from "macros.html" import link_amazon, link_goodreads with context %}
 {% extends "base.html" %}
 {% block content %}
+  <p>
+    {% set comma = joiner(',') %}
+    {% for tag in results.keys() | sort -%}
+      {{ comma() }}
+      <a href="#{{ tag | replace(' ', '_') }}">{{ tag }}</a>
+    {%- endfor %}
+  </p>
   {% for tag, books in results.items() | sort %}
     <h2 id="{{ tag | replace(" ", "_") }}">
       {{ tag }}
