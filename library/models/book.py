@@ -593,13 +593,40 @@ class Book(models.Model):
 
         return self.log_entries.filter(end_date__isnull=False).count() > 0
 
-    def add_tags(self, tags: Iterable[str]) -> None:
+    related_tags = {
+        "ancient history": ["history"],
+        "byzantium": ["eastern europe", "west asia", "greece"],
+        "chinese revolution": ["china", "twentieth century"],
+        "cold war": ["twentieth century"],
+        "decolonisation": ["imperialism"],
+        "historical fiction": ["fiction"],
+        "holocaust": ["antisemitism"],
+        "india": ["south asia"],
+        "intellectual history": ["history"],
+        "iran": ["west asia"],
+        "israel": ["west asia"],
+        "japan": ["east asia"],
+        "korea": ["east asia"],
+        "russian revolution": ["russia", "twentieth century"],
+        "speculative fiction": ["fiction"],
+        "ukraine": ["eastern europe"],
+        "vietnam": ["southeast asia"],
+        "world war one": ["twentieth century"],
+        "world war two": ["twentieth century"],
+    }
+
+    def add_tags(self, tags: Iterable[str]) -> Iterable[str]:
+        initial_tags = set(self.tags)
         for tag in tags:
             clean_tag = tag.strip().lower().replace(",", "").replace("/", "")
             if clean_tag not in self.tags:
                 self.tags.append(clean_tag)
+                if clean_tag in self.related_tags:
+                    self.add_tags(self.related_tags[clean_tag])
         self.tags.sort()
         self.save()
+
+        return list(set(self.tags) - initial_tags)
 
     def remove_tags(self, tags: Iterable[str]) -> None:
         for tag in tags:

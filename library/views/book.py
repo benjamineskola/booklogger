@@ -333,13 +333,11 @@ def update_progress(request, slug):
 def add_tags(request, slug):
     book = get_object_or_404(Book, slug=slug)
     tags = request.POST.get("tags").split(",")
-    if tags:
-        book.add_tags(tags)
 
-    if next := request.GET.get("next"):
-        return redirect(next)
-    else:
-        return redirect("library:book_details", slug=slug)
+    if tags:
+        tags = book.add_tags(tags)
+
+    return HttpResponse(json.dumps({"tags": tags}))
 
 
 @login_required

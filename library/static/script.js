@@ -8,12 +8,12 @@ $(document).ready(function () {
       type: "POST",
       url: url,
       data: form.serialize(),
+      dataType: "json",
       success: function (data) {
         var tags_field = $(form.data("tags"));
         var input_field = form.find('input[name="tags"]');
-        var new_tags = input_field.val().split(",");
-        for (var i in new_tags) {
-          new_tag = new_tags[i].trim();
+        for (var i in data.tags) {
+          new_tag = data.tags[i];
           tags_field.prepend(
             `<span class="ui label"><a href="/tag/${new_tag}">${new_tag}</a></span> `
           );
