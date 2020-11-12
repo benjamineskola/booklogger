@@ -11,6 +11,8 @@
   {% for tag, books in results.items() | sort %}
     <h2 id="{{ tag | replace(" ", "_") }}">
       {{ tag }}
+      <small><a href="#{{ tag | replace(" ", "_") }}">#</a></small>
+      <small><a href="#navbar">⤴</a></small>
     </h2>
     <ol>
       {% for tags, tagged_books in books | groupby('tags') %}

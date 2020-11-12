@@ -6,3 +6,12 @@ body, .ui.button, .ui.header, .ui.menu, .ui.card > .content > .header, .ui.cards
 .ui.grid {
   padding: 0 !important;
 }
+
+h2 > small {
+  display: none;
+}
+
+h2:hover > small {
+  display: inline;
+  font-size: 0.8rem;
+}
