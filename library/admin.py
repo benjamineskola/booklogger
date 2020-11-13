@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Author, Book, BookAuthor, LogEntry
+from .models import Author, Book, BookAuthor, LogEntry, Tag
 
 # Register your models here.
 
@@ -54,3 +54,4 @@ admin.site.register(Author, AuthorAdmin)
 admin.site.register(Book, BookAdmin)
 admin.site.register(BookAuthor)
 admin.site.register(LogEntry, LogEntryAdmin)
+admin.site.register(Tag)

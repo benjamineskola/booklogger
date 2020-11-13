@@ -14,7 +14,7 @@ from django.views import generic
 from django.views.decorators.http import require_POST
 
 from library.forms import BookAuthorFormSet, BookForm, LogEntryFormSet
-from library.models import Book, LogEntry
+from library.models import Book, LogEntry, Tag
 from library.utils import oxford_comma
 
 
@@ -154,18 +154,18 @@ class TagIndexView(IndexView):
         books = super().get_queryset()
         tags = [tag.strip() for tag in self.kwargs["tag_name"].split(",")]
         if tags == ["untagged"]:
-            condition = Q(tags__len=0)
+            return books.filter(tags__len=0)
         elif len(tags) == 1 and tags[0].endswith("!"):
             tag = tags[0][0:-1]
-            condition = (
+            return books.filter(
                 Q(tags=[tag])
                 | Q(tags=sorted(["fiction", tag]))
                 | Q(tags=sorted(["non-fiction", tag]))
             )
         else:
-            condition = Q(tags__contains=tags)
-        books = books.filter(condition)
-        return books
+            for tag in tags:
+                books &= Tag.objects.get(name=tag).books_recursive
+            return books
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -593,36 +593,13 @@ class Book(models.Model):
 
         return self.log_entries.filter(end_date__isnull=False).count() > 0
 
-    related_tags = {
-        "ancient history": ["history"],
-        "byzantium": ["eastern europe", "west asia", "greece"],
-        "chinese revolution": ["china", "twentieth century"],
-        "cold war": ["twentieth century"],
-        "decolonisation": ["imperialism"],
-        "historical fiction": ["fiction"],
-        "holocaust": ["antisemitism"],
-        "india": ["south asia"],
-        "intellectual history": ["history"],
-        "iran": ["west asia"],
-        "israel": ["west asia"],
-        "japan": ["east asia"],
-        "korea": ["east asia"],
-        "russian revolution": ["russia", "twentieth century"],
-        "speculative fiction": ["fiction"],
-        "ukraine": ["eastern europe"],
-        "vietnam": ["southeast asia"],
-        "world war one": ["twentieth century"],
-        "world war two": ["twentieth century"],
-    }
-
     def add_tags(self, tags: Iterable[str]) -> Iterable[str]:
         initial_tags = set(self.tags)
         for tag in tags:
             clean_tag = tag.strip().lower().replace(",", "").replace("/", "")
+            Tag.objects.get_or_create(name=clean_tag)
             if clean_tag not in self.tags:
                 self.tags.append(clean_tag)
-                if clean_tag in self.related_tags:
-                    self.add_tags(self.related_tags[clean_tag])
         self.tags.sort()
         self.save()
 
@@ -830,3 +807,34 @@ class BookAuthor(models.Model):
 
     def __str__(self) -> str:
         return ": ".join([str(self.author), str(self.role), self.book.title])
+
+
+class Tag(models.Model):
+    class Meta:
+        ordering = ("name",)
+
+    name = models.CharField(max_length=64, primary_key=True)
+    parents = models.ManyToManyField(
+        "self", related_name="children", blank=True, symmetrical=False
+    )
+
+    def __str__(self) -> str:
+        return self.fullname
+
+    @property
+    def fullname(self) -> str:
+        if self.parents.count():
+            return self.parents[0].fullname + " :: " + self.name
+        else:
+            return self.name
+
+    @property
+    def books(self) -> "models.Manager[Book]":
+        return Book.objects.filter(tags__contains=[self.name]).distinct()
+
+    @property
+    def books_recursive(self) -> "models.Manager[Book]":
+        books = self.books
+        for child in self.children.all():
+            books |= child.books_recursive
+        return books
