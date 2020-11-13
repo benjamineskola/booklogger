@@ -823,8 +823,8 @@ class Tag(models.Model):
 
     @property
     def fullname(self) -> str:
-        if self.parents.count():
-            return self.parents[0].fullname + " :: " + self.name
+        if parent := self.parents.first():
+            return parent.fullname + " :: " + self.name
         else:
             return self.name
 
