@@ -1,7 +1,7 @@
 import os
 import re
 import time
-from typing import Any, Dict, Iterable, Optional, Sequence, Tuple
+from typing import Any, Dict, Optional, Sequence, Tuple
 from urllib.parse import quote
 
 import requests
@@ -586,24 +586,6 @@ class Book(models.Model):
 
         return self.log_entries.filter(end_date__isnull=False).count() > 0
 
-    def add_tags(self, tags: Iterable[str]) -> Iterable[str]:
-        initial_tags = set(self.tags)
-        for tag in tags:
-            clean_tag = tag.strip().lower().replace(",", "").replace("/", "")
-            Tag.objects.get_or_create(name=clean_tag)
-            if clean_tag not in self.tags:
-                self.tags.append(clean_tag)
-        self.tags.sort()
-        self.save()
-
-        return list(set(self.tags) - initial_tags)
-
-    def remove_tags(self, tags: Iterable[str]) -> None:
-        for tag in tags:
-            clean_tag = tag.strip().lower().replace(",", "").replace("/", "")
-            self.tags.remove(clean_tag)
-        self.save()
-
     def create_new_edition(self, edition_format: int) -> None:
         edition = Book(
             title=self.title,
@@ -649,6 +631,17 @@ class Book(models.Model):
             self.series_order = None
         if self.rating == 0:
             self.rating = None
+
+        self.tags = sorted(
+            set(
+                [
+                    tag.lower().replace(",", "").replace("/", "").strip()
+                    for tag in self.tags
+                ]
+            )
+        )
+        for tag in self.tags:
+            Tag.objects.get_or_create(name=tag)
 
         super().save(*args, **kwargs)
 
@@ -773,14 +766,14 @@ class Book(models.Model):
 
         if "publisher" in volume and not self.publisher:
             self.publisher = volume["publisher"]
-            self.add_tags(["updated-from-google"])
+            self.tags.append("updated-from-google")
         if "pageCount" in volume and not self.page_count:
             self.page_count = volume["pageCount"]
-            self.add_tags(["updated-from-google"])
+            self.tags.append("updated-from-google")
         if "publishedDate" in volume and not self.first_published:
             try:
                 self.first_published = int(volume["publishedDate"].split("-")[0])
-                self.add_tags(["updated-from-google"])
+                self.tags.append("updated-from-google")
             except ValueError:
                 pass
 
@@ -856,12 +849,12 @@ class Tag(models.Model):
             new_tag.save()
 
         for book in self.books:
-            book.add_tags([new_name])
+            book.tags.append(new_name)
             book.save()
         self.delete()
 
     def delete(self, *args: Any, **kwargs: Any) -> Tuple[int, Dict[str, int]]:
         for book in self.books:
-            book.remove_tags([self.name])
+            book.tags.remove(self.name)
             book.save()
         return super().delete(*args, **kwargs)

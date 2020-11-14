@@ -331,7 +331,10 @@ def add_tags(request, slug):
     tags = request.POST.get("tags").split(",")
 
     if tags:
-        tags = book.add_tags(tags)
+        start_tags = book.tags.copy()
+        book.tags += tags
+        book.save()
+        tags = sorted(set(book.tags).difference(start_tags))
 
     return HttpResponse(json.dumps({"tags": tags}))
 
@@ -341,8 +344,9 @@ def add_tags(request, slug):
 def remove_tags(request, slug):
     book = get_object_or_404(Book, slug=slug)
     tags = request.POST.get("tags").split(",")
-    if tags:
-        book.remove_tags(tags)
+    for tag in tags:
+        book.tags.remove(tag)
+    book.save()
 
     if next := request.GET.get("next"):
         return redirect(next)
