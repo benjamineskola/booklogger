@@ -1,7 +1,7 @@
 import os
 import re
 import time
-from typing import Any, Dict, Iterable, Optional, Sequence
+from typing import Any, Dict, Iterable, Optional, Sequence, Tuple
 from urllib.parse import quote
 
 import requests
@@ -73,13 +73,6 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
             .order_by("-similarity")
             .filter(similarity__gt=0.14)
         )
-
-    def rename_tag(self, old_name: str, new_name: str) -> None:
-        tagged_books = self.filter(tags__contains=[old_name])
-        for book in tagged_books:
-            book.tags.append(new_name)
-            book.tags.remove(old_name)
-            book.save()
 
     def filter_by_request(self, request: str) -> "BookQuerySet":
         return self.get_queryset().filter_by_request(request)
@@ -853,3 +846,22 @@ class Tag(models.Model):
             | Q(tags=sorted(["fiction", self.name]))
             | Q(tags=sorted(["non-fiction", self.name]))
         )
+
+    def rename(self, new_name: str) -> None:
+        new_tag, created = Tag.objects.get_or_create(name=new_name)
+        new_tag.save()
+        if created:
+            for parent in self.parents:
+                new_tag.parents.add(parent)
+            new_tag.save()
+
+        for book in self.books:
+            book.add_tags([new_name])
+            book.save()
+        self.delete()
+
+    def delete(self, *args: Any, **kwargs: Any) -> Tuple[int, Dict[str, int]]:
+        for book in self.books:
+            book.remove_tags([self.name])
+            book.save()
+        return super().delete(*args, **kwargs)
