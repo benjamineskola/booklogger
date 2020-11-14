@@ -809,7 +809,14 @@ class BookAuthor(models.Model):
         return ": ".join([str(self.author), str(self.role), self.book.title])
 
 
+class TagManager(models.Manager):  # type: ignore [type-arg]
+    def __getitem__(self, name: str) -> "Tag":  # type: ignore [override]
+        return Tag.objects.get(name=name)
+
+
 class Tag(models.Model):
+    objects = TagManager()
+
     class Meta:
         ordering = ("name",)
 

@@ -10,39 +10,23 @@ from . import author, book, importer, report, search, series  # noqa: F401
 
 
 def tag_cloud(request):
-    all_tags = {
-        "fiction": Book.objects.fiction().values_list("tags", flat=True),
-        "non-fiction": Book.objects.nonfiction().values_list("tags", flat=True),
-    }
-
     tags = {
         "untagged": Book.objects.exclude(tags__contains=["non-fiction"])
         .exclude(tags__contains=["fiction"])
         .count(),
         "non-fiction": {
-            "no other tags": Tag.objects.get(
-                name="non-fiction"
-            ).books_uniquely_tagged.count()
+            "no other tags": Tag.objects["non-fiction"].books_uniquely_tagged.count()
         },
         "fiction": {
-            "no other tags": Tag.objects.get(
-                name="fiction"
-            ).books_uniquely_tagged.count()
+            "no other tags": Tag.objects["fiction"].books_uniquely_tagged.count()
         },
         "all": {},
     }
 
-    for key in ["fiction", "non-fiction"]:
-        for book_tags in all_tags[key]:
-            for tag in book_tags:
-                if tag in tags[key]:
-                    tags[key][tag] += 1
-                else:
-                    tags[key][tag] = 1
-                if tag in tags["all"]:
-                    tags["all"][tag] += 1
-                else:
-                    tags["all"][tag] = 1
+    for tag in Tag.objects.all():
+        tags['all'][tag.name] = tag.books.count()
+        tags['fiction'][tag.name] = tag.books.fiction().count()
+        tags['non-fiction'][tag.name] = tag.books.nonfiction().count()
 
     sorted_tags = {"name": {}, "size": {}}
     for key in ["fiction", "non-fiction", "all"]:

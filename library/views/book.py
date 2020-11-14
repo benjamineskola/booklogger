@@ -160,7 +160,7 @@ class TagIndexView(IndexView):
             return tag.books_uniquely_tagged
         else:
             for tag in tags:
-                books &= Tag.objects.get(name=tag).books_recursive
+                books &= Tag.objects[tag].books_recursive
             return books
 
     def get_context_data(self, **kwargs):
