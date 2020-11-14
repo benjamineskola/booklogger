@@ -838,3 +838,11 @@ class Tag(models.Model):
         for child in self.children.all():
             books |= child.books_recursive
         return books
+
+    @property
+    def books_uniquely_tagged(self) -> "models.Manager[Book]":
+        return Book.objects.filter(
+            Q(tags=[self.name])
+            | Q(tags=sorted(["fiction", self.name]))
+            | Q(tags=sorted(["non-fiction", self.name]))
+        )

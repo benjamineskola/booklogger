@@ -156,12 +156,8 @@ class TagIndexView(IndexView):
         if tags == ["untagged"]:
             return books.filter(tags__len=0)
         elif len(tags) == 1 and tags[0].endswith("!"):
-            tag = tags[0][0:-1]
-            return books.filter(
-                Q(tags=[tag])
-                | Q(tags=sorted(["fiction", tag]))
-                | Q(tags=sorted(["non-fiction", tag]))
-            )
+            tag = get_object_or_404(Tag, name=tags[0][0:-1])
+            return tag.books_uniquely_tagged
         else:
             for tag in tags:
                 books &= Tag.objects.get(name=tag).books_recursive

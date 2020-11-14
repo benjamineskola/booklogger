@@ -2,7 +2,7 @@ from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.utils import timezone
 
-from library.models import Book, LogEntry
+from library.models import Book, LogEntry, Tag
 
 from . import author, book, importer, report, search, series  # noqa: F401
 
@@ -20,9 +20,15 @@ def tag_cloud(request):
         .exclude(tags__contains=["fiction"])
         .count(),
         "non-fiction": {
-            "no other tags": Book.objects.filter(tags=["non-fiction"]).count()
+            "no other tags": Tag.objects.get(
+                name="non-fiction"
+            ).books_uniquely_tagged.count()
         },
-        "fiction": {"no other tags": Book.objects.filter(tags=["fiction"]).count()},
+        "fiction": {
+            "no other tags": Tag.objects.get(
+                name="fiction"
+            ).books_uniquely_tagged.count()
+        },
         "all": {},
     }
 
