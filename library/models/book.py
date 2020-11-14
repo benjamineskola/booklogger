@@ -239,10 +239,10 @@ class BookQuerySet(models.QuerySet):  # type: ignore [type-arg]
         return self.by_gender(2)
 
     def fiction(self) -> "BookQuerySet":
-        return self.filter(tags__contains=["fiction"])
+        return self & Tag.objects["fiction"].books
 
     def nonfiction(self) -> "BookQuerySet":
-        return self.filter(tags__contains=["non-fiction"])
+        return self & Tag.objects["non-fiction"].books
 
     def read(self) -> "BookQuerySet":
         return self.filter(
