@@ -24,9 +24,9 @@ def tag_cloud(request):
     }
 
     for tag in Tag.objects.all():
-        tags['all'][tag.name] = tag.books.count()
-        tags['fiction'][tag.name] = tag.books.fiction().count()
-        tags['non-fiction'][tag.name] = tag.books.nonfiction().count()
+        tags["all"][tag.name] = tag.books.count()
+        tags["fiction"][tag.name] = tag.books.fiction().count()
+        tags["non-fiction"][tag.name] = tag.books.nonfiction().count()
 
     sorted_tags = {"name": {}, "size": {}}
     for key in ["fiction", "non-fiction", "all"]:
