@@ -3,7 +3,7 @@ from itertools import groupby
 from django.db.models import F, Q
 from django.shortcuts import render
 
-from library.models import Book
+from library.models import Book, Tag
 
 
 def report(request, page=None):
@@ -112,9 +112,7 @@ def report(request, page=None):
         ),
         (
             "History without sufficient tags",
-            lambda: Book.objects.filter(
-                tags__contains=["history", "non-fiction"]
-            ).filter(tags__contained_by=["history", "non-fiction"]),
+            lambda: Tag.objects["history"].books_uniquely_tagged,
         ),
     ]
 
@@ -146,9 +144,7 @@ def tags(request, base_tag="non-fiction"):
     if base_tag not in ["fiction", "non-fiction"]:
         excluded_tags |= set(["fiction", "non-fiction"])
 
-    books = Book.objects.filter(tags__contains=[base_tag]).select_related(
-        "first_author"
-    )
+    books = Tag.objects[base_tag].books.select_related("first_author")
     toplevel_tags = set(sum(books.values_list("tags", flat=True), [])) - excluded_tags
 
     results = {
@@ -174,7 +170,7 @@ def related_tags(request, base_tag="non-fiction"):
     if base_tag not in ["fiction", "non-fiction"]:
         excluded_tags |= set(["fiction", "non-fiction"])
 
-    books = Book.objects.filter(tags__contains=[base_tag])
+    books = Tag.objects[base_tag].books
     toplevel_tags = set(sum(books.values_list("tags", flat=True), [])) - excluded_tags
 
     results = {}
@@ -192,8 +188,6 @@ def related_tags(request, base_tag="non-fiction"):
         }
         results[tag]["total"] = len(tagged_books)
         results[tag][tag] = len([book for book in tagged_books if len(book.tags) > 2])
-
-    # {tag: books.filter(tags__contains=[tag]) for tag in toplevel_tags}
 
     return render(
         request,
