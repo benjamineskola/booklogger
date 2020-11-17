@@ -231,11 +231,17 @@ class BookQuerySet(models.QuerySet):  # type: ignore [type-arg]
     def by_women(self) -> "BookQuerySet":
         return self.by_gender(2)
 
+    def tagged(self, *tag_names: str) -> "BookQuerySet":
+        qs = self.distinct()
+        for tag_name in tag_names:
+            qs &= Tag.objects[tag_name].books
+        return qs
+
     def fiction(self) -> "BookQuerySet":
-        return self & Tag.objects["fiction"].books
+        return self.tagged("fiction")
 
     def nonfiction(self) -> "BookQuerySet":
-        return self & Tag.objects["non-fiction"].books
+        return self.tagged("non-fiction")
 
     def read(self) -> "BookQuerySet":
         return self.filter(
