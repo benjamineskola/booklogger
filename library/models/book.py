@@ -271,10 +271,11 @@ class BookQuerySet(models.QuerySet):  # type: ignore [type-arg]
     def filter_by_request(self, request: Any) -> "BookQuerySet":
         filter_by = Q()
         if gender := request.GET.get("gender"):
-            if gender.lower() == "both":
+            if gender.lower() == "multiple":
+                filter_by &= Q(additional_authors__isnull=False)
                 filter_by &= Q(
-                    first_author__gender=1, additional_authors__gender=2
-                ) | Q(first_author__gender=2, additional_authors__gender=1)
+                    additional_authors__gender__lt=F("first_author__gender")
+                ) | Q(additional_authors__gender__gt=F("first_author__gender"))
             else:
                 if not gender.isdigit():
                     gender = Author.Gender[gender.upper()]
