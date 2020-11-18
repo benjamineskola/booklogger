@@ -276,6 +276,10 @@ class BookQuerySet(models.QuerySet):  # type: ignore [type-arg]
                 filter_by &= Q(
                     additional_authors__gender__lt=F("first_author__gender")
                 ) | Q(additional_authors__gender__gt=F("first_author__gender"))
+            elif gender.lower() == "nonmale":
+                filter_by &= Q(first_author__gender__in=[0, 2, 4]) | Q(
+                    additional_authors__gender__in=[0, 2, 4]
+                )
             else:
                 if not gender.isdigit():
                     gender = Author.Gender[gender.upper()]
