@@ -213,6 +213,8 @@ class GenericLogView(generic.ListView):
             entries = entries.filter(**self.filter_by)
 
         if year := self.kwargs.get("year"):
+            if self.request.GET.get("infinite") == "true":
+                self.page_title = None
             if year == "sometime" or str(year) == "1":
                 ordering = [
                     Lower(F("book__first_author__surname")),
@@ -221,10 +223,8 @@ class GenericLogView(generic.ListView):
                     "book__series_order",
                     "book__title",
                 ]
-                self.page_title = "Read sometime"
                 entries = entries.filter(end_date__year=1).order_by(*ordering)
             else:
-                self.page_title = f"Read in {year}"
                 entries = entries.filter(end_date__year=year)
 
         return entries.filter_by_request(self.request).distinct()

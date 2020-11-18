@@ -10,7 +10,7 @@
       {% set display_year = request.resolver_match.kwargs.get('year') | int %}
     {% endif %}
 
-    {% if not year %}
+    {% if entries.count() %}
       {% if display_year == 1 %}
         <h2 class="ui dividing header">Read sometime</h2>
       {% else %}
