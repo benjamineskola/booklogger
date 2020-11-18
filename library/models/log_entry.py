@@ -1,7 +1,7 @@
 from typing import Any
 
 from django.db import models
-from django.db.models import Q
+from django.db.models import F, Q
 from django.utils import timezone
 
 from .author import Author
@@ -20,10 +20,15 @@ class LogEntryQuerySet(models.QuerySet):  # type: ignore [type-arg]
     def filter_by_request(self, request: Any) -> "LogEntryQuerySet":
         filter_by = Q()
         if gender := request.GET.get("gender"):
-            if gender.lower() == "both":
+            if gender.lower() == "multiple":
+                filter_by &= Q(book__additional_authors__isnull=False)
                 filter_by &= Q(
-                    book__first_author__gender=1, book__additional_authors__gender=2
-                ) | Q(book__first_author__gender=2, book__additional_authors__gender=1)
+                    book__additional_authors__gender__lt=F("book__first_author__gender")
+                ) | Q(book__additional_authors__gender__gt=F("book__first_author__gender"))
+            elif gender.lower() == "nonmale":
+                filter_by &= Q(book__first_author__gender__in=[0, 2, 4]) | Q(
+                    book__additional_authors__gender__in=[0, 2, 4]
+                )
             else:
                 if not gender.isdigit():
                     gender = Author.Gender[gender.upper()]
