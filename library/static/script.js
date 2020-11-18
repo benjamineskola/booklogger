@@ -106,8 +106,8 @@ function load_next_page(year, url) {
         url: url,
         success: function (data) {
           var body = $(data).find(".two.doubling.cards").parent();
-          placeholder.html(body);
-          placeholder.attr("class", "");
+          body.insertAfter(placeholder.parent());
+          placeholder.remove();
         },
         error: function () {
           placeholder.find(".message").addClass("hidden");
