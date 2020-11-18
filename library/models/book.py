@@ -40,6 +40,9 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
     def by_women(self) -> "BookQuerySet":
         return self.get_queryset().by_women()
 
+    def by_multiple_genders(self) -> "BookQuerySet":
+        return self.get_queryset().by_multiple_genders()
+
     def fiction(self) -> "BookQuerySet":
         return self.get_queryset().fiction()
 
@@ -230,6 +233,16 @@ class BookQuerySet(models.QuerySet):  # type: ignore [type-arg]
 
     def by_women(self) -> "BookQuerySet":
         return self.by_gender(2)
+
+    def by_multiple_genders(self) -> "BookQuerySet":
+        return (
+            self.exclude(additional_authors__isnull=True)
+            .filter(
+                Q(additional_authors__gender__lt=F("first_author__gender"))
+                | Q(additional_authors__gender__gt=F("first_author__gender"))
+            )
+            .distinct()
+        )
 
     def tagged(self, *tag_names: str) -> "BookQuerySet":
         qs = self.distinct()

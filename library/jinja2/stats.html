@@ -23,16 +23,19 @@
           {% endif %}
           I read {% if year != "total" and year < "2014" %} at least {% endif %}
           {{ year_books["count"] }} books: {{ year_books["men"] }} by <a href="{{ url_base }}?gender=male">men</a> and {{ year_books["women"] }} by <a href="{{ url_base }}?gender=female">women</a>.
-          {% if year_books["both"] or year_books["neither"] %}
+          {% if year_books["nonbinary"] %}
+            There were also {{ year_books["nonbinary"] }} by <a href="{{ url_base }}?gender=nonbinary">nonbinary people</a>.
+          {% endif %}
+          {% if year_books["both"] or year_books["organisations"] %}
             (
             {%- if year_books["both"] -%}
-              {{ year_books["both"] }} of those were by both men and women
+              {{ year_books["both"] }} of those were by people of different genders
             {%- endif -%}
-            {%- if year_books["both"] and year_books["neither"] %}; {% endif -%}
-            {%- if year_books["neither"] -%}
-              {{ year_books["neither"] }} were by <a href="{{ url_base }}?gender=organization">groups or organizations</a>.
+            {%- if year_books["both"] and year_books["organisations"] %}; {% endif -%}
+            {%- if year_books["organisations"] -%}
+              {{ year_books["organisations"] }} were by <a href="{{ url_base }}?gender=organization">groups or organizations</a>
             {%- endif -%}
-            )
+            .)
           {% endif %}
           <br>That's {% if year == current_year | string %}{{ (year_books["count"] / current_week) | round_trunc(1) }}{% else %}{{ (year_books["count"] / 52) | round_trunc(1) }}{% endif %} per week.
           {% if year == current_year | string %}

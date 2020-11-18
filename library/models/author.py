@@ -68,6 +68,7 @@ class Author(models.Model):
         MALE = 1
         FEMALE = 2
         ORGANIZATION = 3
+        NONBINARY = 4
 
     gender = models.IntegerField(choices=Gender.choices, default=0)
     poc = models.BooleanField(default=False)

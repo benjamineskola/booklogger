@@ -58,8 +58,9 @@ def _stats_for_queryset(books):
         "count": books.count(),
         "men": books.by_men().count(),
         "women": books.by_women().count(),
-        "both": books.by_women().by_men().count(),
-        "neither": books.exclude(first_author__gender=1)
+        "both": books.by_multiple_genders().count(),
+        "nonbinary": books.by_gender(4).count(),
+        "organisations": books.exclude(first_author__gender=1)
         .exclude(first_author__gender=2)
         .count(),
         "fiction": fiction.count(),
