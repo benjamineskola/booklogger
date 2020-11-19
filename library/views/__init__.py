@@ -84,7 +84,10 @@ def _stats_for_queryset(books):
     }
 
     for category in ["men", "women", "nonbinary", "both", "organisations"]:
-        result[category + "_percent"] = result[category] / max(1, result['count']) * 100
+        if result[category]:
+            result[category + "_percent"] = result[category] / max(1, result['count']) * 100
+        else:
+            result[category + "_percent"] = 0
 
     for category in ["men", "women", "fiction", "nonfiction", "poc"]:
         if result[category + "_pages"]:
