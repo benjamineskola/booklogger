@@ -37,7 +37,7 @@
             {%- endif -%}
             .)
           {% endif %}
-          {% if year != "1" %}
+          {% if year != "1" and year != "total" %}
             <br>That's {% if year == current_year | string %}{{ (year_books["count"] / current_week) | round_trunc(1) }}{% else %}{{ (year_books["count"] / 52) | round_trunc(1) }}{% endif %} per week.
           {% endif %}
           {% if year == current_year | string %}
