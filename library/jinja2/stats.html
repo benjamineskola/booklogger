@@ -22,22 +22,24 @@
             In <a href="{{ url_base }}">{{ year | trim("!") }}</a>
           {% endif %}
           I read {% if year != "total" and year < "2014" %} at least {% endif %}
-          {{ year_books["count"] }} books: {{ year_books["men"] }} by <a href="{{ url_base }}?gender=male">men</a> and {{ year_books["women"] }} by <a href="{{ url_base }}?gender=female">women</a>.
+          {{ year_books["count"] }} books: {{ year_books["men"] }} ({{ year_books['men_percent'] | round_trunc(2) }}%) by <a href="{{ url_base }}?gender=male">men</a> and {{ year_books["women"] }} ({{ year_books['women_percent'] | round_trunc(2) }}%) by <a href="{{ url_base }}?gender=female">women</a>.
           {% if year_books["nonbinary"] %}
-            There were also {{ year_books["nonbinary"] }} by <a href="{{ url_base }}?gender=nonbinary">nonbinary people</a>.
+            There were also {{ year_books["nonbinary"] }} ({{ year_books['nonbinary_percent'] | round_trunc(2) }}%) by <a href="{{ url_base }}?gender=nonbinary">nonbinary people</a>.
           {% endif %}
           {% if year_books["both"] or year_books["organisations"] %}
             (
             {%- if year_books["both"] -%}
-              {{ year_books["both"] }} of those were by people of different genders
+              {{ year_books["both"] }} ({{ year_books['both_percent'] | round_trunc(2) }}%) of those were by multiple authors of different genders
             {%- endif -%}
             {%- if year_books["both"] and year_books["organisations"] %}; {% endif -%}
             {%- if year_books["organisations"] -%}
-              {{ year_books["organisations"] }} were by <a href="{{ url_base }}?gender=organization">groups or organizations</a>
+              {{ year_books["organisations"] }} ({{ year_books['organisations_percent'] | round_trunc(2) }}%) were by <a href="{{ url_base }}?gender=organization">groups or organizations</a>
             {%- endif -%}
             .)
           {% endif %}
-          <br>That's {% if year == current_year | string %}{{ (year_books["count"] / current_week) | round_trunc(1) }}{% else %}{{ (year_books["count"] / 52) | round_trunc(1) }}{% endif %} per week.
+          {% if year != "1" %}
+            <br>That's {% if year == current_year | string %}{{ (year_books["count"] / current_week) | round_trunc(1) }}{% else %}{{ (year_books["count"] / 52) | round_trunc(1) }}{% endif %} per week.
+          {% endif %}
           {% if year == current_year | string %}
             (It's currently week {{ current_week }}.) On track to read {{ predicted_count | round(0, 'floor') | int }} this year.
             {% if target_counts %}
@@ -47,6 +49,13 @@
               {% endfor %}
             {% endif %}
           {% endif %}
+          <br>
+          There was a total pagecount of {{ year_books['pages'] }}: {{ year_books['men_pages'] }} ({{ year_books['men_pages_percent'] | round_trunc(2) }}%) by men, and {{ year_books['women_pages'] }} ({{ year_books['women_pages_percent'] | round_trunc(2) }}%) by women.
+          {% if year_books["nonbinary"] %}
+            There were also {{ year_books["nonbinary_pages"] }} ({{ year_books["nonbinary_pages_percent"] | round_trunc(2) }}%) by nonbinary people.
+          {% endif %}
+          {{ year_books['fiction_pages'] }} ({{ year_books['fiction_pages_percent'] | round_trunc(2) }}%) were fiction;
+          {{ year_books['nonfiction_pages'] }} ({{ year_books['nonfiction_pages_percent'] | round_trunc(2) }}%) were non-fiction.
         </p>
         <p>
           {{ year_books["fiction"] }} were <a href="{{ url_base }}?tags=fiction">fiction</a>,
@@ -65,7 +74,10 @@
           {% endfor %}
         </p>
         <p>
-          I read {{ year_books["poc"] }} ({{ year_books['poc_percentage'] | round_trunc(2) }}%) books by <a href="{{ url_base }}?poc=1">POC</a>.
+          I read {{ year_books["poc"] }} ({{ year_books['poc_percentage'] | round_trunc(2) }}%) books by <a href="{{ url_base }}?poc=1">POC</a>
+          {%- if year_books["poc"] -%}
+            ; that's {{ year_books['poc_pages'] }} pages, {{ year_books['poc_pages_percent'] | round_trunc(2) }}% of the total
+          {%- endif -%}.
         </p>
         {% if year_books["acquired"] %}
           <p>
