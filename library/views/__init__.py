@@ -1,12 +1,21 @@
 from django.db.models import Q, Sum
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
+from django.views.decorators.http import require_GET
 
 from library.models import Book, LogEntry, Tag
 
 from . import author, book, importer, report, search, series  # noqa: F401
 
-# Create your views here.
+
+@require_GET
+def robots_txt(request):
+    lines = [
+        "User-agent: *",
+        "Disallow: /",
+    ]
+    return HttpResponse("\n".join(lines), content_type="text/plain")
 
 
 def tag_cloud(request):
