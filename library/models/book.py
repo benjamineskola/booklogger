@@ -334,7 +334,7 @@ class BookQuerySet(models.QuerySet):  # type: ignore [type-arg]
 
     @property
     def page_count(self) -> int:
-        return int(self.aggregate(Sum("page_count"))["page_count__sum"])
+        return int(self.aggregate(Sum("page_count")).get("page_count__sum", 0))
 
 
 class Book(models.Model):
