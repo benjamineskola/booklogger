@@ -96,20 +96,15 @@ $(document).ready(function () {
     });
   });
 
-  $("div.stats-for-year").each(function(i, e) {
-    var year = $(e).data("year");
+  document.years_loading = 0;
+  $("div.stats-for-year").each(function (i, e) {
+    if (typeof document.years_loading === undefined) {
+      document.years_loading = {};
+    }
+    document.years_loading += 1;
 
-    $.ajax({
-      type: "GET",
-      url: `/stats/${year}`,
-      success: function(data){
-        $(e).html(data);
-      },
-      error: function(data){
-        $(e).html(`<p>Failed to load stats for ${year}</p>`)
-      }
-    })
-  })
+    return load_stats_for_year(i, e, true);
+  });
 });
 
 function load_next_page(year, url) {
@@ -129,6 +124,49 @@ function load_next_page(year, url) {
           placeholder.find(".error.message").removeClass("hidden");
         },
       });
+    },
+  });
+}
+
+function load_stats_for_year(i, e, update_counts) {
+  var year = $(e).data("year");
+
+  $.ajax({
+    type: "GET",
+    url: `/stats/${year}`,
+    success: function (data) {
+      $(e).html(data);
+
+      if (update_counts) {
+        document.years_loading -= 1;
+
+        if (document.years_loading === 0) {
+          $("#loading-stats").remove();
+        }
+      }
+    },
+    error: function (data) {
+      $(e).html(`
+          <hr class="ui divider">
+          <div id="error-${year}" class="ui error icon message">
+            <i class="exclamation circle icon"></i>
+            <div class="content">
+              <div class="header">Failed to load ${year}.</div>
+              <p><span class="ui basic negative button">Retry?</span></p>
+            </div>
+          </div>
+`);
+      $(`#error-${year} .button`).on("click", function () {
+        return load_stats_for_year(0, e, false);
+      });
+
+      if (update_counts) {
+        document.years_loading -= 1;
+
+        if (document.years_loading === 0) {
+          $("#loading-stats").remove();
+        }
+      }
     },
   });
 }

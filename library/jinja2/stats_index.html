@@ -4,6 +4,12 @@
     In total I own {{ owned }} books and have read {{ owned_read }} ({{ owned_read_pct | round_trunc(2) }}%) of them. I <a href="{{ url("library:books_unread") }}">want to read</a> {{ want_to_read }} ({{ want_to_read_pct | round_trunc(2) }}%) of them, including <a href="{{ url("library:books_unread") }}?read=true&owned=true">rereading</a> {{ reread }} ({{ reread_pct | round_trunc(2) }}%) of them.
   </p>
 
+
+  <div id="loading-stats" class="ui icon message">
+    <i class="spinner loading icon"></i>
+    Loading
+  </div>
+
   <div id="stats-total" class="stats-for-year" data-year="total"></div>
 
   {% for year in years | sort | reverse %}
