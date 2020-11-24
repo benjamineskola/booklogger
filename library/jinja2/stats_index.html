@@ -13,6 +13,9 @@
   <div id="stats-total" class="stats-for-year" data-year="total"></div>
 
   {% for year in years | sort | reverse %}
+    {% if year == 1 %}
+      {% set year = "sometime" %}
+    {% endif %}
     <div id="stats-{{ year }}" class="stats-for-year" data-year="{{ year }}"></div>
   {% endfor %}
 {% endblock %}

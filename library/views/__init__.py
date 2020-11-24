@@ -189,6 +189,8 @@ def stats_for_year(request, year):
     if year == "total":
         result = _stats_for_queryset(read_books)
     else:
+        if year == "sometime":
+            year = 1
         result = _stats_for_queryset(books.filter(log_entries__end_date__year=year))
         result["acquired"] = books.filter(acquired_date__year=year).count()
 
