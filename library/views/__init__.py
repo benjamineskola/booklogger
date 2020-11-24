@@ -1,4 +1,4 @@
-from django.db.models import Q, Sum
+from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
@@ -65,29 +65,23 @@ def _stats_for_queryset(books):
     ).distinct()
     result = {
         "count": books.count(),
-        "pages": books.aggregate(Sum("page_count"))["page_count__sum"],
+        "pages": books.page_count,
         "men": books.by_men().count(),
-        "men_pages": books.by_men().aggregate(Sum("page_count"))["page_count__sum"],
+        "men_pages": books.by_men().page_count,
         "women": books.by_women().count(),
-        "women_pages": books.by_women().aggregate(Sum("page_count"))["page_count__sum"],
+        "women_pages": books.by_women().page_count,
         "both": books.by_multiple_genders().count(),
-        "both_pages": books.by_multiple_genders().aggregate(Sum("page_count"))[
-            "page_count__sum"
-        ],
+        "both_pages": books.by_multiple_genders().page_count,
         "nonbinary": books.by_gender(4).count(),
-        "nonbinary_pages": books.by_gender(4).aggregate(Sum("page_count"))[
-            "page_count__sum"
-        ],
+        "nonbinary_pages": books.by_gender(4).page_count,
         "organisations": books.filter(first_author__gender=3).count(),
-        "organisations_pages": books.exclude(first_author__gender=3).aggregate(
-            Sum("page_count")
-        )["page_count__sum"],
+        "organisations_pages": books.exclude(first_author__gender=3).page_count,
         "fiction": fiction.count(),
-        "fiction_pages": fiction.aggregate(Sum("page_count"))["page_count__sum"],
+        "fiction_pages": fiction.page_count,
         "nonfiction": nonfiction.count(),
-        "nonfiction_pages": nonfiction.aggregate(Sum("page_count"))["page_count__sum"],
+        "nonfiction_pages": nonfiction.page_count,
         "poc": poc.count(),
-        "poc_pages": poc.aggregate(Sum("page_count"))["page_count__sum"],
+        "poc_pages": poc.page_count,
         "poc_percentage": poc.count() / books.count() * 100,
         "breakdowns": {},
     }

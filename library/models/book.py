@@ -12,7 +12,7 @@ from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import TrigramSimilarity
 from django.db import models
-from django.db.models import F, Q
+from django.db.models import F, Q, Sum
 from django.db.models.functions import Length, Lower
 from django.db.models.indexes import Index
 from django.urls import reverse
@@ -331,6 +331,10 @@ class BookQuerySet(models.QuerySet):  # type: ignore [type-arg]
             books = self.filter(edition_format=Book.Format[edition_format])
 
         return books
+
+    @property
+    def page_count(self) -> int:
+        return int(self.aggregate(Sum("page_count"))["page_count__sum"])
 
 
 class Book(models.Model):
