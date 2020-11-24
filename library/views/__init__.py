@@ -178,13 +178,7 @@ def stats_index(request):
 
 def stats_for_year(request, year):
     books = Book.objects.all()
-    owned = books.filter(owned_by__username="ben")
-    owned_count = owned.count()
     read_books = books.read()
-    owned_read = owned.read().count()
-    want_to_read = owned.filter(want_to_read=True)
-    want_to_read_count = want_to_read.count()
-    reread = owned.read().filter(want_to_read=True).count()
 
     if year == "total":
         result = _stats_for_queryset(read_books)
@@ -225,13 +219,6 @@ def stats_for_year(request, year):
         {
             "page_title": "Library Stats",
             "year": str(year),
-            "owned": owned_count,
-            "owned_read": owned_read,
-            "owned_read_pct": owned_read / owned_count * 100,
-            "want_to_read": want_to_read_count,
-            "want_to_read_pct": want_to_read_count / owned_count * 100,
-            "reread": reread,
-            "reread_pct": reread / read_books.count() * 100,
             "current_year": current_year,
             "current_week": current_week,
             "result": result,
