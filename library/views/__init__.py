@@ -122,8 +122,9 @@ def _stats_for_queryset(books):
             / max(1, result[gender])
             * 100,
         }
+
     for genre in ["fiction", "non-fiction"]:
-        genre_books = Tag.objects[genre].books
+        genre_books = books.tagged(genre)
         result["breakdowns"][genre] = {
             "men_count": genre_books.by_men().count(),
             "women_count": genre_books.by_women().count(),
