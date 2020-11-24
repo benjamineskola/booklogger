@@ -95,6 +95,21 @@ $(document).ready(function () {
       },
     });
   });
+
+  $("div.stats-for-year").each(function(i, e) {
+    var year = $(e).data("year");
+
+    $.ajax({
+      type: "GET",
+      url: `/stats/${year}`,
+      success: function(data){
+        $(e).html(data);
+      },
+      error: function(data){
+        $(e).html(`<p>Failed to load stats for ${year}</p>`)
+      }
+    })
+  })
 });
 
 function load_next_page(year, url) {

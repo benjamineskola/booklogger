@@ -143,7 +143,7 @@ def _stats_for_queryset(books):
     return result
 
 
-def stats(request):
+def stats_index(request):
     books = Book.objects.all()
     owned = books.filter(owned_by__username="ben")
     owned_count = owned.count()
@@ -153,43 +153,15 @@ def stats(request):
     want_to_read_count = want_to_read.count()
     reread = owned.read().filter(want_to_read=True).count()
 
-    books_by_year = {}  # {"all": {"books": books, "count": books.count()}}
-
-    for year in (
+    years = (
         LogEntry.objects.exclude(end_date__isnull=True)
         .distinct("end_date__year")
         .values_list("end_date__year", flat=True)
-    ):
-        books_by_year[str(year)] = _stats_for_queryset(
-            books.filter(log_entries__end_date__year=year)
-        )
-
-        books_by_year[str(year)]["acquired"] = books.filter(
-            acquired_date__year=year
-        ).count()
-
-    books_by_year["total"] = _stats_for_queryset(read_books)
-
-    current_year = timezone.now().year
-    first_day = timezone.datetime(current_year, 1, 1)
-    last_day = timezone.datetime(current_year, 12, 31)
-    year_days = (last_day - first_day).days
-    current_day = (timezone.datetime.now() - first_day).days
-    current_week = (current_day // 7) + 1
-    current_year_count = books.filter(log_entries__end_date__year=current_year).count()
-    predicted_count = current_year_count / current_day * year_days
-
-    remaining_weeks = 52 - current_week
-    target_counts = {}
-    for target in [26, 39, 52, 78, 104, 208]:
-        if target > current_year_count:
-            target_counts[target] = (target - current_year_count) / remaining_weeks
-        if len(target_counts.keys()) >= 3:
-            break
+    )
 
     return render(
         request,
-        "stats.html",
+        "stats_index.html",
         {
             "page_title": "Library Stats",
             "owned": owned_count,
@@ -199,11 +171,69 @@ def stats(request):
             "want_to_read_pct": want_to_read_count / owned_count * 100,
             "reread": reread,
             "reread_pct": reread / read_books.count() * 100,
+            "years": years,
+        },
+    )
+
+
+def stats_for_year(request, year):
+    books = Book.objects.all()
+    owned = books.filter(owned_by__username="ben")
+    owned_count = owned.count()
+    read_books = books.read()
+    owned_read = owned.read().count()
+    want_to_read = owned.filter(want_to_read=True)
+    want_to_read_count = want_to_read.count()
+    reread = owned.read().filter(want_to_read=True).count()
+
+    if year == "total":
+        result = _stats_for_queryset(read_books)
+    else:
+        result = _stats_for_queryset(books.filter(log_entries__end_date__year=year))
+        result["acquired"] = books.filter(acquired_date__year=year).count()
+
+    current_year = timezone.now().year
+    prediction = {}
+    if year == current_year:
+        first_day = timezone.datetime(current_year, 1, 1)
+        last_day = timezone.datetime(current_year, 12, 31)
+        year_days = (last_day - first_day).days
+        current_day = (timezone.datetime.now() - first_day).days
+        current_week = (current_day // 7) + 1
+        current_year_count = books.filter(
+            log_entries__end_date__year=current_year
+        ).count()
+        prediction["predicted_count"] = current_year_count / current_day * year_days
+
+        remaining_weeks = 52 - current_week
+        prediction["target_counts"] = {}
+        for target in [26, 39, 52, 78, 104, 208]:
+            if target > current_year_count:
+                prediction["target_counts"][target] = (
+                    target - current_year_count
+                ) / remaining_weeks
+            if len(prediction["target_counts"].keys()) >= 3:
+                break
+    else:
+        current_week = 52
+
+    return render(
+        request,
+        "stats_for_year.html",
+        {
+            "page_title": "Library Stats",
+            "year": str(year),
+            "owned": owned_count,
+            "owned_read": owned_read,
+            "owned_read_pct": owned_read / owned_count * 100,
+            "want_to_read": want_to_read_count,
+            "want_to_read_pct": want_to_read_count / owned_count * 100,
+            "reread": reread,
+            "reread_pct": reread / read_books.count() * 100,
             "current_year": current_year,
             "current_week": current_week,
-            "predicted_count": predicted_count,
-            "books_by_year": books_by_year,
-            "target_counts": target_counts,
+            "result": result,
+            "prediction": prediction,
         },
     )
 

@@ -142,7 +142,8 @@ urlpatterns = [
         views.book.SeriesIndexView.as_view(),
         name="series_details",
     ),
-    path("stats/", views.stats, name="stats"),
+    path("stats/", views.stats_index, name="stats"),
+    path("stats/<str:year>/", views.stats_for_year, name="stats_for_year"),
     re_path(
         r"^tag(?:/(?P<tag_name>[^/]+))?(?:/(?P<page>\d+))?/",
         views.book.TagIndexView.as_view(),
