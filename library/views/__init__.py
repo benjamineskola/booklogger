@@ -108,6 +108,7 @@ def _stats_for_queryset(books):
         gender_nonfiction = nonfiction.by_gender(i)
 
         result["breakdowns"]["gender"][label] = {
+            "key": i,
             "fiction": {
                 "count": gender_fiction.count(),
                 "percentage": gender_fiction.count()
@@ -142,6 +143,7 @@ def _stats_for_queryset(books):
         result["breakdowns"]["genre"][genre] = {}
         for i, gender in gender_labels.items():
             result["breakdowns"]["genre"][genre][gender] = {
+                "key": i,
                 "count": genre_books.by_gender(i).count(),
                 "percentage": genre_books.by_gender(i).count()
                 / max(1, genre_books.count())
