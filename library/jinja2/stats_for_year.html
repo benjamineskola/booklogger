@@ -50,8 +50,8 @@
         {{ result["nonfiction"]["pages"] }} ({{ result["nonfiction"]["pages_percent"] | round_trunc(2) }}%) were non-fiction.
       </p>
       <p>
-        {{ result["fiction"] }} were <a href="{{ url_base }}?tags=fiction">fiction</a>,
-        {{ result["nonfiction"] }} were <a href="{{ url_base }}?tags=non-fiction">non-fiction</a>.<br>
+        {{ result["fiction"]["count"] }} were <a href="{{ url_base }}?tags=fiction">fiction</a>,
+        {{ result["nonfiction"]["count"] }} were <a href="{{ url_base }}?tags=non-fiction">non-fiction</a>.<br>
 
         {% for gender, gender_breakdown in result["breakdowns"]["gender"].items() %}
           {% if (gender_breakdown["fiction"]["count"] + gender_breakdown["nonfiction"]["count"]) > 0 %}
