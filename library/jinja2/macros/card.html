@@ -51,7 +51,7 @@
           {{ book_label(tag, url("library:tag_details", args=[tag]), removable=True) }}
         {% endif %}
       {% else %}
-        {{ book_label("untagged", url("library:tag_details", args=['untagged'])) }}
+        {{ book_label("untagged", url("library:tag_details", args=["untagged"])) }}
       {% endfor %}
 
       {% if book.owned %}

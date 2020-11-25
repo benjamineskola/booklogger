@@ -24,13 +24,13 @@
       <div class="column">
         <div class="ui stackable two column grid">
           {% for field_names in [
-            ['title', 'subtitle', 'first_author', 'first_author_role', 'first_published', 'language', 'series', 'series_order', 'slug'],
-            ['edition_title', 'edition_subtitle', 'publisher', 'edition_published', 'edition_format', 'edition_language', 'edition_number', 'page_count'],
-            ['owned_by', 'acquired_date', 'alienated_date', 'was_borrowed', 'borrowed_from', 'want_to_read'],
-            ['goodreads_id', 'google_books_id', 'isbn', 'asin', 'image_url', 'publisher_url'],
-            ['has_ebook_edition', 'ebook_acquired_date', 'ebook_isbn', 'ebook_asin'],
-            ['tags', 'review', 'rating'],
-            ['editions', 'parent_edition'],
+            ["title", "subtitle", "first_author", "first_author_role", "first_published", "language", "series", "series_order", "slug"],
+            ["edition_title", "edition_subtitle", "publisher", "edition_published", "edition_format", "edition_language", "edition_number", "page_count"],
+            ["owned_by", "acquired_date", "alienated_date", "was_borrowed", "borrowed_from", "want_to_read"],
+            ["goodreads_id", "google_books_id", "isbn", "asin", "image_url", "publisher_url"],
+            ["has_ebook_edition", "ebook_acquired_date", "ebook_isbn", "ebook_asin"],
+            ["tags", "review", "rating"],
+            ["editions", "parent_edition"],
           ] %}
             {% if 'editions' not in field_names or ('editions' in form.fields or 'parent_edition' in form.fields) %}
               <div class="column">
@@ -97,7 +97,7 @@
 {% block footer %}
   <script>
     $(document).ready(function() {
-      $('#id_tags').dropdown({'allowAdditions': true, 'values': {{ form.fields['tags'].widget.values_dict | json | safe }}});
+      $('#id_tags').dropdown({'allowAdditions': true, 'values': {{ form.fields["tags"].widget.values_dict | json | safe }}});
       $("select").dropdown({ fullTextSearch: true });
     })
   </script>

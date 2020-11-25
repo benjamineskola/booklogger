@@ -10,8 +10,8 @@
           <div class="content">
             <a href="https://www.goodreads.com/book/show/{{ goodreads_result["best_book"]["id"]["#text"] }}">{{ goodreads_result["best_book"]["author"]["name"] }}, <em>{{ goodreads_result["best_book"]["title"] }}</em></a>.
 
-            {% if matches[goodreads_result['id']['#text']] %}
-              This might already be in the library as {{ book_link_with_authors(matches[goodreads_result['id']['#text']]) }}.
+            {% if matches[goodreads_result["id"]["#text"]] %}
+              This might already be in the library as {{ book_link_with_authors(matches[goodreads_result["id"]["#text"]]) }}.
             {% endif %}
 
             <div class="ui form extra">

@@ -7,8 +7,8 @@
       <div class="item">
         <div class="content">
           <a class="header" href="{{ url("library:series_details", args=[series]) }}">{{ series }}</a>
-          <span class="meta">({{ details['count'] }} book{% if details['count'] > 1 %}s{% endif %})</span>
-          <span class="extra">by {{ author_list(details['authors'], full=True) }}</span>
+          <span class="meta">({{ details["count"] }} book{% if details["count"] > 1 %}s{% endif %})</span>
+          <span class="extra">by {{ author_list(details["authors"], full=True) }}</span>
         </div>
       </div>
     {% endfor %}
