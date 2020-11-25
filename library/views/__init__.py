@@ -4,7 +4,7 @@ from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_GET
 
-from library.models import Book, LogEntry, Tag
+from library.models import Author, Book, LogEntry, Tag
 
 from . import author, book, importer, report, search, series  # noqa: F401
 
@@ -66,16 +66,8 @@ def _stats_for_queryset(books):
     result = {
         "count": books.count(),
         "pages": books.page_count,
-        "men": books.by_men().count(),
-        "men_pages": books.by_men().page_count,
-        "women": books.by_women().count(),
-        "women_pages": books.by_women().page_count,
         "both": books.by_multiple_genders().count(),
         "both_pages": books.by_multiple_genders().page_count,
-        "nonbinary": books.by_gender(4).count(),
-        "nonbinary_pages": books.by_gender(4).page_count,
-        "organisations": books.filter(first_author__gender=3).count(),
-        "organisations_pages": books.exclude(first_author__gender=3).page_count,
         "fiction": fiction.count(),
         "fiction_pages": fiction.page_count,
         "nonfiction": nonfiction.count(),
@@ -83,21 +75,38 @@ def _stats_for_queryset(books):
         "poc": poc.count(),
         "poc_pages": poc.page_count,
         "poc_percentage": poc.count() / books.count() * 100,
-        "breakdowns": {},
+        "breakdowns": {"gender": {}, "genre": {}},
     }
 
-    for category in ["men", "women", "nonbinary", "both", "organisations"]:
-        if result[category]:
-            result[category + "_percent"] = (
-                result[category] / max(1, result["count"]) * 100
-            )
-        else:
-            result[category + "_percent"] = 0
+    gender_labels = {int(i): Author.Gender(i).label.lower() for i in Author.Gender}
+    gender_labels[1] = "men"
+    gender_labels[2] = "women"
+    gender_labels[3] = "organisations"
 
-    for category in [
-        "men",
-        "women",
-        "nonbinary",
+    for i, label in gender_labels.items():
+        result[label] = books.by_gender(i).count()
+        result[label + "_pages"] = books.by_gender(i).page_count
+
+        if result[label]:
+            result[label + "_percent"] = result[label] / max(1, result["count"]) * 100
+        else:
+            result[label + "_percent"] = 0
+
+        gender_fiction = fiction.by_gender(i)
+        gender_nonfiction = nonfiction.by_gender(i)
+
+        result["breakdowns"]["gender"][label] = {
+            "fiction_count": gender_fiction.count(),
+            "percentage_fiction": gender_fiction.count() / max(1, result[label]) * 100,
+            "nonfiction_count": gender_nonfiction.count(),
+            "percentage_nonfiction": gender_nonfiction.count()
+            / max(1, result[label])
+            * 100,
+        }
+
+    result["both_percent"] = result["both"] / max(1, result["count"]) * 100
+
+    for category in list(gender_labels.values()) + [
         "both",
         "fiction",
         "nonfiction",
@@ -110,31 +119,19 @@ def _stats_for_queryset(books):
         else:
             result[category + "_pages_percent"] = 0
 
-    for gender, i in [("men", 1), ("women", 2)]:
-        gender_fiction = fiction.by_gender(i)
-        gender_nonfiction = nonfiction.by_gender(i)
-
-        result["breakdowns"][gender] = {
-            "fiction_count": gender_fiction.count(),
-            "percentage_fiction": gender_fiction.count() / max(1, result[gender]) * 100,
-            "nonfiction_count": gender_nonfiction.count(),
-            "percentage_nonfiction": gender_nonfiction.count()
-            / max(1, result[gender])
-            * 100,
-        }
-
     for genre in ["fiction", "non-fiction"]:
         genre_books = books.tagged(genre)
-        result["breakdowns"][genre] = {
-            "men_count": genre_books.by_men().count(),
-            "women_count": genre_books.by_women().count(),
-            "percentage_men": genre_books.by_men().count()
-            / max(1, genre_books.count())
-            * 100,
-            "percentage_women": genre_books.by_women().count()
-            / max(1, genre_books.count())
-            * 100,
-        }
+        result["breakdowns"]["genre"][genre] = {}
+        for i, gender in gender_labels.items():
+            result["breakdowns"]["genre"][genre].update(
+                {
+                    f"{gender}_count": genre_books.by_gender(i).count(),
+                    f"percentage_{gender}": genre_books.by_gender(i).count()
+                    / max(1, genre_books.count())
+                    * 100,
+                }
+            )
+
     return result
 
 

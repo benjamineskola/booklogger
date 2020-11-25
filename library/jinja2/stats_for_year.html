@@ -53,16 +53,23 @@
         {{ result["fiction"] }} were <a href="{{ url_base }}?tags=fiction">fiction</a>,
         {{ result["nonfiction"] }} were <a href="{{ url_base }}?tags=non-fiction">non-fiction</a>.<br>
 
-        {% for gender, n in [("men", 1), ("women", 2)] %}
-          By {{ gender }}:
-          {{ result["breakdowns"][gender]["fiction_count"] }} ({{ result["breakdowns"][gender]["percentage_fiction"] | round_trunc(2) }}%) <a href="{{ url_base }}?tags=fiction&gender={{ n }}">fiction</a>,
-          {{ result["breakdowns"][gender]["nonfiction_count"] }} ({{ result["breakdowns"][gender]["percentage_nonfiction"] | round_trunc(2) }}%) <a href="{{ url_base }}?tags=fiction&gender={{ n }}">non-fiction</a>.<br>
+        {% for gender, gender_breakdown in result["breakdowns"]["gender"].items() %}
+          {% if (gender_breakdown["fiction_count"] + gender_breakdown["nonfiction_count"]) > 0 %}
+            By {{ gender }}{% if gender == "nonbinary" %} people{% endif %}:
+            {{ gender_breakdown["fiction_count"] }} ({{ gender_breakdown["percentage_fiction"] | round_trunc(2) }}%) <a href="{{ url_base }}?tags=fiction&gender={{ gender }}">fiction</a>,
+            {{ gender_breakdown["nonfiction_count"] }} ({{ gender_breakdown["percentage_nonfiction"] | round_trunc(2) }}%) <a href="{{ url_base }}?tags=fiction&gender={{ gender }}">non-fiction</a>.<br>
+          {% endif %}
         {% endfor %}
 
-        {% for genre in ["fiction", "non-fiction"] %}
+        {% for genre, genre_breakdown in result["breakdowns"]["genre"].items() %}
           {{ genre.title() }}:
-          {{ result["breakdowns"][genre]["women_count"] }} ({{ result["breakdowns"][genre]["percentage_women"] | round_trunc(2) }}%) by <a href="{{ url_base }}?tags={{ genre }}&gender=2">women</a>,
-          {{ result["breakdowns"][genre]["men_count"] }} ({{ result["breakdowns"][genre]["percentage_men"] | round_trunc(2) }}%) by <a href="{{ url_base }}?tags={{ genre }}&gender=1">men</a>.<br>
+          {{ genre_breakdown["women_count"] }} ({{ genre_breakdown["percentage_women"] | round_trunc(2) }}%) by <a href="{{ url_base }}?tags={{ genre }}&gender=2">women</a>,
+          {{ genre_breakdown["men_count"] }} ({{ genre_breakdown["percentage_men"] | round_trunc(2) }}%) by <a href="{{ url_base }}?tags={{ genre }}&gender=1">men</a>
+          {%- if genre_breakdown["nonbinary_count"] -%}
+            ,
+            {{ genre_breakdown["nonbinary_count"] }} ({{ genre_breakdown["percentage_nonbinary"] | round_trunc(2) }}%) by <a href="{{ url_base }}?tags={{ genre }}&gender=4">nonbinary people</a>
+          {%- endif -%}
+          .<br>
         {% endfor %}
       </p>
       <p>
