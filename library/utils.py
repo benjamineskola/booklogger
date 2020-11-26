@@ -67,3 +67,14 @@ def round_trunc(number: float, digits: int = 2) -> str:
     else:
         num_digits = 1 + digits
     return f"{{:.{num_digits + digits}g}}".format(number)
+
+
+def str2bool(s: str) -> bool:
+    if s.isnumeric():
+        return bool(int(s))
+    elif s.lower() in ["yes", "true", "y", "t"]:
+        return True
+    elif s.lower() in ["no", "false", "n", "f"]:
+        return False
+
+    raise ValueError(f"Cannot interpret '{s}' as boolean")

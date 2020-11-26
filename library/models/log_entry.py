@@ -7,6 +7,8 @@ from django.utils import timezone
 from .author import Author
 from .book import Book
 
+from library.utils import str2bool
+
 
 class LogEntryManager(models.Manager):  # type: ignore [type-arg]
     def get_queryset(self) -> "LogEntryQuerySet":
@@ -36,20 +38,20 @@ class LogEntryQuerySet(models.QuerySet):  # type: ignore [type-arg]
                     book__additional_authors__gender=gender
                 )
         if poc := request.GET.get("poc"):
-            filter_by &= Q(book__first_author__poc=bool(int(poc))) | Q(
-                book__additional_authors__poc=bool(int(poc))
+            val = str2bool(poc)
+            filter_by &= Q(book__first_author__poc=val) | Q(
+                book__additional_authors__poc=val
             )
         if tags := request.GET.get("tags"):
             filter_by &= Q(
                 book__tags__contains=[tag.strip().lower() for tag in tags.split(",")]
             )
         if owned := request.GET.get("owned"):
-            if owned == "true":
-                filter_by &= Q(book__owned_by__isnull=False)
-            elif owned == "false":
-                filter_by &= Q(book__owned_by__isnull=True)
-            else:
-                filter_by &= Q(book__owned_by__id=owned)
+            try:
+                val = not str2bool(owned)
+                filter_by &= Q(book__owned_by__isnull=val)
+            except ValueError:
+                filter_by &= Q(book__owned_by__username=owned)
 
         return self.filter(filter_by)
 

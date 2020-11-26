@@ -18,7 +18,7 @@ from django.db.models.indexes import Index
 from django.urls import reverse
 from django.utils import timezone
 
-from library.utils import LANGUAGES, isbn_to_isbn10, oxford_comma
+from library.utils import LANGUAGES, isbn_to_isbn10, oxford_comma, str2bool
 
 from .author import Author
 
@@ -287,30 +287,28 @@ class BookQuerySet(models.QuerySet):  # type: ignore [type-arg]
                     additional_authors__gender=gender
                 )
         if poc := request.GET.get("poc"):
-            filter_by &= Q(first_author__poc=bool(int(poc))) | Q(
-                additional_authors__poc=bool(int(poc))
-            )
+            val = str2bool(poc)
+            filter_by &= Q(first_author__poc=val) | Q(additional_authors__poc=val)
         if tags := request.GET.get("tags"):
             filter_by &= Q(
                 tags__contains=[tag.strip().lower() for tag in tags.split(",")]
             )
         if owned := request.GET.get("owned"):
-            if owned == "true":
-                filter_by &= Q(owned_by__isnull=False)
-            elif owned == "false":
-                filter_by &= Q(owned_by__isnull=True)
-            else:
-                filter_by &= Q(owned_by__id=owned)
+            try:
+                val = not str2bool(owned)
+                filter_by &= Q(owned_by__isnull=val)
+            except ValueError:
+                filter_by &= Q(owned_by__username=owned)
         if want_to_read := request.GET.get("want_to_read"):
-            if want_to_read == "true":
-                filter_by &= Q(want_to_read=True)
-            elif want_to_read == "false":
-                filter_by &= Q(want_to_read=False)
-
+            try:
+                filter_by &= Q(want_to_read=str2bool(want_to_read))
+            except ValueError:
+                pass
         if read := request.GET.get("read"):
-            if read == "true":
+            val = str2bool(read)
+            if read:
                 return self.filter(filter_by).read()
-            elif read == "false":
+            else:
                 return self.filter(filter_by).unread()
 
         return self.filter(filter_by)
