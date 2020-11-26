@@ -268,6 +268,11 @@ class BookQuerySet(models.QuerySet):  # type: ignore [type-arg]
             & Q(parent_edition__log_entries__end_date__isnull=True)
         ).distinct()
 
+    def poc(self, is_poc: bool = True) -> "BookQuerySet":
+        return self.filter(
+            Q(first_author__poc=is_poc) | Q(additional_authors__poc=is_poc)
+        )
+
     def filter_by_request(self, request: Any) -> "BookQuerySet":
         qs = self
         if gender := request.GET.get("gender"):
@@ -280,8 +285,7 @@ class BookQuerySet(models.QuerySet):  # type: ignore [type-arg]
                     gender = Author.Gender[gender.upper()]
                 qs = qs.by_gender(gender)
         if poc := request.GET.get("poc"):
-            val = str2bool(poc)
-            qs = qs.filter(Q(first_author__poc=val) | Q(additional_authors__poc=val))
+            qs = qs.poc(str2bool(poc))
         if tags := request.GET.get("tags"):
             qs = qs.tagged(*[tag.strip() for tag in tags.lower().split(",")])
         if owned := request.GET.get("owned"):
