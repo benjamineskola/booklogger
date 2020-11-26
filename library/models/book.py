@@ -29,8 +29,8 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
     def get_queryset(self) -> "BookQuerySet":
         return BookQuerySet(self.model, using=self._db)
 
-    def by_gender(self, gender: int) -> "BookQuerySet":
-        return self.get_queryset().by_gender(gender)
+    def by_gender(self, *genders: int) -> "BookQuerySet":
+        return self.get_queryset().by_gender(*genders)
 
     def by_men(self) -> "BookQuerySet":
         return self.get_queryset().by_men()
@@ -220,10 +220,10 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
 
 
 class BookQuerySet(models.QuerySet):  # type: ignore [type-arg]
-    def by_gender(self, gender: int) -> "BookQuerySet":
-        return (
-            self.filter(first_author__gender=gender).distinct()
-            | self.filter(additional_authors__gender=gender).distinct()
+    def by_gender(self, *genders: int) -> "BookQuerySet":
+        return self.filter(
+            Q(first_author__gender__in=genders)
+            | Q(additional_authors__gender__in=genders)
         )
 
     def by_men(self) -> "BookQuerySet":
@@ -274,7 +274,7 @@ class BookQuerySet(models.QuerySet):  # type: ignore [type-arg]
             if gender.lower() == "multiple":
                 qs = qs.by_multiple_genders()
             elif gender.lower() == "nonmale":
-                qs = qs.by_women() | qs.by_gender(4)
+                qs = qs.by_gender(0, 2, 4)
             else:
                 if not gender.isdigit():
                     gender = Author.Gender[gender.upper()]

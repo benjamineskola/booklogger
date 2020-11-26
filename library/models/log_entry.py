@@ -19,10 +19,10 @@ class LogEntryManager(models.Manager):  # type: ignore [type-arg]
 
 
 class LogEntryQuerySet(models.QuerySet):  # type: ignore [type-arg]
-    def by_gender(self, gender: int) -> "LogEntryQuerySet":
+    def by_gender(self, *genders: int) -> "LogEntryQuerySet":
         return self.filter(
-            Q(book__first_author__gender=gender)
-            | Q(book__additional_authors__gender=gender)
+            Q(book__first_author__gender__in=genders)
+            | Q(book__additional_authors__gender__in=genders)
         )
 
     def filter_by_request(self, request: Any) -> "LogEntryQuerySet":
@@ -34,7 +34,7 @@ class LogEntryQuerySet(models.QuerySet):  # type: ignore [type-arg]
                 )
 
             elif gender.lower() == "nonmale":
-                qs = qs.by_gender(2) | qs.by_gender(4)
+                qs = qs.by_gender(0, 2, 4)
             else:
                 if not gender.isdigit():
                     gender = Author.Gender[gender.upper()]
