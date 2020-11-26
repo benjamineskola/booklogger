@@ -30,9 +30,9 @@ class LogEntryQuerySet(models.QuerySet):  # type: ignore [type-arg]
         if gender := request.GET.get("gender"):
             if gender.lower() == "multiple":
                 qs = qs.filter(book__additional_authors__isnull=False).filter(
-                    Q(book__additional_authors__gender__lt=F("book__first_author__gender"))
-                    | Q(book__additional_authors__gender__gt=F("book__first_author__gender"))
+                    book__additional_authors__gender__ne=F("book__first_author__gender")
                 )
+
             elif gender.lower() == "nonmale":
                 qs = qs.by_gender(2) | qs.by_gender(4)
             else:

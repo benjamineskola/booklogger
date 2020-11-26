@@ -13,7 +13,7 @@ from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import TrigramSimilarity
 from django.db import models
 from django.db.models import F, Q, Sum
-from django.db.models.functions import Length, Lower
+from django.db.models.functions import Lower
 from django.db.models.indexes import Index
 from django.urls import reverse
 from django.utils import timezone
@@ -23,8 +23,6 @@ from library.utils import LANGUAGES, isbn_to_isbn10, oxford_comma, str2bool
 from .author import Author
 
 LogEntry = models.Model
-
-models.CharField.register_lookup(Length)
 
 
 class BookManager(models.Manager):  # type: ignore [type-arg]
@@ -237,10 +235,7 @@ class BookQuerySet(models.QuerySet):  # type: ignore [type-arg]
     def by_multiple_genders(self) -> "BookQuerySet":
         return (
             self.exclude(additional_authors__isnull=True)
-            .filter(
-                Q(additional_authors__gender__lt=F("first_author__gender"))
-                | Q(additional_authors__gender__gt=F("first_author__gender"))
-            )
+            .filter(additional_authors__gender__ne=F("first_author__gender"))
             .distinct()
         )
 
