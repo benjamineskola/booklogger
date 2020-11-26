@@ -269,49 +269,36 @@ class BookQuerySet(models.QuerySet):  # type: ignore [type-arg]
         ).distinct()
 
     def filter_by_request(self, request: Any) -> "BookQuerySet":
-        filter_by = Q()
+        qs = self
         if gender := request.GET.get("gender"):
             if gender.lower() == "multiple":
-                filter_by &= Q(additional_authors__isnull=False)
-                filter_by &= Q(
-                    additional_authors__gender__lt=F("first_author__gender")
-                ) | Q(additional_authors__gender__gt=F("first_author__gender"))
+                qs = qs.by_multiple_genders()
             elif gender.lower() == "nonmale":
-                filter_by &= Q(first_author__gender__in=[0, 2, 4]) | Q(
-                    additional_authors__gender__in=[0, 2, 4]
-                )
+                qs = qs.by_women() | qs.by_gender(4)
             else:
                 if not gender.isdigit():
                     gender = Author.Gender[gender.upper()]
-                filter_by &= Q(first_author__gender=gender) | Q(
-                    additional_authors__gender=gender
-                )
+                qs = qs.by_gender(gender)
         if poc := request.GET.get("poc"):
             val = str2bool(poc)
-            filter_by &= Q(first_author__poc=val) | Q(additional_authors__poc=val)
+            qs = qs.filter(Q(first_author__poc=val) | Q(additional_authors__poc=val))
         if tags := request.GET.get("tags"):
-            filter_by &= Q(
-                tags__contains=[tag.strip().lower() for tag in tags.split(",")]
-            )
+            qs = qs.tagged(*[tag.strip() for tag in tags.lower().split(",")])
         if owned := request.GET.get("owned"):
             try:
                 val = not str2bool(owned)
-                filter_by &= Q(owned_by__isnull=val)
+                qs = qs.filter(owned_by__isnull=val)
             except ValueError:
-                filter_by &= Q(owned_by__username=owned)
+                qs = qs.filter(owned_by__username=owned)
         if want_to_read := request.GET.get("want_to_read"):
-            try:
-                filter_by &= Q(want_to_read=str2bool(want_to_read))
-            except ValueError:
-                pass
+            qs = qs.filter(want_to_read=str2bool(want_to_read))
         if read := request.GET.get("read"):
-            val = str2bool(read)
-            if read:
-                return self.filter(filter_by).read()
+            if str2bool(read):
+                qs = qs.read()
             else:
-                return self.filter(filter_by).unread()
+                qs = qs.unread()
 
-        return self.filter(filter_by)
+        return qs
 
     def filter_by_format(self, edition_format: str) -> "BookQuerySet":
         edition_format = edition_format.strip("s").upper()
