@@ -4,10 +4,10 @@ from django.db import models
 from django.db.models import F, Q
 from django.utils import timezone
 
+from library.utils import str2bool
+
 from .author import Author
 from .book import Book
-
-from library.utils import str2bool
 
 
 class LogEntryManager(models.Manager):  # type: ignore [type-arg]
@@ -19,41 +19,43 @@ class LogEntryManager(models.Manager):  # type: ignore [type-arg]
 
 
 class LogEntryQuerySet(models.QuerySet):  # type: ignore [type-arg]
+    def by_gender(self, gender: int) -> "LogEntryQuerySet":
+        return self.filter(
+            Q(book__first_author__gender=gender)
+            | Q(book__additional_authors__gender=gender)
+        )
+
     def filter_by_request(self, request: Any) -> "LogEntryQuerySet":
-        filter_by = Q()
+        qs = self
         if gender := request.GET.get("gender"):
             if gender.lower() == "multiple":
-                filter_by &= Q(book__additional_authors__isnull=False)
-                filter_by &= Q(
-                    book__additional_authors__gender__lt=F("book__first_author__gender")
-                ) | Q(book__additional_authors__gender__gt=F("book__first_author__gender"))
-            elif gender.lower() == "nonmale":
-                filter_by &= Q(book__first_author__gender__in=[0, 2, 4]) | Q(
-                    book__additional_authors__gender__in=[0, 2, 4]
+                qs = qs.filter(book__additional_authors__isnull=False).filter(
+                    Q(book__additional_authors__gender__lt=F("book__first_author__gender"))
+                    | Q(book__additional_authors__gender__gt=F("book__first_author__gender"))
                 )
+            elif gender.lower() == "nonmale":
+                qs = qs.by_gender(2) | qs.by_gender(4)
             else:
                 if not gender.isdigit():
                     gender = Author.Gender[gender.upper()]
-                filter_by &= Q(book__first_author__gender=gender) | Q(
-                    book__additional_authors__gender=gender
-                )
+                qs = qs.by_gender(gender)
         if poc := request.GET.get("poc"):
             val = str2bool(poc)
-            filter_by &= Q(book__first_author__poc=val) | Q(
-                book__additional_authors__poc=val
+            qs = qs.filter(
+                Q(book__first_author__poc=val) | Q(book__additional_authors__poc=val)
             )
         if tags := request.GET.get("tags"):
-            filter_by &= Q(
-                book__tags__contains=[tag.strip().lower() for tag in tags.split(",")]
+            qs = qs.filter(
+                book__tags__contains=[tag.strip() for tag in tags.lower().split(",")]
             )
         if owned := request.GET.get("owned"):
             try:
                 val = not str2bool(owned)
-                filter_by &= Q(book__owned_by__isnull=val)
+                qs = qs.filter(book__owned_by__isnull=val)
             except ValueError:
-                filter_by &= Q(book__owned_by__username=owned)
+                qs = qs.filter(book__owned_by__username=owned)
 
-        return self.filter(filter_by)
+        return qs
 
 
 class LogEntry(models.Model):
