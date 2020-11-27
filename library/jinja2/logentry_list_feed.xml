@@ -18,8 +18,10 @@
       <author><name>Benjamin Eskola</name></author>
       <id>tag:booklogger.eskola.uk,{{ entry.end_date.strftime("%Y-%m-%d") }}:{{ entry.book.slug }}</id>
       <content type="html">
-        &lt;img src="https://booklogger.eskola.uk{{ entry.book.get_absolute_url() }}" rel="alternate"/&gt;
-        &lt;br/&gt;&lt;br/&gt;
+        {% if entry.book.image_url %}
+          &lt;img src="https://booklogger.eskola.uk{{ entry.book.image_url }}" rel="alternate"/&gt;
+          &lt;br/&gt;&lt;br/&gt;
+        {% endif %}
         Author{% if entry.book.authors | length > 1 %}s{% endif %}: {{ entry.book.authors | map('string') | list | oxford_comma }}&lt;br/&gt;
         Published: {{ entry.book.display_date }}&lt;br/&gt;
         Rating: {{ entry.book.rating }}&lt;br/&gt;
