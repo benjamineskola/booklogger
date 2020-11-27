@@ -26,12 +26,10 @@
         Published: {{ entry.book.display_date }}&lt;br/&gt;
         Rating: {{ entry.book.rating }}&lt;br/&gt;
         Read at: {{ format_date(entry.end_date, entry.end_precision) }}&lt;br/&gt;
-        Date added:
-          {% if entry.book.acquired_date %}
-            {{ format_date(entry.book.acquired_date, 0) }}
-          {% else %}
-            {{ format_date(entry.book.created_date, 0) }}
-          {% endif %}&lt;br/&gt;
+        {% if entry.book.acquired_date %}
+          Date acquired: {{ format_date(entry.book.acquired_date, 0) }}&lt;br/&gt;
+        {% endif %}
+        Date added: {{ format_date(entry.book.created_date, 0) }}&lt;br/&gt;
         Tags: {{ entry.book.tags | oxford_comma }}&lt;br/&gt;
         Review: {{ entry.book.review | markdown | forceescape }}
       </content>
