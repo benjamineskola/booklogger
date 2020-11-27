@@ -19,7 +19,7 @@
       <id>tag:booklogger.eskola.uk,2020-11-27:{{ entry.end_date.strftime("%Y-%m-%d") }}/{{ entry.book.slug }}</id>
       <content type="html" xml:base="http://booklogger.eskola.uk/"><![CDATA[
         {% if entry.book.image_url %}
-          <img src="http://booklogger.eskola.uk{{ entry.book.image_url }}" rel="alternate"/>
+          <img src="{{ entry.book.image_url }}" rel="alternate"/>
           <br/><br/>
         {% endif %}
         Author{% if entry.book.authors | length > 1 %}s{% endif %}: {{ entry.book.authors | map('string') | list | oxford_comma }}<br/>
