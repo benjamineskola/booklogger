@@ -99,6 +99,11 @@ urlpatterns = [
                     name="books_read_markdown",
                 ),
                 re_path(
+                    r"^read\.xml",
+                    views.book.XmlReadView.as_view(),
+                    name="books_read_xml",
+                ),
+                re_path(
                     r"^read(?:/(?P<year>(\d+|sometime)))?/",
                     views.book.ReadView.as_view(),
                     name="books_read",

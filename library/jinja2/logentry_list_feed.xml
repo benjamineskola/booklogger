@@ -1,0 +1,38 @@
+{% from "macros.html" import format_date %}
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Ben’s Read Books</title>
+  <link href="https://booklogger.eskola.uk/" rel="alternate"></link>
+  <link href="https://booklogger.eskola.uk/books/read.xml" rel="self"></link>
+  <id>https://booklogger.eskola.uk/</id>
+  <updated>{{ entries.first().end_date.isoformat() }}</updated>
+  {% for entry in entries %}
+    <entry>
+      <title>Finished reading {{ entry.book.display_title }}</title>
+      <link href="https://booklogger.eskola.uk{{ entry.book.get_absolute_url() }}" rel="alternate"/>
+      {% if entry.book.image_url %}
+        <link href="{{ entry.book.image_url }}" rel="enclosure" type="image/jpeg"/>
+      {% endif %}
+      <published>{{ entry.end_date.isoformat() }}</published>
+      <updated>{{ entry.end_date.isoformat() }}</updated>
+      <author><name>Benjamin Eskola</name></author>
+      <id>tag:booklogger.eskola.uk,{{ entry.end_date.strftime("%Y-%m-%d") }}:{{ entry.book.slug }}</id>
+      <content type="html">
+        &lt;img src="https://booklogger.eskola.uk{{ entry.book.get_absolute_url() }}" rel="alternate"/&gt;
+        &lt;br/&gt;&lt;br/&gt;
+        Author{% if entry.book.authors | length > 1 %}s{% endif %}: {{ entry.book.authors | map('string') | list | oxford_comma }}&lt;br/&gt;
+        Published: {{ entry.book.display_date }}&lt;br/&gt;
+        Rating: {{ entry.book.rating }}&lt;br/&gt;
+        Read at: {{ format_date(entry.end_date, entry.end_precision) }}&lt;br/&gt;
+        Date added:
+          {% if entry.book.acquired_date %}
+            {{ format_date(entry.book.acquired_date, 0) }}
+          {% else %}
+            {{ format_date(entry.book.created_date, 0) }}
+          {% endif %}&lt;br/&gt;
+        Tags: {{ entry.book.tags | oxford_comma }}&lt;br/&gt;
+        Review: {{ entry.book.review | markdown | forceescape }}
+      </content>
+    </entry>
+  {% endfor %}
+</feed>

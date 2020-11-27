@@ -289,6 +289,26 @@ class MarkdownReadView(GenericLogView):
         )
 
 
+class XmlReadView(GenericLogView):
+    template_name = "logentry_list_feed.xml"
+    content_type = "application/xml; charset=utf-8"
+    filter_by = {"end_date__isnull": False}
+
+    def get_queryset(self, *args, **kwargs):
+        return (
+            super()
+            .get_queryset()
+            .order_by(
+                "-end_date",
+                "book__first_author__surname",
+                "book__first_author__forenames",
+                "book__series",
+                "book__series_order",
+                "book__title",
+            )[0:20]
+        )
+
+
 @login_required
 @require_POST
 def start_reading(request, slug):

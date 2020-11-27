@@ -4,9 +4,9 @@ import commonmark
 from django.contrib.humanize.templatetags.humanize import ordinal
 from django.templatetags.static import static
 from django.urls import reverse
-from library.utils import round_trunc
-
 from jinja2 import Environment, Markup
+
+from library.utils import oxford_comma, round_trunc
 
 
 def environment(**options):
@@ -20,5 +20,7 @@ def environment(**options):
     env.filters["ordinal"] = ordinal
 
     env.filters["round_trunc"] = round_trunc
+
+    env.filters["oxford_comma"] = oxford_comma
 
     return env
