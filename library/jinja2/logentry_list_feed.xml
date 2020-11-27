@@ -16,7 +16,7 @@
       <published>{{ entry.end_date.isoformat() }}</published>
       <updated>{{ entry.end_date.isoformat() }}</updated>
       <author><name>Benjamin Eskola</name></author>
-      <id>tag:booklogger.eskola.uk:{{ entry.end_date.strftime("%Y-%m-%d") }}:{{ entry.book.slug }}</id>
+      <id>tag:booklogger.eskola.uk,{{ entry.end_date.strftime("%Y-%m-%d") }}:{{ entry.book.slug }}</id>
       <content type="html">
         {% if entry.book.image_url %}
           &lt;img src="http://booklogger.eskola.uk{{ entry.book.image_url }}" rel="alternate"/&gt;
