@@ -17,22 +17,22 @@
       <updated>{{ entry.end_date.isoformat() }}</updated>
       <author><name>Benjamin Eskola</name></author>
       <id>tag:booklogger.eskola.uk,2020-11-27:{{ entry.end_date.strftime("%Y-%m-%d") }}/{{ entry.book.slug }}</id>
-      <content type="html">
+      <content type="html" xml:base="http://booklogger.eskola.uk/"><![CDATA[
         {% if entry.book.image_url %}
-          &lt;img src="http://booklogger.eskola.uk{{ entry.book.image_url }}" rel="alternate"/&gt;
-          &lt;br/&gt;&lt;br/&gt;
+          <img src="http://booklogger.eskola.uk{{ entry.book.image_url }}" rel="alternate"/>
+          <br/><br/>
         {% endif %}
-        Author{% if entry.book.authors | length > 1 %}s{% endif %}: {{ entry.book.authors | map('string') | list | oxford_comma }}&lt;br/&gt;
-        Published: {{ entry.book.display_date }}&lt;br/&gt;
-        Rating: {{ entry.book.rating }}&lt;br/&gt;
-        Read at: {{ format_date(entry.end_date, entry.end_precision) }}&lt;br/&gt;
+        Author{% if entry.book.authors | length > 1 %}s{% endif %}: {{ entry.book.authors | map('string') | list | oxford_comma }}<br/>
+        Published: {{ entry.book.display_date }}<br/>
+        Rating: {{ entry.book.rating }}<br/>
+        Read at: {{ format_date(entry.end_date, entry.end_precision) }}<br/>
         {% if entry.book.acquired_date %}
-          Date acquired: {{ format_date(entry.book.acquired_date, 0) }}&lt;br/&gt;
+          Date acquired: {{ format_date(entry.book.acquired_date, 0) }}<br/>
         {% endif %}
-        Date added: {{ format_date(entry.book.created_date, 0) }}&lt;br/&gt;
-        Tags: {{ entry.book.tags | oxford_comma }}&lt;br/&gt;
-        Review: {{ entry.book.review | markdown | forceescape }}
-      </content>
+        Date added: {{ format_date(entry.book.created_date, 0) }}<br/>
+        Tags: {{ entry.book.tags | oxford_comma }}<br/>
+        Review: {{ entry.book.review | markdown }}
+      ]]></content>
     </entry>
   {% endfor %}
 </feed>
