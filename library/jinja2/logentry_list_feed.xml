@@ -2,14 +2,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>Ben’s Read Books</title>
-  <link href="https://booklogger.eskola.uk/" rel="alternate"></link>
-  <link href="https://booklogger.eskola.uk/books/read.xml" rel="self"></link>
+  <link href="http://booklogger.eskola.uk/" rel="alternate"></link>
+  <link href="http://booklogger.eskola.uk/books/read.xml" rel="self"></link>
   <id>https://booklogger.eskola.uk/</id>
   <updated>{{ entries.first().end_date.isoformat() }}</updated>
   {% for entry in entries %}
     <entry>
       <title>Finished reading {{ entry.book.display_title }}</title>
-      <link href="https://booklogger.eskola.uk{{ entry.book.get_absolute_url() }}" rel="alternate"/>
+      <link href="http://booklogger.eskola.uk{{ entry.book.get_absolute_url() }}" rel="alternate"/>
       {% if entry.book.image_url %}
         <link href="{{ entry.book.image_url }}" rel="enclosure" type="image/jpeg"/>
       {% endif %}
@@ -19,7 +19,7 @@
       <id>tag:booklogger.eskola.uk,{{ entry.end_date.strftime("%Y-%m-%d") }}:{{ entry.book.slug }}</id>
       <content type="html">
         {% if entry.book.image_url %}
-          &lt;img src="https://booklogger.eskola.uk{{ entry.book.image_url }}" rel="alternate"/&gt;
+          &lt;img src="http://booklogger.eskola.uk{{ entry.book.image_url }}" rel="alternate"/&gt;
           &lt;br/&gt;&lt;br/&gt;
         {% endif %}
         Author{% if entry.book.authors | length > 1 %}s{% endif %}: {{ entry.book.authors | map('string') | list | oxford_comma }}&lt;br/&gt;
