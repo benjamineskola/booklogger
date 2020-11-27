@@ -1,4 +1,4 @@
-{% from "macros.html" import format_date %}
+{% from "macros.html" import author_list, format_date %}
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>Ben’s Read Books</title>
@@ -22,7 +22,7 @@
           <img src="{{ entry.book.image_url }}" rel="alternate"/>
           <br/><br/>
         {% endif %}
-        Author{% if entry.book.authors | length > 1 %}s{% endif %}: {{ entry.book.authors | map('string') | list | oxford_comma }}<br/>
+        Author{% if entry.book.authors | length > 1 %}s{% endif %}: {{ author_list(entry.book.all_authors, book=entry.book) }}<br/>
         Published: {{ entry.book.display_date }}<br/>
         Rating: {{ entry.book.rating }}<br/>
         Read at: {{ format_date(entry.end_date, entry.end_precision) }}<br/>
