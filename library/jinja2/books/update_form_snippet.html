@@ -59,6 +59,16 @@
         </form>
       </div>
     {% endif %}
+    {% if not book.read %}
+      <div class="item">
+        <form class="form" action="{{ url('library:book_mark_read_sometime', args=[book.slug]) }}" method="post">
+          <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+          <div class="field">
+            <input class="ui button primary" type="submit" name="Mark Read Sometime" value="Mark Read Sometime" />
+          </div>
+        </form>
+      </div>
+    {% endif %}
     <div class="divider"></div>
     <div class="item"><a class="card-link" href="{{ url('library:book_edit', args=[book.slug]) }}">edit</a></div>
   </div>

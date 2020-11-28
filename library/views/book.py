@@ -391,6 +391,14 @@ def mark_owned(request, slug):
 
 @login_required
 @require_POST
+def mark_read_sometime(request, slug):
+    book = get_object_or_404(Book, slug=slug)
+    book.mark_read_sometime()
+    return redirect("library:book_details", slug=slug)
+
+
+@login_required
+@require_POST
 def rate(request, slug):
     book = get_object_or_404(Book, slug=slug)
     if rating := request.POST["rating"]:
