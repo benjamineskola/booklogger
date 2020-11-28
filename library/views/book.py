@@ -95,7 +95,10 @@ class IndexView(generic.ListView):
 
                 def group_func(b):
                     if self.sort_by.endswith("_date"):
-                        return getattr(b, self.sort_by).strftime("%d %B, %Y") or None
+                        if d := getattr(b, self.sort_by):
+                            return d.strftime("%d %B, %Y")
+                        else:
+                            return None
                     else:
                         return getattr(b, self.sort_by) or None
 
