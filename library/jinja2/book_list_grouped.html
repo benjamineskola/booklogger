@@ -1,7 +1,7 @@
 {% from "macros/card.html" import book_list with context %}
 {% extends "base.html" %}
 {% block content %}
-  {% for group, items in page_groups %}
+  {% for group, items in page_groups.items() %}
     {% if items[0] | attr('get_' + group_by + '_display') %}
       {% set group = items[0] | attr('get_' + group_by + '_display')() %}
     {% endif %}

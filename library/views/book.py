@@ -102,13 +102,13 @@ class IndexView(generic.ListView):
                     else:
                         return getattr(b, self.sort_by) or None
 
-                context["page_groups"] = [
-                    (d, list(l))
+                context["page_groups"] = {
+                    d: list(l)
                     for d, l in groupby(
                         context["page_obj"].object_list,
                         group_func,
                     )
-                ]
+                }
 
         return context
 
