@@ -1,6 +1,5 @@
 import json
 import re
-from itertools import groupby
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -23,6 +22,7 @@ class IndexView(generic.ListView):
 
     filter_by = {}
     sort_by = None
+    reverse_sort = False
     page_title = "All Books"
 
     def get_queryset(self):
@@ -52,15 +52,13 @@ class IndexView(generic.ListView):
 
             if self.sort_by.startswith("-"):
                 self.sort_by = self.sort_by[1:]
-                reverse_sort = True
-            else:
-                reverse_sort = False
+                self.reverse_sort = True
 
             if self.sort_by in field_names:
                 if self.sort_by == "read_date":
                     self.sort_by = "log_entries__end_date"
 
-                if reverse_sort:
+                if self.reverse_sort:
                     books = books.order_by(
                         F(self.sort_by).desc(nulls_last=True), *Book._meta.ordering
                     )
@@ -92,23 +90,7 @@ class IndexView(generic.ListView):
             if self.sort_by in ["edition_format", "rating"] or "date" in self.sort_by:
                 self.template_name = "book_list_grouped.html"
                 context["group_by"] = self.sort_by
-
-                def group_func(b):
-                    if self.sort_by.endswith("_date"):
-                        if d := getattr(b, self.sort_by):
-                            return d.strftime("%d %B, %Y")
-                        else:
-                            return None
-                    else:
-                        return getattr(b, self.sort_by) or None
-
-                context["page_groups"] = {
-                    d: list(l)
-                    for d, l in groupby(
-                        context["page_obj"].object_list,
-                        group_func,
-                    )
-                }
+                context["reverse_sort"] = self.reverse_sort
 
         return context
 

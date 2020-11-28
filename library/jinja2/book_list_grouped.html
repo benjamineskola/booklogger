@@ -1,8 +1,14 @@
 {% from "macros/card.html" import book_list with context %}
 {% extends "base.html" %}
 {% block content %}
-  {% for group, items in page_groups.items() %}
-    {% if items[0] | attr('get_' + group_by + '_display') %}
+  {% set groups = page_obj | groupby(group_by) | sort %}
+  {% if reverse_sort %}
+    {% set groups = groups | reverse %}
+  {% endif %}
+  {% for group, items in groups %}
+    {% if group_by.endswith('date') %}
+      {% set group = (items[0] | attr(group_by)).strftime('%d %B, %Y') %}
+    {% elif items[0] | attr('get_' + group_by + '_display') %}
       {% set group = items[0] | attr('get_' + group_by + '_display')() %}
     {% endif %}
     <h2 class="ui header">{{ group or 'Unknown' }}</h2>
