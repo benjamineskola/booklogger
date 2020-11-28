@@ -1,6 +1,7 @@
 import os
 import re
 import time
+from datetime import date
 from typing import Any, Dict, Optional, Sequence, Tuple
 from urllib.parse import quote
 
@@ -794,6 +795,10 @@ class Book(models.Model):
 
         self.save()
         return True
+
+    @property
+    def created_date_date(self) -> date:
+        return self.created_date.date()
 
 
 class BookAuthor(models.Model):
