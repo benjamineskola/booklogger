@@ -91,6 +91,8 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
             all_results = xml["GoodreadsResponse"]["search"]["results"]["work"]
         except KeyError:
             return None
+        except TypeError:
+            return None
 
         results: Sequence[Dict[str, Any]] = []
         if "id" in all_results:
