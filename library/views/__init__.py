@@ -200,7 +200,7 @@ def stats_for_year(request, year):
 
     current_year = timezone.now().year
     prediction = {}
-    if year == current_year:
+    if year == str(current_year):
         first_day = timezone.datetime(current_year, 1, 1)
         last_day = timezone.datetime(current_year, 12, 31)
         year_days = (last_day - first_day).days
