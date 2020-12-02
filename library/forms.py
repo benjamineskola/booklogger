@@ -1,7 +1,12 @@
 import re
 
-from django.forms import (ModelForm, Select, SelectMultiple, ValidationError,
-                          inlineformset_factory)
+from django.forms import (
+    ModelForm,
+    Select,
+    SelectMultiple,
+    ValidationError,
+    inlineformset_factory,
+)
 
 from library.models import Author, Book, BookAuthor, LogEntry
 from library.utils import isbn10_to_isbn
