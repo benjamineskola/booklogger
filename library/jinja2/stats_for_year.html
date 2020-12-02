@@ -75,7 +75,7 @@
       <p>
         I read {{ result["poc"]["count"] }} ({{ result["poc"]["percent"] | round_trunc(2) }}%) books by <a href="{{ url_base }}?poc=1">POC</a>
         {%- if result["poc"]["count"] -%}
-          ; that's {{ result["poc"]["pages"] }} pages, {{ result["poc"]["pages_percent"] | round_trunc(2) }}% of the total
+          ; that's {{ result["poc"]["pages"] | intcomma }} pages, {{ result["poc"]["pages_percent"] | round_trunc(2) }}% of the total
         {%- endif -%}.
       </p>
       {% if result["acquired"] %}
