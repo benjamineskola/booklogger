@@ -11,17 +11,23 @@ from library.utils import oxford_comma, round_trunc
 
 def environment(**options):
     env = Environment(**options, trim_blocks=True, lstrip_blocks=True)
-    env.globals.update({"static": static, "url": reverse})
 
-    env.filters["markdown"] = lambda text: Markup(commonmark.commonmark(text))
+    env.globals.update(
+        {
+            "static": static,
+            "url": reverse,
+        }
+    )
 
-    env.filters["json"] = json.dumps
-
-    env.filters["ordinal"] = ordinal
-    env.filters["intcomma"] = intcomma
-
-    env.filters["round_trunc"] = round_trunc
-
-    env.filters["oxford_comma"] = oxford_comma
+    env.filters.update(
+        {
+            "intcomma": intcomma,
+            "json": json.dumps,
+            "markdown": lambda text: Markup(commonmark.commonmark(text)),
+            "ordinal": ordinal,
+            "oxford_comma": oxford_comma,
+            "round_trunc": round_trunc,
+        }
+    )
 
     return env
