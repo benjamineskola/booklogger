@@ -227,7 +227,7 @@ class BookQuerySet(models.QuerySet):  # type: ignore [type-arg]
         return self.filter(
             Q(first_author__gender__in=genders)
             | Q(additional_authors__gender__in=genders)
-        )
+        ).distinct()
 
     def by_men(self) -> "BookQuerySet":
         return self.by_gender(1)
