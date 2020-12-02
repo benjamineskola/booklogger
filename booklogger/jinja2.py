@@ -1,7 +1,7 @@
 import json
 
 import commonmark
-from django.contrib.humanize.templatetags.humanize import ordinal
+from django.contrib.humanize.templatetags.humanize import intcomma, ordinal
 from django.templatetags.static import static
 from django.urls import reverse
 from jinja2 import Environment, Markup
@@ -18,6 +18,7 @@ def environment(**options):
     env.filters["json"] = json.dumps
 
     env.filters["ordinal"] = ordinal
+    env.filters["intcomma"] = intcomma
 
     env.filters["round_trunc"] = round_trunc
 

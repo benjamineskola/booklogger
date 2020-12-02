@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
   <p class="ui basic segment">
-    In total I own {{ owned }} books and have read {{ owned_read }} ({{ owned_read_pct | round_trunc(2) }}%) of them. I <a href="{{ url("library:books_unread") }}">want to read</a> {{ want_to_read }} ({{ want_to_read_pct | round_trunc(2) }}%) of them, including <a href="{{ url("library:books_unread") }}?read=true&owned=true">rereading</a> {{ reread }} ({{ reread_pct | round_trunc(2) }}%) of them.
+    In total I own {{ owned | intcomma }} books and have read {{ owned_read | intcomma }} ({{ owned_read_pct | round_trunc(2) }}%) of them. I <a href="{{ url("library:books_unread") }}">want to read</a> {{ want_to_read | intcomma }} ({{ want_to_read_pct | round_trunc(2) }}%) of them, including <a href="{{ url("library:books_unread") }}?read=true&owned=true">rereading</a> {{ reread | intcomma }} ({{ reread_pct | round_trunc(2) }}%) of them.
   </p>
 
 
