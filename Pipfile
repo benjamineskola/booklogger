@@ -29,6 +29,7 @@ Jinja2 = "*"
 PyYAML = "*"
 Unidecode = "*"
 dj-database-url = "*"
+bs4 = "*"
 
 [requires]
 python_version = "3.8"
