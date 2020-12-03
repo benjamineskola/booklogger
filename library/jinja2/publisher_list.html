@@ -6,7 +6,7 @@
     {% for publisher, count in publishers.items() | sort %}
       <div class="item">
         <div class="content">
-          <a class="header" href="{{ url("library:publisher_details", args=[publisher]) }}">{{ publisher }}</a>
+          <a class="header" href="{{ url("library:publisher_details", kwargs={'publisher': publisher}) }}">{{ publisher }}</a>
           <span class="meta">({{ count }} book{% if count > 1 %}s{% endif %})</span>
         </div>
       </div>
