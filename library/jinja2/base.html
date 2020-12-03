@@ -132,6 +132,8 @@
               {% set new_kwargs= {"format": request.resolver_match.kwargs["format"]} %}
             {% elif request.resolver_match.kwargs["tag_name"] %}
               {% set new_kwargs= {"tag_name": request.resolver_match.kwargs["tag_name"]} %}
+            {% elif request.resolver_match.kwargs["publisher"] %}
+              {% set new_kwargs= {"publisher": request.resolver_match.kwargs["publisher"]} %}
             {% else %}
               {% set new_kwargs = {} %}
             {% endif %}
