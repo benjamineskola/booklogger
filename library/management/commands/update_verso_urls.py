@@ -28,7 +28,9 @@ class Command(BaseCommand):
             title, *subtitle = title.split(": ", 1)
             query = f"{book.first_author} {title}"
 
-            if url := self.search(query):
+            if book.publisher_url:
+                self.process(book, book.publisher_url)
+            elif url := self.search(query):
                 self.process(book, url)
             elif url := self.search(title):
                 self.process(book, url)
