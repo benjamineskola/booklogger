@@ -152,6 +152,12 @@ urlpatterns = [
         views.book.SeriesIndexView.as_view(),
         name="series_details",
     ),
+    path("publishers/", views.publisher.list, name="publisher_index"),
+    re_path(
+        r"^publisher(?:/(?P<publisher>[^/]+))?(?:/(?P<page>\d+))?/",
+        views.book.PublisherIndexView.as_view(),
+        name="publisher_details",
+    ),
     path("stats/", views.stats_index, name="stats"),
     path("stats/<str:year>/", views.stats_for_year, name="stats_for_year"),
     re_path(

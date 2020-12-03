@@ -6,7 +6,7 @@ from django.views.decorators.http import require_GET
 
 from library.models import Author, Book, LogEntry, Tag
 
-from . import author, book, importer, report, search, series  # noqa: F401
+from . import author, book, importer, publisher, report, search, series  # noqa: F401
 
 
 @require_GET

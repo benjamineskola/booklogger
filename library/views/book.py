@@ -141,6 +141,20 @@ class SeriesIndexView(IndexView):
         return context
 
 
+class PublisherIndexView(IndexView):
+    def get_queryset(self):
+        books = super().get_queryset()
+        books = books.filter(publisher=self.kwargs["publisher"])
+        return books
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context[
+            "page_title"
+        ] = f"Books published by {self.kwargs['publisher']} ({self.get_queryset().count()} books)"
+        return context
+
+
 class TagIndexView(IndexView):
     def get_queryset(self):
         books = super().get_queryset()

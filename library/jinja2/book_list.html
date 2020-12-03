@@ -7,7 +7,7 @@
   {% endif %}
 
   <p class="ui top attached segment">
-    {% if request.resolver_match.url_name not in ["books_read", "books_read_undated", "series_details", "tag_details", "books_reviewed", "books_unreviewed"] %}
+    {% if request.resolver_match.url_name not in ["books_read", "books_read_undated", "series_details", "tag_details", "books_reviewed", "books_unreviewed", "publisher_details"] %}
       {% set qs = '?' + request.GET.urlencode() %}
       Formats: <a href="{{ url(request.resolver_match.view_name) }}{{ qs }}">all</a>
       {% if not format %}
