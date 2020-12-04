@@ -24,6 +24,7 @@ class IndexView(generic.ListView):
     sort_by = None
     reverse_sort = False
     page_title = "All Books"
+    show_format_filters = False
 
     def get_queryset(self):
         books = (
@@ -34,6 +35,9 @@ class IndexView(generic.ListView):
 
         if "filter_by" in self.kwargs:
             self.filter_by = self.kwargs["filter_by"]
+
+        if "show_format_filters" in self.kwargs:
+            self.show_format_filters = self.kwargs["show_format_filters"]
 
         if self.filter_by:
             books = books.filter(**self.filter_by)
@@ -92,16 +96,20 @@ class IndexView(generic.ListView):
                 context["group_by"] = self.sort_by
                 context["reverse_sort"] = self.reverse_sort
 
+        context["show_format_filters"] = self.show_format_filters
+
         return context
 
 
 class OwnedIndexView(IndexView):
     filter_by = {"owned_by__username": "ben"}
     page_title = "Owned Books"
+    show_format_filters = True
 
 
 class BorrowedIndexView(IndexView):
     page_title = "Borrowed Books"
+    show_format_filters = True
 
     def get_queryset(self):
         books = super().get_queryset()
@@ -114,6 +122,7 @@ class BorrowedIndexView(IndexView):
 class UnreadIndexView(IndexView):
     filter_by = {"want_to_read": True}
     page_title = "Unread Books"
+    show_format_filters = True
 
     def get_queryset(self):
         books = (
