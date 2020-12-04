@@ -91,7 +91,11 @@ class IndexView(generic.ListView):
         if self.sort_by:
             context["page_title"] += f" by {re.sub(r'_', ' ', self.sort_by.title())}"
 
-            if self.sort_by in ["edition_format", "rating"] or "date" in self.sort_by:
+            if (
+                self.sort_by in ["edition_format", "rating"]
+                or "date" in self.sort_by
+                or "published" in self.sort_by
+            ):
                 context["group_by"] = self.sort_by
                 context["reverse_sort"] = self.reverse_sort
 

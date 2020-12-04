@@ -34,6 +34,8 @@
     {% if request.resolver_match.url_name not in ['books_to_read'] %}
       {{ filter_list('Want to read', 'want_to_read', {'yes': 'true', 'no': 'false'}) }}
     {% endif %}
+    <br>
+    {{ filter_list('Sort', 'sort_by', {'title': 'title', 'acquired date': 'acquired_date', 'created date': 'created_date', 'modified date': 'modified_date', 'first published': 'first_published', 'edition published': 'edition_published', 'length': 'page_count', 'format': 'edition_format', 'rating': 'rating'}) }}
   </p>
 
   {% if stats %}
