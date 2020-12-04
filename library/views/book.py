@@ -58,6 +58,13 @@ class IndexView(generic.ListView):
                 self.sort_by = self.sort_by[1:]
                 self.reverse_sort = True
 
+            if (
+                self.sort_by in ["edition_format", "rating", "page_count"]
+                or "date" in self.sort_by
+                or "published" in self.sort_by
+            ):
+                self.reverse_sort = not self.reverse_sort
+
             if self.sort_by in field_names:
                 if self.sort_by == "read_date":
                     self.sort_by = "log_entries__end_date"
