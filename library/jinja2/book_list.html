@@ -42,5 +42,25 @@
     </p>
   {% endif %}
 
-  {{ book_list(page_obj) }}
+  {% if not group_by %}
+    {{ book_list(page_obj) }}
+  {% else %}
+    {% if group_by in ['created_date', 'modified_date'] %}
+      {% set groups = page_obj | groupby(group_by + "_date") | sort %}
+    {% else %}
+      {% set groups = page_obj | groupby(group_by) | sort %}
+    {% endif %}
+    {% if reverse_sort %}
+      {% set groups = groups | reverse %}
+    {% endif %}
+    {% for group, items in groups %}
+      {% if group_by.endswith('date') %}
+        {% set group = (items[0] | attr(group_by)).strftime('%d %B, %Y') %}
+      {% elif items[0] | attr('get_' + group_by + '_display') %}
+        {% set group = items[0] | attr('get_' + group_by + '_display')() %}
+      {% endif %}
+      <h2 class="ui header">{{ group or 'Unknown' }}</h2>
+      {{ book_list(items) }}
+    {% endfor %}
+  {% endif %}
 {% endblock content %}
