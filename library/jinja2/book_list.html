@@ -24,6 +24,16 @@
     {{ filter_list('POC', 'poc', {'yes': '1', 'no': '0'}) }}
     <br>
     {{ filter_list('Subject', 'tags', {'fiction': 'fiction', 'non-fiction': 'non-fiction'}) }}
+    {% if request.resolver_match.url_name not in ['books_owned', 'books_owned_by_date', 'books_unowned', 'books_borrowed', 'books_unread'] %}
+      <br>
+      {{ filter_list('Owned', 'owned', {'yes': 'true', 'borrowed': 'sara', 'no': 'false'}) }}
+    {% endif %}
+    <br>
+    {{ filter_list('Read', 'read', {'yes': 'true', 'no': 'false'}) }}
+    <br>
+    {% if request.resolver_match.url_name not in ['books_unread'] %}
+      {{ filter_list('Want to read', 'want_to_read', {'yes': 'true', 'no': 'false'}) }}
+    {% endif %}
   </p>
 
   {% if stats %}
