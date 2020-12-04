@@ -121,7 +121,7 @@ class BorrowedIndexView(IndexView):
 
 class UnreadIndexView(IndexView):
     filter_by = {"want_to_read": True}
-    page_title = "Unread Books"
+    page_title = "To-Read Books"
     show_format_filters = True
 
     def get_queryset(self):

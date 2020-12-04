@@ -121,7 +121,7 @@ urlpatterns = [
                 re_path(
                     r"^toread(?:/(?P<format>[a-z]+))?(?:/(?P<page>\d+))?/",
                     views.book.UnreadIndexView.as_view(),
-                    name="books_unread",
+                    name="books_to_read",
                 ),
                 re_path(
                     r"^unowned(?:/(?P<format>[a-z]+))?(?:/(?P<page>\d+))?/",
