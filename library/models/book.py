@@ -13,12 +13,13 @@ from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import TrigramSimilarity
 from django.db import models
-from django.db.models import F, Q, Sum
+from django.db.models import F, Q, Sum, signals
 from django.db.models.functions import Lower
 from django.db.models.indexes import Index
 from django.urls import reverse
 from django.utils import timezone
 
+from library.signals import update_timestamp_on_save
 from library.utils import LANGUAGES, isbn_to_isbn10, oxford_comma, str2bool
 
 from .author import Author
@@ -426,6 +427,7 @@ class Book(models.Model):
     editions = models.ManyToManyField("self", symmetrical=True, blank=True)
 
     created_date = models.DateTimeField(db_index=True, default=timezone.now)
+    modified_date = models.DateTimeField(db_index=True, default=timezone.now)
 
     slug = models.SlugField(blank=True, default="")
 
@@ -813,6 +815,9 @@ class BookAuthor(models.Model):
     role = models.CharField(db_index=True, max_length=255, blank=True, default="")
     order = models.PositiveSmallIntegerField(db_index=True, blank=True, null=True)
 
+    created_date = models.DateTimeField(db_index=True, default=timezone.now)
+    modified_date = models.DateTimeField(db_index=True, default=timezone.now)
+
     def __str__(self) -> str:
         return ": ".join([str(self.author), str(self.role), self.book.title])
 
@@ -832,6 +837,9 @@ class Tag(models.Model):
     parents = models.ManyToManyField(
         "self", related_name="children", blank=True, symmetrical=False
     )
+
+    created_date = models.DateTimeField(db_index=True, default=timezone.now)
+    modified_date = models.DateTimeField(db_index=True, default=timezone.now)
 
     def __str__(self) -> str:
         return self.fullname
@@ -880,3 +888,8 @@ class Tag(models.Model):
             book.tags.remove(self.name)
             book.save()
         return super().delete(*args, **kwargs)
+
+
+signals.pre_save.connect(receiver=update_timestamp_on_save, sender=Book)
+signals.pre_save.connect(receiver=update_timestamp_on_save, sender=BookAuthor)
+signals.pre_save.connect(receiver=update_timestamp_on_save, sender=Tag)

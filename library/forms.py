@@ -48,7 +48,7 @@ class TagWidget(SelectMultiple):
 class AuthorForm(ModelForm):
     class Meta:
         model = Author
-        fields = "__all__"
+        exclude = ["created_date", "modified_date"]
         widgets = {
             "primary_identity": AuthorWidget,
         }
@@ -60,7 +60,7 @@ class AuthorForm(ModelForm):
 class BookForm(ModelForm):
     class Meta:
         model = Book
-        exclude = ["additional_authors", "created_date"]
+        exclude = ["additional_authors", "created_date", "modified_date"]
         widgets = {
             "first_author": AuthorWidget,
             "tags": TagWidget,
@@ -128,7 +128,7 @@ class BookAuthorForm(ModelForm):
 class LogEntryForm(ModelForm):
     class Meta:
         model = BookAuthor
-        fields = "__all__"
+        exclude = ["created_date", "modified_date"]
 
 
 BookAuthorFormSet = inlineformset_factory(Book, BookAuthor, form=BookAuthorForm)
