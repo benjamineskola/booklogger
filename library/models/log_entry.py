@@ -55,6 +55,8 @@ class LogEntryQuerySet(models.QuerySet):  # type: ignore [type-arg]
                 qs = qs.filter(book__owned_by__isnull=val)
             except ValueError:
                 qs = qs.filter(book__owned_by__username=owned)
+        if want_to_read := request.GET.get("want_to_read"):
+            qs = qs.filter(book__want_to_read=str2bool(want_to_read))
 
         return qs
 
