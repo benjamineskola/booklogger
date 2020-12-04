@@ -804,6 +804,10 @@ class Book(models.Model):
     def created_date_date(self) -> date:
         return self.created_date.date()
 
+    @property
+    def modified_date_date(self) -> date:
+        return self.modified_date.date()
+
 
 class BookAuthor(models.Model):
     class Meta:

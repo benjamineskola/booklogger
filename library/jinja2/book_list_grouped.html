@@ -1,7 +1,7 @@
 {% from "macros/card.html" import book_list with context %}
 {% extends "base.html" %}
 {% block content %}
-  {% if group_by == 'created_date' %}
+  {% if group_by in ['created_date', 'modified_date'] %}
     {% set groups = page_obj | groupby(group_by + "_date") | sort %}
   {% else %}
     {% set groups = page_obj | groupby(group_by) | sort %}
