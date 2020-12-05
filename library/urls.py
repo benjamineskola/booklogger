@@ -90,7 +90,7 @@ urlpatterns = [
                 re_path(
                     r"^owned/bydate(?:/(?P<page>\d+))?/",
                     views.book.OwnedIndexView.as_view(),
-                    {"sort_by": "-acquired_date", "show_format_filters": False},
+                    {"sort_by": "acquired_date", "show_format_filters": False},
                     name="books_owned_by_date",
                 ),
                 re_path(
