@@ -2,15 +2,17 @@
 {% extends "base.html" %}
 {% block content %}
   {% if form.instance.id %}
-    <div class="ui segment">
-      <strong>Amazon</strong> {{ link_amazon(book) }}<br/>
-      <strong>Goodreads</strong> {{ link_goodreads(book) }}<br/>
-      <strong>Google</strong> {{ link_google(book) }}
+    <div class="card mb-2">
+      <div class="card-body">
+        <strong>Amazon</strong> {{ link_amazon(book) }}<br/>
+        <strong>Goodreads</strong> {{ link_goodreads(book) }}<br/>
+        <strong>Google</strong> {{ link_google(book) }}
+      </div>
     </div>
   {% endif %}
 
   {% if form.errors %}
-    <div class="ui segment error message">
+    <div class="alert alert-danger mb-2">
       {% for error in form.errors %}
         <p><strong>{{ error }}:</strong> {{ form.errors[error] | join('; ') }}</p>
       {% endfor %}
@@ -20,73 +22,81 @@
   <form method="post">
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
 
-    <div class="row">
-      <div class="column">
-        <div class="ui stackable two column grid">
-          {% for field_names in [
-            ["title", "subtitle", "first_author", "first_author_role", "first_published", "language", "series", "series_order", "slug"],
-            ["edition_title", "edition_subtitle", "publisher", "edition_published", "edition_format", "edition_language", "edition_number", "page_count"],
-            ["owned_by", "acquired_date", "alienated_date", "was_borrowed", "borrowed_from", "want_to_read"],
-            ["goodreads_id", "google_books_id", "isbn", "asin", "image_url", "publisher_url"],
-            ["has_ebook_edition", "ebook_acquired_date", "ebook_isbn", "ebook_asin"],
-            ["tags", "review", "rating"],
-            ["editions", "parent_edition"],
-          ] %}
-            {% if 'editions' not in field_names or ('editions' in form.fields or 'parent_edition' in form.fields) %}
-              <div class="column">
-                <div class="ui segment">
-                  <div class="ui form{% if form.errors %} error{% endif %}">
-                    {% for field_name in field_names %}
-                      {% set field = form[field_name] %}
-                      {% if field %}
-                        {% include "edit_form_field_snippet.html" %}
-                      {% endif %}
+    <div class="row row-cols-1 row-cols-md-2">
+      {% for field_names in [
+        ["title", "subtitle", "first_author", "first_author_role", "first_published", "language", "series", "series_order", "slug"],
+        ["edition_title", "edition_subtitle", "publisher", "edition_published", "edition_format", "edition_language", "edition_number", "page_count"],
+        ["owned_by", "acquired_date", "alienated_date", "was_borrowed", "borrowed_from", "want_to_read"],
+        ["goodreads_id", "google_books_id", "isbn", "asin", "image_url", "publisher_url"],
+        ["has_ebook_edition", "ebook_acquired_date", "ebook_isbn", "ebook_asin"],
+        ["tags", "review", "rating"],
+        ["editions", "parent_edition"],
+      ] %}
+        {% if 'editions' not in field_names or ('editions' in form.fields or 'parent_edition' in form.fields) %}
+          <div class="col">
+            <div class="card mb-2">
+              <div class="card-body">
+                {% for field_name in field_names %}
+                  {% set field = form[field_name] %}
+                  {% if field %}
+                    {{ field | crispy }}
+                    {% for error in field.errors %}
+                      <label for="{{ field.id_for_label }}" class="alert alert-warning">
+                        {{ error|escape }}
+                      </label>
                     {% endfor %}
-                  </div> {# form #}
-                </div> {# segment #}
-              </div> {# column #}
-            {% endif %}
-          {% endfor %}
-        </div> {# two column grid #}
-
-        {% for inline_formset in [bookauthor_formset, logentry_formset] %}
-          <div class="ui segment">
-            {% if inline_formset.errors %}
-              <div class="ui segment error message">
-                {% for error in inline_formset.errors %}
-                  <p><strong>{{ error }}:</strong> {{ inline_formset.errors[error] | join('; ') }}</p>
+                  {% endif %}
                 {% endfor %}
-              </div>
-            {% endif %}
-            {{ inline_formset.management_form }}
-            {% for form in inline_formset %}
-              <div class="ui form">
-                <div class="four fields">
-                  {{ form.id }}
-                  {% for field in form %}
-                    {% if field.name not in ["id", "book"] %}
-                      {% include "edit_form_field_snippet.html" %}
-                    {% endif %}
-                  {% endfor %}
-                </div> {# four fields #}
-              </div> {# form #}
-            {% endfor %}
-          </div> {# segment #}
-        {% endfor %}
+              </div> {# card-body #}
+            </div> {# card #}
+          </div> {# column #}
+        {% endif %}
+      {% endfor %}
+    </div> {# row #}
 
-        <div class="ui segment">
-          <div class="ui form">
-            <input type="submit" value="Submit" class="ui button primary">
-            {% if form.instance.id %}
-              <a href="{{ form.instance.get_absolute_url() }}" class="ui button" role="button">Cancel</a>
-              <a href="{{ url("library:book_delete", args=[form.instance.slug]) }}" class="ui button negative" role="button">Delete</a>
-            {% else %}
-              <a href="/" class="ui button">Cancel</a>
-            {% endif %}
-          </div> {# form #}
-        </div> {# segment #}
-      </div>
-    </div>
+    {% for inline_formset in [bookauthor_formset, logentry_formset] %}
+      <div class="card mb-2">
+        <div class="card-body">
+          {% if inline_formset.errors %}
+            <div class="alert alert-danger">
+              {% for error in inline_formset.errors %}
+                <p><strong>{{ error }}:</strong> {{ inline_formset.errors[error] | join('; ') }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+          {{ inline_formset.management_form }}
+          {% for form in inline_formset %}
+            <div class="form-inline">
+              {{ form.id }}
+              {% for field in form %}
+                {% if field.name not in ["id", "book"] %}
+                  {{ field | crispy(field_class="mr-2 mt-2", label_class="mr-2") }}
+                  {% for error in field.errors %}
+                    <label for="{{ field.id_for_label }}" class="alert alert-warning">
+                      {{ error|escape }}
+                    </label>
+                  {% endfor %}
+                {% endif %}
+              {% endfor %}
+            </div>
+          {% endfor %}
+        </div> {# card-body #}
+      </div> {# card #}
+    {% endfor %}
+
+    <div class="col">
+      <div class="card">
+        <div class="card-body">
+          <input type="submit" value="Submit" class="btn btn-primary">
+          {% if form.instance.id %}
+            <a href="{{ form.instance.get_absolute_url() }}" class="btn btn-secondary" role="button">Cancel</a>
+            <a href="{{ url("library:book_delete", args=[form.instance.slug]) }}" class="btn btn-danger" role="button">Delete</a>
+          {% else %}
+            <a href="/" class="ui button">Cancel</a>
+          {% endif %}
+        </div> {# card-body #}
+      </div> {# card #}
+    </div> {# col #}
   </form>
 
   {% if form.instance.id %}

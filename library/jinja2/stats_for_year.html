@@ -5,85 +5,86 @@
     {% else %}
       {% set url_base = url("library:books_read", kwargs={"year": ("sometime" if year == '1' else year)}) %}
     {% endif %}
-    <hr class="ui divider" />
-    <div class="ui basic segment">
-      <p>
-        {% if year == "1" %}
-          <a href="{{ url_base }}">Sometime</a>
-        {% else %}
-          In <a href="{{ url_base }}">{{ year | trim("!") }}</a>
-        {% endif %}
-        I read {% if year != "total" and year < "2014" %} at least {% endif %}
-        {{ result["count"] }} books: {{ result["men"]["count"] }} ({{ result["men"]["percent"] | round_trunc(2) }}%) by <a href="{{ url_base }}?gender=male">men</a> and {{ result["women"]["count"] }} ({{ result["women"]["percent"] | round_trunc(2) }}%) by <a href="{{ url_base }}?gender=female">women</a>.
-        {% if result["nonbinary"]["count"] %}
-          There were also {{ result["nonbinary"]["count"] }} ({{ result["nonbinary"]["percent"] | round_trunc(2) }}%) by <a href="{{ url_base }}?gender=nonbinary">nonbinary people</a>.
-        {% endif %}
-        {% if result["both"] or result["organisations"] %}
-          (
-          {%- if result["both"]["count"] -%}
-            {{ result["both"]["count"] }} ({{ result["both"]["percent"] | round_trunc(2) }}%) of those were by multiple authors of different genders
-          {%- endif -%}
-          {%- if result["both"]["count"] and result["organisations"]["count"] %}; {% endif -%}
-          {%- if result["organisations"]["count"] -%}
-            {{ result["organisations"]["count"] }} ({{ result["organisations"]["percent"] | round_trunc(2) }}%) were by <a href="{{ url_base }}?gender=organization">groups or organizations</a>
-          {%- endif -%}
-          .)
-        {% endif %}
-        {% if year != "1" and year != "total" %}
-          <br>That's {% if year == current_year | string %}{{ (result["count"] / current_week) | round_trunc(1) }}{% else %}{{ (result["count"] / 52) | round_trunc(1) }}{% endif %} per week.
-        {% endif %}
-        {% if prediction %}
-          (It's currently week {{ current_week }}.) On track to read {{ prediction["predicted_count"] | round(0, 'floor') | int }} this year.
-          {% if prediction["target_counts"] %}
-            <br>
-            {% for target, target_count in prediction["target_counts"].items() %}
-              To reach {{ target }} books I'd have to read {{ target_count | round_trunc(1) }} per week.
-            {% endfor %}
-          {% endif %}
-        {% endif %}
-        <br>
-        There was a total pagecount of {{ result["pages"] | intcomma }}: {{ result["men"]["pages"] | intcomma }} ({{ result["men"]["pages_percent"] | round_trunc(2) }}%) by men, and {{ result["women"]["pages"] | intcomma }} ({{ result["women"]["pages_percent"] | round_trunc(2) }}%) by women.
-        {% if result["nonbinary"] %}
-          There were also {{ result["nonbinary"]["pages"] | intcomma }} ({{ result["nonbinary"]["pages_percent"] | round_trunc(2) }}%) by nonbinary people.
-        {% endif %}
-        {{ result["fiction"]["pages"] | intcomma }} ({{ result["fiction"]["pages_percent"] | round_trunc(2) }}%) were fiction;
-        {{ result["nonfiction"]["pages"] | intcomma }} ({{ result["nonfiction"]["pages_percent"] | round_trunc(2) }}%) were non-fiction.
-      </p>
-      <p>
-        {{ result["fiction"]["count"] }} were <a href="{{ url_base }}?tags=fiction">fiction</a>,
-        {{ result["nonfiction"]["count"] }} were <a href="{{ url_base }}?tags=non-fiction">non-fiction</a>.<br>
-
-        {% for gender, gender_breakdown in result["breakdowns"]["gender"].items() %}
-          {% if (gender_breakdown["fiction"]["count"] + gender_breakdown["nonfiction"]["count"]) > 0 %}
-            By {{ gender }}{% if gender == "nonbinary" %} people{% endif %}:
-            {{ gender_breakdown["fiction"]["count"] }} ({{ gender_breakdown["fiction"]["percentage"] | round_trunc(2) }}%) <a href="{{ url_base }}?tags=fiction&gender={{ gender_breakdown["key"] }}">fiction</a>,
-            {{ gender_breakdown["nonfiction"]["count"] }} ({{ gender_breakdown["nonfiction"]["percentage"] | round_trunc(2) }}%) <a href="{{ url_base }}?tags=non-fiction&gender={{ gender_breakdown["key"] }}">non-fiction</a>.<br>
-          {% endif %}
-        {% endfor %}
-
-        {% for genre, genre_breakdown in result["breakdowns"]["genre"].items() %}
-          {{ genre.title() }}:
-          {{ genre_breakdown["women"]["count"] }} ({{ genre_breakdown["women"]["percentage"] | round_trunc(2) }}%) by <a href="{{ url_base }}?tags={{ genre }}&gender=2">women</a>,
-          {{ genre_breakdown["men"]["count"] }} ({{ genre_breakdown["men"]["percentage"] | round_trunc(2) }}%) by <a href="{{ url_base }}?tags={{ genre }}&gender=1">men</a>
-          {%- if genre_breakdown["nonbinary"]["count"] -%}
-            ,
-            {{ genre_breakdown["nonbinary"]["count"] }} ({{ genre_breakdown["nonbinary"]["percentage"] | round_trunc(2) }}%) by <a href="{{ url_base }}?tags={{ genre }}&gender=4">nonbinary people</a>
-          {%- endif -%}
-          .<br>
-        {% endfor %}
-      </p>
-      <p>
-        I read {{ result["poc"]["count"] }} ({{ result["poc"]["percent"] | round_trunc(2) }}%) books by <a href="{{ url_base }}?poc=1">POC</a>
-        {%- if result["poc"]["count"] -%}
-          ; that's {{ result["poc"]["pages"] | intcomma }} pages, {{ result["poc"]["pages_percent"] | round_trunc(2) }}% of the total
-        {%- endif -%}.
-      </p>
-      {% if result["acquired"] %}
+    <div class="card mb-4">
+      <div class="card-body">
         <p>
-          I acquired {{ result["acquired"] }} more books this year.
-          That's {{ (result["count"] - result["acquired"]) | abs }} {% if result["acquired"] - result["count"] >= 0 %}more{% else %}fewer{% endif %} than I read.
+          {% if year == "1" %}
+            <a href="{{ url_base }}">Sometime</a>
+          {% else %}
+            In <a href="{{ url_base }}">{{ year | trim("!") }}</a>
+          {% endif %}
+          I read {% if year != "total" and year < "2014" %} at least {% endif %}
+          {{ result["count"] }} books: {{ result["men"]["count"] }} ({{ result["men"]["percent"] | round_trunc(2) }}%) by <a href="{{ url_base }}?gender=male">men</a> and {{ result["women"]["count"] }} ({{ result["women"]["percent"] | round_trunc(2) }}%) by <a href="{{ url_base }}?gender=female">women</a>.
+          {% if result["nonbinary"]["count"] %}
+            There were also {{ result["nonbinary"]["count"] }} ({{ result["nonbinary"]["percent"] | round_trunc(2) }}%) by <a href="{{ url_base }}?gender=nonbinary">nonbinary people</a>.
+          {% endif %}
+          {% if result["both"] or result["organisations"] %}
+            (
+            {%- if result["both"]["count"] -%}
+              {{ result["both"]["count"] }} ({{ result["both"]["percent"] | round_trunc(2) }}%) of those were by multiple authors of different genders
+            {%- endif -%}
+            {%- if result["both"]["count"] and result["organisations"]["count"] %}; {% endif -%}
+            {%- if result["organisations"]["count"] -%}
+              {{ result["organisations"]["count"] }} ({{ result["organisations"]["percent"] | round_trunc(2) }}%) were by <a href="{{ url_base }}?gender=organization">groups or organizations</a>
+            {%- endif -%}
+            .)
+          {% endif %}
+          {% if year != "1" and year != "total" %}
+            <br>That's {% if year == current_year | string %}{{ (result["count"] / current_week) | round_trunc(1) }}{% else %}{{ (result["count"] / 52) | round_trunc(1) }}{% endif %} per week.
+          {% endif %}
+          {% if prediction %}
+            (It's currently week {{ current_week }}.) On track to read {{ prediction["predicted_count"] | round(0, 'floor') | int }} this year.
+            {% if prediction["target_counts"] %}
+              <br>
+              {% for target, target_count in prediction["target_counts"].items() %}
+                To reach {{ target }} books I'd have to read {{ target_count | round_trunc(1) }} per week.
+              {% endfor %}
+            {% endif %}
+          {% endif %}
+          <br>
+          There was a total pagecount of {{ result["pages"] | intcomma }}: {{ result["men"]["pages"] | intcomma }} ({{ result["men"]["pages_percent"] | round_trunc(2) }}%) by men, and {{ result["women"]["pages"] | intcomma }} ({{ result["women"]["pages_percent"] | round_trunc(2) }}%) by women.
+          {% if result["nonbinary"] %}
+            There were also {{ result["nonbinary"]["pages"] | intcomma }} ({{ result["nonbinary"]["pages_percent"] | round_trunc(2) }}%) by nonbinary people.
+          {% endif %}
+          {{ result["fiction"]["pages"] | intcomma }} ({{ result["fiction"]["pages_percent"] | round_trunc(2) }}%) were fiction;
+          {{ result["nonfiction"]["pages"] | intcomma }} ({{ result["nonfiction"]["pages_percent"] | round_trunc(2) }}%) were non-fiction.
         </p>
-      {% endif %}
+        <p>
+          {{ result["fiction"]["count"] }} were <a href="{{ url_base }}?tags=fiction">fiction</a>,
+          {{ result["nonfiction"]["count"] }} were <a href="{{ url_base }}?tags=non-fiction">non-fiction</a>.<br>
+
+          {% for gender, gender_breakdown in result["breakdowns"]["gender"].items() %}
+            {% if (gender_breakdown["fiction"]["count"] + gender_breakdown["nonfiction"]["count"]) > 0 %}
+              By {{ gender }}{% if gender == "nonbinary" %} people{% endif %}:
+              {{ gender_breakdown["fiction"]["count"] }} ({{ gender_breakdown["fiction"]["percentage"] | round_trunc(2) }}%) <a href="{{ url_base }}?tags=fiction&gender={{ gender_breakdown["key"] }}">fiction</a>,
+              {{ gender_breakdown["nonfiction"]["count"] }} ({{ gender_breakdown["nonfiction"]["percentage"] | round_trunc(2) }}%) <a href="{{ url_base }}?tags=non-fiction&gender={{ gender_breakdown["key"] }}">non-fiction</a>.<br>
+            {% endif %}
+          {% endfor %}
+
+          {% for genre, genre_breakdown in result["breakdowns"]["genre"].items() %}
+            {{ genre.title() }}:
+            {{ genre_breakdown["women"]["count"] }} ({{ genre_breakdown["women"]["percentage"] | round_trunc(2) }}%) by <a href="{{ url_base }}?tags={{ genre }}&gender=2">women</a>,
+            {{ genre_breakdown["men"]["count"] }} ({{ genre_breakdown["men"]["percentage"] | round_trunc(2) }}%) by <a href="{{ url_base }}?tags={{ genre }}&gender=1">men</a>
+            {%- if genre_breakdown["nonbinary"]["count"] -%}
+              ,
+              {{ genre_breakdown["nonbinary"]["count"] }} ({{ genre_breakdown["nonbinary"]["percentage"] | round_trunc(2) }}%) by <a href="{{ url_base }}?tags={{ genre }}&gender=4">nonbinary people</a>
+            {%- endif -%}
+            .<br>
+          {% endfor %}
+        </p>
+        <p>
+          I read {{ result["poc"]["count"] }} ({{ result["poc"]["percent"] | round_trunc(2) }}%) books by <a href="{{ url_base }}?poc=1">POC</a>
+          {%- if result["poc"]["count"] -%}
+            ; that's {{ result["poc"]["pages"] | intcomma }} pages, {{ result["poc"]["pages_percent"] | round_trunc(2) }}% of the total
+          {%- endif -%}.
+        </p>
+        {% if result["acquired"] %}
+          <p>
+            I acquired {{ result["acquired"] }} more books this year.
+            That's {{ (result["count"] - result["acquired"]) | abs }} {% if result["acquired"] - result["count"] >= 0 %}more{% else %}fewer{% endif %} than I read.
+          </p>
+        {% endif %}
+      </div>
     </div>
   {% endif %}
 {% endblock %}

@@ -4,7 +4,7 @@
   {% for genre in ["all", "fiction", "non-fiction"] %}
     <h2>{{ genre.title() }}</h2>
     {% for sort_type, sorted_tags in tags.items() %}
-      <div class="ui labels">
+      <div class="tags">
         <strong>By {{ sort_type }}:</strong>
         {% for tag, count in sorted_tags[genre].items() %}
           {% if count %}

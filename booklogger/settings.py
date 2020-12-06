@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.postgres",
     "django_extensions",
+    "crispy_forms",
 ]
 
 MIDDLEWARE = [
@@ -144,6 +145,8 @@ USE_TZ = True
 STATIC_URL = "/static/"
 
 LOGIN_URL = "/admin/login/"
+
+CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 if os.environ.get("DYNO"):
     import django_heroku

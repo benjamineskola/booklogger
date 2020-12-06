@@ -35,12 +35,12 @@ $(document).ready(function () {
       data: form.serialize(),
       dataType: "json",
       success: function (data) {
-        var progress_bar = $(`#book-${book} .bar`);
+        var progress_bar = $(`#book-${book} .progress-bar`);
         progress_bar.css("width", `${data["percentage"]}%`);
 
-        var progress_text = $(`#book-${book} .extra.content .progress-date`);
+        var progress_text = $(`#book-${book} .card-footer .progress-date`);
         if (progress_text.length == 0) {
-          var progress_text = $(`#book-${book} .extra.content .read-dates"`);
+          var progress_text = $(`#book-${book} .card-footer .read-dates`);
           progress_text.text(
             `${progress_text.text()}; ${data["progress_text"]}`
           );
@@ -53,32 +53,32 @@ $(document).ready(function () {
     });
   });
 
-  $(".ui.rating").rating({
-    clearable: true,
-    onRate: function (value) {
-      var book = $(this).data("book");
+  // $(".ui.rating").rating({
+  //   clearable: true,
+  //   onRate: function (value) {
+  //     var book = $(this).data("book");
 
-      $.ajax({
-        type: "POST",
-        url: `/book/${book}/rate/`,
-        data: { rating: Number(value) },
-        dataType: "json",
-        beforeSend: function (xhr, settings) {
-          xhr.setRequestHeader(
-            "X-CSRFToken",
-            $("[name=csrfmiddlewaretoken]").val()
-          );
-        },
-      });
-    },
-  });
-  $(".ui.accordion").accordion();
-  $("#navbar .ui.dropdown").dropdown();
+  //     $.ajax({
+  //       type: "POST",
+  //       url: `/book/${book}/rate/`,
+  //       data: { rating: Number(value) },
+  //       dataType: "json",
+  //       beforeSend: function (xhr, settings) {
+  //         xhr.setRequestHeader(
+  //           "X-CSRFToken",
+  //           $("[name=csrfmiddlewaretoken]").val()
+  //         );
+  //       },
+  //     });
+  //   },
+  // });
+  // $(".ui.accordion").accordion();
+  // $("#navbar .ui.dropdown").dropdown();
 
   $("a.remove-tag").click(function () {
     var tag = $(this).data("tag");
     var label = $(this).parent();
-    var book = label.parent().parent().parent().data("book");
+    var book = label.parent().data('book');
     $.ajax({
       type: "POST",
       url: `/book/${book}/remove_tags/`,

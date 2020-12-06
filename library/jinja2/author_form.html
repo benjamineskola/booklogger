@@ -10,20 +10,25 @@
 
   <form method="post">
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-    <div class="ui segment">
-      <div class="ui form">
+    <div class="card mb-2">
+      <div class="card-body">
         {% for field in form %}
-          {% include "edit_form_field_snippet.html" %}
+          {{ field | crispy }}
+          {% for error in field.errors %}
+            <label for="{{ field.id_for_label }}" class="alert alert-warning">
+              {{ error|escape }}
+            </label>
+          {% endfor %}
         {% endfor %}
       </div>
     </div>
 
-    <div class="ui segment">
-      <div class="ui form">
-        <input type="submit" value="Submit" class="ui button primary">
+    <div class="card mb-2">
+      <div class="card-body">
+        <input type="submit" value="Submit" class="btn btn-primary">
         {% if form.instance.id %}
-          <a href="{{ form.instance.get_absolute_url() }}" class="ui button" role="button">Cancel</a>
-          <a href="{{ url("library:author_delete", args=[form.instance.slug]) }}" class="ui button negative" role="button">Delete</a>
+          <a href="{{ form.instance.get_absolute_url() }}" class="btn btn-secondary" role="button">Cancel</a>
+          <a href="{{ url("library:author_delete", args=[form.instance.slug]) }}" class="btn btn-danger" role="button">Delete</a>
         {% else %}
           <a href="/" class="ui button">Cancel</a>
         {% endif %}

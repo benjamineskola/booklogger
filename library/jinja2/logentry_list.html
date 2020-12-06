@@ -6,17 +6,19 @@
     {{ book_list(entries) }}
   {% else %}
     {% if request.GET.get("infinite") != "true" %}
-      <p class="ui segment">
-        {{ filter_list('Gender', 'gender', {'male': 'male', 'female': 'female', 'nonbinary': 'nonbinary', 'multiple': 'multiple', 'non-male': 'nonmale', 'groups/organisations': 'organization'}) }}
-        <br>
-        {{ filter_list('POC', 'poc', {'yes': '1', 'no': '0'}) }}
-        <br>
-        {{ filter_list('Subject', 'tags', {'fiction': 'fiction', 'non-fiction': 'non-fiction'}) }}
-        <br>
-        {{ filter_list('Owned', 'owned', {'yes': 'true', 'borrowed': 'sara', 'no': 'false'}) }}
-        <br>
-        {{ filter_list('Want to read', 'want_to_read', {'yes': 'true', 'no': 'false'}) }}
-      </p>
+      <div class="card">
+        <div class="card-body">
+          {{ filter_list('Gender', 'gender', {'male': 'male', 'female': 'female', 'nonbinary': 'nonbinary', 'multiple': 'multiple', 'non-male': 'nonmale', 'groups/organisations': 'organization'}) }}
+          <br>
+          {{ filter_list('POC', 'poc', {'yes': '1', 'no': '0'}) }}
+          <br>
+          {{ filter_list('Subject', 'tags', {'fiction': 'fiction', 'non-fiction': 'non-fiction'}) }}
+          <br>
+          {{ filter_list('Owned', 'owned', {'yes': 'true', 'borrowed': 'sara', 'no': 'false'}) }}
+          <br>
+          {{ filter_list('Want to read', 'want_to_read', {'yes': 'true', 'no': 'false'}) }}
+        </div>
+      </div>
     {% endif %}
 
     {% if entries %}

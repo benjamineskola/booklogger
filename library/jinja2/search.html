@@ -2,31 +2,22 @@
 {% extends "base.html" %}
 {% block content %}
   {% if authors %}
-    <div class="ui items">
+    <ul>
       {% for author in authors %}
         {% include "authors/list_item.html" %}
       {% endfor %}
-    </div>
+    </ul>
   {% endif %}
   {% if books %}
     {{ book_list(books) }}
   {% else %}
-    <div class="ui form">
-      <form action="{{ url('library:basic_search') }}">
-        <div class="two fields">
-          <div class="ui fifteen wide icon input field">
-            <input type="search" placeholder="Search" aria-label="Search" name="query">
-            <i class="search link icon"></i>
-          </div>
-          <div class="ui field">
-            <button class="ui button primary" type="submit">Search</button>
-          </div>
-        </div>
-      </form>
-    </div>
+    <form class="form-inline" action="{{ url('library:basic_search') }}">
+      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="query">
+      <button class="btn btn-primary" type="submit">Search</button>
+    </form>
   {% endif %}
 
-  {% if user.is_authenticated %}
+  {% if user.is_authenticated and query %}
     <br>
     <p>Or try <a href="{{ url("library:book_import", args=[query]) }}">importing it</a>.</p>
   {% endif %}

@@ -1,19 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
-  <div class="ui text container">
-    <p>Delete {{ object }}?</p>
-    <form method="POST">
-      <div class="ui form">
+  <div class="card mt-4">
+    <div class="card-body">
+      <p>Delete {{ object }}?</p>
+      <form method="POST">
         <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-        <div class="two fields">
-          <div class="field">
-            <input type="submit" value="Delete" class="ui button negative">
-          </div>
-          <div class="field">
-            <a href="{{ object.get_absolute_url() }}" class="ui button" role="button">Cancel</a>
-          </div>
-        </div>
-      </div>
-    </form>
+        <input type="submit" value="Delete" class="btn btn-danger">
+        <a href="{{ object.get_absolute_url() }}" class="btn btn-secondary" role="button">Cancel</a>
+      </form>
+    </div>
   </div>
 {% endblock content %}

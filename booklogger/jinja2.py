@@ -1,6 +1,7 @@
 import json
 
 import commonmark
+from crispy_forms.templatetags.crispy_forms_filters import as_crispy_field
 from django.contrib.humanize.templatetags.humanize import intcomma, ordinal
 from django.templatetags.static import static
 from django.urls import reverse
@@ -27,6 +28,7 @@ def environment(**options):
             "ordinal": ordinal,
             "oxford_comma": oxford_comma,
             "round_trunc": round_trunc,
+            "crispy": as_crispy_field,
         }
     )
 

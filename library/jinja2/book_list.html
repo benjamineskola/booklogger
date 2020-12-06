@@ -6,43 +6,44 @@
     <h2 class="ui header">{{ format }}</h2>
   {% endif %}
 
-  <p class="ui top attached segment">
-    {% if show_format_filters %}
-      {% set qs = '?' + request.GET.urlencode() %}
-      Formats: <a href="{{ url(request.resolver_match.view_name) }}{{ qs }}">all</a>
-      {% if not format %}
-        {%- for n, f  in formats if n in counts and counts[n] > 0 -%}
-          , <a href="{{ url(request.resolver_match.view_name, kwargs={"format": f.lower()}) }}{{ qs }}">{{ f | lower }}</a> ({{ counts[n] }})
-        {%- endfor -%}
-        , <a href="{{ url(request.resolver_match.view_name, kwargs={"format": "physical"}) }}{{ qs }}">physical</a> ({{ counts.get(1) | int + counts.get(2) | int }})
+  <div class="card mb-4">
+    <div class="card-body">
+      {% if show_format_filters %}
+        {% set qs = '?' + request.GET.urlencode() %}
+        Formats: <a href="{{ url(request.resolver_match.view_name) }}{{ qs }}">all</a>
+        {% if not format %}
+          {%- for n, f  in formats if n in counts and counts[n] > 0 -%}
+            , <a href="{{ url(request.resolver_match.view_name, kwargs={"format": f.lower()}) }}{{ qs }}">{{ f | lower }}</a> ({{ counts[n] }})
+          {%- endfor -%}
+          , <a href="{{ url(request.resolver_match.view_name, kwargs={"format": "physical"}) }}{{ qs }}">physical</a> ({{ counts.get(1) | int + counts.get(2) | int }})
+        {% endif %}
+        <br>
+      {% endif %}
+
+      {{ filter_list('Gender', 'gender', {'male': 'male', 'female': 'female', 'nonbinary': 'nonbinary', 'multiple': 'multiple', 'non-male': 'nonmale', 'groups/organisations': 'organization'}) }}
+      <br>
+      {{ filter_list('POC', 'poc', {'yes': '1', 'no': '0'}) }}
+      <br>
+      {{ filter_list('Subject', 'tags', {'fiction': 'fiction', 'non-fiction': 'non-fiction'}) }}
+      {% if request.resolver_match.url_name not in ['books_owned', 'books_owned_by_date', 'books_unowned', 'books_borrowed', 'books_to_read'] %}
+        <br>
+        {{ filter_list('Owned', 'owned', {'yes': 'true', 'borrowed': 'sara', 'no': 'false'}) }}
       {% endif %}
       <br>
-    {% endif %}
-
-    {{ filter_list('Gender', 'gender', {'male': 'male', 'female': 'female', 'nonbinary': 'nonbinary', 'multiple': 'multiple', 'non-male': 'nonmale', 'groups/organisations': 'organization'}) }}
-    <br>
-    {{ filter_list('POC', 'poc', {'yes': '1', 'no': '0'}) }}
-    <br>
-    {{ filter_list('Subject', 'tags', {'fiction': 'fiction', 'non-fiction': 'non-fiction'}) }}
-    {% if request.resolver_match.url_name not in ['books_owned', 'books_owned_by_date', 'books_unowned', 'books_borrowed', 'books_to_read'] %}
+      {{ filter_list('Read', 'read', {'yes': 'true', 'no': 'false'}) }}
       <br>
-      {{ filter_list('Owned', 'owned', {'yes': 'true', 'borrowed': 'sara', 'no': 'false'}) }}
+      {% if request.resolver_match.url_name not in ['books_to_read'] %}
+        {{ filter_list('Want to read', 'want_to_read', {'yes': 'true', 'no': 'false'}) }}
+      {% endif %}
+      <br>
+      {{ filter_list('Sort', 'sort_by', {'title': 'title', 'acquired date': 'acquired_date', 'created date': 'created_date', 'modified date': 'modified_date', 'first published': 'first_published', 'edition published': 'edition_published', 'length': 'page_count', 'format': 'edition_format', 'rating': 'rating'}) }}
+    </div>
+    {% if stats %}
+      <p class="card-footer bg-transparent">
+        {{ stats["total"] }} items, {{ stats["owned"] }} owned, {{ stats["read"] }} read.
+      </p>
     {% endif %}
-    <br>
-    {{ filter_list('Read', 'read', {'yes': 'true', 'no': 'false'}) }}
-    <br>
-    {% if request.resolver_match.url_name not in ['books_to_read'] %}
-      {{ filter_list('Want to read', 'want_to_read', {'yes': 'true', 'no': 'false'}) }}
-    {% endif %}
-    <br>
-    {{ filter_list('Sort', 'sort_by', {'title': 'title', 'acquired date': 'acquired_date', 'created date': 'created_date', 'modified date': 'modified_date', 'first published': 'first_published', 'edition published': 'edition_published', 'length': 'page_count', 'format': 'edition_format', 'rating': 'rating'}) }}
-  </p>
-
-  {% if stats %}
-    <p class="ui bottom attached segment">
-      {{ stats["total"] }} items, {{ stats["owned"] }} owned, {{ stats["read"] }} read.
-    </p>
-  {% endif %}
+  </div>
 
   {% if not group_by %}
     {{ book_list(page_obj) }}
@@ -61,7 +62,7 @@
       {% elif items[0] | attr('get_' + group_by + '_display') %}
         {% set group = items[0] | attr('get_' + group_by + '_display')() %}
       {% endif %}
-      <h2 class="ui header">{{ group or 'Unknown' }}</h2>
+      <h2>{{ group or 'Unknown' }}</h2>
       {{ book_list(items) }}
     {% endfor %}
   {% endif %}

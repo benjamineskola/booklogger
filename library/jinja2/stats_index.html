@@ -1,13 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
-  <p class="ui basic segment">
-    In total I own {{ owned | intcomma }} books and have read {{ owned_read | intcomma }} ({{ owned_read_pct | round_trunc(2) }}%) of them. I <a href="{{ url("library:books_to_read") }}">want to read</a> {{ want_to_read | intcomma }} ({{ want_to_read_pct | round_trunc(2) }}%) of them, including <a href="{{ url("library:books_to_read") }}?read=true&owned=true">rereading</a> {{ reread | intcomma }} ({{ reread_pct | round_trunc(2) }}%) of them.
-  </p>
+  <div class="card mb-4">
+    <div class="card-body">
+      In total I own {{ owned | intcomma }} books and have read {{ owned_read | intcomma }} ({{ owned_read_pct | round_trunc(2) }}%) of them. I <a href="{{ url("library:books_to_read") }}">want to read</a> {{ want_to_read | intcomma }} ({{ want_to_read_pct | round_trunc(2) }}%) of them, including <a href="{{ url("library:books_to_read") }}?read=true&owned=true">rereading</a> {{ reread | intcomma }} ({{ reread_pct | round_trunc(2) }}%) of them.
+    </div>
+  </div>
 
-
-  <div id="loading-stats" class="ui icon message">
-    <i class="spinner loading icon"></i>
-    Loading
+  <div class="d-flex justify-content-center">
+    <div id="loading-stats" class="spinner-grow mb-4" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
   </div>
 
   <div id="stats-total" class="stats-for-year" data-year="total"></div>
