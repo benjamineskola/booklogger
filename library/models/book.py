@@ -416,7 +416,7 @@ class Book(models.Model):
         decimal_places=1,
         choices=[(i / 2, i / 2) for i in range(1, 11)],
         blank=True,
-        null=True,
+        default=0,
     )
 
     has_ebook_edition = models.BooleanField(default=False)
@@ -649,8 +649,6 @@ class Book(models.Model):
             self.edition_number = None
         if self.series_order == 0.0:
             self.series_order = None
-        if self.rating == 0:
-            self.rating = None
 
         self.tags = sorted(
             set(
