@@ -414,7 +414,7 @@ class Book(models.Model):
     rating = models.DecimalField(
         max_digits=2,
         decimal_places=1,
-        choices=[(i / 2, i / 2) for i in range(1, 11)],
+        choices=[(i / 2, i / 2) for i in range(0, 11)],
         blank=True,
         default=0,
     )
