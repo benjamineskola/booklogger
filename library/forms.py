@@ -1,57 +1,15 @@
 import re
 
-from django.forms import (
-    ModelForm,
-    Select,
-    SelectMultiple,
-    ValidationError,
-    inlineformset_factory,
-)
+from django.forms import ModelForm, ValidationError, inlineformset_factory
 
 from library.models import Author, Book, BookAuthor, LogEntry
 from library.utils import isbn10_to_isbn
-
-
-class AuthorWidget(Select):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.attrs.update({"class": "ui search selection dropdown"})
-
-
-class TagWidget(SelectMultiple):
-    def value_from_datadict(self, data, files, name):
-        values = super().value_from_datadict(data, files, name)
-        return ",".join(values)
-
-    def optgroups(self, name, value, attrs=None):
-        values = value[0].split(",") if value[0] else []
-        selected = set(values)
-        subgroup = [
-            self.create_option(name, v, v, selected, i) for i, v in enumerate(values)
-        ]
-        return [(None, subgroup, 0)]
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.attrs.update({"class": "ui search multiple selection dropdown"})
-        tags = Book.objects.exclude(tags=[]).values_list("tags", flat=True)
-        tags_choices = sorted(
-            [
-                {"name": i, "value": i}
-                for i in set([item for sublist in tags for item in sublist])
-            ],
-            key=lambda i: i["name"],
-        )
-        self.values_dict = tags_choices
 
 
 class AuthorForm(ModelForm):
     class Meta:
         model = Author
         exclude = ["created_date", "modified_date"]
-        widgets = {
-            "primary_identity": AuthorWidget,
-        }
 
     def __init__(self, *args, **kwargs):
         super(AuthorForm, self).__init__(*args, **kwargs)
@@ -61,10 +19,6 @@ class BookForm(ModelForm):
     class Meta:
         model = Book
         exclude = ["additional_authors", "created_date", "modified_date"]
-        widgets = {
-            "first_author": AuthorWidget,
-            "tags": TagWidget,
-        }
 
     def __init__(self, *args, **kwargs):
         super(BookForm, self).__init__(*args, **kwargs)
@@ -119,7 +73,6 @@ class BookAuthorForm(ModelForm):
             "role",
             "order",
         ]
-        widgets = {"author": AuthorWidget}
 
     def __init__(self, *args, **kwargs):
         super(BookAuthorForm, self).__init__(*args, **kwargs)
