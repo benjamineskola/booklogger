@@ -11,9 +11,14 @@ import xmltodict
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.indexes import GinIndex
-from django.contrib.postgres.search import TrigramSimilarity
+from django.contrib.postgres.search import (
+    SearchQuery,
+    SearchRank,
+    SearchVector,
+    TrigramSimilarity,
+)
 from django.db import models
-from django.db.models import F, Q, Sum, signals
+from django.db.models import Case, F, Q, Sum, Value, When, signals
 from django.db.models.functions import Lower
 from django.db.models.indexes import Index
 from django.urls import reverse
@@ -58,6 +63,12 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
     def search(self, pattern: str) -> "BookQuerySet":
         return (
             self.annotate(  # type: ignore [return-value]
+                first_author_similarity=TrigramSimilarity(
+                    "first_author__surname", pattern
+                ),
+                other_author_similarity=TrigramSimilarity(
+                    "additional_authors__surname", pattern
+                ),
                 title_similarity=TrigramSimilarity("title", pattern),
                 subtitle_similarity=TrigramSimilarity("subtitle", pattern),
                 series_similarity=TrigramSimilarity("series", pattern),
@@ -65,16 +76,36 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
                 edition_subtitle_similarity=TrigramSimilarity(
                     "edition_subtitle", pattern
                 ),
+                review_similarity=TrigramSimilarity("review", pattern),
+                tags_similarity=SearchRank(SearchVector("tags"), SearchQuery(pattern)),
                 similarity=(
-                    F("title_similarity")
-                    + F("subtitle_similarity")
+                    F("first_author_similarity")
+                    + Case(
+                        When(Q(other_author_similarity__isnull=True), then=Value(0.0)),
+                        default=F("other_author_similarity"),
+                    )
+                    + Case(
+                        When(
+                            Q(edition_title=""),
+                            then=(
+                                F("title_similarity") * 2 + F("subtitle_similarity") * 2
+                            ),
+                        ),
+                        default=(
+                            F("title_similarity")
+                            + F("subtitle_similarity")
+                            + F("edition_title_similarity")
+                            + F("edition_subtitle_similarity")
+                        ),
+                    )
                     + F("series_similarity")
-                    + F("edition_title_similarity")
-                    + F("edition_subtitle_similarity")
+                    + F("review_similarity")
+                    + F("tags_similarity") * 10
                 ),
             )
             .order_by("-similarity")
-            .filter(similarity__gt=0.14)
+            .filter(similarity__gt=0.2)
+            .distinct()
         )
 
     def filter_by_request(self, request: str) -> "BookQuerySet":
