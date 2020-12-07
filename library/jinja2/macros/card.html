@@ -24,7 +24,7 @@
     {% if book.image_url %}
       <div class="col-4">
         <a href="{{ book.get_absolute_url() }}">
-          <img class="ui small rounded left floated image" src="{{ book.image_url }}" style="max-height: 24em; max-width: 14em" />
+          <img class="img-fluid rounded" src="{{ book.image_url }}" />
         </a>
       </div>
     {% endif%}
