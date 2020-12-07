@@ -2,11 +2,15 @@
 {% extends "base.html" %}
 {% block content %}
   {% if authors %}
-    <ul>
-      {% for author in authors %}
-        {% include "authors/list_item.html" %}
-      {% endfor %}
-    </ul>
+    <div class="card mb-4">
+      <div class="card-body">
+        <ul style="max-height: 10em; overflow: scroll">
+          {% for author in authors %}
+            {% include "authors/list_item.html" %}
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
   {% endif %}
   {% if books %}
     {{ book_list(books) }}
