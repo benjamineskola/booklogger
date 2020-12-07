@@ -23,7 +23,7 @@ $(document).ready(function () {
     });
   });
 
-  $(".form.update-progress").submit(function (event) {
+  $("form.update-progress").submit(function (event) {
     event.preventDefault();
     var form = $(this);
     var url = form.attr("action");
