@@ -50,15 +50,17 @@
 
       {% if display_year > 1 %}
         <div class="loader" style="margin-top: 2rem;">
-          <div id="loading-{{ next_year }}" class="ui icon message">
-            <i class="spinner loading icon"></i>
-            Loading {{ next_year }}
+          <div class="d-flex justify-content-center" id="loading-{{ next_year }}">
+            <div id="loading-stats" class="spinner-grow mb-4" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
           </div>
-          <div id="error-{{ next_year }}" class="ui error icon message hidden">
+
+          <div id="error-{{ next_year }}" class="alert alert-danger d-none">
             <i class="exclamation circle icon"></i>
             <div class="content">
               <div class="header">Failed to load {{ next_year }}.</div>
-              <p><span class="ui basic negative button">Retry?</span></p>
+              <p><span class="btn btn-outline-danger">Retry?</span></p>
             </div>
           </div>
         </div>
@@ -71,7 +73,7 @@
             load_next_page("{{ next_year }}", "{{ url("library:books_read", kwargs={"year": next_year}) }}?{{ params.urlencode() | safe }}");
           }, 2 * 1000);
 
-          $(".error.message .button").on("click", function () {
+          $(".alert-danger .btn").on("click", function () {
             load_next_page("{{ next_year }}", "{{ url("library:books_read", kwargs={"year": next_year}) }}?{{ params.urlencode() | safe }}");
           });
         </script>

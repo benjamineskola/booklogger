@@ -78,7 +78,7 @@ $(document).ready(function () {
   $("a.remove-tag").click(function () {
     var tag = $(this).data("tag");
     var label = $(this).parent();
-    var book = label.parent().data('book');
+    var book = label.parent().data("book");
     $.ajax({
       type: "POST",
       url: `/book/${book}/remove_tags/`,
@@ -108,22 +108,18 @@ $(document).ready(function () {
 });
 
 function load_next_page(year, url) {
-  $(".loader").visibility({
-    onTopVisible: function (calculations) {
-      var placeholder = $(this);
-      $.ajax({
-        type: "GET",
-        url: url,
-        success: function (data) {
-          var body = $(data).find(".two.doubling.cards").parent();
-          body.insertAfter(placeholder.parent());
-          placeholder.remove();
-        },
-        error: function () {
-          placeholder.find(".message").addClass("hidden");
-          placeholder.find(".error.message").removeClass("hidden");
-        },
-      });
+  var placeholder = $(".loader");
+  $.ajax({
+    type: "GET",
+    url: url,
+    success: function (data) {
+      var body = $(data).find(".book.card").parent().parent().parent();
+      body.insertAfter(placeholder.parent());
+      placeholder.remove();
+    },
+    error: function () {
+      placeholder.find(".spinner-grow").addClass("d-none");
+      placeholder.find(".alert-danger").removeClass("d-none");
     },
   });
 }
