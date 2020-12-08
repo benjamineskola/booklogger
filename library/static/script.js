@@ -60,6 +60,8 @@ $(document).ready(function () {
     var old_rating = ratings.data("rating");
 
     if (old_rating == value) {
+      value = value - 0.5;
+    } else if (old_rating == value - 0.5) {
       value = 0;
     }
 
@@ -78,6 +80,8 @@ $(document).ready(function () {
         ratings.children().each(function (i, star) {
           if (value >= i + 1) {
             $(star).text("★");
+          } else if (value - i == 0.5) {
+            $(star).text("½");
           } else {
             $(star).text("☆");
           }
