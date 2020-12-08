@@ -117,47 +117,36 @@
 
       {% if page_obj and page_obj.paginator and page_obj.paginator.num_pages > 1 %}
         {% set params = request.GET.copy() %}
-        {% set qs = params.urlencode() %}
+        {% set qs = "?" + params.urlencode() if params else "" %}
         <nav>
-          <ul class="pagination justify-content-center">
-            {% if request.resolver_match.kwargs["format"] %}
-              {% set new_kwargs= {"format": request.resolver_match.kwargs["format"]} %}
-            {% elif request.resolver_match.kwargs["tag_name"] %}
-              {% set new_kwargs= {"tag_name": request.resolver_match.kwargs["tag_name"]} %}
-            {% elif request.resolver_match.kwargs["publisher"] %}
-              {% set new_kwargs= {"publisher": request.resolver_match.kwargs["publisher"]} %}
-            {% else %}
-              {% set new_kwargs = {} %}
-            {% endif %}
+          <ul class="pagination flex-wrap justify-content-center">
+            {% set kwargs = request.resolver_match.kwargs.copy() %}
+            {% set _ = kwargs.update({"page": None}) and kwargs.pop("page") %}
 
             <li class="page-item{% if page_obj.number == 1 %} disabled{% endif %}">
-              {% if page_obj.number > 2 %}
-                {% set prev_kwargs = dict(new_kwargs, **{"page": page_obj.previous_page_number()}) %}
-              {% else %}
-                {% set prev_kwargs = new_kwargs %}
-              {% endif %}
-              <a class="page-link" href="{{ url(request.resolver_match.view_name, kwargs=prev_kwargs) }}{% if qs %}?{{ qs }}{% endif %}">&laquo;</a>
+              {% if page_obj.number > 2 %}{% set _ = kwargs.update({"page": page_obj.previous_page_number()}) %}{% endif %}
+              <a class="page-link" href="{{ url(request.resolver_match.view_name, kwargs=kwargs) }}{{ qs }}">&laquo;</a>
             </li>
+            {% set _ = kwargs.pop("page") %}
 
             {% for pageno in page_obj.paginator.page_range %}
-              {% if page_obj.paginator.num_pages < 10 or pageno == 1 or pageno == page_obj.paginator.num_pages or (pageno > page_obj.number - 3 and pageno < page_obj.number + 3) %}
-                {% if pageno > 1 %}
-                  {% set new_kwargs = dict(new_kwargs, **{"page": pageno}) %}
-                {% endif %}
-                <li class="page-item{% if pageno == page_obj.number %} disabled{% endif %}">
-                  <a class="page-link" href="{{ url(request.resolver_match.view_name, kwargs=new_kwargs) }}{% if qs %}?{{ qs }}{% endif %}">{{ pageno }}</a>
+              {% if page_obj.paginator.num_pages < 10 or pageno in [1, page_obj.paginator.num_pages] or (pageno >= page_obj.number - 2 and pageno <= page_obj.number + 3) %}
+                {% set _ = kwargs.update({"page": pageno}) %}
+                <li class="page-item{% if pageno == page_obj.number %} active{% endif %}">
+                  <a class="page-link" href="{{ url(request.resolver_match.view_name, kwargs=kwargs) }}{{ qs }}">
+                    {{ pageno }}
+                  </a>
                 </li>
-              {% elif pageno == page_obj.number - 3 or pageno == page_obj.number + 3 %}
+              {% elif pageno in [page_obj.number - 3, page_obj.number + 4] %}
                 <li class="page-item disabled"><span class="page-link">…</span></li>
               {% endif %}
             {% endfor %}
 
             <li class="page-item{% if page_obj.number == page_obj.paginator.num_pages %} disabled{% endif %}">
               {% if page_obj.number < page_obj.paginator.num_pages %}
-                <a class="page-link" href="{{ url(request.resolver_match.view_name, kwargs=dict(request.resolver_match.kwargs, **{"page": page_obj.next_page_number()})) }}{% if qs %}?{{ qs }}{% endif %}">&raquo;</a>
-              {% else %}
-                <a class="page-link" href="#" tabindex="-1">&raquo;</a>
+                {% set _ = kwargs.update({"page": page_obj.next_page_number()}) %}
               {% endif %}
+              <a class="page-link" href="{{ url(request.resolver_match.view_name, kwargs=kwargs)}}{{ qs }}">&raquo;</a>
             </li>
           </ul>
         </nav>
