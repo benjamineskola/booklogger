@@ -10,7 +10,7 @@
           <label class="form-check-label">pages</label>
         </div>
         <div class="form-check form-check-inline">
-          <input class="form-check-input" type="radio" name="progress_type" value="percentage"{% if not book.page_count %} checked="checked"{% endif %}>
+          <input class="form-check-input" type="radio" name="progress_type" value="percentage"{% if (not book.page_count) or (book.log_entries.last().progress_percentage and not book.log_entries.last().progress_page) %} checked="checked"{% endif %}>
           <label class="form-check-label">%</label>
         </div>
         <button class="btn btn-primary" type="submit">Update</button>
