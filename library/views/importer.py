@@ -17,11 +17,9 @@ def import_book(request, query=None):
         book = Book.objects.create_from_goodreads(data=data, query=query)
         return redirect("library:book_edit", slug=book.slug)
     else:
-        goodreads_results = None
+        goodreads_results = []
         matches = {}
-        if query:
-            goodreads_results = Book.objects.find_on_goodreads(query)
-
+        if query and (goodreads_results := Book.objects.find_on_goodreads(query)):
             for result in goodreads_results:
                 match = Book.objects.search(
                     f"{result['best_book']['author']['name']} {result['best_book']['title']}"
