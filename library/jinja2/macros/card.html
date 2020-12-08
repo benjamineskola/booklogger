@@ -54,11 +54,9 @@
             {{ book.page_count }} pages.
           {% endif %}
 
-          {% if book.rating %}
-            <span class="ui rating" data-rating="{% if book.rating %}{{ book.rating | round }}{% endif %}" data-max-rating="5" data-book="{{ book.slug }}">
-              {% for i in range(book.rating | int) %}★{% endfor %}
-            </span>
-          {% endif %}
+          <span class="rating" data-rating="{% if book.rating %}{{ book.rating | round }}{% endif %}" data-max-rating="5" data-book="{{ book.slug }}">
+            {% for i in range(5) %}<span data-rating="{{ i + 1 }}" class="rating-star">{% if i < book.rating %}★{% else %}☆{% endif %}</span>{% endfor %}
+          </span>
         </p>
 
         <span class="tags" id="tags-{{ book.id }}" data-book="{{ book.slug }}">

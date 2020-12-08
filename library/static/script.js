@@ -53,27 +53,38 @@ $(document).ready(function () {
     });
   });
 
-  // $(".ui.rating").rating({
-  //   clearable: true,
-  //   onRate: function (value) {
-  //     var book = $(this).data("book");
+  $(".rating-star").on("click", function () {
+    var value = $(this).data("rating");
+    var ratings = $(this).parent();
+    var book = ratings.data("book");
+    var old_rating = ratings.data("rating");
 
-  //     $.ajax({
-  //       type: "POST",
-  //       url: `/book/${book}/rate/`,
-  //       data: { rating: Number(value) },
-  //       dataType: "json",
-  //       beforeSend: function (xhr, settings) {
-  //         xhr.setRequestHeader(
-  //           "X-CSRFToken",
-  //           $("[name=csrfmiddlewaretoken]").val()
-  //         );
-  //       },
-  //     });
-  //   },
-  // });
-  // $(".ui.accordion").accordion();
-  // $("#navbar .ui.dropdown").dropdown();
+    if (old_rating == value) {
+      value = 0;
+    }
+
+    $.ajax({
+      type: "POST",
+      url: `/book/${book}/rate/`,
+      data: { rating: Number(value) },
+      beforeSend: function (xhr, settings) {
+        xhr.setRequestHeader(
+          "X-CSRFToken",
+          $("[name=csrfmiddlewaretoken]").val()
+        );
+      },
+      success: function (data) {
+        ratings.data("rating", value);
+        ratings.children().each(function (i, star) {
+          if (value >= i + 1) {
+            $(star).text("★");
+          } else {
+            $(star).text("☆");
+          }
+        });
+      },
+    });
+  });
 
   $("a.remove-tag").click(function () {
     var tag = $(this).data("tag");
