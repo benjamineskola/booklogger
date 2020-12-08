@@ -103,12 +103,3 @@
     <a href="{{ url("admin:library_book_change", args=[form.instance.id]) }}">Advanced</a>
   {% endif %}
 {% endblock content %}
-
-{% block footer %}
-  <script>
-    $(document).ready(function() {
-      $('#id_tags').dropdown({'allowAdditions': true, 'values': {{ form.fields["tags"].widget.values_dict | json | safe }}});
-      $("select").dropdown({ fullTextSearch: true });
-    })
-  </script>
-{% endblock footer %}
