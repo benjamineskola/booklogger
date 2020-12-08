@@ -6,7 +6,7 @@
     {{ book_list(entries) }}
   {% else %}
     {% if request.GET.get("infinite") != "true" %}
-      <div class="card">
+      <div class="card mb-4">
         <div class="card-body">
           {{ filter_list('Gender', 'gender', {'male': 'male', 'female': 'female', 'nonbinary': 'nonbinary', 'multiple': 'multiple', 'non-male': 'nonmale', 'groups/organisations': 'organization'}) }}
           <br>
