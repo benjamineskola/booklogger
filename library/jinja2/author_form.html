@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
   {% if form.errors %}
-    <div class="ui segment error message">
+    <div class="alert alert-danger">
       {% for error in form.errors %}
         <p><strong>{{ error }}:</strong> {{ form.errors[error] | join('; ') }}</p>
       {% endfor %}
@@ -30,7 +30,7 @@
           <a href="{{ form.instance.get_absolute_url() }}" class="btn btn-secondary" role="button">Cancel</a>
           <a href="{{ url("library:author_delete", args=[form.instance.slug]) }}" class="btn btn-danger" role="button">Delete</a>
         {% else %}
-          <a href="/" class="ui button">Cancel</a>
+          <a href="/" class="btn btn-secondary">Cancel</a>
         {% endif %}
       </div>
     </div>

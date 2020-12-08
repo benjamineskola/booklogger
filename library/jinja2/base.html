@@ -106,7 +106,7 @@
       </div>
     </nav>
 
-    <div class="ui main container" style="margin-bottom: 2em">
+    <main style="margin-bottom: 2em">
       {% if page_title and request.resolver_match.url_name != 'book_details' %}
         <h1 class="ui header">
           {{ page_title }}
@@ -162,7 +162,7 @@
           </nav>
         </div>
       {% endif %}
-    </div>
+    </main>
 
     {% block footer %}
     {% endblock footer %}

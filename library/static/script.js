@@ -15,7 +15,7 @@ $(document).ready(function () {
         for (var i in data.tags) {
           new_tag = data.tags[i];
           tags_field.prepend(
-            `<span class="ui label"><a href="/tag/${new_tag}">${new_tag}</a></span> `
+            `<span class="badge badge-secondary"><a href="/tag/${new_tag}">${new_tag}</a></span> `
           );
         }
         input_field.val("");
@@ -143,12 +143,12 @@ function load_stats_for_year(i, e, update_counts) {
     },
     error: function (data) {
       $(e).html(`
-          <hr class="ui divider">
-          <div id="error-${year}" class="ui error icon message">
+          <hr>
+          <div id="error-${year}" class="alert alert-danger">
             <i class="exclamation circle icon"></i>
             <div class="content">
               <div class="header">Failed to load ${year}.</div>
-              <p><span class="ui basic negative button">Retry?</span></p>
+              <p><span class="btn btn-outline-danger">Retry?</span></p>
             </div>
           </div>
 `);
