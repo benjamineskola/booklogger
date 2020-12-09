@@ -100,6 +100,7 @@ function add_tag(event) {
         );
       }
       input_field.val("");
+      form.collapse("hide");
     },
   });
 }
