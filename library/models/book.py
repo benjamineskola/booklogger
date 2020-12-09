@@ -293,9 +293,9 @@ class BookQuerySet(models.QuerySet):  # type: ignore [type-arg]
         ).distinct()
 
     def unread(self) -> "BookQuerySet":
-        return self.filter(
-            Q(log_entries__end_date__isnull=True)
-            & Q(parent_edition__log_entries__end_date__isnull=True)
+        return self.exclude(
+            Q(log_entries__end_date__isnull=False)
+            | Q(parent_edition__log_entries__end_date__isnull=False)
         ).distinct()
 
     def poc(self, is_poc: bool = True) -> "BookQuerySet":
