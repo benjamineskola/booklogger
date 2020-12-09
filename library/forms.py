@@ -2,6 +2,7 @@ import re
 
 from django.forms import (
     ModelForm,
+    Select,
     SelectMultiple,
     ValidationError,
     inlineformset_factory,
@@ -25,6 +26,12 @@ class BookForm(ModelForm):
         model = Book
         exclude = ["additional_authors", "created_date", "modified_date"]
         widgets = {
+            "publisher": Select(
+                choices=Book.objects.exclude(publisher="")
+                .order_by("publisher")
+                .values_list("publisher", "publisher")
+                .distinct("publisher")
+            ),
             "tags": SelectMultiple(
                 choices=sorted(
                     [
@@ -39,7 +46,7 @@ class BookForm(ModelForm):
                         )
                     ],
                 )
-            )
+            ),
         }
 
     def __init__(self, *args, **kwargs):
