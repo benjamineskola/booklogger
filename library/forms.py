@@ -1,6 +1,11 @@
 import re
 
-from django.forms import ModelForm, ValidationError, inlineformset_factory
+from django.forms import (
+    ModelForm,
+    SelectMultiple,
+    ValidationError,
+    inlineformset_factory,
+)
 
 from library.models import Author, Book, BookAuthor, LogEntry
 from library.utils import isbn10_to_isbn
@@ -19,6 +24,23 @@ class BookForm(ModelForm):
     class Meta:
         model = Book
         exclude = ["additional_authors", "created_date", "modified_date"]
+        widgets = {
+            "tags": SelectMultiple(
+                choices=sorted(
+                    [
+                        (i, i)
+                        for i in set(
+                            sum(
+                                Book.objects.exclude(tags=[]).values_list(
+                                    "tags", flat=True
+                                ),
+                                [],
+                            )
+                        )
+                    ],
+                )
+            )
+        }
 
     def __init__(self, *args, **kwargs):
         super(BookForm, self).__init__(*args, **kwargs)
