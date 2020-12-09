@@ -84,19 +84,21 @@
       </div> {# card #}
     {% endfor %}
 
-    <div class="col">
-      <div class="card">
-        <div class="card-body">
-          <input type="submit" value="Submit" class="btn btn-primary">
-          {% if form.instance.id %}
-            <a href="{{ form.instance.get_absolute_url() }}" class="btn btn-secondary" role="button">Cancel</a>
-            <a href="{{ url("library:book_delete", args=[form.instance.slug]) }}" class="btn btn-danger" role="button">Delete</a>
-          {% else %}
-            <a href="/" class="btn btn-secondary">Cancel</a>
-          {% endif %}
-        </div> {# card-body #}
-      </div> {# card #}
-    </div> {# col #}
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <input type="submit" value="Submit" class="btn btn-primary">
+            {% if form.instance.id %}
+              <a href="{{ form.instance.get_absolute_url() }}" class="btn btn-secondary" role="button">Cancel</a>
+              <a href="{{ url("library:book_delete", args=[form.instance.slug]) }}" class="btn btn-danger" role="button">Delete</a>
+            {% else %}
+              <a href="/" class="btn btn-secondary">Cancel</a>
+            {% endif %}
+          </div> {# card-body #}
+        </div> {# card #}
+      </div> {# col #}
+    </div> {# row #}
   </form>
 
   {% if form.instance.id %}
