@@ -8,7 +8,7 @@ from django.forms import (
     inlineformset_factory,
 )
 
-from library.models import Author, Book, BookAuthor, LogEntry
+from library.models import Author, Book, BookAuthor, LogEntry, Tag
 from library.utils import isbn10_to_isbn
 
 
@@ -32,21 +32,7 @@ class BookForm(ModelForm):
                 .values_list("publisher", "publisher")
                 .distinct("publisher")
             ),
-            "tags": SelectMultiple(
-                choices=sorted(
-                    [
-                        (i, i)
-                        for i in set(
-                            sum(
-                                Book.objects.exclude(tags=[]).values_list(
-                                    "tags", flat=True
-                                ),
-                                [],
-                            )
-                        )
-                    ],
-                )
-            ),
+            "tags": SelectMultiple(choices=Tag.objects.values_list("name", "name")),
         }
 
     def __init__(self, *args, **kwargs):
