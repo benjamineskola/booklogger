@@ -3,10 +3,12 @@ import re
 from django.forms import (
     ModelForm,
     Select,
+    SelectDateWidget,
     SelectMultiple,
     ValidationError,
     inlineformset_factory,
 )
+from django.utils import timezone
 
 from library.models import Author, Book, BookAuthor, LogEntry, Tag
 from library.utils import isbn10_to_isbn
@@ -26,6 +28,18 @@ class BookForm(ModelForm):
         model = Book
         exclude = ["additional_authors", "created_date", "modified_date"]
         widgets = {
+            "acquired_date": SelectDateWidget(
+                years=range(
+                    Book.objects.order_by("acquired_date").first().acquired_date.year,
+                    timezone.now().year + 1,
+                )
+            ),
+            "alienated_date": SelectDateWidget(
+                years=range(
+                    Book.objects.order_by("alienated_date").first().alienated_date.year,
+                    timezone.now().year + 1,
+                )
+            ),
             "publisher": Select(
                 choices=Book.objects.exclude(publisher="")
                 .order_by("publisher")
