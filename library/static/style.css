@@ -44,6 +44,8 @@
 
   .form-control,
   .form-control:focus,
+  .form-control-sm,
+  .form-control-sm:focus,
   .select2-dropdown,
   .select2-results,
   .select2-container--bootstrap
