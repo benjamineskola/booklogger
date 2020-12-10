@@ -1,6 +1,12 @@
 {% from "macros.html" import filter_list with context %}
 {% from "macros/card.html" import book_list with context %}
 {% extends "base.html" %}
+{% block header %}
+  <script>
+    $(document).scroll(update_scroll_position);
+  </script>
+{% endblock header %}
+
 {% block content %}
   {% if entries and entries[0].currently_reading %}
     {{ book_list(entries) }}
@@ -29,9 +35,9 @@
 
     {% if entries.count() %}
       {% if display_year == 1 %}
-        <h2>Read sometime</h2>
+        <h2 href="#read-{{ sometime }}">Read sometime</h2>
       {% else %}
-        <h2>Read in {{ display_year }}</h2>
+        <h2 href="#read-{{ display_year }}">Read in {{ display_year }}</h2>
       {% endif %}
     {% endif %}
 
@@ -65,13 +71,24 @@
           </div>
         </div>
         <script>
+          {% if next_year == "sometime" %}
+            var delay = 2000;
+          {% else %}
+            if (parseInt(window.location.hash.split("-").pop()) <= {{ next_year }}) {
+              var delay = 100;
+            } else {
+              var delay = 2000;
+            }
+          {% endif %}
+
           setTimeout(function () {
           {% set params = request.GET.copy() %}
           {% if not 'infinite' in params %}
             {% set _ = params.update({'infinite': 'true'}) %}
           {% endif %}
+
             load_next_page("{{ next_year }}", "{{ url("library:books_read", kwargs={"year": next_year}) }}?{{ params.urlencode() | safe }}");
-          }, 2 * 1000);
+          }, delay);
 
           $(".alert-danger .btn").on("click", function () {
             load_next_page("{{ next_year }}", "{{ url("library:books_read", kwargs={"year": next_year}) }}?{{ params.urlencode() | safe }}");

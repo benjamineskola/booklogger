@@ -29,6 +29,15 @@ function load_next_page(year, url) {
       body.find("form.add-tag").on("submit", add_tag);
       body.find("form.update-progress").on("submit", update_progress);
       body.find("span.rating-star").on("click", rate_book);
+
+      if (window.location.hash.split("-").pop() == year) {
+        $("html, body").animate(
+          {
+            scrollTop: body.offset().top,
+          },
+          10
+        );
+      }
     },
     error: function () {
       placeholder.find(".spinner-grow").addClass("d-none");
@@ -189,5 +198,36 @@ function update_progress(event) {
 
       form.find('input[name="value"]').val("");
     },
+  });
+}
+
+function update_scroll_position() {
+  $("h2").each(function () {
+    const height = $(window).height();
+    var top = window.pageYOffset;
+    var distance = top - $(this).offset().top;
+    var hash = $(this).attr("href");
+    if (Math.abs(distance) < height * 0.75) {
+      if (window.location.hash != hash) {
+        if (history.pushState) {
+          history.pushState(null, null, hash);
+        } else {
+          window.location.hash = hash;
+        }
+      }
+    } else if (0 - distance > height && hash == window.location.hash) {
+      var year = hash.split("-").pop();
+      if (year == "sometime") {
+        var new_year = 2004;
+      } else {
+        var new_year = parseInt(year) + 1;
+      }
+      var new_hash = `#read_in_${new_year}`;
+      if (history.pushState) {
+        history.pushState(null, null, new_hash);
+      } else {
+        window.location.hash = new_hash;
+      }
+    }
   });
 }
