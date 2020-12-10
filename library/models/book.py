@@ -2,7 +2,7 @@ import os
 import re
 import time
 from datetime import date
-from typing import Any, Dict, Optional, Sequence, Tuple
+from typing import Any, Dict, Optional, Sequence, Set, Tuple
 from urllib.parse import quote
 
 import requests
@@ -902,6 +902,30 @@ class Tag(models.Model):
             | Q(tags=sorted(["fiction", self.name]))
             | Q(tags=sorted(["non-fiction", self.name]))
         )
+
+    @property
+    def parents_recursive(self) -> Set["Tag"]:
+        return set(self.parents.all()) | set(
+            [pp for p in self.parents.all() for pp in p.parents_recursive]
+        )
+
+    @property
+    def children_recursive(self) -> Set["Tag"]:
+        return set(self.children.all()) | set(
+            [cc for c in self.children.all() for cc in c.children_recursive]
+        )
+
+    @property
+    def related(self):
+        return set(
+            [Tag.objects[tag] for child in self.books.all() for tag in child.tags]
+        )
+
+    def __lt__(self, other: "Tag") -> bool:
+        return self.name < other.name
+
+    def get_absolute_url(self) -> str:
+        return reverse("library:tag_details", args=[self.name])
 
     def rename(self, new_name: str) -> None:
         new_tag, created = Tag.objects.get_or_create(name=new_name)

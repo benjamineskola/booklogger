@@ -1,4 +1,4 @@
-{% from "macros.html" import filter_list with context %}
+{% from "macros.html" import book_label, filter_list with context %}
 {% from "macros/card.html" import book_list with context %}
 {% extends "base.html" %}
 {% block content %}
@@ -38,6 +38,42 @@
       <br>
       {{ filter_list('Sort', 'sort_by', {'title': 'title', 'acquired date': 'acquired_date', 'created date': 'created_date', 'modified date': 'modified_date', 'first published': 'first_published', 'edition published': 'edition_published', 'length': 'page_count', 'format': 'edition_format', 'rating': 'rating'}) }}
     </div>
+    {% if tags %}
+      <p class="card-footer bg-transparent tags">
+        {% set scope = namespace() %}
+        {% set scope.parents = set() %}
+        {% set scope.children = set() %}
+        {% set scope.related = set() %}
+        {% for tag in tags %}
+          {% set scope.parents = scope.parents.union(tag.parents_recursive) %}
+          {% set scope.children = scope.children.union(tag.children_recursive) %}
+          {% set scope.related = scope.related.union(tag.related) %}
+        {% endfor %}
+
+        {% if scope.parents %}
+          Parent tags:
+          {% for parent in scope.parents | sort %}
+            {{ book_label(parent.name, parent.get_absolute_url()) }}
+          {% endfor %}
+        {% endif %}
+        {% if scope.parents and scope.children%}<br>{% endif %}
+        {% if scope.children %}
+          Child tags:
+          {% for child in scope.children | sort %}
+            {{ book_label(child.name, child.get_absolute_url()) }}
+          {% endfor %}
+        {% endif %}
+        {% if (scope.parents or scope.children) and scope.related %}<br>{% endif %}
+        {% if scope.related %}
+          Related tags:
+          {% for tag in scope.related | sort %}
+            {{ book_label(tag.name, tag.get_absolute_url()) }}
+          {% endfor %}
+        {% endif %}
+
+
+      </p>
+    {% endif %}
     {% if stats %}
       <p class="card-footer bg-transparent">
         {{ stats["total"] }} items, {{ stats["owned"] }} owned, {{ stats["read"] }} read.

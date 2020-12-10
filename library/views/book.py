@@ -92,6 +92,9 @@ class IndexView(generic.ListView):
             "read": self.get_queryset().read().count(),
         }
 
+        if tags := self.request.GET.get("tags"):
+            context["tags"] = [Tag.objects[tag] for tag in tags.split(",")]
+
         if "page_title" in self.kwargs:
             self.page_title = self.kwargs["page_title"]
         context["page_title"] = self.page_title + f" ({context['stats']['total']})"
@@ -192,6 +195,9 @@ class TagIndexView(IndexView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["tags"] = [
+            Tag.objects[tag] for tag in self.kwargs["tag_name"].split(",")
+        ]
         context[
             "page_title"
         ] = f"{self.get_queryset().count()} books tagged {oxford_comma(self.kwargs['tag_name'].split(','))}"

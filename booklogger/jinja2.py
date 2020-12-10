@@ -15,6 +15,7 @@ def environment(**options):
 
     env.globals.update(
         {
+            "set": set,
             "static": static,
             "url": reverse,
         }
