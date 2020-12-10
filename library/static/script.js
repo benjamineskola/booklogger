@@ -222,7 +222,7 @@ function update_scroll_position() {
       } else {
         var new_year = parseInt(year) + 1;
       }
-      var new_hash = `#read_in_${new_year}`;
+      var new_hash = `#read-${new_year}`;
       if (history.pushState) {
         history.pushState(null, null, new_hash);
       } else {
