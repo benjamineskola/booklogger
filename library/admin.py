@@ -1,6 +1,14 @@
 from django.contrib import admin
 
-from .models import Author, Book, BookAuthor, LogEntry, Tag
+from .models import (
+    Author,
+    Book,
+    BookAuthor,
+    LogEntry,
+    ReadingList,
+    ReadingListEntry,
+    Tag,
+)
 
 # Register your models here.
 
@@ -50,8 +58,19 @@ class BookAdmin(admin.ModelAdmin):
     ]
 
 
+class ReadingListEntryInline(admin.TabularInline):
+    model = ReadingListEntry
+    autocomplete_fields = ("book",)
+
+
+class ReadingListAdmin(admin.ModelAdmin):
+    readonly_fields = ("created_date", "modified_date")
+    inlines = (ReadingListEntryInline,)
+
+
 admin.site.register(Author, AuthorAdmin)
 admin.site.register(Book, BookAdmin)
 admin.site.register(BookAuthor)
 admin.site.register(LogEntry, LogEntryAdmin)
 admin.site.register(Tag)
+admin.site.register(ReadingList, ReadingListAdmin)

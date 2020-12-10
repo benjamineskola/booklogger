@@ -916,7 +916,7 @@ class Tag(models.Model):
         )
 
     @property
-    def related(self):
+    def related(self) -> Set["Tag"]:
         return set(
             [Tag.objects[tag] for child in self.books.all() for tag in child.tags]
         )

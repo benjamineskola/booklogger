@@ -64,10 +64,13 @@
         </p>
 
         <span class="tags" id="tags-{{ book.id }}" data-book="{{ book.slug }}">
-          {% for tag in book.tags | sort %}
+          {% for tag in book.all_tags | sort %}
             {{ book_label(tag, url("library:tag_details", args=[tag]), removable=True) }}
           {% else %}
             {{ book_label("untagged", url("library:tag_details", args=["untagged"])) }}
+          {% endfor %}
+          {% for reading_list in book.reading_lists.all() %}
+            {{ book_label(reading_list.title, url("library:list_details", kwargs={"pk": reading_list.id})) }}
           {% endfor %}
 
           {% if book.owned %}

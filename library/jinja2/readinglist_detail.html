@@ -1,0 +1,22 @@
+{% from "macros.html" import book_label with context %}
+{% extends "base.html" %}
+{% block content %}
+  <p>
+    {{ object.books.count() }} books,
+    {{ object.books.read().count() }} read,
+    {{ object.books.filter(want_to_read=True).count() }} to read.
+
+    (I own {{ object.books.filter(want_to_read=True, owned_by__isnull=False).count() }} of the to-read items.)
+  </p>
+  <ol>
+    {% for item in object.readinglistentry_set.all() %}
+      <li{% if item.order %} value="{{ item.order }}"{% endif %}>
+        <a href="{{ item.book.get_absolute_url() }}">{{ item.book }}</a>
+        <span class="tags">
+          {% if item.book.read %}{{ book_label("read", url("library:books_read"), highlight=True) }}{% endif %}
+          {% if item.book.want_to_read %}{{ book_label("to read", url("library:books_to_read"), highlight=True) }}{% endif %}
+        </span>
+      </li>
+    {% endfor %}
+  </ol>
+{% endblock %}

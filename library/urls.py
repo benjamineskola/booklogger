@@ -145,6 +145,10 @@ urlpatterns = [
             ]
         ),
     ),
+    path("lists/", views.reading_list.IndexView.as_view(), name="list_index"),
+    path(
+        "list/<str:pk>/", views.reading_list.DetailView.as_view(), name="list_details"
+    ),
     path("search/", views.search.basic_search, name="basic_search"),
     path("series/", views.series.list, name="series_index"),
     path(
