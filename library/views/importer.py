@@ -77,6 +77,7 @@ def bulk_import(request):
             ) = Author.objects.get_or_create_by_single_name(first_author_name)
             book.first_author = first_author
             book.first_author_role = first_author_role
+            first_author.save()
             book.save()
 
             results.append((first_author, fa_created))

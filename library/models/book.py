@@ -664,7 +664,7 @@ class Book(models.Model):
         self.save()
 
     def save(self, *args: Any, **kwargs: Any) -> None:
-        if not self.slug or self.slug.startswith("-"):
+        if not self.slug:
             self.slug = self._generate_slug()
 
         if "goodreads" in self.image_url or "amazon" in self.image_url:
