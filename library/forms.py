@@ -41,10 +41,13 @@ class BookForm(ModelForm):
                 )
             ),
             "publisher": Select(
-                choices=Book.objects.exclude(publisher="")
-                .order_by("publisher")
-                .values_list("publisher", "publisher")
-                .distinct("publisher")
+                choices=[("", "---------")]
+                + list(
+                    Book.objects.exclude(publisher="")
+                    .order_by("publisher")
+                    .values_list("publisher", "publisher")
+                    .distinct("publisher")
+                )
             ),
             "tags": SelectMultiple(choices=Tag.objects.values_list("name", "name")),
         }
