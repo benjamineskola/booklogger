@@ -664,7 +664,7 @@ class Book(models.Model):
         self.save()
 
     def save(self, *args: Any, **kwargs: Any) -> None:
-        if not self.slug:
+        if not self.slug or self.slug.startswith("-"):
             self.slug = self._generate_slug()
 
         if "goodreads" in self.image_url or "amazon" in self.image_url:
@@ -738,11 +738,19 @@ class Book(models.Model):
         slug = re.sub(r"[^\w-]+", "", slug)
 
         slug = slug[0:50].strip("-")
-        matches = Book.objects.filter(slug__regex=f"^{slug}(-\\d+)?$")
-        if matches:
-            slug = slug[0:48].strip("-") + "-" + str(matches.count())
-
-        return slug
+        matches = Book.objects.filter(slug=slug)
+        if not matches:
+            return slug
+        elif matches.count() == 1 and matches.first() == self:
+            return slug
+        else:
+            idx = 1
+            while True:
+                new_slug = slug[0:48].strip("-") + "-" + str(idx)
+                matches = Book.objects.filter(slug=new_slug)
+                if not matches:
+                    return new_slug
+                idx += 1
 
     @property
     def isbn10(self) -> str:
