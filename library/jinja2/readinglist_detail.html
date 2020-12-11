@@ -1,12 +1,14 @@
 {% from "macros.html" import book_label with context %}
 {% extends "base.html" %}
 {% block content %}
+  {% set to_read_count = object.books.filter(want_to_read=True).count()%}
+  {% set to_read_owned_count = object.books.filter(want_to_read=True, owned_by__isnull=False).count()%}
   <p>
     {{ object.books.count() }} books,
     {{ object.books.read().count() }} read,
-    {{ object.books.filter(want_to_read=True).count() }} to read.
+    {{ to_read_count }} to read.
 
-    (I own {{ object.books.filter(want_to_read=True, owned_by__isnull=False).count() }} of the to-read items.)
+    (I own {{ to_read_owned_count if to_read_count != to_read_owned_count else "all" }} of the to-read items.)
   </p>
   <ol>
     {% for item in object.readinglistentry_set.all() %}
@@ -14,7 +16,17 @@
         <a href="{{ item.book.get_absolute_url() }}">{{ item.book }}</a>
         <span class="tags">
           {% if item.book.read %}{{ book_label("read", url("library:books_read"), highlight="success") }}{% endif %}
-          {% if item.book.want_to_read %}{{ book_label("to read", url("library:books_to_read"), highlight="danger") }}{% endif %}
+          {% if item.book.currently_reading %}{{ book_label("currently reading", url("library:books_currently_reading"), highlight=True) }}{% endif %}
+          {% if item.book.want_to_read %}
+            {{ book_label("to read", url("library:books_to_read"), highlight="danger") }}
+            {% if to_read_count != to_read_owned_count %}
+              {% if item.book.owned %}
+                {{ book_label("owned", url("library:books_owned")) }}
+              {% else %}
+                {{ book_label("wishlist", url("library:books_unowned")) }}
+              {% endif %}
+            {% endif %}
+          {% endif %}
         </span>
       </li>
     {% endfor %}
