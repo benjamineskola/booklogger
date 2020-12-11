@@ -222,12 +222,12 @@ class Author(models.Model):
             return slug
         else:
             idx = 1
-            while True:
+            for idx in range(1, 10):
                 new_slug = slug[0:48].strip("-") + "-" + str(idx)
                 matches = Author.objects.filter(slug=new_slug)
                 if not matches:
                     return new_slug
-                idx += 1
+        return str(self.id)
 
     def save(self, *args: Any, **kwargs: Any) -> None:
         if not self.slug:

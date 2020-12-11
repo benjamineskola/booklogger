@@ -744,13 +744,12 @@ class Book(models.Model):
         elif matches.count() == 1 and matches.first() == self:
             return slug
         else:
-            idx = 1
-            while True:
+            for idx in range(1, 10):
                 new_slug = slug[0:48].strip("-") + "-" + str(idx)
                 matches = Book.objects.filter(slug=new_slug)
                 if not matches:
                     return new_slug
-                idx += 1
+        return str(self.id)
 
     @property
     def isbn10(self) -> str:
