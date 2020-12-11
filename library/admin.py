@@ -15,12 +15,14 @@ from .models import (
 
 class AuthorAdmin(admin.ModelAdmin):
     search_fields = ["surname", "forenames"]
+    readonly_fields = ("created_date", "modified_date")
 
 
 class BookAuthorInline(admin.TabularInline):
     autocomplete_fields = ["author", "book"]
     model = BookAuthor
     extra = 1
+    readonly_fields = ("created_date", "modified_date")
 
 
 class LogEntryAdmin(admin.ModelAdmin):
@@ -35,17 +37,19 @@ class LogEntryAdmin(admin.ModelAdmin):
         "book__additional_authors__surname",
         "book__additional_authors__forenames",
     ]
+    readonly_fields = ("created_date", "modified_date")
 
 
 class LogEntryInline(admin.TabularInline):
     model = LogEntry
     extra = 0
+    readonly_fields = ("created_date", "modified_date")
 
 
 class BookAdmin(admin.ModelAdmin):
     autocomplete_fields = ["first_author", "editions"]
     inlines = (BookAuthorInline, LogEntryInline)
-    readonly_fields = ("created_date",)
+    readonly_fields = ("created_date", "modified_date")
     search_fields = [
         "title",
         "series",
@@ -61,6 +65,7 @@ class BookAdmin(admin.ModelAdmin):
 class ReadingListEntryInline(admin.TabularInline):
     model = ReadingListEntry
     autocomplete_fields = ("book",)
+    readonly_fields = ("created_date", "modified_date")
 
 
 class ReadingListAdmin(admin.ModelAdmin):
