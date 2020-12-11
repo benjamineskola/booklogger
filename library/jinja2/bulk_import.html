@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
-  {% if results %}
+  {% if results or failures %}
+    <ul>
+      {% for title, authors, exception in failures %}
+        <li>Failed to create {{", ".join(authors)}}, <em>{{ title }}</em> (“{{ exception }}”)</li>
+      {% endfor %}
+    </ul>
     <ul>
       {% for result, created in results %}
         <li>{% if created %}Created{% else %}Updated{% endif %} {{ result.__class__.__name__.lower() }} <a href="{{ result.get_absolute_url() }}">{{ result }}</a></li>

@@ -44,13 +44,24 @@ def bulk_import(request):
         data = request.POST["data"]
 
         results = []
+        failures = []
 
         for entry in data.strip("\r\n").split("\n"):
             title, *author_names = entry.strip("\r\n").split(";")
 
             author_names = [i for i in author_names if i]
 
-            book, book_created = Book.objects.get_or_create(title__iexact=title.strip())
+            if not title.strip():
+                continue
+
+            try:
+                book, book_created = Book.objects.get_or_create(
+                    title__iexact=title.strip()
+                )
+            except Exception as e:
+                failures.append((title, author_names, e))
+                continue
+
             if book_created:
                 book.title = title.strip()
 
@@ -88,7 +99,12 @@ def bulk_import(request):
         return render(
             request,
             "bulk_import.html",
-            {"page_title": "Import", "data": data, "results": results},
+            {
+                "page_title": "Import",
+                "data": data,
+                "results": results,
+                "failures": failures,
+            },
         )
     else:
         return render(
