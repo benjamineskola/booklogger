@@ -13,8 +13,8 @@
       <li{% if item.order %} value="{{ item.order }}"{% endif %}>
         <a href="{{ item.book.get_absolute_url() }}">{{ item.book }}</a>
         <span class="tags">
-          {% if item.book.read %}{{ book_label("read", url("library:books_read"), highlight=True) }}{% endif %}
-          {% if item.book.want_to_read %}{{ book_label("to read", url("library:books_to_read"), highlight=True) }}{% endif %}
+          {% if item.book.read %}{{ book_label("read", url("library:books_read"), highlight="success") }}{% endif %}
+          {% if item.book.want_to_read %}{{ book_label("to read", url("library:books_to_read"), highlight="danger") }}{% endif %}
         </span>
       </li>
     {% endfor %}
