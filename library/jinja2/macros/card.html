@@ -64,7 +64,7 @@
         </p>
 
         <span class="tags" id="tags-{{ book.id }}" data-book="{{ book.slug }}">
-          {% for tag in book.all_tags | sort %}
+          {% for tag in book.tags | sort %}
             {{ book_label(tag, url("library:tag_details", args=[tag]), removable=True) }}
           {% else %}
             {{ book_label("untagged", url("library:tag_details", args=["untagged"])) }}
