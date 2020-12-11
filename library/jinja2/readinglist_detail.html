@@ -17,18 +17,18 @@
         <em>{{ book_link(item.book) }}</em>
         ({{ item.book.display_date }})
         <span class="tags">
-          {% if item.book.read %}{{ book_label("read", url("library:books_read"), highlight="success") }}{% endif %}
-          {% if item.book.currently_reading %}{{ book_label("currently reading", url("library:books_currently_reading"), highlight=True) }}{% endif %}
-          {% if item.book.want_to_read %}
-            {{ book_label("to read", url("library:books_to_read"), highlight="danger") }}
-            {% if to_read_count != to_read_owned_count %}
-              {% if item.book.owned %}
-                {{ book_label("owned", url("library:books_owned")) }}
-              {% else %}
-                {{ book_label("wishlist", url("library:books_unowned")) }}
-              {% endif %}
+        {% if item.book.read %}{{ book_label("read", url("library:books_read"), highlight="success") }}{% endif %}
+        {% if item.book.currently_reading %}{{ book_label("currently reading", url("library:books_currently_reading"), highlight=True) }}{% endif %}
+        {% if item.book.want_to_read %}
+          {{ book_label("to read", url("library:books_to_read"), highlight="danger") }}
+          {% if to_read_count != to_read_owned_count %}
+            {% if item.book.owned %}
+              {{ book_label("owned", url("library:books_owned")) }}
+            {% else %}
+              {{ book_label("wishlist", url("library:books_unowned")) }}
             {% endif %}
           {% endif %}
+        {% endif %}
         </span>
       </li>
     {% endfor %}
