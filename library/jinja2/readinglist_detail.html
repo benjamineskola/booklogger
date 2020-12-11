@@ -1,4 +1,4 @@
-{% from "macros.html" import book_label with context %}
+{% from "macros.html" import author_list, book_link, book_label with context %}
 {% extends "base.html" %}
 {% block content %}
   {% set to_read_count = object.books.filter(want_to_read=True).count()%}
@@ -13,7 +13,9 @@
   <ol>
     {% for item in object.readinglistentry_set.all() %}
       <li{% if item.order %} value="{{ item.order }}"{% endif %}>
-        <a href="{{ item.book.get_absolute_url() }}">{{ item.book }}</a>
+        {{ author_list(item.book.authors, book=item.book) }},
+        <em>{{ book_link(item.book) }}</em>
+        ({{ item.book.display_date }})
         <span class="tags">
           {% if item.book.read %}{{ book_label("read", url("library:books_read"), highlight="success") }}{% endif %}
           {% if item.book.currently_reading %}{{ book_label("currently reading", url("library:books_currently_reading"), highlight=True) }}{% endif %}
