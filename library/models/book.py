@@ -169,40 +169,18 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
             title=title,
             series=series_name,
             series_order=series_order,
-            goodreads_id=goodreads_book["id"]["#text"],
-            first_published=result["original_publication_year"].get("#text"),
-        )
-
-        if "nophoto" not in goodreads_book["image_url"]:
-            book.image_url = goodreads_book["image_url"]
-
-        if not book.image_url:
-            book.image_url = Book.objects.scrape_goodreads_image(book.goodreads_id)
-
-        book.first_author, created = Author.objects.get_or_create_by_single_name(
-            goodreads_book["author"]["name"]
         )
 
         if query:
             if len(query) == 13 and query.startswith("978"):
-                book.isbn = query
+                self.isbn = query
             elif re.match(r"^B[A-Z0-9]{9}$", query):
-                book.asin = query
-                book.edition_format = Book.Format.EBOOK
+                self.asin = query
+                self.edition_format = Book.Format.EBOOK
 
         book.save()
 
-        if book.isbn or book.google_books_id:
-            if (
-                (book.isbn and not book.google_books_id)
-                or not book.publisher
-                or not book.page_count
-                or not book.first_published
-            ):
-                book.update_from_google()
-                book.refresh_from_db()
-
-        return book
+        return book.update_from_goodreads(data=data)
 
     def regenerate_all_slugs(self) -> None:
         qs = self.get_queryset()
@@ -835,6 +813,50 @@ class Book(models.Model):
 
         self.save()
         return True
+
+    def update_from_goodreads(
+        self, data: Optional[Dict[str, Any]] = None
+    ) -> Optional["Book"]:
+        result = {}
+        if data:
+            result = data
+        else:
+            results = Book.objects.find_on_goodreads(self.search_query)
+            if not results:
+                return None
+            result = results[0]
+
+        goodreads_book = result["best_book"]
+
+        if not self.goodreads_id:
+            self.goodreads_id = goodreads_book["id"]["#text"]
+
+        if not self.first_published:
+            self.first_published = result["original_publication_year"].get("#text")
+
+        if "nophoto" not in goodreads_book["image_url"]:
+            self.image_url = goodreads_book["image_url"]
+
+        if not self.image_url:
+            self.image_url = self.objects.scrape_goodreads_image(self.goodreads_id)
+
+        self.first_author, created = Author.objects.get_or_create_by_single_name(
+            goodreads_book["author"]["name"]
+        )
+
+        self.save()
+
+        if self.isbn or self.google_books_id:
+            if (
+                (self.isbn and not self.google_books_id)
+                or not self.publisher
+                or not self.page_count
+                or not self.first_published
+            ):
+                self.update_from_google()
+                self.refresh_from_db()
+
+        return self
 
     @property
     def created_date_date(self) -> date:
