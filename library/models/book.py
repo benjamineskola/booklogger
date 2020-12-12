@@ -176,10 +176,9 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
             series_order=series_order,
         )
 
-        self.first_author, created = Author.objects.get_or_create_by_single_name(
+        book.first_author, created = Author.objects.get_or_create_by_single_name(
             goodreads_book["author"]["name"]
         )
-        self.first_author.save()
 
         if query:
             if len(query) == 13 and query.startswith("978"):
