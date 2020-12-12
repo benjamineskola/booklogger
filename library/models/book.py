@@ -838,7 +838,7 @@ class Book(models.Model):
             self.image_url = goodreads_book["image_url"]
 
         if not self.image_url:
-            self.image_url = self.objects.scrape_goodreads_image(self.goodreads_id)
+            self.image_url = Book.objects.scrape_goodreads_image(self.goodreads_id)
 
         self.first_author, created = Author.objects.get_or_create_by_single_name(
             goodreads_book["author"]["name"]
