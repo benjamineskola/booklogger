@@ -114,7 +114,7 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
     def filter_by_format(self, edition_format: str) -> "BookQuerySet":
         return self.get_queryset().filter_by_format(edition_format)
 
-    def find_on_goodreads(self, query: str) -> Optional[Sequence[Dict[str, Any]]]:
+    def find_on_goodreads(self, query: str) -> Sequence[Dict[str, Any]]:
         search_url = f"https://www.goodreads.com/search/index.xml?key={os.environ['GOODREADS_KEY']}&q={query}"
         data = requests.get(search_url).text
         xml = xmltodict.parse(data, dict_constructor=dict)
@@ -132,7 +132,12 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
         else:
             results = all_results
 
-        return results
+        return [
+            result
+            for result in results
+            if result["best_book"]["author"]["name"]
+            not in ["SparkNotes", "BookRags", "BookHabits", "Bright Summaries"]
+        ]
 
     def create_from_goodreads(
         self, query: Optional[str] = None, data: Optional[Dict[str, Any]] = None
@@ -826,7 +831,16 @@ class Book(models.Model):
         if data:
             result = data
         else:
-            results = Book.objects.find_on_goodreads(self.search_query)
+            results = [
+                result
+                for result in Book.objects.find_on_goodreads(self.search_query)
+                if (
+                    not self.first_author
+                    or self.first_author.surname.lower()
+                    in result["best_book"]["author"]["name"].lower()
+                )
+            ]
+
             if not results:
                 return None
             result = results[0]
