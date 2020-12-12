@@ -171,6 +171,10 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
             series_order=series_order,
         )
 
+        self.first_author, created = Author.objects.get_or_create_by_single_name(
+            goodreads_book["author"]["name"]
+        )
+
         if query:
             if len(query) == 13 and query.startswith("978"):
                 self.isbn = query
@@ -839,10 +843,6 @@ class Book(models.Model):
 
         if not self.image_url:
             self.image_url = Book.objects.scrape_goodreads_image(self.goodreads_id)
-
-        self.first_author, created = Author.objects.get_or_create_by_single_name(
-            goodreads_book["author"]["name"]
-        )
 
         self.save()
 
