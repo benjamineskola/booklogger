@@ -1,4 +1,5 @@
 import re
+from typing import Any
 
 from django.forms import (
     ModelForm,
@@ -10,7 +11,13 @@ from django.forms import (
 )
 from django.utils import timezone
 
-from library.models import Author, Book, BookAuthor, LogEntry, Tag
+from library.models import (  # type: ignore [attr-defined]
+    Author,
+    Book,
+    BookAuthor,
+    LogEntry,
+    Tag,
+)
 from library.utils import isbn10_to_isbn
 
 
@@ -19,7 +26,7 @@ class AuthorForm(ModelForm):
         model = Author
         exclude = ["created_date", "modified_date"]
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any):
         super(AuthorForm, self).__init__(*args, **kwargs)
 
 
@@ -52,7 +59,7 @@ class BookForm(ModelForm):
             "tags": SelectMultiple(choices=Tag.objects.values_list("name", "name")),
         }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any):
         super(BookForm, self).__init__(*args, **kwargs)
 
         instance = kwargs.get("instance")
@@ -66,7 +73,7 @@ class BookForm(ModelForm):
             del self.fields["editions"]
             del self.fields["parent_edition"]
 
-    def _clean_asin(self, asin):
+    def _clean_asin(self, asin: str) -> str:
         if not asin:
             return ""
         if len(asin) != 10:
@@ -81,14 +88,14 @@ class BookForm(ModelForm):
                 return asin
         return asin
 
-    def clean_asin(self):
+    def clean_asin(self) -> str:
         return self._clean_asin(self.cleaned_data["asin"])
 
-    def clean_ebook_asin(self):
+    def clean_ebook_asin(self) -> str:
         return self._clean_asin(self.cleaned_data["ebook_asin"])
 
-    def clean_isbn(self):
-        isbn = self.cleaned_data["isbn"]
+    def clean_isbn(self) -> str:
+        isbn: str = self.cleaned_data["isbn"]
         if not isbn:
             return ""
         isbn = isbn10_to_isbn(isbn)
@@ -106,7 +113,7 @@ class BookAuthorForm(ModelForm):
             "order",
         ]
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any):
         super(BookAuthorForm, self).__init__(*args, **kwargs)
 
 
