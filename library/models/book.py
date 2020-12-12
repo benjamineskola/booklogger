@@ -853,11 +853,11 @@ class Book(models.Model):
         if not self.first_published:
             self.first_published = result["original_publication_year"].get("#text")
 
-        if "nophoto" not in goodreads_book["image_url"]:
-            self.image_url = goodreads_book["image_url"]
-
-        if not self.image_url:
-            self.image_url = Book.objects.scrape_goodreads_image(self.goodreads_id)
+        if goodreads_book["image_url"] and not self.image_url:
+            if "nophoto" not in goodreads_book["image_url"]:
+                self.image_url = goodreads_book["image_url"]
+            else:
+                self.image_url = Book.objects.scrape_goodreads_image(self.goodreads_id)
 
         self.save()
 
