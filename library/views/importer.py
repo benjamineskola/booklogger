@@ -79,6 +79,7 @@ def bulk_import(request):
             book.first_author_role = first_author_role
             first_author.save()
             book.save()
+            book.update_from_goodreads()
 
             results.append((first_author, fa_created))
 
