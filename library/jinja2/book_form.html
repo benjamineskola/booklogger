@@ -100,6 +100,8 @@
         </div> {# card-body #}
         {% if inline_formset.prefix == "bookauthor_set" %}
           <div class="card-footer"><a href="#">Add author</a></div>
+        {% elif inline_formset.prefix == "readinglistentry_set" %}
+          <div class="card-footer"><a href="#">Add list</a></div>
         {% endif %}
       </div> {# card #}
     {% endfor %}
@@ -154,9 +156,12 @@
         $('#id_acquired_date_month, #id_alienated_date_month').parent().find('span').each(function(){ $(this).addClass('mr-2') })
 
         $("#card-bookauthor_set .card-footer a").on("click", add_author);
+        $("#card-readinglistentry_set .card-footer a").on("click", add_listentry);
     });
 
-  var bookauthor_formset_template = `{{ inline_formsets[0].empty_form }}`
+  var bookauthor_formset_template = `{{ inline_formsets[0].empty_form }}`;
+  var listentry_formset_template = `{{ inline_formsets[2].empty_form }}`;
+
   function add_author(event) {
     event.preventDefault();
 
@@ -201,5 +206,46 @@
 
     select_field.select2({ theme: "bootstrap" });
   }
+
+  function add_listentry(event) {
+    event.preventDefault();
+
+    var parent = $("#formset-readinglistentry_set");
+    var total_forms = $('input[name="readinglistentry_set-TOTAL_FORMS"]');
+    var index = parseInt(total_forms.val());
+
+    var inline_form = $('<div class="form-inline"></div>');
+    var select_field = $(
+      listentry_formset_template.replace(/__prefix__/g, index)
+    ).find("select");
+
+    var author_form_group = $('<div class="form-group"></div>');
+    author_form_group.append(
+      `<label for="${select_field.attr(
+        "id"
+      )}" class="mr-2 requiredField">Reading List*</label>`
+    );
+    var select_div = $('<div class="mr-2 mt-2"></div>');
+    select_div.append(select_field);
+    author_form_group.append(select_div);
+    inline_form.append(author_form_group);
+
+    inline_form.append(
+      $(
+        `<div class="form-group"><label for="readinglistentry_set-${index}-order" class="mr-2">Order</label><div class="mr-2 mt-2"><input type="number" name="readinglistentry_set-${index}-order" maxlength="255" class="textinput textInput form-control" id="id_readinglistentry_set-${index}-role"></div></div>`
+      )
+    );
+    inline_form.append(
+      $(
+        `<div class="form-group"><div class="mr-2 mt-2"><div class="form-check"><input type="checkbox" name="readinglistentry_set-${index}-DELETE" class="checkboxinput form-check-input" id="id_readinglistentry_set-${index}-DELETE"><label for="id_readinglistentry_set-${index}-DELETE" class="form-check-label">Delete </label></div></div></div>`
+      )
+    );
+
+    parent.append(inline_form);
+    total_forms.val(index + 1);
+
+    select_field.select2({ theme: "bootstrap" });
+  }
+
   </script>
 {% endblock footer%}
