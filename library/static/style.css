@@ -26,6 +26,18 @@
     border-color: var(--gray);
   }
 
+  .page-item.disabled .page-link {
+    background-color: var(--dark);
+    color: var(--gray);
+    border-color: var(--gray);
+  }
+
+  .page-link:hover {
+    background-color: var(--gray);
+    color: var(--light);
+    border-color: var(--gray);
+  }
+
   .dropdown-menu {
     border: 1px solid var(--gray);
   }
@@ -58,6 +70,12 @@
     .select2-selection__rendered {
     background-color: var(--dark);
     color: var(--light);
-    border-color: var(--gray);
+  }
+  .select2-container--bootstrap
+    .select2-selection--multiple
+    .select2-search--inline
+    .select2-search__field {
+    background-color: transparent;
+    color: var(--light);
   }
 }
