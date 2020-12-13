@@ -445,15 +445,10 @@ class CreateOrUpdateView(LoginRequiredMixin):
 
     def form_valid(self, form):
         context = self.get_context_data()
-        bookauthor_formset = context["bookauthor_formset"]
-        logentry_formset = context["logentry_formset"]
-        listentry_formset = context["listentry_formset"]
         self.object = form.save()
 
-        formsets = [bookauthor_formset, logentry_formset, listentry_formset]
-
-        if all([formset.is_valid() for formset in formsets]):
-            for formset in formsets:
+        if all([formset.is_valid() for formset in context["inline_formsets"]]):
+            for formset in context["inline_formsets"]:
                 formset.instance = self.object
                 formset.save()
 
@@ -470,19 +465,17 @@ class CreateOrUpdateView(LoginRequiredMixin):
         context = super(CreateOrUpdateView, self).get_context_data(**kwargs)
 
         if self.request.POST:
-            context["bookauthor_formset"] = BookAuthorFormSet(
-                self.request.POST, instance=self.object
-            )
-            context["logentry_formset"] = LogEntryFormSet(
-                self.request.POST, instance=self.object
-            )
-            context["listentry_formset"] = ReadingListEntryFormSet(
-                self.request.POST, instance=self.object
-            )
+            context["inline_formsets"] = [
+                BookAuthorFormSet(self.request.POST, instance=self.object),
+                LogEntryFormSet(self.request.POST, instance=self.object),
+                ReadingListEntryFormSet(self.request.POST, instance=self.object),
+            ]
         else:
-            context["bookauthor_formset"] = BookAuthorFormSet(instance=self.object)
-            context["logentry_formset"] = LogEntryFormSet(instance=self.object)
-            context["listentry_formset"] = ReadingListEntryFormSet(instance=self.object)
+            context["inline_formsets"] = [
+                BookAuthorFormSet(instance=self.object),
+                LogEntryFormSet(instance=self.object),
+                ReadingListEntryFormSet(instance=self.object),
+            ]
 
         if self.object:
             context["page_title"] = f"Editing {self.object}"
