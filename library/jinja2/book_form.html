@@ -73,11 +73,13 @@
       <div class="card mb-2">
         <div class="card-body">
           {% if inline_formset.errors %}
-            <div class="alert alert-danger">
-              {% for error in inline_formset.errors %}
-                <p><strong>{{ error }}:</strong> {{ inline_formset.errors[error] | join('; ') }}</p>
-              {% endfor %}
-            </div>
+            {% for error in inline_formset.errors %}
+              {% if error %}
+                <div class="alert alert-danger">
+                  {{ error }}
+                </div>
+              {% endif %}
+            {% endfor %}
           {% endif %}
           {{ inline_formset.management_form }}
           {% for form in inline_formset %}
