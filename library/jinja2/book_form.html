@@ -161,27 +161,45 @@
     event.preventDefault();
 
     var parent = $("#formset-bookauthor_set");
-    var total_forms = $('input[name="bookauthor_set-TOTAL_FORMS"]')
+    var total_forms = $('input[name="bookauthor_set-TOTAL_FORMS"]');
     var index = parseInt(total_forms.val());
 
     var inline_form = $('<div class="form-inline"></div>');
-    var select_field = $(bookauthor_formset_template.replace(/__prefix__/g, index)).find("select");
+    var select_field = $(
+      bookauthor_formset_template.replace(/__prefix__/g, index)
+    ).find("select");
 
-    var author_form_group = $('<div class="form-group"></div>')
-    author_form_group.append(`<label for="${select_field.attr("id")}" class="mr-2 requiredField">Author*</label>`)
-    var select_div = $('<div class="mr-2 mt-2"></div>')
+    var author_form_group = $('<div class="form-group"></div>');
+    author_form_group.append(
+      `<label for="${select_field.attr(
+        "id"
+      )}" class="mr-2 requiredField">Author*</label>`
+    );
+    var select_div = $('<div class="mr-2 mt-2"></div>');
     select_div.append(select_field);
     author_form_group.append(select_div);
     inline_form.append(author_form_group);
 
-    inline_form.append($(`<div class="form-group"><label for="bookauthor_set-${index}-role" class="mr-2">Role</label><div class="mr-2 mt-2"><input type="text" name="bookauthor_set-${index}-role" maxlength="255" class="textinput textInput form-control" id="id_bookauthor_set-${index}-role"></div></div>`))
-    inline_form.append($(`<div class="form-group"><label for="bookauthor_set-${index}-order" class="mr-2">Order</label><div class="mr-2 mt-2"><input type="number" name="bookauthor_set-${index}-order" maxlength="255" class="textinput textInput form-control" id="id_bookauthor_set-${index}-role"></div></div>`))
-    inline_form.append($(`<div class="form-group"><div class="mr-2 mt-2"><div id="div_id_bookauthor_set-${index}-DELETE" class="form-check"><input type="checkbox" name="bookauthor_set-${index}-DELETE" class="checkboxinput form-check-input" id="id_bookauthor_set-${index}-DELETE"><label for="id_bookauthor_set-${index}-DELETE" class="form-check-label">Delete </label></div></div></div>`))
+    inline_form.append(
+      $(
+        `<div class="form-group"><label for="bookauthor_set-${index}-role" class="mr-2">Role</label><div class="mr-2 mt-2"><input type="text" name="bookauthor_set-${index}-role" maxlength="255" class="textinput textInput form-control" id="id_bookauthor_set-${index}-role"></div></div>`
+      )
+    );
+    inline_form.append(
+      $(
+        `<div class="form-group"><label for="bookauthor_set-${index}-order" class="mr-2">Order</label><div class="mr-2 mt-2"><input type="number" name="bookauthor_set-${index}-order" maxlength="255" class="textinput textInput form-control" id="id_bookauthor_set-${index}-role"></div></div>`
+      )
+    );
+    inline_form.append(
+      $(
+        `<div class="form-group"><div class="mr-2 mt-2"><div id="div_id_bookauthor_set-${index}-DELETE" class="form-check"><input type="checkbox" name="bookauthor_set-${index}-DELETE" class="checkboxinput form-check-input" id="id_bookauthor_set-${index}-DELETE"><label for="id_bookauthor_set-${index}-DELETE" class="form-check-label">Delete </label></div></div></div>`
+      )
+    );
 
     parent.append(inline_form);
     total_forms.val(index + 1);
 
-    select_field.select2({theme: "bootstrap"});
+    select_field.select2({ theme: "bootstrap" });
   }
   </script>
 {% endblock footer%}
