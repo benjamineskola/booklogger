@@ -157,6 +157,12 @@
 
         $("#card-bookauthor_set .card-footer a").on("click", add_author);
         $("#card-readinglistentry_set .card-footer a").on("click", add_listentry);
+
+        $("#card-bookauthor_set, #card-logentry_set, #card-readinglistentry_set")
+          .find(".form-check-input")
+          .on("click", function (event) {
+            $(this).parent().parent().parent().parent().hide(1000);
+          });
     });
 
   var bookauthor_formset_template = `{{ inline_formsets[0].empty_form }}`;
@@ -203,6 +209,9 @@
     total_forms.val(index + 1);
 
     select_field.select2({ theme: "bootstrap" });
+    inline_form.find(".form-check-input").on("click", function (event) {
+      $(this).parent().parent().parent().parent().hide(1000);
+    });
   }
 
   function add_listentry(event) {
@@ -241,6 +250,9 @@
     total_forms.val(index + 1);
 
     select_field.select2({ theme: "bootstrap" });
+    inline_form.find(".form-check-input").on("click", function (event) {
+      $(this).parent().parent().parent().parent().hide(1000);
+    });
   }
   </script>
 {% endblock footer%}
