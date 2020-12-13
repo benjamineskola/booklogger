@@ -137,7 +137,9 @@ class ReadingListEntryForm(ModelForm):
         fields = ["reading_list", "order"]
 
 
-BookAuthorFormSet = inlineformset_factory(Book, BookAuthor, form=BookAuthorForm)
+BookAuthorFormSet = inlineformset_factory(
+    Book, BookAuthor, form=BookAuthorForm, extra=0
+)
 LogEntryFormSet = inlineformset_factory(Book, LogEntry, form=LogEntryForm, extra=0)
 ReadingListEntryFormSet = inlineformset_factory(
     Book, ReadingListEntry, ReadingListEntryForm, extra=0
