@@ -98,7 +98,9 @@ class IndexView(generic.ListView):
         }
 
         if tags := self.request.GET.get("tags"):
-            context["tags"] = [Tag.objects[tag] for tag in tags.split(",")]
+            context["tags"] = [
+                Tag.objects[tag] for tag in tags.split(",") if tag != "untagged"
+            ]
 
         if "page_title" in self.kwargs:
             self.page_title = self.kwargs["page_title"]
@@ -201,7 +203,9 @@ class TagIndexView(IndexView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["tags"] = [
-            Tag.objects[tag] for tag in self.kwargs["tag_name"].split(",")
+            Tag.objects[tag]
+            for tag in self.kwargs["tag_name"].split(",")
+            if tag != "untagged"
         ]
         context[
             "page_title"
