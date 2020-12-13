@@ -122,13 +122,13 @@
         <nav>
           <ul class="pagination flex-wrap justify-content-center">
             {% set kwargs = request.resolver_match.kwargs.copy() %}
-            {% set _ = kwargs.update({"page": None}) and kwargs.pop("page") %}
+            {% set _ = kwargs.pop("page", None) %}
 
             <li class="page-item{% if page_obj.number == 1 %} disabled{% endif %}">
               {% if page_obj.number > 2 %}{% set _ = kwargs.update({"page": page_obj.previous_page_number()}) %}{% endif %}
               <a class="page-link" href="{{ url(request.resolver_match.view_name, kwargs=kwargs) }}{{ qs }}">&laquo;</a>
             </li>
-            {% set _ = kwargs.pop("page") %}
+            {% set _ = kwargs.pop("page", None) %}
 
             {% for pageno in page_obj.paginator.page_range %}
               {% if page_obj.paginator.num_pages < 10 or pageno in [1, page_obj.paginator.num_pages] or (pageno >= page_obj.number - 2 and pageno <= page_obj.number + 3) %}
