@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block header %}
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+  <link rel="stylesheet" href="https://angel-vladov.github.io/select2-theme-bootstrap4/css/select2-bootstrap.css" />
+{% endblock %}
+
+{% block content %}
+  {% if form.errors %}
+    <div class="alert alert-danger mb-2">
+      {% for error in form.errors %}
+        <p><strong>{{ error }}:</strong> {{ form.errors[error] | join('; ') }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <form method="post">
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    <div class="card mb-2">
+      <div class="card-body">
+        {{ form["title"] | crispy }}
+        {% for error in form["title"].errors %}
+          <label for="{{ form["title"].id_for_label }}" class="alert alert-warning">
+            {{ error|escape }}
+          </label>
+        {% endfor %}
+
+        {{ form["books"] | crispy }}
+        {% for error in form["books"].errors %}
+          <label for="{{ form["books"].id_for_label }}" class="alert alert-warning">
+            {{ error|escape }}
+          </label>
+        {% endfor %}
+      </div> {# card-body #}
+    </div> {# card #}
+
+    <div class="card">
+      <div class="card-body">
+        <input type="submit" value="Submit" class="btn btn-primary">
+        {% if form.instance.id %}
+          <a href="{{ form.instance.get_absolute_url() }}" class="btn btn-secondary" role="button">Cancel</a>
+          <a href="{{ url("library:list_delete", args=[form.instance.id]) }}" class="btn btn-danger" role="button">Delete</a>
+        {% else %}
+          <a href="/" class="btn btn-secondary">Cancel</a>
+        {% endif %}
+      </div> {# card-body #}
+    </div> {# card #}
+  </form>
+
+  {% if form.instance.id %}
+    <a href="{{ url("admin:library_book_change", args=[form.instance.id]) }}">Advanced</a>
+  {% endif %}
+{% endblock content %}
+
+{% block footer %}
+  <script>
+    $(document).ready(function() {
+        $('select').select2({
+          theme: 'bootstrap',
+        });
+    });
+  </script>
+{% endblock footer%}

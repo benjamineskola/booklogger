@@ -33,4 +33,8 @@
       </li>
     {% endfor %}
   </ol>
+
+  {% if user.is_authenticated %}
+    <p><a class="card-link" href="{{ url('library:list_edit', args=[object.id]) }}">edit</a></p>
+  {% endif %}
 {% endblock %}

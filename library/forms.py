@@ -16,6 +16,8 @@ from library.models import (  # type: ignore [attr-defined]
     Book,
     BookAuthor,
     LogEntry,
+    ReadingList,
+    ReadingListEntry,
     Tag,
 )
 from library.utils import isbn10_to_isbn
@@ -123,5 +125,20 @@ class LogEntryForm(ModelForm):
         exclude = ["created_date", "modified_date"]
 
 
+class ReadingListForm(ModelForm):
+    class Meta:
+        model = ReadingList
+        fields = ["title", "books"]
+
+
+class ReadingListEntryForm(ModelForm):
+    class Meta:
+        model = ReadingListEntry
+        fields = ["reading_list", "order"]
+
+
 BookAuthorFormSet = inlineformset_factory(Book, BookAuthor, form=BookAuthorForm)
 LogEntryFormSet = inlineformset_factory(Book, LogEntry, form=LogEntryForm, extra=0)
+ReadingListEntryFormSet = inlineformset_factory(
+    Book, ReadingListEntry, ReadingListEntryForm, extra=0
+)

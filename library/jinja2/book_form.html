@@ -69,7 +69,7 @@
       {% endfor %}
     </div> {# row #}
 
-    {% for inline_formset in [bookauthor_formset, logentry_formset] %}
+    {% for inline_formset in [bookauthor_formset, logentry_formset, listentry_formset] %}
       <div class="card mb-2">
         <div class="card-body">
           {% if inline_formset.errors %}

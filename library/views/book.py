@@ -12,7 +12,12 @@ from django.utils import timezone
 from django.views import generic
 from django.views.decorators.http import require_POST
 
-from library.forms import BookAuthorFormSet, BookForm, LogEntryFormSet
+from library.forms import (
+    BookAuthorFormSet,
+    BookForm,
+    LogEntryFormSet,
+    ReadingListEntryFormSet,
+)
 from library.models import Book, LogEntry, Tag
 from library.utils import oxford_comma
 
@@ -442,22 +447,20 @@ class CreateOrUpdateView(LoginRequiredMixin):
         context = self.get_context_data()
         bookauthor_formset = context["bookauthor_formset"]
         logentry_formset = context["logentry_formset"]
+        listentry_formset = context["listentry_formset"]
         self.object = form.save()
 
-        if bookauthor_formset.is_valid() and logentry_formset.is_valid():
-            bookauthor_formset.instance = self.object
-            bookauthor_formset.save()
-            logentry_formset.instance = self.object
-            logentry_formset.save()
+        formsets = [bookauthor_formset, logentry_formset, listentry_formset]
 
-            for subform in bookauthor_formset:
-                if bookauthor_formset.data.get(subform.prefix + "-DELETE") == "on":
-                    if subform.instance.id:
-                        subform.instance.delete()
-            for subform in logentry_formset:
-                if logentry_formset.data.get(subform.prefix + "-DELETE") == "on":
-                    if subform.instance.id:
-                        subform.instance.delete()
+        if all([formset.is_valid() for formset in formsets]):
+            for formset in formsets:
+                formset.instance = self.object
+                formset.save()
+
+                for subform in formset:
+                    if formset.data.get(subform.prefix + "-DELETE") == "on":
+                        if subform.instance.id:
+                            subform.instance.delete()
 
             return super(CreateOrUpdateView, self).form_valid(form)
         else:
@@ -473,9 +476,13 @@ class CreateOrUpdateView(LoginRequiredMixin):
             context["logentry_formset"] = LogEntryFormSet(
                 self.request.POST, instance=self.object
             )
+            context["listentry_formset"] = ReadingListEntryFormSet(
+                self.request.POST, instance=self.object
+            )
         else:
             context["bookauthor_formset"] = BookAuthorFormSet(instance=self.object)
             context["logentry_formset"] = LogEntryFormSet(instance=self.object)
+            context["listentry_formset"] = ReadingListEntryFormSet(instance=self.object)
 
         if self.object:
             context["page_title"] = f"Editing {self.object}"
