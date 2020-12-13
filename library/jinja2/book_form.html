@@ -176,9 +176,7 @@
 
     var author_form_group = $('<div class="form-group"></div>');
     author_form_group.append(
-      `<label for="${select_field.attr(
-        "id"
-      )}" class="mr-2 requiredField">Author*</label>`
+      `<label for="id_bookauthor_set-${index}-author" class="mr-2 requiredField">Author*</label>`
     );
     var select_div = $('<div class="mr-2 mt-2"></div>');
     select_div.append(select_field);
@@ -221,9 +219,7 @@
 
     var author_form_group = $('<div class="form-group"></div>');
     author_form_group.append(
-      `<label for="${select_field.attr(
-        "id"
-      )}" class="mr-2 requiredField">Reading List*</label>`
+      `<label for="id_readinglistentry_set-${index}-reading_list}" class="mr-2 requiredField">Reading List*</label>`
     );
     var select_div = $('<div class="mr-2 mt-2"></div>');
     select_div.append(select_field);
@@ -246,6 +242,5 @@
 
     select_field.select2({ theme: "bootstrap" });
   }
-
   </script>
 {% endblock footer%}
