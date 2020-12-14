@@ -719,26 +719,38 @@ class Book(models.Model):
         return entries
 
     def _generate_slug(self) -> str:
-        slug = (
-            "-".join(self.first_author.slug.split("-")[0:-1]) + "-"
-            if self.first_author
-            else ""
-        )
+        if self.first_author:
+            slug = self.first_author.surname.lower().replace(" ", "-")
+            slug = unidecode.unidecode(slug)
+            slug = re.sub(r"[^\w-]", "", slug)
+            slug += "-"
+        else:
+            slug = ""
 
-        stopwords = ["a", "an", "and", "at", "in", "is", "of", "on", "to", "for", "the"]
+        stopwords = [
+            "a",
+            "an",
+            "and",
+            "at",
+            "in",
+            "is",
+            "of",
+            "on",
+            "to",
+            "for",
+            "the",
+            "&",
+        ]
 
         title = self.edition_title if self.edition_title else self.title
 
-        title_words = title.split(":")[0].lower().split(" ")
+        title_words = title.split(":")[0].lower().split()
         title_words = [word for word in title_words if word not in stopwords]
 
-        slug += "-".join(title_words)
-
-        slug = unidecode.unidecode(slug)
-        slug = re.sub(r"[^\w-]+", "", slug)
+        slug += re.sub(r"[^\w-]+", "", unidecode.unidecode("-".join(title_words)))
 
         slug = slug[0:50].strip("-")
-        matches = Book.objects.filter(slug=slug)
+        matches = Book.objects.filter(slug=slug).exclude(pk=self.id)
         if not matches:
             return slug
         elif matches.count() == 1 and matches.first() == self:
@@ -746,7 +758,7 @@ class Book(models.Model):
         else:
             for idx in range(1, 10):
                 new_slug = slug[0:48].strip("-") + "-" + str(idx)
-                matches = Book.objects.filter(slug=new_slug)
+                matches = Book.objects.filter(slug=new_slug).exclude(pk=self.id)
                 if not matches:
                     return new_slug
         return str(self.id)
