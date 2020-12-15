@@ -1,7 +1,8 @@
 import re
-from typing import Any
+from typing import Any, Optional
 
 from django.forms import (
+    ModelChoiceField,
     ModelForm,
     Select,
     SelectDateWidget,
@@ -32,10 +33,23 @@ class AuthorForm(ModelForm):
         super(AuthorForm, self).__init__(*args, **kwargs)
 
 
+class AuthorField(ModelChoiceField):
+    def to_python(self, value: Optional[str]) -> Author:
+        if value and value.isnumeric():
+            return super().to_python(value)
+        else:
+            try:
+                author, _ = Author.objects.get_or_create_by_single_name(value)
+                return author
+            except Exception as e:
+                raise ValidationError(str(e))
+
+
 class BookForm(ModelForm):
     class Meta:
         model = Book
         exclude = ["additional_authors", "created_date", "modified_date"]
+        field_classes = {"first_author": AuthorField}
         widgets = {
             "acquired_date": SelectDateWidget(
                 years=range(
@@ -114,6 +128,7 @@ class BookAuthorForm(ModelForm):
             "role",
             "order",
         ]
+        field_classes = {"author": AuthorField}
 
     def __init__(self, *args: Any, **kwargs: Any):
         super(BookAuthorForm, self).__init__(*args, **kwargs)

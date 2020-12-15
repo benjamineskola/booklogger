@@ -134,7 +134,7 @@
         $('select').select2({
           theme: 'bootstrap',
         });
-        $('#id_tags, #id_publisher').select2({
+        $('#id_first_author, #id_tags, #id_publisher, #formset-bookauthor_set select').select2({
           theme: 'bootstrap',
           tags: true,
         });
@@ -208,7 +208,7 @@
     parent.append(inline_form);
     total_forms.val(index + 1);
 
-    select_field.select2({ theme: "bootstrap" });
+    select_field.select2({ theme: "bootstrap", tags: "true" });
     inline_form.find(".form-check-input").on("click", function (event) {
       $(this).parent().parent().parent().parent().hide(1000);
     });
