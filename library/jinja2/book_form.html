@@ -138,6 +138,10 @@
           theme: 'bootstrap',
           tags: true,
         });
+        {% if form.instance %}
+        $('#id_tags').val({{ form.instance.tags | json | safe }});
+        $('#id_tags').trigger("change");
+        {% endif %}
         $('#id_acquired_date_day, #id_alienated_date_day').select2({
           theme: 'bootstrap',
           width: '5em',
