@@ -134,9 +134,14 @@
         $('select').select2({
           theme: 'bootstrap',
         });
-        $('#id_first_author, #id_tags, #id_publisher, #formset-bookauthor_set select').select2({
+        $('#id_first_author, #id_publisher, #formset-bookauthor_set select').select2({
           theme: 'bootstrap',
           tags: true,
+        });
+        $('#id_tags').select2({
+          theme: 'bootstrap',
+          tags: true,
+          tokenSeparators: [','],
         });
         {% if form.instance %}
         $('#id_tags').val({{ form.instance.tags | json | safe }});
