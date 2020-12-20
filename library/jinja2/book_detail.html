@@ -175,24 +175,24 @@
       </div>
     {% endif %}
 
-    {% if book.parent_edition %}
+    {% if book.parent_edition or book.subeditions.count() %}
       <div class="col">
         <div class="card">
           <div class="card-body">
-            This book is part of {{ book_link(book.parent_edition) }}
-          </div>
-        </div>
-      </div>
-    {% elif book.subeditions.count() %}
-      <div class="col">
-        <div class="card">
-          <div class="card-body">
-            This book is made up of the following books:
-            <ul>
-              {% for subedition in book.subeditions.all() %}
-                <li>{{ book_link(subedition) }}</li>
-              {% endfor %}
-            </ul>
+            {% if book.parent_edition %}
+              This book is part of {{ book_link(book.parent_edition) }}
+              {%- for ancestor in book.ancestor_editions[1:] -%}
+                , which is part of {{ book_link(ancestor) }}
+              {%- endfor -%}.
+            {% endif %}
+            {% if book.subeditions.count() %}
+              This book is made up of the following books:
+              <ul>
+                {% for subedition in book.subeditions.all() %}
+                  <li>{{ book_link(subedition) }}</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
           </div>
         </div>
       </div>

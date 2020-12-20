@@ -2,7 +2,7 @@ import os
 import re
 import time
 from datetime import date
-from typing import Any, Dict, Optional, Sequence, Set, Tuple
+from typing import Any, Dict, List, Optional, Sequence, Set, Tuple
 from urllib.parse import quote
 
 import requests
@@ -904,6 +904,14 @@ class Book(models.Model):
     @property
     def modified_date_date(self) -> date:
         return self.modified_date.date()
+
+    @property
+    def ancestor_editions(self) -> List["Book"]:
+        return (
+            [self.parent_edition] + self.parent_edition.ancestor_editions
+            if self.parent_edition
+            else []
+        )
 
 
 class BookAuthor(models.Model):
