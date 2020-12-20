@@ -1,4 +1,4 @@
-{% from "macros.html" import author_list, book_link, format_date_range, link_amazon, link_goodreads, link_google, link_publisher with context %}
+{% from "macros.html" import author_list, book_children, book_link, format_date_range, link_amazon, link_goodreads, link_google, link_publisher with context %}
 {% from "macros/card.html" import book_card with context %}
 {% extends "base.html" %}
 {% block content %}
@@ -187,11 +187,7 @@
             {% endif %}
             {% if book.subeditions.count() %}
               This book is made up of the following books:
-              <ul>
-                {% for subedition in book.subeditions.all() %}
-                  <li>{{ book_link(subedition) }}</li>
-                {% endfor %}
-              </ul>
+              {{ book_children(book) }}
             {% endif %}
           </div>
         </div>

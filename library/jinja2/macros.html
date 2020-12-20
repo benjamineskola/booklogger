@@ -16,6 +16,19 @@
 {%- endif %}
 {%- endmacro %}
 
+{% macro book_children(book) %}
+<ul>
+  {% for child in book.subeditions.all() %}
+    <li>
+      {{ book_link(child) }}
+      {% if child.subeditions.count() %}
+        {{ book_children(child) }}
+      {% endif %}
+    </li>
+  {% endfor %}
+</ul>
+{% endmacro %}
+
 {% macro book_label(label, link, highlight=False, removable=False) %}
 <span class="badge {% if highlight is true %}badge-info{% elif highlight %}badge-{{ highlight }}{% else %}badge-secondary{% endif %}">
   <a href="{{ link }}">{{ label }}</a>
