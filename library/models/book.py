@@ -2,7 +2,7 @@ import os
 import re
 import time
 from datetime import date
-from typing import Any, Dict, List, Optional, Sequence, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 from urllib.parse import quote
 
 import requests
@@ -114,7 +114,7 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
     def filter_by_format(self, edition_format: str) -> "BookQuerySet":
         return self.get_queryset().filter_by_format(edition_format)
 
-    def find_on_goodreads(self, query: str) -> Sequence[Dict[str, Any]]:
+    def find_on_goodreads(self, query: str) -> List[Dict[str, Any]]:
         search_url = f"https://www.goodreads.com/search/index.xml?key={os.environ['GOODREADS_KEY']}&q={query}"
         data = requests.get(search_url).text
         xml = xmltodict.parse(data, dict_constructor=dict)
@@ -126,7 +126,7 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
         except TypeError:
             return []
 
-        results: Sequence[Dict[str, Any]] = []
+        results: List[Dict[str, Any]] = []
         if "id" in all_results:
             results = [all_results]
         else:
@@ -500,7 +500,7 @@ class Book(models.Model):
         return reverse("library:book_details", args=[self.slug])
 
     @property
-    def authors(self) -> Sequence[Author]:
+    def authors(self) -> List[Author]:
         additional_authors = list(
             self.additional_authors.filter(
                 bookauthor__role=self.first_author_role
@@ -512,7 +512,7 @@ class Book(models.Model):
             return additional_authors
 
     @property
-    def all_authors(self) -> Sequence[Author]:
+    def all_authors(self) -> List[Author]:
         additional_authors = list(self.additional_authors.order_by("bookauthor__order"))
         if self.first_author:
             return [self.first_author] + additional_authors
