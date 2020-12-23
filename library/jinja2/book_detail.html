@@ -175,7 +175,7 @@
       </div>
     {% endif %}
 
-    {% if book.parent_edition or book.subeditions.count() %}
+    {% if book.parent_edition or book.subeditions.count() or book.reading_lists.count() %}
       <div class="col">
         <div class="card">
           <div class="card-body">
@@ -188,6 +188,17 @@
             {% if book.subeditions.count() %}
               This book is made up of the following books:
               {{ book_children(book) }}
+            {% endif %}
+            {% if book.reading_lists.count() %}
+              This book is on the following reading lists:
+              <ul>
+                {% for reading_list in book.readinglistentry_set.order_by('reading_list__title') %}
+                  <li>
+                    <a href="{{ reading_list.reading_list.get_absolute_url() }}">{{ reading_list.reading_list.title }}</a>
+                    {%- if reading_list.order %} ({{ reading_list.order }}){% endif -%}
+                  </li>
+                {% endfor %}
+              </ul>
             {% endif %}
           </div>
         </div>
