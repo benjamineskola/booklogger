@@ -632,8 +632,8 @@ class Book(models.Model):
 
     @property
     def read(self) -> bool:
-        if self.parent_edition:
-            return self.parent_edition.read
+        if self.parent_edition and self.parent_edition.read:
+            return True
 
         return self.log_entries.filter(end_date__isnull=False).count() > 0
 
