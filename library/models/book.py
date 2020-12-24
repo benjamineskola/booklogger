@@ -782,6 +782,12 @@ class Book(models.Model):
         )
 
     @property
+    def parent_owned(self) -> bool:
+        return (not self.owned_by) and any(
+            [ancestor.owned for ancestor in self.ancestor_editions]
+        )
+
+    @property
     def search_query(self) -> str:
         return quote(
             f"{self.edition_title or self.title} {self.first_author and self.first_author.surname}"

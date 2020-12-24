@@ -1,6 +1,27 @@
 {% from "macros.html" import author_list, book_children, book_link, format_date_range, link_amazon, link_goodreads, link_google, link_publisher with context %}
 {% from "macros/card.html" import book_card with context %}
 {% extends "base.html" %}
+
+{% macro edition_details(book) %}
+{% if book.owned_by_sara %}
+  Sara owns
+{% else %}
+  I {% if book.owned or book.parent_owned %}own{% elif book.was_borrowed %}borrowed{% else %}owned{% endif %}
+{% endif %}
+a{% if book.get_edition_format_display().lower()[0] in ["a", "e", "i", "o", "u"] %}n{% endif %} {{ book.get_edition_format_display().lower() }} edition
+{%- if book.was_borrowed %} from {{ book.borrowed_from }}{% endif -%}
+{%- if book.acquired_date or book.alienated_date %} which I
+  {%- if book.acquired_date %}
+    acquired on {{ book.acquired_date.strftime("%d %B, %Y") }}
+    {%- if book.acquired_date and book.alienated_date %} and {% endif -%}
+  {%- endif -%}
+  {%- if book.alienated_date %} disposed of on {{ book.alienated_date.strftime("%d %B, %Y") }}{% endif -%}
+{%- endif -%}
+{%- if book.has_ebook_edition -%}
+  , and an ebook edition{% if book.ebook_acquired_date %} which I acquired {% if book.acquired_date == book.ebook_acquired_date %} at the same time{% else %} on {{ book.ebook_acquired_date.strftime("%d %B, %Y") }}{% endif %}{% endif %}
+{%- endif %}.
+{% endmacro %}
+
 {% block content %}
   <div class="row row-cols-1 row-cols-md-2 mt-4">
     <div class="col">
@@ -69,25 +90,15 @@
             {% endif %}
           </p>
 
-          {% if book.owned_by or book.was_borrowed or book.alienated_date %}
+          {% if book.owned_by or book.was_borrowed or book.alienated_date or book.parent_owned %}
             <p id="ownership-details">
-              {% if book.owned_by_sara %}
-                Sara owns
-              {% else %}
-                I {% if book.owned %}own{% elif book.was_borrowed %}borrowed{% else %}owned{% endif %}
+              {% if book.owned_by or book.was_borrowed or book.alienated_date %}
+                {{ edition_details(book) }}
               {% endif %}
-              a{% if book.get_edition_format_display().lower()[0] in ["a", "e", "i", "o", "u"] %}n{% endif %} {{ book.get_edition_format_display().lower() }} edition
-              {%- if book.was_borrowed %} from {{ book.borrowed_from }}{% endif -%}
-              {%- if book.acquired_date or book.alienated_date %} which I
-                {%- if book.acquired_date %}
-                  acquired on {{ book.acquired_date.strftime("%d %B, %Y") }}
-                  {%- if book.acquired_date and book.alienated_date %} and {% endif -%}
-                {%- endif -%}
-                {%- if book.alienated_date %} disposed of on {{ book.alienated_date.strftime("%d %B, %Y") }}{% endif -%}
-              {%- endif -%}
-              {%- if book.has_ebook_edition -%}
-                , and an ebook edition{% if book.ebook_acquired_date %} which I acquired {% if book.acquired_date == book.ebook_acquired_date %} at the same time{% else %} on {{ book.ebook_acquired_date.strftime("%d %B, %Y") }}{% endif %}{% endif %}
-              {%- endif %}.
+
+              {% for edition in book.ancestor_editions %}
+                This is part of {{ book_link(edition) }}; {{ edition_details(edition) }}
+              {% endfor %}
             </p>
           {% endif %}
         </div>
