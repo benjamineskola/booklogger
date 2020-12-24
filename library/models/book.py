@@ -769,11 +769,17 @@ class Book(models.Model):
 
     @property
     def owned(self) -> bool:
-        return self.owned_by is not None and self.owned_by.username == "ben"
+        return (self.owned_by is not None and self.owned_by.username == "ben") or any(
+            [ancestor.owned for ancestor in self.ancestor_editions]
+        )
 
     @property
     def owned_by_sara(self) -> bool:
-        return self.owned_by is not None and self.owned_by.username == "sara"
+        return (
+            self.owned_by is not None
+            and self.owned_by.username == "sara"
+            or any([ancestor.owned_by_sara for ancestor in self.ancestor_editions])
+        )
 
     @property
     def search_query(self) -> str:
