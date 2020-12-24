@@ -8,6 +8,7 @@
 {% else %}
   I {% if book.owned or book.parent_owned %}own{% elif book.was_borrowed %}borrowed{% else %}owned{% endif %}
 {% endif %}
+
 a{% if book.get_edition_format_display().lower()[0] in ["a", "e", "i", "o", "u"] %}n{% endif %} {{ book.get_edition_format_display().lower() }} edition
 {%- if book.was_borrowed %} from {{ book.borrowed_from }}{% endif -%}
 {%- if book.acquired_date or book.alienated_date %} which I
