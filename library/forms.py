@@ -63,6 +63,9 @@ class BookForm(ModelForm):
                     timezone.now().year + 1,
                 )
             ),
+            "ebook_acquired_date": SelectDateWidget(
+                years=range(2011, timezone.now().year + 1)
+            ),
             "publisher": Select(
                 choices=[("", "---------")]
                 + list(

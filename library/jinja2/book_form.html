@@ -147,22 +147,22 @@
         $('#id_tags').val({{ form.instance.tags | json | safe }});
         $('#id_tags').trigger("change");
         {% endif %}
-        $('#id_acquired_date_day, #id_alienated_date_day').select2({
+        $('#id_acquired_date_day, #id_alienated_date_day, #id_ebook_acquired_date_day').select2({
           theme: 'bootstrap',
           width: '5em',
         });
-        $('#id_acquired_date_month, #id_alienated_date_month').select2({
+        $('#id_acquired_date_month, #id_alienated_date_month, #id_ebook_acquired_date_month').select2({
           theme: 'bootstrap',
           width: '9em',
         });
-        $('#id_acquired_date_year, #id_alienated_date_year').select2({
+        $('#id_acquired_date_year, #id_alienated_date_year, #id_ebook_acquired_date_year').select2({
           theme: 'bootstrap',
           tags: true,
           width: '6em',
         });
 
-        $('#id_acquired_date_month, #id_alienated_date_month').parent().addClass('form-row')
-        $('#id_acquired_date_month, #id_alienated_date_month').parent().find('span').each(function(){ $(this).addClass('mr-2') })
+        $('#id_acquired_date_month, #id_alienated_date_month, #id_ebook_acquired_date_month').parent().addClass('form-row')
+        $('#id_acquired_date_month, #id_alienated_date_month, #id_ebook_acquired_date_month').parent().find('span').each(function(){ $(this).addClass('mr-2') })
 
         $("#card-bookauthor_set .card-footer a").on("click", add_author);
         $("#card-readinglistentry_set .card-footer a").on("click", add_listentry);
