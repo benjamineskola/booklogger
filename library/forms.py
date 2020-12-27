@@ -75,6 +75,15 @@ class BookForm(ModelForm):
                     .distinct("publisher")
                 )
             ),
+            "series": Select(
+                choices=[("", "---------")]
+                + list(
+                    Book.objects.exclude(series="")
+                    .order_by("series")
+                    .values_list("series", "series")
+                    .distinct("series")
+                )
+            ),
             "tags": SelectMultiple(choices=Tag.objects.values_list("name", "name")),
         }
 
