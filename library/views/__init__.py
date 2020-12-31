@@ -75,6 +75,7 @@ def _stats_for_queryset(books):
     result = {
         "count": books.count(),
         "pages": books.page_count,
+        "average_pages": books.page_count / max(1, books.count()),
         "both": {
             "count": books.by_multiple_genders().count(),
             "pages": books.by_multiple_genders().page_count,
