@@ -91,7 +91,7 @@ def _stats_for_queryset(books):
         "poc": {
             "count": poc.count(),
             "pages": poc.page_count,
-            "percent": poc.count() / books.count() * 100,
+            "percent": poc.count() / max(1, books.count()) * 100,
         },
         "breakdowns": {"gender": {}, "genre": {}},
     }
