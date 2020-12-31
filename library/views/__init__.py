@@ -225,7 +225,7 @@ def stats_for_year(request, year):
         for target in [26, 39, 52, 78, 104, 208]:
             if target > current_year_count:
                 prediction["target_counts"][target] = (
-                    (target - current_year_count) / remaining_days * 7
+                    (target - current_year_count) / max(1, remaining_days) * 7
                 )
             if len(prediction["target_counts"].keys()) >= 3:
                 break
