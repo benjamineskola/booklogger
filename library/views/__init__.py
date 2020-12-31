@@ -243,6 +243,7 @@ def stats_for_year(request, year):
             "current_week": current_week,
             "result": result,
             "prediction": prediction,
+            "all_time_average_pages": read_books.page_count / read_books.count(),
         },
     )
 
