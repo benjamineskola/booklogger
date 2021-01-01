@@ -219,7 +219,9 @@ def stats_for_year(request, year):
         current_year_count = books.filter(
             log_entries__end_date__year=current_year
         ).count()
-        prediction["predicted_count"] = current_year_count / current_day * year_days
+        prediction["predicted_count"] = (
+            current_year_count / max(1, current_day) * year_days
+        )
 
         remaining_days = year_days - current_day
         prediction["target_counts"] = {}
