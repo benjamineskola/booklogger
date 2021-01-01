@@ -76,6 +76,10 @@ def _stats_for_queryset(books):
         "count": books.count(),
         "pages": books.page_count,
         "average_pages": books.page_count / max(1, books.count()),
+        "shortest_book": books.order_by("page_count").first(),
+        "longest_book": books.exclude(page_count__isnull=True)
+        .order_by("page_count")
+        .last(),
         "both": {
             "count": books.by_multiple_genders().count(),
             "pages": books.by_multiple_genders().page_count,
