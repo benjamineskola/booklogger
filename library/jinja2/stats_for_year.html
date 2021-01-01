@@ -48,7 +48,7 @@
           {% endif %}
           {{ result["fiction"]["pages"] | intcomma }} ({{ result["fiction"]["pages_percent"] | round_trunc(2) }}%) were fiction;
           {{ result["nonfiction"]["pages"] | intcomma }} ({{ result["nonfiction"]["pages_percent"] | round_trunc(2) }}%) were non-fiction.
-          The average pagecount was {{ result["average_pages"] | round_trunc(2) }}. {% if year != "total" %}That's {% if result["average_pages"] > all_time_average_pages %}more{% else %}less{% endif %} than the all-time average ({{ all_time_average_pages | round_trunc(2) }}).{% endif %}
+          The average pagecount was {{ result["average_pages"] | round_trunc(2) }}. {% if year != "total" %}That's {% if result["average_pages"] > all_time_average_pages %}more{% else %}less{% endif %} than the all-time average ({{ all_time_average_pages | round_trunc(2) }}). {% if year == current_year %}Need to read books of at least {{ all_time_average_pages - ((result["average_pages"] - all_time_average_pages) * result["count"]) | round_trunc(2) }} pages to beat the average.{% endif %}{% endif %}
         </p>
         <p>
           {{ result["fiction"]["count"] }} were <a href="{{ url_base }}?tags=fiction">fiction</a>,
