@@ -75,7 +75,8 @@ def _stats_for_queryset(books):
     result = {
         "count": books.count(),
         "pages": books.page_count,
-        "average_pages": books.page_count / max(1, books.count()),
+        "average_pages": books.page_count
+        / max(1, books.exclude(page_count__isnull=True).count()),
         "shortest_book": books.order_by("page_count").first(),
         "longest_book": books.exclude(page_count__isnull=True)
         .order_by("page_count")
@@ -249,7 +250,8 @@ def stats_for_year(request, year):
             "current_week": current_week,
             "result": result,
             "prediction": prediction,
-            "all_time_average_pages": read_books.page_count / read_books.count(),
+            "all_time_average_pages": read_books.page_count
+            / read_books.exclude(page_count__isnull=True).count(),
         },
     )
 
