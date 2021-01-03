@@ -203,14 +203,19 @@ def stats_index(request):
 
 def stats_for_year(request, year):
     books = Book.objects.all()
-    read_books = books.read()
 
     if year == "total":
+        read_books = books.read()
         result = _stats_for_queryset(read_books)
     else:
         if year == "sometime":
             year = 1
-        result = _stats_for_queryset(books.filter(log_entries__end_date__year=year))
+        read_books = Book.objects.filter(
+            id__in=LogEntry.objects.filter(end_date__year=year).values_list(
+                "book", flat=True
+            )
+        )
+        result = _stats_for_queryset(read_books)
         result["acquired"] = books.filter(acquired_date__year=year).count()
 
     current_year = timezone.now().year
