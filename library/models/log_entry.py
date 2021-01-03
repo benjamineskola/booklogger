@@ -71,6 +71,8 @@ class LogEntry(models.Model):
     progress_page = models.PositiveSmallIntegerField(default=0)
     progress_date = models.DateTimeField(db_index=True, default=timezone.now)
 
+    exclude_from_stats = models.BooleanField(default=False)
+
     class DatePrecision(models.IntegerChoices):
         DAY = 0
         MONTH = 1
