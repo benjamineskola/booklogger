@@ -259,8 +259,8 @@ def stats_for_year(request, year):
             "current_week": current_week,
             "result": result,
             "prediction": prediction,
-            "all_time_average_pages": read_books.page_count
-            / max(1, read_books.exclude(page_count__isnull=True).count()),
+            "all_time_average_pages": books.read().page_count
+            / max(1, books.read().exclude(page_count__isnull=True).count()),
         },
     )
 
