@@ -18,7 +18,7 @@
           {% if result["nonbinary"]["count"] %}
             There were also {{ result["nonbinary"]["count"] }} ({{ result["nonbinary"]["percent"] | round_trunc(2) }}%) by <a href="{{ url_base }}?gender=nonbinary">nonbinary people</a>.
           {% endif %}
-          {% if result["both"] or result["organisations"] %}
+          {% if result["both"]["count"] or result["organisations"]["count"] %}
             (
             {%- if result["both"]["count"] -%}
               {{ result["both"]["count"] }} ({{ result["both"]["percent"] | round_trunc(2) }}%) of those were by multiple authors of different genders
