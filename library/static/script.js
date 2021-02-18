@@ -4,14 +4,8 @@ $(document).ready(function () {
   $("form.update-progress").on("submit", update_progress);
   $("span.rating-star").on("click", rate_book);
 
-  document.years_loading = 0;
   $("div.stats-for-year").each(function (i, e) {
-    if (typeof document.years_loading === undefined) {
-      document.years_loading = {};
-    }
-    document.years_loading += 1;
-
-    return load_stats_for_year(i, e, true);
+    return load_stats_for_year(e);
   });
 });
 
@@ -46,25 +40,18 @@ function load_next_page(year, url) {
   });
 }
 
-function load_stats_for_year(i, e, update_counts) {
-  var year = $(e).data("year");
+function load_stats_for_year(e) {
+  var div = $(e);
+  var year = div.data("year");
 
   $.ajax({
     type: "GET",
     url: `/stats/${year}`,
     success: function (data) {
-      $(e).html(data);
-
-      if (update_counts) {
-        document.years_loading -= 1;
-
-        if (document.years_loading === 0) {
-          $("#loading-stats").remove();
-        }
-      }
+      div.html(data);
     },
     error: function (data) {
-      $(e).html(`
+      div.html(`
           <hr>
           <div id="error-${year}" class="alert alert-danger">
             <i class="exclamation circle icon"></i>
@@ -75,16 +62,8 @@ function load_stats_for_year(i, e, update_counts) {
           </div>
 `);
       $(`#error-${year} .button`).on("click", function () {
-        return load_stats_for_year(0, e, false);
+        return load_stats_for_year(e);
       });
-
-      if (update_counts) {
-        document.years_loading -= 1;
-
-        if (document.years_loading === 0) {
-          $("#loading-stats").remove();
-        }
-      }
     },
   });
 }
