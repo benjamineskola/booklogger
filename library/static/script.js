@@ -52,7 +52,6 @@ function load_stats_for_year(e) {
     },
     error: function (data) {
       div.html(`
-          <hr>
           <div id="error-${year}" class="alert alert-danger">
             <i class="exclamation circle icon"></i>
             <div class="content">
@@ -61,7 +60,12 @@ function load_stats_for_year(e) {
             </div>
           </div>
 `);
-      $(`#error-${year} .button`).on("click", function () {
+      $(`#error-${year} .btn`).on("click", function () {
+        div.html(`
+          <div id="loading-stats-${year}" class="spinner-grow mb-4" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+        `);
         return load_stats_for_year(e);
       });
     },
