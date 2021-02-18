@@ -48,6 +48,7 @@ function load_stats_for_year(e) {
     type: "GET",
     url: `/stats/${year}`,
     success: function (data) {
+      $(".spinner-grow").show();
       div.html(data);
     },
     error: function (data) {
