@@ -43,7 +43,7 @@
           {% endif %}
           <br>
           There was a total pagecount of {{ result["pages"] | intcomma }}: {{ result["men"]["pages"] | intcomma }} ({{ result["men"]["pages_percent"] | round_trunc(2) }}%) by men, and {{ result["women"]["pages"] | intcomma }} ({{ result["women"]["pages_percent"] | round_trunc(2) }}%) by women. 
-          {% if result["nonbinary"] %}
+          {% if result["nonbinary"]["pages"] %}
             There were also {{ result["nonbinary"]["pages"] | intcomma }} ({{ result["nonbinary"]["pages_percent"] | round_trunc(2) }}%) by nonbinary people.
           {% endif %}
           {{ result["fiction"]["pages"] | intcomma }} ({{ result["fiction"]["pages_percent"] | round_trunc(2) }}%) were fiction;
