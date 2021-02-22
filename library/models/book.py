@@ -604,7 +604,7 @@ class Book(models.Model):
         return percentage
 
     def mark_read_sometime(self) -> None:
-        self.log_entries.create(start_date=None, end_date="0001-01-01 00:00")
+        self.log_entries.create(start_date=None, end_date="0001-01-01 00:00", end_precision=2)
 
     def mark_owned(self) -> None:
         self.owned_by = User.objects.get(username="ben")
