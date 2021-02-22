@@ -476,7 +476,7 @@ class Book(models.Model):
         else:
             result = oxford_comma([str(author) for author in self.authors])
 
-        result += ", " + self.display_title
+        result += ", _" + self.display_title + "_"
 
         if (
             self.editions.count()
