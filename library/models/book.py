@@ -553,6 +553,25 @@ class Book(models.Model):
         else:
             return "n.d."
 
+    @property
+    def note_title(self) -> str:
+        title = ""
+        for author in self.authors:
+            if len(self.authors) > 1 and author == self.authors[-1]:
+                title += "and "
+            title += author.name_sortable
+            if len(self.authors) > 1 and author != self.authors[-1]:
+                title += ", "
+
+        title += " (" + self.display_date.replace("] ", "/").strip("[") + "), "
+
+        if self.edition_title:
+            title += self.edition_title.replace(":", ",")
+        else:
+            title += self.title.replace(":", ",")
+
+        return title
+
     def add_author(
         self, author: "Author", role: str = "", order: Optional[int] = None
     ) -> None:

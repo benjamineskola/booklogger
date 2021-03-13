@@ -135,8 +135,7 @@
     {% endif %}
 
     {% if user.is_authenticated %}
-      <a href="bear://x-callback-url/open-note?title={{ book.first_author.name_sortable }}%20({{ book.display_date | replace("] ", "/") | replace("[", "") }}),%20{{ book.display_title }}">🗒️</a>
-      <a href="bear://x-callback-url/create?title={{ book.first_author.name_sortable }}%20({{ book.display_date | replace("] ", "/") | replace("[", "") }}),%20{{ book.display_title }}&text=[[{{ book.first_author.full_name }}]]&tags=reading/reading%20notes,zk/people/{{ book.first_author.surname.lower() }}">📝</a>
+      <a href="bear://x-callback-url/open-note?title={{ book.note_title }}&x-error=bear://x-callback-url/create%3ftitle%3d{{ book.note_title | replace(' ', '%2520') }}%26text%3dAuthor:%2520{% set joiner = joiner(", ")%}{% for author in book.authors %}{{ joiner() }}[[{{ author.full_name | replace(' ', '%2520') }}]]{% endfor %}%26tags%3dreading/reading%2520notes{% for author in book.authors %},zk/people/{{ author.surname.lower() | replace(' ', '')}}{% endfor %}">📝</a>
       <a class="small dropdown-toggle" data-toggle="collapse" data-target="#collapse-logupdate-{{ book.id}}{% if entry and entry.start_date %}-{{ entry.start_date.date() }}{% endif %}" role="button">Update</a>
       <div class="collapse" id="collapse-logupdate-{{book.id}}{% if entry and entry.start_date %}-{{ entry.start_date.date() }}{% endif %}">
         {% include "books/update_form_snippet.html" %}
