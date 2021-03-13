@@ -114,6 +114,13 @@ class Author(models.Model):
         else:
             return self.surname
 
+    @property
+    def name_sortable(self) -> str:
+        if self.forenames:
+            return self.surname + ", " + self.forenames
+        else:
+            return self.surname
+
     def get_absolute_url(self) -> str:
         return reverse("library:author_details", args=[str(self.slug)])
 
