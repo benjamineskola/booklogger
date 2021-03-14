@@ -563,7 +563,7 @@ class Book(models.Model):
             if len(self.authors) > 1 and author != self.authors[-1]:
                 title += ", "
 
-        title += " (" + self.display_date.replace("] ", "/").strip("[") + "), "
+        title += f" ({self.first_published}), "
 
         if self.edition_title:
             title += self.edition_title.replace(":", ",")
