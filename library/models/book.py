@@ -6,7 +6,6 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 from urllib.parse import quote
 
 import requests
-import unidecode
 import xmltodict
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField
@@ -23,6 +22,7 @@ from django.db.models.functions import Lower
 from django.db.models.indexes import Index
 from django.urls import reverse
 from django.utils import timezone
+from stripunicode import stripunicode
 
 from library.signals import update_timestamp_on_save
 from library.utils import LANGUAGES, isbn_to_isbn10, oxford_comma, str2bool
@@ -740,7 +740,7 @@ class Book(models.Model):
     def _generate_slug(self) -> str:
         if self.first_author:
             slug = self.first_author.surname.lower().replace(" ", "-")
-            slug = unidecode.unidecode(slug)
+            slug = stripunicode(slug)
             slug = re.sub(r"[^\w-]", "", slug)
             slug += "-"
         else:
@@ -766,7 +766,7 @@ class Book(models.Model):
         title_words = title.split(":")[0].lower().split()
         title_words = [word for word in title_words if word not in stopwords]
 
-        slug += re.sub(r"[^\w-]+", "", unidecode.unidecode("-".join(title_words)))
+        slug += re.sub(r"[^\w-]+", "", stripunicode("-".join(title_words)))
 
         slug = slug[0:50].strip("-")
         matches = Book.objects.filter(slug=slug).exclude(pk=self.id)

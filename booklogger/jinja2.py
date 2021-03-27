@@ -2,7 +2,6 @@ import json
 import urllib.parse
 
 import commonmark
-import unidecode
 from crispy_forms.templatetags.crispy_forms_filters import as_crispy_field
 from django.contrib.humanize.templatetags.humanize import intcomma, ordinal
 from django.templatetags.static import static
@@ -32,7 +31,6 @@ def environment(**options):
             "oxford_comma": oxford_comma,
             "round_trunc": round_trunc,
             "crispy": as_crispy_field,
-            "unidecode": lambda text: unidecode.unidecode(text),
             "quote": lambda text: urllib.parse.quote(text),
         }
     )

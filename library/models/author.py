@@ -1,7 +1,6 @@
 import re
 from typing import Any, MutableMapping, Set, Tuple
 
-import unidecode
 from django.contrib.postgres.search import TrigramSimilarity
 from django.db import models
 from django.db.models import F, Q, signals
@@ -9,6 +8,7 @@ from django.db.models.functions import Lower
 from django.db.models.indexes import Index
 from django.urls import reverse
 from django.utils import timezone
+from stripunicode import stripunicode
 
 from library.signals import update_timestamp_on_save
 from library.utils import LANGUAGES
@@ -220,7 +220,7 @@ class Author(models.Model):
         slug = "-".join(
             [word for word in words if word not in ["von", "van", "der", "le", "de"]]
         )
-        slug = unidecode.unidecode(slug)
+        slug = stripunicode(slug)
         slug = re.sub(r"[^\w-]+", "", slug)
 
         slug = slug[0:50].strip("-")

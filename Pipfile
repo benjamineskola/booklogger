@@ -27,10 +27,10 @@ xmltodict = "*"
 Django = "*"
 Jinja2 = "*"
 PyYAML = "*"
-Unidecode = "*"
 dj-database-url = "*"
 bs4 = "*"
 django-crispy-forms = "*"
+stripunicode = {git = "https://gitlab.com/benjamineskola/stripunicode"}
 
 [requires]
 python_version = "3.8"

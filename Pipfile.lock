@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "c3919ba8a27831dd06408bd3468bf18a9210c749642f1d629b18cade7b463e0d"
+            "sha256": "a4a61e6da54563563cbab2bb69f5f4c6d86e6e0c7280ff8474a2daf42e320d88"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -400,13 +400,9 @@
             "markers": "python_version >= '3.5'",
             "version": "==0.4.1"
         },
-        "unidecode": {
-            "hashes": [
-                "sha256:12435ef2fc4cdfd9cf1035a1db7e98b6b047fe591892e81f34e94959591fad00",
-                "sha256:8d73a97d387a956922344f6b74243c2c6771594659778744b2dbdaad8f6b727d"
-            ],
-            "index": "pypi",
-            "version": "==1.2.0"
+        "stripunicode": {
+            "git": "https://gitlab.com/benjamineskola/stripunicode",
+            "ref": "bde4390592a12dbaa997e7f8ecd7a404f2c73724"
         },
         "urllib3": {
             "hashes": [
