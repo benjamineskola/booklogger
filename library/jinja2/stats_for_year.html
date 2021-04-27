@@ -37,7 +37,7 @@
             {% if prediction["target_counts"] %}
               <br>
               {% for target, target_count in prediction["target_counts"].items() %}
-                To reach {{ target }} books I'd have to read {{ target_count | round_trunc(1) }} per week.
+                To reach {{ target }} books I'd have to read {{ target_count | round_trunc(1) }} per week (1 every {{ (1 / target_count * 7) | round_trunc(1) }} days).
               {% endfor %}
             {% endif %}
           {% endif %}
