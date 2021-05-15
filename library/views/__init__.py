@@ -239,6 +239,9 @@ def stats_for_year(request, year):
             current_year_count / max(1, current_day) * year_days
         )
 
+        result["pages_per_day"] = result["pages"] / current_day
+        result["predicted_pages"] = result["pages_per_day"] * year_days
+
         remaining_days = year_days - current_day
         prediction["target_counts"] = {}
         for target in [26, 39, 52, 78, 104, 208]:
@@ -249,6 +252,10 @@ def stats_for_year(request, year):
             if len(prediction["target_counts"].keys()) >= 3:
                 break
     else:
+        if year != "total" and year != "sometime":
+            result["pages_per_day"] = result["pages"] / (
+                366 if int(year) % 4 == 0 else 365
+            )
         current_week = 52
 
     return render(
