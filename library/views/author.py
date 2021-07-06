@@ -6,7 +6,7 @@ from library.forms import AuthorForm
 from library.models import Author
 
 
-class DetailView(generic.DetailView):
+class DetailView(LoginRequiredMixin, generic.DetailView):
     model = Author
 
     def get_context_data(self, **kwargs):
@@ -15,7 +15,7 @@ class DetailView(generic.DetailView):
         return context
 
 
-class IndexView(generic.ListView):
+class IndexView(LoginRequiredMixin, generic.ListView):
     model = Author
     paginate_by = 100
 

@@ -22,7 +22,7 @@ from library.models import Book, LogEntry, Tag
 from library.utils import oxford_comma
 
 
-class IndexView(generic.ListView):
+class IndexView(LoginRequiredMixin, generic.ListView):
     paginate_by = 100
 
     filter_by = {}
@@ -227,7 +227,7 @@ class UnreviewedView(IndexView):
         return super().get_queryset().filter(review="").read()
 
 
-class DetailView(generic.DetailView):
+class DetailView(LoginRequiredMixin, generic.DetailView):
     model = Book
 
     def get_context_data(self, **kwargs):
@@ -237,7 +237,7 @@ class DetailView(generic.DetailView):
         return context
 
 
-class GenericLogView(generic.ListView):
+class GenericLogView(LoginRequiredMixin, generic.ListView):
     context_object_name = "entries"
 
     filter_by = {}
