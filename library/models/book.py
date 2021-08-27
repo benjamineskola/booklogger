@@ -236,7 +236,7 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
         if meta_tag:
             image_url = re.search(r"https://.*\.jpg", meta_tag[0])
             if image_url and ("nophoto" not in image_url[0]):
-                return image_url[0]
+                return str(image_url[0])
 
         return ""
 
