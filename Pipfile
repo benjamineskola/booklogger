@@ -14,6 +14,7 @@ mypy-extensions = "*"
 pep8-naming = "*"
 pytest-django = "*"
 pytest-factoryboy = "*"
+types-requests = "*"
 
 [packages]
 bpython = "*"
@@ -22,7 +23,6 @@ django-extensions = "*"
 django-heroku = "*"
 gunicorn = "*"
 psycopg2 = "*"
-requests = "*"
 xmltodict = "*"
 Django = "*"
 Jinja2 = "*"
@@ -31,6 +31,7 @@ dj-database-url = "*"
 bs4 = "*"
 django-crispy-forms = "*"
 stripunicode = {git = "https://gitlab.com/benjamineskola/stripunicode"}
+requests = "*"
 
 [requires]
 python_version = "3.8"
