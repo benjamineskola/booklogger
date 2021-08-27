@@ -1,4 +1,4 @@
-# booklogger [![travis-ci](https://gitlab.com/benjamineskola/booklogger/badges/main/pipeline.svg)](https://gitlab.com/benjamineskola/booklogger/-/commits/main)
+# booklogger [![GitHub Actions](https://github.com/benjamineskola/booklogger/actions/workflows/main.yml/badge.svg)](https://github.com/benjamineskola/booklogger/)
 
 Track the books I own and read
 
