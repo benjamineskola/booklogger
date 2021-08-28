@@ -182,10 +182,10 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
 
         if query:
             if len(query) == 13 and query.startswith("978"):
-                self.isbn = query
+                book.isbn = query
             elif re.match(r"^B[A-Z0-9]{9}$", query):
-                self.asin = query
-                self.edition_format = Book.Format.EBOOK
+                book.asin = query
+                book.edition_format = Book.Format.EBOOK
 
         book.save()
 
