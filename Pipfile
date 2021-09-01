@@ -16,6 +16,7 @@ pytest-django = "*"
 pytest-factoryboy = "*"
 types-requests = "*"
 pytest-cov = "*"
+lxml = "*"
 
 [packages]
 bpython = "*"
