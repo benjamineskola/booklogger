@@ -15,6 +15,7 @@ pep8-naming = "*"
 pytest-django = "*"
 pytest-factoryboy = "*"
 types-requests = "*"
+pytest-cov = "*"
 
 [packages]
 bpython = "*"
