@@ -1,2 +1,11 @@
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "booklogger.settings"
+addopts = "--nomigrations --cov=booklogger --cov=library --cov-report term-missing:skip-covered"
+
+[tool.coverage.report]
+omit = [
+        "*/settings.py",
+        "*/urls.py",
+        "booklogger/?sgi.py",
+        "library/migrations/*",
+    ]
