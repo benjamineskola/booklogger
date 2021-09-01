@@ -61,3 +61,6 @@ jobs:
       - name: Test with pytest
         run: |
           pipenv run pytest
+      - name: Check code coverage
+        run: |
+          pipenv run ./scripts/check-coverage.py
