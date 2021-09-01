@@ -27,7 +27,6 @@ jobs:
 
     env:
       DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/github_actions
-      PIPENV_VENV_IN_PROJECT: enabled
 
     steps:
       - uses: actions/checkout@v2
@@ -36,31 +35,31 @@ jobs:
         with:
           python-version: 3.9
         id: setup-python
-      - name: Install pipenv
+      - name: Install poetry
         run: |
           python -m pip install --upgrade pip
-          pip install pipenv
+          pip install poetry
       - uses: actions/cache@v2
         with:
-          path: ./.venv
-          key: ${{ runner.os }}-python-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('Pipfile.lock') }}
+          path: ~/.cache/pypoetry/virtualenvs
+          key: ${{ runner.os }}-python-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('poetry.lock') }}
         id: cache
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
-          pipenv install --dev
+          poetry install
       - name: Lint with curlylint
         run: |
-          pipenv run find library/jinja2/ -name '*.html' -exec curlylint --rule 'indent: 2' {} +
+          poetry run find library/jinja2/ -name '*.html' -exec curlylint --rule 'indent: 2' {} +
       - name: Lint with flake8
         run: |
-          pipenv run flake8
+          poetry run flake8
       - name: Lint with mypy
         run: |
-          pipenv run mypy --show-error-codes -m library.models  -m library.utils -m library.forms
+          poetry run mypy --show-error-codes -m library.models  -m library.utils -m library.forms
       - name: Test with pytest
         run: |
-          pipenv run pytest
+          poetry run pytest
       - name: Check code coverage
         run: |
-          pipenv run ./scripts/check-coverage.py
+          poetry run ./scripts/check-coverage.py

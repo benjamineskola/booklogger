@@ -10,3 +10,47 @@ omit = [
 
 [tool.github-coverage-action]
 threshold = 40
+
+[tool.poetry]
+name = "booklogger"
+version = "0.1.0"
+description = ""
+authors = ["Benjamin Eskola <ben@eskola.uk>"]
+license = "CC-BY-NC"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+bpython = "*"
+bs4 = "*"
+commonmark = "*"
+dj-database-url = "*"
+Django = "*"
+django-crispy-forms = "*"
+django-extensions = "*"
+django-heroku = "*"
+gunicorn = "*"
+Jinja2 = "*"
+psycopg2 = "*"
+PyYAML = "*"
+requests = "*"
+stripunicode = {git = "https://github.com/benjamineskola/stripunicode", branch = "main"}
+xmltodict = "*"
+
+[tool.poetry.dev-dependencies]
+curlylint = "*"
+django-stubs = "*"
+flake8 = "*"
+flake8-bugbear = "*"
+flake8-docstrings = "*"
+lxml = "*"
+mypy = "*"
+mypy-extensions = "*"
+pep8-naming = "*"
+pytest-cov = "*"
+pytest-django = "*"
+pytest-factoryboy = "*"
+types-requests = "*"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
