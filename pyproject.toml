@@ -13,6 +13,26 @@ omit = [
 [tool.github-coverage-action]
 threshold = 40
 
+[tool.mypy]
+check_untyped_defs = true
+disallow_any_generics = true
+disallow_incomplete_defs = true
+disallow_subclassing_any = true
+disallow_untyped_calls = true
+disallow_untyped_decorators = true
+disallow_untyped_defs = true
+ignore_missing_imports = true
+no_implicit_optional = true
+no_implicit_reexport = true
+warn_redundant_casts = true
+warn_return_any = true
+warn_unused_configs = true
+warn_unused_ignores = true
+plugins = ["mypy_django_plugin.main"]
+
+[tool.django-stubs]
+django_settings_module = "booklogger.settings"
+
 [tool.poetry]
 name = "booklogger"
 version = "0.1.0"
@@ -37,10 +57,11 @@ PyYAML = "*"
 requests = "*"
 stripunicode = {git = "https://github.com/benjamineskola/stripunicode", branch = "main"}
 xmltodict = "*"
+django-stubs-ext = "^0.2.0"
 
 [tool.poetry.dev-dependencies]
 curlylint = "*"
-django-stubs = "*"
+django-stubs = { git = "https://github.com/typeddjango/django-stubs.git" }
 flake8 = "*"
 flake8-bugbear = "*"
 flake8-docstrings = "*"
