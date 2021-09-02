@@ -5,6 +5,18 @@ from .book import Book, BookAuthor, BookManager, Tag  # noqa: F401
 from .log_entry import LogEntry  # noqa: F401
 from .reading_list import ReadingList, ReadingListEntry  # noqa: F401
 
+__all__ = [
+    "Author",
+    "AuthorManager",
+    "Book",
+    "BookAuthor",
+    "BookManager",
+    "LogEntry",
+    "ReadingList",
+    "ReadingListEntry",
+    "Tag",
+]
+
 
 # from https://docs.djangoproject.com/en/3.1/howto/custom-lookups/
 class NotEqual(Lookup):  # type: ignore [type-arg]
