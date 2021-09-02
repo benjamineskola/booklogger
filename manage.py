@@ -3,6 +3,10 @@
 import os
 import sys
 
+import django_stubs_ext
+
+django_stubs_ext.monkeypatch()
+
 
 def main():
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "booklogger.settings")
