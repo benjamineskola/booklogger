@@ -1,15 +1,21 @@
 from itertools import groupby
+from typing import Any, Callable, List, Optional, Tuple
 
 from django.db.models import F, Q
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 
 from library.models import Book, Tag
+from library.utils import flatten
 
 
-def report(request, page=None):
-    categories = {}
+def report(request: HttpRequest, page: Optional[str] = None) -> HttpResponse:
+    if page:
+        owned_books = Book.objects.filter(owned_by__isnull=False)
+    else:
+        owned_books = Book.objects.none()
 
-    categories = [
+    categories: List[Tuple[str, Callable[..., Any]]] = [
         (
             "Missing ISBN",
             lambda: owned_books.filter(isbn="")
@@ -116,14 +122,13 @@ def report(request, page=None):
         ),
     ]
 
-    results = None
-
     if page:
-        owned_books = Book.objects.filter(owned_by__isnull=False)
         results = categories[int(page) - 1][1]()
 
-    if order_by := request.GET.get("order_by"):
-        results = results.order_by(order_by)
+        if order_by := request.GET.get("order_by"):
+            results = results.order_by(order_by)
+    else:
+        results = None
 
     return render(
         request,
@@ -132,7 +137,7 @@ def report(request, page=None):
     )
 
 
-def tags(request, base_tag="non-fiction"):
+def tags(request: HttpRequest, base_tag: str = "non-fiction") -> HttpResponse:
     excluded_tags = set(
         [
             base_tag,
@@ -145,7 +150,10 @@ def tags(request, base_tag="non-fiction"):
         excluded_tags |= set(["fiction", "non-fiction"])
 
     books = Tag.objects[base_tag].books.select_related("first_author")
-    toplevel_tags = set(sum(books.values_list("tags", flat=True), [])) - excluded_tags
+    toplevel_tags = (
+        set(flatten([tags for tags in books.values_list("tags", flat=True) if tags]))
+        - excluded_tags
+    )
 
     results = {
         tag: [book for book in books if tag in book.tags] for tag in toplevel_tags
@@ -158,7 +166,7 @@ def tags(request, base_tag="non-fiction"):
     )
 
 
-def related_tags(request, base_tag="non-fiction"):
+def related_tags(request: HttpRequest, base_tag: str = "non-fiction") -> HttpResponse:
     excluded_tags = set(
         [
             base_tag,
@@ -170,17 +178,17 @@ def related_tags(request, base_tag="non-fiction"):
     if base_tag not in ["fiction", "non-fiction"]:
         excluded_tags |= set(["fiction", "non-fiction"])
 
-    books = Tag.objects[base_tag].books
-    toplevel_tags = set(sum(books.values_list("tags", flat=True), [])) - excluded_tags
+    books = Tag.objects[base_tag].books.all()
+    toplevel_tags = (
+        set(flatten(tags for tags in books.values_list("tags", flat=True) if tags))
+        - excluded_tags
+    )
 
     results = {}
     for tag in toplevel_tags:
         tagged_books = [book for book in books if tag in book.tags]
         related_tags = sorted(
-            sum(
-                [book.tags for book in tagged_books],
-                [],
-            )
+            flatten(book.tags for book in tagged_books),
         )
         results[tag] = {
             related_tag: len(list(books))
