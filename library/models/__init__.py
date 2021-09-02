@@ -1,8 +1,8 @@
 from django.db.models import Field, Lookup
 
 from .author import Author, AuthorManager  # noqa: F401
-from .book import Book, BookAuthor, BookManager, Tag  # noqa: F401
-from .log_entry import LogEntry  # noqa: F401
+from .book import Book, BookAuthor, BookManager, BookQuerySet, Tag  # noqa: F401
+from .log_entry import LogEntry, LogEntryQuerySet  # noqa: F401
 from .reading_list import ReadingList, ReadingListEntry  # noqa: F401
 
 __all__ = [
@@ -11,7 +11,9 @@ __all__ = [
     "Book",
     "BookAuthor",
     "BookManager",
+    "BookQuerySet",
     "LogEntry",
+    "LogEntryQuerySet",
     "ReadingList",
     "ReadingListEntry",
     "Tag",

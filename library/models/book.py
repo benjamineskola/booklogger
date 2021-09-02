@@ -264,7 +264,7 @@ class BookQuerySet(models.QuerySet):  # type: ignore [type-arg]
     def tagged(self, *tag_names: str) -> "BookQuerySet":
         qs = self.distinct()
         for tag_name in tag_names:
-            qs &= Tag.objects[tag_name].books
+            qs &= Tag.objects[tag_name].books.all()
         return qs
 
     def fiction(self) -> "BookQuerySet":
@@ -992,18 +992,18 @@ class Tag(models.Model):
             return self.name
 
     @property
-    def books(self) -> "models.Manager[Book]":
+    def books(self) -> "BookQuerySet":
         return Book.objects.filter(tags__contains=[self.name]).distinct()
 
     @property
-    def books_recursive(self) -> "models.Manager[Book]":
+    def books_recursive(self) -> "BookQuerySet":
         books = self.books
         for child in self.children.all():
             books |= child.books_recursive
         return books
 
     @property
-    def books_uniquely_tagged(self) -> "models.Manager[Book]":
+    def books_uniquely_tagged(self) -> "BookQuerySet":
         return Book.objects.filter(
             Q(tags=[self.name])
             | Q(tags=sorted(["fiction", self.name]))
@@ -1038,7 +1038,7 @@ class Tag(models.Model):
         new_tag, created = Tag.objects.get_or_create(name=new_name)
         new_tag.save()
         if created:
-            for parent in self.parents:
+            for parent in self.parents.all():
                 new_tag.parents.add(parent)
             new_tag.save()
 

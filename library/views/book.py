@@ -1,11 +1,12 @@
 import json
 import re
+from typing import Any, Dict
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import F, Q
+from django.db.models import F, Q, QuerySet
 from django.db.models.functions import Lower
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.utils import timezone
@@ -18,21 +19,21 @@ from library.forms import (
     LogEntryFormSet,
     ReadingListEntryFormSet,
 )
-from library.models import Book, LogEntry, Tag
+from library.models import Book, BookQuerySet, LogEntry, LogEntryQuerySet, Tag
 from library.utils import oxford_comma
 
 
-class IndexView(LoginRequiredMixin, generic.ListView):
+class IndexView(LoginRequiredMixin, generic.ListView[Book]):
     paginate_by = 100
 
-    filter_by = {}
+    filter_by: Dict[str, Any] = {}
     sort_by = None
     reverse_sort = False
     page_title = "All Books"
     show_format_filters = False
 
-    def get_queryset(self):
-        books = (
+    def get_queryset(self) -> BookQuerySet:
+        books: BookQuerySet = (
             Book.objects.select_related("first_author")
             .prefetch_related("additional_authors", "log_entries")
             .all()
@@ -74,16 +75,17 @@ class IndexView(LoginRequiredMixin, generic.ListView):
                 if self.sort_by == "read_date":
                     self.sort_by = "log_entries__end_date"
 
-                if self.reverse_sort:
-                    books = books.order_by(
-                        F(self.sort_by).desc(nulls_last=True), *Book._meta.ordering
-                    )
-                else:
-                    books = books.order_by(self.sort_by, *Book._meta.ordering)
+                if ordering := Book._meta.ordering:
+                    if self.reverse_sort:
+                        books = books.order_by(
+                            F(self.sort_by).desc(nulls_last=True), *ordering
+                        )
+                    else:
+                        books = books.order_by(self.sort_by, *ordering)
 
         return books.filter_by_request(self.request).distinct()
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: str) -> Dict[str, str]:
         context = super().get_context_data(**kwargs)
         context["formats"] = Book.Format.choices
         context["format"] = self.kwargs.get("format")
@@ -131,7 +133,7 @@ class BorrowedIndexView(IndexView):
     page_title = "Borrowed Books"
     show_format_filters = True
 
-    def get_queryset(self):
+    def get_queryset(self) -> BookQuerySet:
         books = super().get_queryset()
         books = books.filter(owned_by__username="sara") | books.filter(
             was_borrowed=True
@@ -144,7 +146,7 @@ class UnreadIndexView(IndexView):
     page_title = "To-Read Books"
     show_format_filters = True
 
-    def get_queryset(self):
+    def get_queryset(self) -> BookQuerySet:
         books = (
             super()
             .get_queryset()
@@ -157,13 +159,13 @@ class UnreadIndexView(IndexView):
 class SeriesIndexView(IndexView):
     sort_by = "series_order"
 
-    def get_queryset(self):
+    def get_queryset(self) -> BookQuerySet:
         books = super().get_queryset()
         self.series = self.kwargs["series"].replace("%2f", "/")
         books = books.filter(series=self.series)
         return books
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: str) -> Dict[str, str]:
         context = super().get_context_data(**kwargs)
         context[
             "page_title"
@@ -172,13 +174,13 @@ class SeriesIndexView(IndexView):
 
 
 class PublisherIndexView(IndexView):
-    def get_queryset(self):
+    def get_queryset(self) -> BookQuerySet:
         books = super().get_queryset()
         self.publisher = self.kwargs["publisher"].replace("%2f", "/")
         books = books.filter(publisher=self.publisher)
         return books
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: str) -> Dict[str, str]:
         context = super().get_context_data(**kwargs)
         context[
             "page_title"
@@ -187,7 +189,7 @@ class PublisherIndexView(IndexView):
 
 
 class TagIndexView(IndexView):
-    def get_queryset(self):
+    def get_queryset(self) -> BookQuerySet:
         books = super().get_queryset()
         tags = [tag.strip() for tag in self.kwargs["tag_name"].split(",")]
         if tags == ["untagged"]:
@@ -197,11 +199,11 @@ class TagIndexView(IndexView):
             return tag.books_uniquely_tagged
         else:
             for tag in tags:
-                books &= Tag.objects[tag].books_recursive
+                books &= Tag.objects[tag.name].books_recursive
             return books
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+    def get_context_data(self, **kwargs: str) -> Dict[str, Any]:
+        context: Dict[str, Any] = super().get_context_data(**kwargs)
         context["tags"] = [
             Tag.objects[tag]
             for tag in self.kwargs["tag_name"].split(",")
@@ -216,35 +218,35 @@ class TagIndexView(IndexView):
 class ReviewedView(IndexView):
     page_title = "Reviewed Books"
 
-    def get_queryset(self):
+    def get_queryset(self) -> BookQuerySet:
         return super().get_queryset().exclude(review="")
 
 
 class UnreviewedView(IndexView):
     page_title = "Unreviewed Books"
 
-    def get_queryset(self):
+    def get_queryset(self) -> BookQuerySet:
         return super().get_queryset().filter(review="").read()
 
 
-class DetailView(LoginRequiredMixin, generic.DetailView):
+class DetailView(LoginRequiredMixin, generic.DetailView[Book]):
     model = Book
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: str) -> Dict[str, str]:
         context = super().get_context_data(**kwargs)
         book = self.get_object()
         context["page_title"] = book.display_title + " by " + str(book.first_author)
         return context
 
 
-class GenericLogView(LoginRequiredMixin, generic.ListView):
+class GenericLogView(LoginRequiredMixin, generic.ListView[LogEntry]):
     context_object_name = "entries"
 
-    filter_by = {}
+    filter_by: Dict[str, Any] = {}
     page_title = ""
 
-    def get_queryset(self, *args, **kwargs):
-        entries = (
+    def get_queryset(self) -> LogEntryQuerySet:
+        entries: LogEntryQuerySet = (
             LogEntry.objects.select_related("book", "book__first_author")
             .prefetch_related("book__additional_authors", "book__log_entries")
             .all()
@@ -256,7 +258,7 @@ class GenericLogView(LoginRequiredMixin, generic.ListView):
 
         if year := self.kwargs.get("year"):
             if self.request.GET.get("infinite") == "true":
-                self.page_title = None
+                self.page_title = ""
             if year == "sometime" or str(year) == "1":
                 ordering = [
                     Lower(F("book__first_author__surname")),
@@ -271,7 +273,7 @@ class GenericLogView(LoginRequiredMixin, generic.ListView):
 
         return entries.filter_by_request(self.request).distinct()
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs: str) -> Dict[str, str]:
         context = super().get_context_data(**kwargs)
         context["page_title"] = self.page_title
         context["year"] = self.kwargs.get("year")
@@ -282,20 +284,16 @@ class CurrentlyReadingView(GenericLogView):
     filter_by = {"end_date__isnull": True}
     page_title = "Currently Reading"
 
-    def get_queryset(self, *args, **kwargs):
-        return (
-            super()
-            .get_queryset(*args, **kwargs)
-            .order_by("-progress_date", "start_date")
-        )
+    def get_queryset(self) -> LogEntryQuerySet:
+        return super().get_queryset().order_by("-progress_date", "start_date")
 
 
 class ReadView(GenericLogView):
     filter_by = {"end_date__isnull": False}
     page_title = "Read Books"
 
-    def get_queryset(self, *args, **kwargs):
-        entries = super().get_queryset(*args, **kwargs)
+    def get_queryset(self) -> LogEntryQuerySet:
+        entries = super().get_queryset()
         if entries:
             year = entries.last().end_date.year
             return entries.filter(end_date__year=year)
@@ -308,7 +306,7 @@ class MarkdownReadView(GenericLogView):
     content_type = "text/plain; charset=utf-8"
     filter_by = {"end_date__isnull": False}
 
-    def get_queryset(self, *args, **kwargs):
+    def get_queryset(self) -> LogEntryQuerySet:
         return (
             super()
             .get_queryset()
@@ -329,7 +327,7 @@ class XmlReadView(GenericLogView):
     content_type = "application/xml; charset=utf-8"
     filter_by = {"end_date__isnull": False}
 
-    def get_queryset(self, *args, **kwargs):
+    def get_queryset(self, *args: Any, **kwargs: Any) -> LogEntryQuerySet:
         return (
             super()
             .get_queryset()
@@ -346,7 +344,7 @@ class XmlReadView(GenericLogView):
 
 @login_required
 @require_POST
-def start_reading(request, slug):
+def start_reading(request: HttpRequest, slug: str) -> HttpResponse:
     book = get_object_or_404(Book, slug=slug)
     book.start_reading()
     return redirect("library:book_details", slug=slug)
@@ -354,7 +352,7 @@ def start_reading(request, slug):
 
 @login_required
 @require_POST
-def finish_reading(request, slug):
+def finish_reading(request: HttpRequest, slug: str) -> HttpResponse:
     book = get_object_or_404(Book, slug=slug)
     book.finish_reading()
     return redirect("library:book_details", slug=slug)
@@ -362,14 +360,14 @@ def finish_reading(request, slug):
 
 @login_required
 @require_POST
-def update_progress(request, slug):
+def update_progress(request: HttpRequest, slug: str) -> HttpResponse:
     book = get_object_or_404(Book, slug=slug)
 
     if request.POST["progress_type"] == "pages":
         page = int(request.POST["value"])
-        percentage = None
+        percentage = 0.0
     else:
-        page = None
+        page = 0
         percentage = float(request.POST["value"])
 
     percentage = book.update_progress(percentage=percentage, page=page)
@@ -388,9 +386,9 @@ def update_progress(request, slug):
 
 @login_required
 @require_POST
-def add_tags(request, slug):
+def add_tags(request: HttpRequest, slug: str) -> HttpResponse:
     book = get_object_or_404(Book, slug=slug)
-    tags = request.POST.get("tags").split(",")
+    tags = request.POST.get("tags", "").split(",")
 
     if tags:
         start_tags = book.tags.copy()
@@ -403,9 +401,9 @@ def add_tags(request, slug):
 
 @login_required
 @require_POST
-def remove_tags(request, slug):
+def remove_tags(request: HttpRequest, slug: str) -> HttpResponse:
     book = get_object_or_404(Book, slug=slug)
-    tags = request.POST.get("tags").split(",")
+    tags = request.POST.get("tags", "").split(",")
     for tag in tags:
         book.tags.remove(tag)
     book.save()
@@ -418,7 +416,7 @@ def remove_tags(request, slug):
 
 @login_required
 @require_POST
-def mark_owned(request, slug):
+def mark_owned(request: HttpRequest, slug: str) -> HttpResponse:
     book = get_object_or_404(Book, slug=slug)
     book.mark_owned()
     return redirect("library:book_details", slug=slug)
@@ -426,7 +424,7 @@ def mark_owned(request, slug):
 
 @login_required
 @require_POST
-def mark_read_sometime(request, slug):
+def mark_read_sometime(request: HttpRequest, slug: str) -> HttpResponse:
     book = get_object_or_404(Book, slug=slug)
     book.mark_read_sometime()
     return redirect("library:book_details", slug=slug)
@@ -434,7 +432,7 @@ def mark_read_sometime(request, slug):
 
 @login_required
 @require_POST
-def rate(request, slug):
+def rate(request: HttpRequest, slug: str) -> HttpResponse:
     book = get_object_or_404(Book, slug=slug)
     if rating := request.POST["rating"]:
         book.rating = rating
@@ -446,10 +444,13 @@ def rate(request, slug):
 class CreateOrUpdateView(LoginRequiredMixin):
     form_class = BookForm
     model = Book
+    request: HttpRequest
 
-    def form_valid(self, form):
+    def form_valid(self, form: BookForm) -> HttpResponse:
         context = self.get_context_data()
         self.object = form.save()
+
+        response: HttpResponse
 
         if all([formset.is_valid() for formset in context["inline_formsets"]]):
             for formset in context["inline_formsets"]:
@@ -461,12 +462,16 @@ class CreateOrUpdateView(LoginRequiredMixin):
                         if subform.instance.id:
                             subform.instance.delete()
 
-            return super(CreateOrUpdateView, self).form_valid(form)
-        else:
-            return super(CreateOrUpdateView, self).form_invalid(form)
+            response = super(CreateOrUpdateView, self).form_valid(form)
 
-    def get_context_data(self, *args, **kwargs):
-        context = super(CreateOrUpdateView, self).get_context_data(**kwargs)
+        else:
+            response = super(CreateOrUpdateView, self).form_invalid(form)
+        return response
+
+    def get_context_data(self, *args: Any, **kwargs: Any) -> Dict[str, Any]:
+        context: Dict[str, Any] = super(CreateOrUpdateView, self).get_context_data(
+            **kwargs
+        )
 
         if self.request.POST:
             context["inline_formsets"] = [
@@ -489,11 +494,11 @@ class CreateOrUpdateView(LoginRequiredMixin):
         return context
 
 
-class NewView(CreateOrUpdateView, generic.edit.CreateView):
+class NewView(CreateOrUpdateView, generic.edit.CreateView[Book, BookForm]):
     pass
 
 
-class EditView(CreateOrUpdateView, generic.edit.UpdateView):
+class EditView(CreateOrUpdateView, generic.edit.UpdateView[Book, BookForm]):
     pass
 
 
