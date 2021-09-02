@@ -1,3 +1,4 @@
+import django_stubs_ext
 from django.contrib import admin
 
 from .models import (
@@ -13,19 +14,22 @@ from .models import (
 # Register your models here.
 
 
-class AuthorAdmin(admin.ModelAdmin):
+django_stubs_ext.monkeypatch()
+
+
+class AuthorAdmin(admin.ModelAdmin[Author]):
     search_fields = ["surname", "forenames"]
     readonly_fields = ("created_date", "modified_date")
 
 
-class BookAuthorInline(admin.TabularInline):
+class BookAuthorInline(admin.TabularInline[BookAuthor]):
     autocomplete_fields = ["author", "book"]
     model = BookAuthor
     extra = 1
     readonly_fields = ("created_date", "modified_date")
 
 
-class LogEntryAdmin(admin.ModelAdmin):
+class LogEntryAdmin(admin.ModelAdmin[LogEntry]):
     autocomplete_fields = ["book"]
     search_fields = [
         "book__title",
@@ -40,13 +44,13 @@ class LogEntryAdmin(admin.ModelAdmin):
     readonly_fields = ("created_date", "modified_date")
 
 
-class LogEntryInline(admin.TabularInline):
+class LogEntryInline(admin.TabularInline[LogEntry]):
     model = LogEntry
     extra = 0
     readonly_fields = ("created_date", "modified_date")
 
 
-class BookAdmin(admin.ModelAdmin):
+class BookAdmin(admin.ModelAdmin[Book]):
     autocomplete_fields = ["first_author", "editions"]
     inlines = (BookAuthorInline, LogEntryInline)
     readonly_fields = ("created_date", "modified_date")
@@ -62,13 +66,13 @@ class BookAdmin(admin.ModelAdmin):
     ]
 
 
-class ReadingListEntryInline(admin.TabularInline):
+class ReadingListEntryInline(admin.TabularInline[ReadingListEntry]):
     model = ReadingListEntry
     autocomplete_fields = ("book",)
     readonly_fields = ("created_date", "modified_date")
 
 
-class ReadingListAdmin(admin.ModelAdmin):
+class ReadingListAdmin(admin.ModelAdmin[ReadingList]):
     readonly_fields = ("created_date", "modified_date")
     inlines = (ReadingListEntryInline,)
 
