@@ -1,6 +1,7 @@
 import re
 from typing import Any, Optional
 
+import django_stubs_ext
 from django.forms import (
     ModelChoiceField,
     ModelForm,
@@ -12,7 +13,7 @@ from django.forms import (
 )
 from django.utils import timezone
 
-from library.models import (  # type: ignore [attr-defined]
+from library.models import (
     Author,
     Book,
     BookAuthor,
@@ -23,8 +24,10 @@ from library.models import (  # type: ignore [attr-defined]
 )
 from library.utils import isbn10_to_isbn
 
+django_stubs_ext.monkeypatch()
 
-class AuthorForm(ModelForm):
+
+class AuthorForm(ModelForm[Author]):
     class Meta:
         model = Author
         exclude = ["created_date", "modified_date"]
@@ -34,8 +37,10 @@ class AuthorForm(ModelForm):
 
 
 class AuthorField(ModelChoiceField):
-    def to_python(self, value: Optional[str]) -> Author:
-        if value and value.isnumeric():
+    def to_python(self, value: Optional[str]) -> Optional[Author]:
+        if not value:
+            return None
+        if value.isnumeric():
             return super().to_python(value)
         else:
             try:
@@ -45,44 +50,43 @@ class AuthorField(ModelChoiceField):
                 raise ValidationError(str(e))
 
 
-class BookForm(ModelForm):
+class BookForm(ModelForm[Book]):
     class Meta:
         model = Book
         exclude = ["additional_authors", "created_date", "modified_date"]
         field_classes = {"first_author": AuthorField}
+
         widgets = {
             "acquired_date": SelectDateWidget(
-                years=range(
-                    Book.objects.order_by("acquired_date").first().acquired_date.year,
-                    timezone.now().year + 1,
-                )
+                years=range(timezone.now().year + 1, 1986, -1)
             ),
             "alienated_date": SelectDateWidget(
-                years=range(
-                    Book.objects.order_by("alienated_date").first().alienated_date.year,
-                    timezone.now().year + 1,
-                )
+                years=range(timezone.now().year + 1, 1986, -1)
             ),
             "ebook_acquired_date": SelectDateWidget(
-                years=range(2011, timezone.now().year + 1)
+                years=range(timezone.now().year + 1, 2011, -1)
             ),
             "publisher": Select(
                 choices=[("", "---------")]
-                + list(
-                    Book.objects.exclude(publisher="")
+                + [
+                    (publisher, publisher)
+                    for publisher in Book.objects.exclude(publisher="")
                     .order_by("publisher")
-                    .values_list("publisher", "publisher")
+                    .values_list("publisher", flat=True)
                     .distinct("publisher")
-                )
+                    if publisher
+                ]
             ),
             "series": Select(
                 choices=[("", "---------")]
-                + list(
-                    Book.objects.exclude(series="")
+                + [
+                    (series, series)
+                    for series in Book.objects.exclude(series="")
                     .order_by("series")
-                    .values_list("series", "series")
+                    .values_list("series", flat=True)
                     .distinct("series")
-                )
+                    if series
+                ]
             ),
             "tags": SelectMultiple(choices=Tag.objects.values_list("name", "name")),
         }
@@ -132,7 +136,7 @@ class BookForm(ModelForm):
         return isbn
 
 
-class BookAuthorForm(ModelForm):
+class BookAuthorForm(ModelForm[BookAuthor]):
     class Meta:
         model = BookAuthor
         fields = [
@@ -146,19 +150,19 @@ class BookAuthorForm(ModelForm):
         super(BookAuthorForm, self).__init__(*args, **kwargs)
 
 
-class LogEntryForm(ModelForm):
+class LogEntryForm(ModelForm[LogEntry]):
     class Meta:
-        model = BookAuthor
+        model = LogEntry
         exclude = ["created_date", "modified_date"]
 
 
-class ReadingListForm(ModelForm):
+class ReadingListForm(ModelForm[ReadingList]):
     class Meta:
         model = ReadingList
         fields = ["title", "books"]
 
 
-class ReadingListEntryForm(ModelForm):
+class ReadingListEntryForm(ModelForm[ReadingListEntry]):
     class Meta:
         model = ReadingListEntry
         fields = ["reading_list", "order"]

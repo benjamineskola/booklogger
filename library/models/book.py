@@ -61,8 +61,8 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
         return self.get_queryset().unread()
 
     def search(self, pattern: str) -> "BookQuerySet":
-        return (
-            self.annotate(  # type: ignore [return-value]
+        qs: BookQuerySet = (
+            self.annotate(
                 first_author_similarity=TrigramSimilarity(
                     "first_author__surname", pattern
                 ),
@@ -107,6 +107,7 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
             .filter(similarity__gt=0.2)
             .distinct()
         )
+        return qs
 
     def filter_by_request(self, request: str) -> "BookQuerySet":
         return self.get_queryset().filter_by_request(request)
@@ -623,7 +624,9 @@ class Book(models.Model):
         return percentage
 
     def mark_read_sometime(self) -> None:
-        self.log_entries.create(start_date=None, end_date="0001-01-01 00:00", end_precision=2)
+        self.log_entries.create(
+            start_date=None, end_date="0001-01-01 00:00", end_precision=2
+        )
 
     def mark_owned(self) -> None:
         self.owned_by = User.objects.get(username="ben")
@@ -963,7 +966,7 @@ class BookAuthor(models.Model):
 
 
 class TagManager(models.Manager):  # type: ignore [type-arg]
-    def __getitem__(self, name: str) -> "Tag":  # type: ignore [override]
+    def __getitem__(self, name: str) -> "Tag":
         return Tag.objects.get(name=name)
 
 
@@ -992,18 +995,18 @@ class Tag(models.Model):
             return self.name
 
     @property
-    def books(self) -> "models.Manager[Book]":
+    def books(self) -> "models.QuerySet[Book]":
         return Book.objects.filter(tags__contains=[self.name]).distinct()
 
     @property
-    def books_recursive(self) -> "models.Manager[Book]":
+    def books_recursive(self) -> "models.QuerySet[Book]":
         books = self.books
         for child in self.children.all():
             books |= child.books_recursive
         return books
 
     @property
-    def books_uniquely_tagged(self) -> "models.Manager[Book]":
+    def books_uniquely_tagged(self) -> "models.QuerySet[Book]":
         return Book.objects.filter(
             Q(tags=[self.name])
             | Q(tags=sorted(["fiction", self.name]))
@@ -1038,7 +1041,7 @@ class Tag(models.Model):
         new_tag, created = Tag.objects.get_or_create(name=new_name)
         new_tag.save()
         if created:
-            for parent in self.parents:
+            for parent in self.parents.all():
                 new_tag.parents.add(parent)
             new_tag.save()
 
