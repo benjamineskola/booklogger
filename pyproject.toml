@@ -11,7 +11,7 @@ omit = [
     ]
 
 [tool.github-coverage-action]
-threshold = 40
+threshold = 38
 
 [tool.mypy]
 check_untyped_defs = true
