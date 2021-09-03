@@ -11,14 +11,6 @@ from .author import Author
 from .book import Book
 
 
-class LogEntryManager(models.Manager):  # type: ignore [type-arg]
-    def get_queryset(self) -> "LogEntryQuerySet":
-        return LogEntryQuerySet(self.model, using=self._db)
-
-    def filter_by_request(self, request: Any) -> "LogEntryQuerySet":
-        return self.get_queryset().filter_by_request(request)
-
-
 class LogEntryQuerySet(models.QuerySet):  # type: ignore [type-arg]
     def by_gender(self, *genders: int) -> "LogEntryQuerySet":
         return self.filter(
@@ -59,6 +51,9 @@ class LogEntryQuerySet(models.QuerySet):  # type: ignore [type-arg]
             qs = qs.filter(book__want_to_read=str2bool(want_to_read))
 
         return qs
+
+
+LogEntryManager = models.Manager.from_queryset(LogEntryQuerySet)
 
 
 class LogEntry(models.Model):

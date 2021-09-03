@@ -111,7 +111,7 @@ def _stats_for_queryset(books: BookQuerySet) -> Dict[str, Any]:
 
 
 def stats_index(request: HttpRequest) -> HttpResponse:
-    books: BookQuerySet = Book.objects.all()  # type: ignore [assignment]
+    books = Book.objects.all()
     owned = books.filter(owned_by__username="ben")
     owned_count = owned.count()
     read_books = books.read()
@@ -146,10 +146,10 @@ def stats_index(request: HttpRequest) -> HttpResponse:
 
 
 def stats_for_year(request: HttpRequest, year: str) -> HttpResponse:
-    books: BookQuerySet = Book.objects.all()  # type: ignore [assignment]
+    books = Book.objects.all()
 
     if year == "total":
-        read_books: BookQuerySet = Book.objects.filter(  # type: ignore [assignment]
+        read_books = Book.objects.filter(
             id__in=LogEntry.objects.exclude(exclude_from_stats=True).values_list(
                 "book", flat=True
             )
@@ -158,7 +158,7 @@ def stats_for_year(request: HttpRequest, year: str) -> HttpResponse:
     else:
         if year == "sometime":
             year = "1"
-        read_books = Book.objects.filter(  # type: ignore [assignment]
+        read_books = Book.objects.filter(
             id__in=LogEntry.objects.exclude(exclude_from_stats=True)
             .filter(end_date__year=year)
             .values_list("book", flat=True)

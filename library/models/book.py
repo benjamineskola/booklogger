@@ -32,34 +32,7 @@ from .author import Author
 LogEntry = models.Model
 
 
-class BookManager(models.Manager):  # type: ignore [type-arg]
-    def get_queryset(self) -> "BookQuerySet":
-        return BookQuerySet(self.model, using=self._db)
-
-    def by_gender(self, *genders: int) -> "BookQuerySet":
-        return self.get_queryset().by_gender(*genders)
-
-    def by_men(self) -> "BookQuerySet":
-        return self.get_queryset().by_men()
-
-    def by_women(self) -> "BookQuerySet":
-        return self.get_queryset().by_women()
-
-    def by_multiple_genders(self) -> "BookQuerySet":
-        return self.get_queryset().by_multiple_genders()
-
-    def fiction(self) -> "BookQuerySet":
-        return self.get_queryset().fiction()
-
-    def nonfiction(self) -> "BookQuerySet":
-        return self.get_queryset().nonfiction()
-
-    def read(self) -> "BookQuerySet":
-        return self.get_queryset().read()
-
-    def unread(self) -> "BookQuerySet":
-        return self.get_queryset().unread()
-
+class BaseBookManager(models.Manager):  # type: ignore [type-arg]
     def search(self, pattern: str) -> "BookQuerySet":
         qs: BookQuerySet = (
             self.annotate(
@@ -108,12 +81,6 @@ class BookManager(models.Manager):  # type: ignore [type-arg]
             .distinct()
         )
         return qs
-
-    def filter_by_request(self, request: str) -> "BookQuerySet":
-        return self.get_queryset().filter_by_request(request)
-
-    def filter_by_format(self, edition_format: str) -> "BookQuerySet":
-        return self.get_queryset().filter_by_format(edition_format)
 
     def find_on_goodreads(self, query: str) -> List[Dict[str, Any]]:
         search_url = f"https://www.goodreads.com/search/index.xml?key={os.environ['GOODREADS_KEY']}&q={query}"
@@ -345,6 +312,9 @@ class BookQuerySet(models.QuerySet):  # type: ignore [type-arg]
             return int(count)
         else:
             return 0
+
+
+BookManager = BaseBookManager.from_queryset(BookQuerySet)
 
 
 class Book(models.Model):
@@ -641,7 +611,7 @@ class Book(models.Model):
         if not entries:
             return False
         else:
-            return entries[0].currently_reading
+            return bool(entries[0].currently_reading)
 
     @property
     def display_series(self) -> str:
@@ -995,18 +965,18 @@ class Tag(models.Model):
             return self.name
 
     @property
-    def books(self) -> "models.QuerySet[Book]":
+    def books(self) -> "BookQuerySet":
         return Book.objects.filter(tags__contains=[self.name]).distinct()
 
     @property
-    def books_recursive(self) -> "models.QuerySet[Book]":
+    def books_recursive(self) -> "BookQuerySet":
         books = self.books
         for child in self.children.all():
             books |= child.books_recursive
         return books
 
     @property
-    def books_uniquely_tagged(self) -> "models.QuerySet[Book]":
+    def books_uniquely_tagged(self) -> "BookQuerySet":
         return Book.objects.filter(
             Q(tags=[self.name])
             | Q(tags=sorted(["fiction", self.name]))

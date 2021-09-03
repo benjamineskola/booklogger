@@ -3,7 +3,7 @@ from typing import Dict
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 
-from library.models import Book, BookQuerySet, Tag
+from library.models import Book, Tag
 
 
 def tag_cloud(request: HttpRequest) -> HttpResponse:
@@ -23,7 +23,7 @@ def tag_cloud(request: HttpRequest) -> HttpResponse:
     }
 
     for tag in Tag.objects.all():
-        books: BookQuerySet = tag.books  # type: ignore [assignment]
+        books = tag.books
         tags["all"][tag.name] = books.count()
         tags["fiction"][tag.name] = books.fiction().count()
         tags["non-fiction"][tag.name] = books.nonfiction().count()

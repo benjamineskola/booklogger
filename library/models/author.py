@@ -14,6 +14,7 @@ from library.signals import update_timestamp_on_save
 from library.utils import LANGUAGES
 
 Book = models.Model
+BookQuerySet = models.QuerySet[Book]
 
 
 class AuthorManager(models.Manager):  # type: ignore
@@ -156,14 +157,14 @@ class Author(models.Model):
         return ".".join([name[0] for name in all_forenames if name]) + "."
 
     @property
-    def books(self) -> "models.QuerySet[Book]":
+    def books(self) -> "BookQuerySet":
         return (
             self.first_authored_books.all() | self.additional_authored_books.all()
         ).distinct()
 
     @property
-    def authored_books(self) -> "models.QuerySet[Book]":
-        books: "models.QuerySet[Book]" = (
+    def authored_books(self) -> "BookQuerySet":
+        books = (
             self.books.filter(
                 id__in=[
                     ba.book.id
@@ -177,8 +178,8 @@ class Author(models.Model):
         return books
 
     @property
-    def edited_books(self) -> "models.QuerySet[Book]":
-        books: "models.QuerySet[Book]" = (
+    def edited_books(self) -> "BookQuerySet":
+        books = (
             self.books.filter(
                 id__in=[ba.book.id for ba in self.bookauthor_set.filter(role="editor")]
             )
