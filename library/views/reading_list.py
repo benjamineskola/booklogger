@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Type
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -7,8 +7,12 @@ from django.views import generic
 from library.forms import ReadingListForm
 from library.models import ReadingList
 
+# This additional monkeypatch should be unnecessary
+generic.DetailView.__class_getitem__ = classmethod(lambda cls, *args, **kwargs: cls)  # type: ignore [attr-defined]
+generic.ListView.__class_getitem__ = classmethod(lambda cls, *args, **kwargs: cls)  # type: ignore [attr-defined]
 
-class IndexView(generic.ListView):
+
+class IndexView(generic.ListView[ReadingList]):
     model = ReadingList
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
@@ -18,27 +22,33 @@ class IndexView(generic.ListView):
         return context
 
 
-class DetailView(generic.DetailView):
+class DetailView(generic.DetailView[ReadingList]):
     model = ReadingList
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context.update({"page_title": self.object.title})
+        context.update({"page_title": self.object.title})  # type: ignore [attr-defined]
 
         return context
 
 
 class CreateOrUpdateView(LoginRequiredMixin):
-    form_class = ReadingListForm
-    model = ReadingList
+    form_class: Type[ReadingListForm]
+    model: Type[ReadingList]
 
 
-class NewView(CreateOrUpdateView, generic.edit.CreateView):
-    pass
+class NewView(
+    CreateOrUpdateView, generic.edit.CreateView[ReadingList, ReadingListForm]
+):
+    form_class: Type[ReadingListForm]
+    model: Type[ReadingList]
 
 
-class EditView(CreateOrUpdateView, generic.edit.UpdateView):
-    pass
+class EditView(
+    CreateOrUpdateView, generic.edit.UpdateView[ReadingList, ReadingListForm]
+):
+    form_class: Type[ReadingListForm]
+    model: Type[ReadingList]
 
 
 class DeleteView(LoginRequiredMixin, generic.edit.DeleteView):
