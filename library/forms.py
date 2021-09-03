@@ -1,7 +1,6 @@
 import re
 from typing import Any, Optional
 
-import django_stubs_ext
 from django.forms import (
     ModelChoiceField,
     ModelForm,
@@ -24,7 +23,8 @@ from library.models import (
 )
 from library.utils import isbn10_to_isbn
 
-django_stubs_ext.monkeypatch()
+# This additional monkeypatch should be unnecessary
+ModelForm.__class_getitem__ = classmethod(lambda cls, *args, **kwargs: cls)  # type: ignore [attr-defined]
 
 
 class AuthorForm(ModelForm[Author]):
