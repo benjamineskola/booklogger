@@ -41,7 +41,7 @@ authors = ["Benjamin Eskola <ben@eskola.uk>"]
 license = "CC-BY-NC"
 
 [tool.poetry.dependencies]
-python = ">= 3.8, <4"
+python = "^3.8"
 bpython = "*"
 bs4 = "*"
 commonmark = "*"
