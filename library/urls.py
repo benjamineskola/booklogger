@@ -181,7 +181,7 @@ urlpatterns = [
         views.book.TagIndexView.as_view(),
         name="tag_details",
     ),
-    path("tags/", views.tag_cloud, name="tag_cloud"),
+    path("tags/", views.tags.tag_cloud, name="tag_cloud"),
     re_path(
         r"^report/tags/related(?:/(?P<base_tag>[^/]+))?/",
         views.report.related_tags,
