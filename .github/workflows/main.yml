@@ -60,7 +60,7 @@ jobs:
           poetry run flake8
       - name: Lint with mypy
         run: |
-          poetry run mypy --show-error-codes booklogger library/models library/*.py library/views/tags.py
+          poetry run mypy --show-error-codes booklogger library/models library/*.py library/views/__init__.py library/views/tags.py
       - name: Test with pytest
         run: |
           poetry run pytest
