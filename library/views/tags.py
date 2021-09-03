@@ -1,14 +1,18 @@
+from typing import Dict
+
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 
-from library.models import Book, Tag
+from library.models import Book, BookQuerySet, Tag
 
 
 def tag_cloud(request: HttpRequest) -> HttpResponse:
-    tags = {
-        "untagged": Book.objects.exclude(tags__contains=["non-fiction"])
-        .exclude(tags__contains=["fiction"])
-        .count(),
+    tags: Dict[str, Dict[str, int]] = {
+        "untagged": {
+            "total": Book.objects.exclude(tags__contains=["non-fiction"])
+            .exclude(tags__contains=["fiction"])
+            .count()
+        },
         "non-fiction": {
             "no other tags": Tag.objects["non-fiction"].books_uniquely_tagged.count()
         },
@@ -19,11 +23,12 @@ def tag_cloud(request: HttpRequest) -> HttpResponse:
     }
 
     for tag in Tag.objects.all():
-        tags["all"][tag.name] = tag.books.count()
-        tags["fiction"][tag.name] = tag.books.fiction().count()
-        tags["non-fiction"][tag.name] = tag.books.nonfiction().count()
+        books: BookQuerySet = tag.books  # type: ignore [assignment]
+        tags["all"][tag.name] = books.count()
+        tags["fiction"][tag.name] = books.fiction().count()
+        tags["non-fiction"][tag.name] = books.nonfiction().count()
 
-    sorted_tags = {"name": {}, "size": {}}
+    sorted_tags: Dict[str, Dict[str, Dict[str, int]]] = {"name": {}, "size": {}}
     for key in ["fiction", "non-fiction", "all"]:
         sorted_tags["name"][key] = {
             k: v for k, v in sorted(tags[key].items(), key=lambda item: item[0])
