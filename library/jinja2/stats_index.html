@@ -11,7 +11,7 @@
   </div>
 
   {% for year in years | sort | reverse %}
-    {% if year == 1 %}
+    {% if year == "1" %}
       {% set year = "sometime" %}
     {% endif %}
     <div id="stats-{{ year }}" class="stats-for-year" data-year="{{ year }}">

@@ -1,18 +1,20 @@
+from typing import Any, Dict
+
 from django.db.models import Q
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
 
-from library.models import Author, Book, LogEntry
+from library.models import Author, Book, BookQuerySet, LogEntry
 
 
-def _stats_for_queryset(books):
+def _stats_for_queryset(books: BookQuerySet) -> Dict[str, Any]:
     fiction = books.fiction()
     nonfiction = books.nonfiction()
     poc = books.filter(
         Q(first_author__poc=True) | Q(additional_authors__poc=True)
     ).distinct()
-    result = {
+    result: Dict[str, Any] = {
         "count": books.count(),
         "pages": books.page_count,
         "average_pages": books.page_count
@@ -109,7 +111,7 @@ def _stats_for_queryset(books):
 
 
 def stats_index(request: HttpRequest) -> HttpResponse:
-    books = Book.objects.all()
+    books: BookQuerySet = Book.objects.all()  # type: ignore [assignment]
     owned = books.filter(owned_by__username="ben")
     owned_count = owned.count()
     read_books = books.read()
@@ -143,11 +145,11 @@ def stats_index(request: HttpRequest) -> HttpResponse:
     )
 
 
-def stats_for_year(request, year):
-    books = Book.objects.all()
+def stats_for_year(request: HttpRequest, year: str) -> HttpResponse:
+    books: BookQuerySet = Book.objects.all()  # type: ignore [assignment]
 
     if year == "total":
-        read_books = Book.objects.filter(
+        read_books: BookQuerySet = Book.objects.filter(  # type: ignore [assignment]
             id__in=LogEntry.objects.exclude(exclude_from_stats=True).values_list(
                 "book", flat=True
             )
@@ -155,8 +157,8 @@ def stats_for_year(request, year):
         result = _stats_for_queryset(read_books)
     else:
         if year == "sometime":
-            year = 1
-        read_books = Book.objects.filter(
+            year = "1"
+        read_books = Book.objects.filter(  # type: ignore [assignment]
             id__in=LogEntry.objects.exclude(exclude_from_stats=True)
             .filter(end_date__year=year)
             .values_list("book", flat=True)
@@ -183,13 +185,13 @@ def stats_for_year(request, year):
         result["predicted_pages"] = result["pages_per_day"] * year_days
 
         remaining_days = year_days - current_day
-        prediction["target_counts"] = {}
+        prediction["target_counts"] = {}  # type: ignore [assignment]
         for target in [26, 39, 52, 78, 104, 208]:
             if target > current_year_count:
-                prediction["target_counts"][target] = (
+                prediction["target_counts"][target] = (  # type: ignore [index]
                     (target - current_year_count) / max(1, remaining_days) * 7
                 )
-            if len(prediction["target_counts"].keys()) >= 3:
+            if len(prediction["target_counts"].keys()) >= 3:  # type: ignore [attr-defined]
                 break
     else:
         if year != "total" and year != "sometime":
