@@ -4,7 +4,7 @@ from pytest_factoryboy import register
 from library.models import Author, Book, BookAuthor
 
 
-class AuthorFactory(factory.Factory):
+class AuthorFactory(factory.Factory):  # type: ignore
     class Meta:
         model = Author
 
@@ -12,14 +12,14 @@ class AuthorFactory(factory.Factory):
     forenames = factory.Faker("first_name")
 
 
-class BookFactory(factory.Factory):
+class BookFactory(factory.Factory):  # type: ignore
     class Meta:
         model = Book
 
     title = factory.Faker("sentence", nb_words=4)
 
 
-class BookAuthorFactory(factory.Factory):
+class BookAuthorFactory(factory.Factory):  # type: ignore
     class Meta:
         model = BookAuthor
 
