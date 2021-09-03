@@ -1,12 +1,14 @@
 from itertools import groupby
+from typing import Optional
 
 from django.db.models import F, Q
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 
 from library.models import Book, Tag
 
 
-def report(request, page=None):
+def report(request: HttpRequest, page: Optional[str] = None) -> HttpResponse:
     categories = {}
 
     categories = [
@@ -132,7 +134,7 @@ def report(request, page=None):
     )
 
 
-def tags(request, base_tag="non-fiction"):
+def tags(request: HttpRequest, base_tag: str = "non-fiction") -> HttpResponse:
     excluded_tags = set(
         [
             base_tag,
@@ -158,7 +160,7 @@ def tags(request, base_tag="non-fiction"):
     )
 
 
-def related_tags(request, base_tag="non-fiction"):
+def related_tags(request: HttpRequest, base_tag: str = "non-fiction") -> HttpResponse:
     excluded_tags = set(
         [
             base_tag,

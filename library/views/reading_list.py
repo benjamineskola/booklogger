@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views import generic
@@ -9,8 +11,8 @@ from library.models import ReadingList
 class IndexView(generic.ListView):
     model = ReadingList
 
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
         context.update({"page_title": "Reading Lists"})
 
         return context
@@ -19,8 +21,8 @@ class IndexView(generic.ListView):
 class DetailView(generic.DetailView):
     model = ReadingList
 
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
         context.update({"page_title": self.object.title})
 
         return context
