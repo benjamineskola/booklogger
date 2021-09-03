@@ -60,7 +60,7 @@ jobs:
           poetry run flake8
       - name: Lint with mypy
         run: |
-          poetry run mypy --show-error-codes --exclude '/(migrations/|tests/|management/|views/(book|reading_list|report).py)$' booklogger library
+          poetry run mypy --show-error-codes --exclude '/(migrations/|tests/|management/|views/(book|reading_list).py)$' booklogger library
       - name: Test with pytest
         run: |
           poetry run pytest

@@ -1,20 +1,18 @@
 from itertools import groupby
-from typing import Optional
+from typing import Callable, List, Optional, Tuple
 
 from django.db.models import F, Q
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 
-from library.models import Book, Tag
+from library.models import Book, BookQuerySet, Tag
 
 
 def report(request: HttpRequest, page: Optional[str] = None) -> HttpResponse:
-    categories = {}
-
-    categories = [
+    categories: List[Tuple[str, Callable[[BookQuerySet], BookQuerySet]]] = [
         (
             "Missing ISBN",
-            lambda: owned_books.filter(isbn="")
+            lambda owned_books: owned_books.filter(isbn="")
             .exclude(
                 first_author__surname__in=["Jacobin", "Tribune", "New Left Review"]
             )
@@ -24,7 +22,7 @@ def report(request: HttpRequest, page: Optional[str] = None) -> HttpResponse:
         ),
         (
             "Missing ASIN",
-            lambda: owned_books.filter(edition_format=3, asin="").exclude(
+            lambda owned_books: owned_books.filter(edition_format=3, asin="").exclude(
                 publisher__in=[
                     "Verso",
                     "Pluto",
@@ -41,7 +39,7 @@ def report(request: HttpRequest, page: Optional[str] = None) -> HttpResponse:
         ),
         (
             "Messy Publisher",
-            lambda: Book.objects.filter(
+            lambda _: Book.objects.filter(
                 Q(publisher__endswith="Books")
                 | Q(publisher__contains="Company")
                 | Q(publisher__contains="Ltd")
@@ -62,13 +60,13 @@ def report(request: HttpRequest, page: Optional[str] = None) -> HttpResponse:
                 | Q(publisher="Pan Macmillan")
             ),
         ),
-        ("Missing Goodreads", lambda: Book.objects.filter(goodreads_id="")),
-        ("Missing Google", lambda: owned_books.filter(google_books_id="")),
-        ("Missing Image", lambda: owned_books.filter(image_url="")),
-        ("Missing Publisher", lambda: owned_books.filter(publisher="")),
+        ("Missing Goodreads", lambda _: Book.objects.filter(goodreads_id="")),
+        ("Missing Google", lambda owned_books: owned_books.filter(google_books_id="")),
+        ("Missing Image", lambda owned_books: owned_books.filter(image_url="")),
+        ("Missing Publisher", lambda owned_books: owned_books.filter(publisher="")),
         (
             "Missing Publisher URL",
-            lambda: owned_books.filter(publisher_url="").filter(
+            lambda owned_books: owned_books.filter(publisher_url="").filter(
                 publisher__in=[
                     "Verso",
                     "Pluto",
@@ -81,40 +79,44 @@ def report(request: HttpRequest, page: Optional[str] = None) -> HttpResponse:
         ),
         (
             "Missing Page Count",
-            lambda: owned_books.filter(Q(page_count=0) | Q(page_count__isnull=True)),
+            lambda owned_books: owned_books.filter(
+                Q(page_count=0) | Q(page_count__isnull=True)
+            ),
         ),
         (
             "Missing Publication Date",
-            lambda: Book.objects.filter(
+            lambda _: Book.objects.filter(
                 Q(first_published=0) | Q(first_published__isnull=True)
             ),
         ),
         (
             "Ebook edition without ISBN or ASIN",
-            lambda: owned_books.filter(has_ebook_edition=True).filter(
+            lambda owned_books: owned_books.filter(has_ebook_edition=True).filter(
                 ebook_isbn="", ebook_asin=""
             ),
         ),
         (
             "Public domain but no URL",
-            lambda: Book.objects.filter(
+            lambda _: Book.objects.filter(
                 borrowed_from="public domain", publisher_url=""
             ),
         ),
         (
             "First editions recorded as English for non-English authors",
-            lambda: Book.objects.exclude(language=F("first_author__primary_language")),
+            lambda _: Book.objects.exclude(
+                language=F("first_author__primary_language")
+            ),
         ),
         (
             "Wished for without ASIN",
-            lambda: Book.objects.filter(owned_by__isnull=True)
+            lambda _: Book.objects.filter(owned_by__isnull=True)
             .filter(want_to_read=True)
             .filter(asin="")
             .exclude(was_borrowed=True),
         ),
         (
             "History without sufficient tags",
-            lambda: Tag.objects["history"].books_uniquely_tagged,
+            lambda _: Tag.objects["history"].books_uniquely_tagged,
         ),
     ]
 
@@ -122,10 +124,10 @@ def report(request: HttpRequest, page: Optional[str] = None) -> HttpResponse:
 
     if page:
         owned_books = Book.objects.filter(owned_by__isnull=False)
-        results = categories[int(page) - 1][1]()
+        results = categories[int(page) - 1][1](owned_books)
 
-    if order_by := request.GET.get("order_by"):
-        results = results.order_by(order_by)
+        if order_by := request.GET.get("order_by"):
+            results = results.order_by(order_by)
 
     return render(
         request,
