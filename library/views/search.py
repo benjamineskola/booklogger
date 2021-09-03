@@ -1,14 +1,15 @@
 from django.db.models import Q
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 
 from library.models import Author, Book
 
 
-def basic_search(request):
+def basic_search(request: HttpRequest) -> HttpResponse:
     query = request.GET.get("query")
 
-    authors = []
-    books = []
+    authors = Author.objects.none()
+    books = Book.objects.none()
     if query:
         if (
             books := Book.objects.filter(Q(isbn=query) | Q(asin=query))

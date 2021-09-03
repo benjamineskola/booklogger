@@ -1,13 +1,15 @@
 import json
+from typing import Optional
 
 from django.contrib.auth.decorators import login_required
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 
 from library.models import Author, Book
 
 
 @login_required
-def import_book(request, query=None):
+def import_book(request: HttpRequest, query: Optional[str] = None) -> HttpResponse:
     if request.method == "GET" and not query:
         query = request.GET.get("query")
 
@@ -15,7 +17,10 @@ def import_book(request, query=None):
         data = json.loads(request.POST["data"])
         query = request.POST.get("query")
         book = Book.objects.create_from_goodreads(data=data, query=query)
-        return redirect("library:book_edit", slug=book.slug)
+        if book:
+            return redirect("library:book_edit", slug=book.slug)
+        else:
+            return redirect("library:book_import", query=query)
     else:
         goodreads_results = []
         matches = {}
@@ -39,7 +44,7 @@ def import_book(request, query=None):
 
 
 @login_required
-def bulk_import(request):
+def bulk_import(request: HttpRequest) -> HttpResponse:
     if request.POST:
         data = request.POST["data"]
 

@@ -6,7 +6,7 @@
     {% for series, details in all_series.items() %}
       <li>
         <a class="header" href="{{ url("library:series_details", args=[series.replace("/", "%2f")]) }}">{{ series }}</a>
-        <span class="meta">({{ details["count"] }} book{% if details["count"] > 1 %}s{% endif %})</span>
+        <span class="meta">({{ details["books"] | count }} book{% if details["books"] | count > 1 %}s{% endif %})</span>
         <span class="extra">by {{ author_list(details["authors"], full=True) }}</span>
       </li>
     {% endfor %}

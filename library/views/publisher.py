@@ -1,9 +1,10 @@
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 
 from library.models import Book
 
 
-def list(request):
+def list(request: HttpRequest) -> HttpResponse:
     publisher_books = Book.objects.exclude(publisher="")
     counts = {}
     for book in publisher_books:

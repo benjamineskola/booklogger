@@ -1,19 +1,21 @@
 import re
+from typing import Any, Dict, Set
 
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 
 from library.models import Book
 
 
-def list(request):
+def list(request: HttpRequest) -> HttpResponse:
     series_books = Book.objects.exclude(series="")
-    counts = {}
+    counts: Dict[str, Dict[str, Set[Any]]] = {}
     for book in series_books:
         series = book.series
         if series not in counts:
-            counts[series] = {"count": 0, "authors": set()}
+            counts[series] = {"books": set(), "authors": set()}
 
-        counts[series]["count"] += 1
+        counts[series]["books"].add(book)
 
         for author in book.authors:
             counts[series]["authors"].add(author)
@@ -21,7 +23,7 @@ def list(request):
     sorted_series = {
         k: v
         for k, v in sorted(
-            counts.items(), key=lambda s: re.sub(r"^(A|The) (.*)", r"\2, \1", s[0])
+            counts.items(), key=lambda s: str(re.sub(r"^(A|The) (.*)", r"\2, \1", s[0]))
         )
     }
 
