@@ -8,8 +8,12 @@ from django.views import generic
 from library.forms import AuthorForm
 from library.models import Author
 
+# This additional monkeypatch should be unnecessary
+generic.DetailView.__class_getitem__ = classmethod(lambda cls, *args, **kwargs: cls)  # type: ignore [attr-defined]
+generic.ListView.__class_getitem__ = classmethod(lambda cls, *args, **kwargs: cls)  # type: ignore [attr-defined]
 
-class DetailView(LoginRequiredMixin, generic.DetailView):
+
+class DetailView(LoginRequiredMixin, generic.DetailView[Author]):
     model = Author
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
@@ -18,7 +22,7 @@ class DetailView(LoginRequiredMixin, generic.DetailView):
         return context
 
 
-class IndexView(LoginRequiredMixin, generic.ListView):
+class IndexView(LoginRequiredMixin, generic.ListView[Author]):
     model = Author
     paginate_by = 100
 
@@ -26,8 +30,7 @@ class IndexView(LoginRequiredMixin, generic.ListView):
         qs = super().get_queryset()
         if gender := self.request.GET.get("gender"):
             if not gender.isnumeric():
-                gender = Author.Gender[gender.upper()]
-                print(gender)
+                gender = str(Author.Gender[gender.upper()])
             qs = qs.filter(gender=gender)
         if poc := self.request.GET.get("poc"):
             if poc.lower() in ["1", "true"]:
@@ -54,17 +57,17 @@ class IndexView(LoginRequiredMixin, generic.ListView):
         return context
 
 
-class EditView(LoginRequiredMixin, generic.edit.UpdateView):
+class EditView(LoginRequiredMixin, generic.edit.UpdateView[Author, AuthorForm]):
     form_class = AuthorForm
     model = Author
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context["page_title"] = f"Editing {self.object}"
+        context["page_title"] = f"Editing {self.object}"  # type: ignore [attr-defined]
         return context
 
 
-class NewView(LoginRequiredMixin, generic.edit.CreateView):
+class NewView(LoginRequiredMixin, generic.edit.CreateView[Author, AuthorForm]):
     form_class = AuthorForm
     model = Author
 
