@@ -1,6 +1,6 @@
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "booklogger.settings"
-addopts = "--nomigrations --cov=booklogger --cov=library --cov-report term-missing:skip-covered --cov-report xml"
+addopts = "--nomigrations --cov=booklogger --cov=library --cov-report term-missing:skip-covered --cov-fail-under=40"
 
 [tool.coverage.report]
 omit = [
@@ -9,9 +9,6 @@ omit = [
         "booklogger/?sgi.py",
         "library/migrations/*",
     ]
-
-[tool.github-coverage-action]
-threshold = 40
 
 [tool.mypy]
 check_untyped_defs = true
