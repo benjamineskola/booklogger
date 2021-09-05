@@ -17,11 +17,19 @@ class TestBook:
             )
         return User.objects.first()
 
-    def test_root(self, factory, user):
+    @pytest.fixture
+    def get(self, factory, user):
+        def _get(url):
+            req = factory.get(url)
+            req.user = user
+            return req
+
+        yield _get
+
+    def test_root(self, get):
         from library.views.book import IndexView
 
-        req = factory.get("/")
-        req.user = user
+        req = get("/")
 
         resp = IndexView.as_view()(req)
         assert resp.status_code == 200
