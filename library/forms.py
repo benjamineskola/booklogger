@@ -19,7 +19,6 @@ from library.models import (
     LogEntry,
     ReadingList,
     ReadingListEntry,
-    Tag,
 )
 from library.utils import isbn10_to_isbn
 
@@ -66,29 +65,9 @@ class BookForm(ModelForm[Book]):
             "ebook_acquired_date": SelectDateWidget(
                 years=range(timezone.now().year + 1, 2011, -1)
             ),
-            "publisher": Select(
-                choices=[("", "---------")]
-                + [
-                    (publisher, publisher)
-                    for publisher in Book.objects.exclude(publisher="")
-                    .order_by("publisher")
-                    .values_list("publisher", flat=True)
-                    .distinct("publisher")
-                    if publisher
-                ]
-            ),
-            "series": Select(
-                choices=[("", "---------")]
-                + [
-                    (series, series)
-                    for series in Book.objects.exclude(series="")
-                    .order_by("series")
-                    .values_list("series", flat=True)
-                    .distinct("series")
-                    if series
-                ]
-            ),
-            "tags": SelectMultiple(choices=Tag.objects.values_list("name", "name")),
+            "publisher": Select(choices=[("", "---------")]),
+            "series": Select(choices=[("", "---------")]),
+            "tags": SelectMultiple(),
         }
 
     def __init__(self, *args: Any, **kwargs: Any):

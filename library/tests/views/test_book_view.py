@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.test import RequestFactory
 
 from library.factories import user_factory  # noqa: F401
+from library.views.book import IndexView
 
 
 @pytest.mark.django_db
@@ -27,7 +28,6 @@ class TestBook:
         yield _get
 
     def test_root(self, get):
-        from library.views.book import IndexView
 
         req = get("/")
 

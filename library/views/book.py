@@ -453,6 +453,29 @@ class CreateOrUpdateView(LoginRequiredMixin):
     form_class = BookForm
     model = Book
 
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        form = self.get_form()  # type: ignore [attr-defined]
+        form._meta.widgets["publisher"].choices += [
+            (publisher, publisher)
+            for publisher in Book.objects.exclude(publisher="")
+            .order_by("publisher")
+            .values_list("publisher", flat=True)
+            .distinct("publisher")
+            if publisher
+        ]
+        form._meta.widgets["series"].choices += [
+            (series, series)
+            for series in Book.objects.exclude(series="")
+            .order_by("series")
+            .values_list("series", flat=True)
+            .distinct("series")
+            if series
+        ]
+        form._meta.widgets["tags"].choices = Tag.objects.values_list("name", "name")
+
+        response: HttpResponse = super().get(request, *args, **kwargs)  # type: ignore [misc]
+        return response
+
     def form_valid(self, form: BookForm) -> HttpResponse:
         context = self.get_context_data()
         self.object = form.save()
