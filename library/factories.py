@@ -1,4 +1,5 @@
 import factory
+from django.contrib.auth.models import User
 from pytest_factoryboy import register
 
 from library.models import Author, Book, BookAuthor
@@ -24,6 +25,12 @@ class BookAuthorFactory(factory.Factory):  # type: ignore
         model = BookAuthor
 
 
+class UserFactory(factory.Factory):  # type: ignore
+    class Meta:
+        model = User
+
+
 register(AuthorFactory)
 register(BookFactory)
 register(BookAuthorFactory)
+register(UserFactory)

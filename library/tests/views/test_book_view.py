@@ -2,6 +2,8 @@ import pytest
 from django.contrib.auth.models import User
 from django.test import RequestFactory
 
+from library.factories import user_factory  # noqa: F401
+
 
 @pytest.mark.django_db
 class TestBook:
@@ -10,11 +12,9 @@ class TestBook:
         return RequestFactory()
 
     @pytest.fixture
-    def user(self):
+    def user(self, user_factory):  # noqa: F811
         if not User.objects.count():
-            User.objects.create(
-                username="admin", email="admin@none.invalid", password="s3cr3t"
-            )
+            user_factory().save()
         return User.objects.first()
 
     @pytest.fixture
