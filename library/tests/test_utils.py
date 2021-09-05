@@ -1,54 +1,77 @@
+from math import pi
+
 import pytest
 
 from library import utils
 
 
 class TestUtils:
-    def test_isbn_to_isbn10(self):
-        assert utils.isbn_to_isbn10("9780306406157") == "0306406152"
+    @pytest.mark.parametrize(
+        "isbn10,isbn13",
+        [
+            ("0306406152", "9780306406157"),
+            ("178067905X", "9781780679051"),
+        ],
+    )
+    def test_isbn_to_isbn10_and_back(self, isbn10, isbn13):
+        assert utils.isbn_to_isbn10(isbn13) == isbn10
+        assert utils.isbn10_to_isbn(isbn10) == isbn13
 
-    def test_isbn10_to_isbn(self):
-        assert utils.isbn10_to_isbn("0306406152") == "9780306406157"
+    @pytest.mark.parametrize(
+        "isbn",
+        [
+            "X030646152",
+            "030640615Z",
+        ],
+    )
+    def test_isbn10_to_isbn_invalid(self, isbn):
+        assert utils.isbn10_to_isbn(isbn) == ""
 
-    def test_isbn10_to_isbn_invalid1(self):
-        assert utils.isbn10_to_isbn("X030646152") == ""
+    @pytest.mark.parametrize(
+        "test_input,expected",
+        [
+            ((pi,), "3.14"),
+            ((pi, 2), "3.14"),
+            ((pi, 3), "3.142"),
+            ((pi, 5), "3.14159"),
+            ((0,), "0"),
+        ],
+    )
+    def test_round_trunc(self, test_input, expected):
+        assert utils.round_trunc(*test_input) == expected
 
-    def test_isbn10_to_isbn_invalid2(self):
-        assert utils.isbn10_to_isbn("030640615Z") == ""
+    @pytest.mark.parametrize(
+        "test_input,expected",
+        [
+            ("0", False),
+            ("0", False),
+            ("1", True),
+            ("2", True),
+            ("yes", True),
+            ("Yes", True),
+            ("YES", True),
+            ("true", True),
+            ("True", True),
+            ("TRUE", True),
+            ("y", True),
+            ("Y", True),
+            ("t", True),
+            ("T", True),
+            ("no", False),
+            ("No", False),
+            ("NO", False),
+            ("false", False),
+            ("False", False),
+            ("FALSE", False),
+            ("n", False),
+            ("N", False),
+            ("f", False),
+            ("F", False),
+        ],
+    )
+    def test_str2bool(self, test_input, expected):
+        assert utils.str2bool(test_input) is expected
 
-    def test_round_trunc(self):
-        import math
-
-        assert utils.round_trunc(math.pi) == "3.14"
-        assert utils.round_trunc(math.pi, 3) == "3.142"
-        assert utils.round_trunc(math.pi, 5) == "3.14159"
-        assert utils.round_trunc(0) == "0"
-
-    def test_str2bool(self):
-        assert utils.str2bool("0") is False
-        assert utils.str2bool("1") is True
-        assert utils.str2bool("2") is True
-        assert utils.str2bool("yes") is True
-        assert utils.str2bool("Yes") is True
-        assert utils.str2bool("YES") is True
-        assert utils.str2bool("true") is True
-        assert utils.str2bool("True") is True
-        assert utils.str2bool("TRUE") is True
-        assert utils.str2bool("y") is True
-        assert utils.str2bool("Y") is True
-        assert utils.str2bool("t") is True
-        assert utils.str2bool("T") is True
-
-        assert utils.str2bool("no") is False
-        assert utils.str2bool("No") is False
-        assert utils.str2bool("NO") is False
-        assert utils.str2bool("false") is False
-        assert utils.str2bool("False") is False
-        assert utils.str2bool("FALSE") is False
-        assert utils.str2bool("n") is False
-        assert utils.str2bool("N") is False
-        assert utils.str2bool("f") is False
-        assert utils.str2bool("F") is False
-
+    def test_str2bool_invalid_input(self):
         with pytest.raises(ValueError):
             utils.str2bool("any other string")
