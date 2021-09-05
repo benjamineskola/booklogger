@@ -1,6 +1,6 @@
 import json
 import re
-from typing import Any, Dict, Type
+from typing import Any, Dict
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -449,13 +449,15 @@ def rate(request: HttpRequest, slug: str) -> HttpResponse:
     return redirect("library:book_details", slug=slug)
 
 
-class CreateOrUpdateView(LoginRequiredMixin):
+class BookEditMixin(
+    generic.edit.ModelFormMixin[Book, BookForm], generic.edit.ProcessFormView
+):
     form_class = BookForm
     model = Book
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        form = self.get_form()  # type: ignore [attr-defined]
-        form._meta.widgets["publisher"].choices += [
+        widgets = self.get_form()._meta.widgets  # type: ignore [attr-defined]
+        widgets["publisher"].choices += [
             (publisher, publisher)
             for publisher in Book.objects.exclude(publisher="")
             .order_by("publisher")
@@ -463,7 +465,7 @@ class CreateOrUpdateView(LoginRequiredMixin):
             .distinct("publisher")
             if publisher
         ]
-        form._meta.widgets["series"].choices += [
+        widgets["series"].choices += [
             (series, series)
             for series in Book.objects.exclude(series="")
             .order_by("series")
@@ -471,9 +473,9 @@ class CreateOrUpdateView(LoginRequiredMixin):
             .distinct("series")
             if series
         ]
-        form._meta.widgets["tags"].choices = Tag.objects.values_list("name", "name")
+        widgets["tags"].choices = Tag.objects.values_list("name", "name")
 
-        response: HttpResponse = super().get(request, *args, **kwargs)  # type: ignore [misc]
+        response: HttpResponse = super().get(request, *args, **kwargs)
         return response
 
     def form_valid(self, form: BookForm) -> HttpResponse:
@@ -491,21 +493,19 @@ class CreateOrUpdateView(LoginRequiredMixin):
                         if subform.instance.id:
                             subform.instance.delete()
 
-            response = super(CreateOrUpdateView, self).form_valid(form)  # type: ignore [misc]
+            response = super(BookEditMixin, self).form_valid(form)
         else:
-            response = super(CreateOrUpdateView, self).form_invalid(form)  # type: ignore [misc]
+            response = super(BookEditMixin, self).form_invalid(form)
         return response
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
-        context: Dict[str, Any] = super(CreateOrUpdateView, self).get_context_data(  # type: ignore [misc]
-            **kwargs
-        )
+        context: Dict[str, Any] = super(BookEditMixin, self).get_context_data(**kwargs)
 
-        if self.request.POST:  # type: ignore [attr-defined]
+        if self.request.POST:
             context["inline_formsets"] = [
-                BookAuthorFormSet(self.request.POST, instance=self.object),  # type: ignore [attr-defined]
-                LogEntryFormSet(self.request.POST, instance=self.object),  # type: ignore [attr-defined]
-                ReadingListEntryFormSet(self.request.POST, instance=self.object),  # type: ignore [attr-defined]
+                BookAuthorFormSet(self.request.POST, instance=self.object),
+                LogEntryFormSet(self.request.POST, instance=self.object),
+                ReadingListEntryFormSet(self.request.POST, instance=self.object),
             ]
         else:
             context["inline_formsets"] = [
@@ -522,14 +522,16 @@ class CreateOrUpdateView(LoginRequiredMixin):
         return context
 
 
-class NewView(CreateOrUpdateView, generic.edit.CreateView[Book, BookForm]):
-    model: Type[Book]
-    form_class: Type[BookForm]
+class NewView(
+    LoginRequiredMixin, generic.edit.CreateView[Book, BookForm], BookEditMixin
+):
+    pass
 
 
-class EditView(CreateOrUpdateView, generic.edit.UpdateView[Book, BookForm]):
-    model: Type[Book]
-    form_class: Type[BookForm]
+class EditView(
+    LoginRequiredMixin, generic.edit.UpdateView[Book, BookForm], BookEditMixin
+):
+    pass
 
 
 class DeleteView(LoginRequiredMixin, generic.edit.DeleteView):
