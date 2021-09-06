@@ -59,7 +59,7 @@ typing-extensions = "^3.10.0"
 
 [tool.poetry.dev-dependencies]
 curlylint = "*"
-django-stubs = { git = "https://github.com/typeddjango/django-stubs.git" }
+django-stubs = "^1.9"
 flake8 = "*"
 flake8-bugbear = "*"
 flake8-docstrings = "*"
