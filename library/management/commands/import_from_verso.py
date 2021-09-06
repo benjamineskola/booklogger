@@ -4,6 +4,7 @@ import sys
 from django.core.management.base import BaseCommand
 
 from library.models import Book
+from library.utils import flatten
 
 
 class Command(BaseCommand):
@@ -18,7 +19,7 @@ class Command(BaseCommand):
             _, title = title.strip().split(" ", 1)
             title, *authors = re.split(r" (?:Edited )*?by ", title, 1)
             if authors:
-                authors = sum([author.split(" and ") for author in authors], [])
+                authors = flatten([author.split(" and ") for author in authors])
 
             try:
                 book = Book.objects.get(title__istartswith=title.lower())

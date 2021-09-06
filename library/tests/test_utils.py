@@ -75,3 +75,22 @@ class TestUtils:
     def test_str2bool_invalid_input(self):
         with pytest.raises(ValueError):
             utils.str2bool("any other string")
+
+    @pytest.mark.parametrize(
+        "test_input,expected",
+        [
+            ([], []),
+            ([[]], []),
+            ([[], []], []),
+            ([[1]], [1]),
+            ([[1], [2]], [1, 2]),
+            ([[1], ["2"]], [1, "2"]),
+            ([["1"], ["2"]], ["1", "2"]),
+            ([[1, 2], [3, 4]], [1, 2, 3, 4]),
+            ([[1, "2"], [3, "4"]], [1, "2", 3, "4"]),
+            ([[1, 2], [3], [4]], [1, 2, 3, 4]),
+            ([[1, 2], [3], [4], []], [1, 2, 3, 4]),
+        ],
+    )
+    def test_flatten(self, test_input, expected):
+        assert utils.flatten(test_input) == expected

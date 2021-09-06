@@ -6,6 +6,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 
 from library.models import Book, BookQuerySet, Tag
+from library.utils import flatten
 
 
 def report(request: HttpRequest, page: Optional[str] = None) -> HttpResponse:
@@ -149,7 +150,7 @@ def tags(request: HttpRequest, base_tag: str = "non-fiction") -> HttpResponse:
         excluded_tags |= set(["fiction", "non-fiction"])
 
     books = Tag.objects[base_tag].books.select_related("first_author")
-    toplevel_tags = set(sum(books.values_list("tags", flat=True), [])) - excluded_tags
+    toplevel_tags = set(flatten(books.values_list("tags", flat=True))) - excluded_tags
 
     results = {
         tag: [book for book in books if tag in book.tags] for tag in toplevel_tags
@@ -175,17 +176,12 @@ def related_tags(request: HttpRequest, base_tag: str = "non-fiction") -> HttpRes
         excluded_tags |= set(["fiction", "non-fiction"])
 
     books = Tag.objects[base_tag].books
-    toplevel_tags = set(sum(books.values_list("tags", flat=True), [])) - excluded_tags
+    toplevel_tags = set(flatten(books.values_list("tags", flat=True))) - excluded_tags
 
     results = {}
     for tag in toplevel_tags:
         tagged_books = [book for book in books if tag in book.tags]
-        related_tags = sorted(
-            sum(
-                [book.tags for book in tagged_books],
-                [],
-            )
-        )
+        related_tags = sorted(flatten([book.tags for book in tagged_books]))
         results[tag] = {
             related_tag: len(list(books))
             for related_tag, books in groupby(related_tags)
