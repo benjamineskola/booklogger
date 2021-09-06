@@ -27,7 +27,7 @@ jobs:
 
     strategy:
       matrix:
-        python: [3.8, 3.9]
+        python: [3.8, 3.9, "3.10.0-rc.2"]
 
     env:
       DATABASE_URL: postgres://postgres:postgres@127.0.0.1:5432/github_actions
