@@ -1,6 +1,4 @@
 import pytest
-from django.contrib.auth.models import User
-from django.test import RequestFactory
 
 from library.factories import book_factory, user_factory  # noqa: F401
 from library.models import Book
@@ -15,25 +13,6 @@ from library.views.book import (
 
 @pytest.mark.django_db
 class TestBook:
-    @pytest.fixture
-    def factory(self):
-        return RequestFactory()
-
-    @pytest.fixture
-    def user(self, user_factory):  # noqa: F811
-        if not User.objects.count():
-            user_factory(username="ben").save()
-        return User.objects.first()
-
-    @pytest.fixture
-    def get(self, factory, user):
-        def _get(url):
-            req = factory.get(url)
-            req.user = user
-            return req
-
-        yield _get
-
     def test_currently_reading(self, get, book_factory):  # noqa: F811
         view = CurrentlyReadingView.as_view()
         book = book_factory()
