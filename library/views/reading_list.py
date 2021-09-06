@@ -7,10 +7,6 @@ from django.views import generic
 from library.forms import ReadingListForm
 from library.models import ReadingList
 
-# This additional monkeypatch should be unnecessary
-generic.DetailView.__class_getitem__ = classmethod(lambda cls, *args, **kwargs: cls)  # type: ignore [attr-defined]
-generic.ListView.__class_getitem__ = classmethod(lambda cls, *args, **kwargs: cls)  # type: ignore [attr-defined]
-
 
 class IndexView(generic.ListView[ReadingList]):
     model = ReadingList

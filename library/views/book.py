@@ -22,10 +22,6 @@ from library.forms import (
 from library.models import Book, BookQuerySet, LogEntry, LogEntryQuerySet, Tag
 from library.utils import oxford_comma
 
-# This additional monkeypatch should be unnecessary
-generic.DetailView.__class_getitem__ = classmethod(lambda cls, *args, **kwargs: cls)  # type: ignore [attr-defined]
-generic.ListView.__class_getitem__ = classmethod(lambda cls, *args, **kwargs: cls)  # type: ignore [attr-defined]
-
 
 class IndexView(LoginRequiredMixin, generic.ListView[Book]):
     paginate_by = 100
