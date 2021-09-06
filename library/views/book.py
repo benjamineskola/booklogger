@@ -299,10 +299,9 @@ class ReadView(GenericLogView):
     def get_queryset(self) -> LogEntryQuerySet:
         entries = super().get_queryset()
         if last := entries.last():
-            year = last.end_date.year
-            return entries.filter(end_date__year=year)
-        else:
-            return LogEntry.objects.none()
+            if last.end_date:
+                return entries.filter(end_date__year=last.end_date.year)
+        return LogEntry.objects.none()
 
 
 class MarkdownReadView(GenericLogView):
