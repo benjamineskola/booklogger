@@ -9,8 +9,8 @@ class TestUtils:
     @pytest.mark.parametrize(
         "isbn10,isbn13",
         [
-            ("0306406152", "9780306406157"),
-            ("178067905X", "9781780679051"),
+            ("0140135154", "9780140135152"),
+            ("014103579X", "9780141035796"),
         ],
     )
     def test_isbn_to_isbn10_and_back(self, isbn10, isbn13):
@@ -20,12 +20,33 @@ class TestUtils:
     @pytest.mark.parametrize(
         "isbn",
         [
-            "X030646152",
-            "030640615Z",
+            "796",
+            "",
+            "not an isbn",
+            "978014103579X",
+            "Z141035790",
+            "Z14103579X",
+            "014103579Z",
         ],
     )
-    def test_isbn10_to_isbn_invalid(self, isbn):
+    def test_invalid_isbn(self, isbn):
+        assert utils.isbn_to_isbn10(isbn) == ""
         assert utils.isbn10_to_isbn(isbn) == ""
+
+    def test_isbn13_treated_as_isbn10(self):
+        assert utils.isbn10_to_isbn("9780141035796") == "9780141035796"
+
+    def test_sbn_to_isbn13(self):
+        assert utils.isbn10_to_isbn("140135154") == "9780140135152"
+
+        # when converted back it'll prepend a 0: isbn format not sbn
+        assert utils.isbn_to_isbn10("9780140135152") == "0140135154"
+
+    def test_isbn10_to_isbn_with_invalid_check_digit(self):
+        assert utils.isbn10_to_isbn("0140135151") == "9780140135152"
+
+        # converting back gives correct check digit
+        assert utils.isbn_to_isbn10("9780140135152") == "0140135154"
 
     @pytest.mark.parametrize(
         "test_input,expected",
