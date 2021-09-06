@@ -11,7 +11,7 @@ from .author import Author
 from .book import Book
 
 
-class LogEntryQuerySet(models.QuerySet):  # type: ignore [type-arg]
+class LogEntryQuerySet(models.QuerySet["LogEntry"]):
     def by_gender(self, *genders: int) -> "LogEntryQuerySet":
         return self.filter(
             Q(book__first_author__gender__in=genders)
