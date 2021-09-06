@@ -243,7 +243,7 @@ class DetailView(LoginRequiredMixin, generic.DetailView[Book]):
         return context
 
 
-class GenericLogView(LoginRequiredMixin, generic.ListView[Book]):
+class GenericLogView(LoginRequiredMixin, generic.ListView[LogEntry]):
     context_object_name = "entries"
 
     filter_by: Dict[str, Any] = {}
