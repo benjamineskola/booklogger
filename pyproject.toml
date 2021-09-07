@@ -11,6 +11,11 @@ omit = [
     ]
 
 [tool.mypy]
+files = ["booklogger", "library"]
+exclude = "/(migrations|tests|management)/$"
+pretty = true
+show_error_codes = true
+
 check_untyped_defs = true
 disallow_any_generics = true
 disallow_incomplete_defs = true
@@ -25,6 +30,7 @@ warn_redundant_casts = true
 warn_return_any = true
 warn_unused_configs = true
 warn_unused_ignores = true
+
 plugins = ["mypy_django_plugin.main"]
 
 [tool.django-stubs]
