@@ -13,59 +13,52 @@ from library.views.book import (
 
 @pytest.mark.django_db
 class TestBook:
-    def test_currently_reading(self, get, book_factory):  # noqa: F811
-        view = CurrentlyReadingView.as_view()
+    def test_currently_reading(self, get_response, book_factory):  # noqa: F811
+        view = CurrentlyReadingView
         book = book_factory()
         book.save()
 
-        req = get("/")
-        resp = view(req)
+        resp = get_response(view)
         assert resp.status_code == 200
         assert len(resp.context_data["object_list"]) == 0
 
         book.start_reading()
 
-        req = get("/")
-        resp = view(req)
+        resp = get_response(view)
         assert resp.status_code == 200
         assert len(resp.context_data["object_list"]) == 1
 
         book.finish_reading()
 
-        req = get("/")
-        resp = view(req)
+        resp = get_response(view)
         assert resp.status_code == 200
         assert len(resp.context_data["object_list"]) == 0
 
-    def test_read(self, get, book_factory):  # noqa: F811
-        view = ReadView.as_view()
+    def test_read(self, get_response, book_factory):  # noqa: F811
+        view = ReadView
         book = book_factory()
         book.save()
 
-        req = get("/books/read/")
-        resp = view(req)
+        resp = get_response(view)
         assert resp.status_code == 200
         assert len(resp.context_data["object_list"]) == 0
 
         book.start_reading()
 
-        req = get("/books/read/")
-        resp = view(req)
+        resp = get_response(view)
         assert resp.status_code == 200
         assert len(resp.context_data["object_list"]) == 0
 
         book.finish_reading()
 
-        req = get("/books/read/")
-        resp = view(req)
+        resp = get_response(view)
         assert resp.status_code == 200
         assert len(resp.context_data["object_list"]) == 1
 
-    def test_toread(self, get, book_factory, user):  # noqa: F811
-        view = UnreadIndexView.as_view()
+    def test_toread(self, get_response, book_factory, user):  # noqa: F811
+        view = UnreadIndexView
 
-        req = get("/books/toread/")
-        resp = view(req)
+        resp = get_response(view)
         assert resp.status_code == 200
         assert len(resp.context_data["object_list"]) == 0
 
@@ -73,26 +66,23 @@ class TestBook:
         book.owned_by = user
         book.save()
 
-        req = get("/books/toread/")
-        resp = view(req)
+        resp = get_response(view)
         assert resp.status_code == 200
         assert len(resp.context_data["object_list"]) == 1
         book.start_reading()
 
-        req = get("/books/toread/")
-        resp = view(req)
+        resp = get_response(view)
         assert resp.status_code == 200
         assert len(resp.context_data["object_list"]) == 0
 
         book.finish_reading()
 
-        req = get("/books/toread/")
-        resp = view(req)
+        resp = get_response(view)
         assert resp.status_code == 200
         assert len(resp.context_data["object_list"]) == 0
 
-    def test_format_filters(self, get, book_factory, user):  # noqa: F811
-        view = OwnedIndexView.as_view()
+    def test_format_filters(self, get_response, book_factory, user):  # noqa: F811
+        view = OwnedIndexView
 
         book_ebook = book_factory()
         book_ebook.owned_by = user
@@ -103,32 +93,28 @@ class TestBook:
         book_paperback.edition_format = Book.Format["PAPERBACK"]
         book_paperback.save()
 
-        req = get("/books/owned/")
-        resp = view(req)
+        resp = get_response(view)
         assert resp.status_code == 200
         assert book_ebook in resp.context_data["object_list"]
         assert book_paperback in resp.context_data["object_list"]
 
-        req = get("/books/owned/ebook/")
-        resp = view(req, format="ebook")
+        resp = get_response(view, format="ebook")
         assert resp.status_code == 200
         assert book_ebook in resp.context_data["object_list"]
         assert book_paperback not in resp.context_data["object_list"]
 
-        req = get("/books/owned/paperback/")
-        resp = view(req, format="paperback")
+        resp = get_response(view, format="paperback")
         assert resp.status_code == 200
         assert book_ebook not in resp.context_data["object_list"]
         assert book_paperback in resp.context_data["object_list"]
 
-        req = get("/books/owned/physical/")
-        resp = view(req, format="physical")
+        resp = get_response(view, format="physical")
         assert resp.status_code == 200
         assert book_ebook not in resp.context_data["object_list"]
         assert book_paperback in resp.context_data["object_list"]
 
-    def test_tag_filters(self, get, book_factory, user):  # noqa: F811
-        view = IndexView.as_view()
+    def test_tag_filters(self, get_response, book_factory, user):  # noqa: F811
+        view = IndexView
         book_fiction = book_factory()
         book_fiction.tags = ["fiction"]
         book_fiction.save()
@@ -136,20 +122,17 @@ class TestBook:
         book_nonfiction.tags = ["non-fiction"]
         book_nonfiction.save()
 
-        req = get("/books/")
-        resp = view(req)
+        resp = get_response(view)
         assert resp.status_code == 200
         assert book_fiction in resp.context_data["object_list"]
         assert book_nonfiction in resp.context_data["object_list"]
 
-        req = get("/books/?tags=fiction")
-        resp = view(req)
+        resp = get_response(view, "tags=fiction")
         assert resp.status_code == 200
         assert book_fiction in resp.context_data["object_list"]
         assert book_nonfiction not in resp.context_data["object_list"]
 
-        req = get("/books/?tags=non-fiction")
-        resp = view(req)
+        resp = get_response(view, "tags=non-fiction")
         assert resp.status_code == 200
         assert book_fiction not in resp.context_data["object_list"]
         assert book_nonfiction in resp.context_data["object_list"]

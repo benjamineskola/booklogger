@@ -12,11 +12,15 @@ def user(user_factory):  # noqa: F811
     return User.objects.first()
 
 
-@pytest.fixture
-def get(user):
-    def _get(url):
+@pytest.fixture(autouse=True)
+def get_response(user):
+    def _get(view, qs="", **kwargs):
+        url = "/"  # doesn't matter — ignored in practice
+        if qs:
+            url += "?" + qs.lstrip("?")
+
         req = RequestFactory().get(url)
         req.user = user
-        return req
+        return view.as_view()(req, **kwargs)
 
     yield _get
