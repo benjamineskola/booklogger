@@ -34,9 +34,9 @@
           {% endif %}
           {% if prediction %}
             (It's currently week {{ current_week }}.) On track to read {{ prediction["predicted_count"] | round(0, 'floor') | int }} this year.
-            {% if prediction["target_counts"] %}
+            {% if target_counts %}
               <br>
-              {% for target, target_count in prediction["target_counts"].items() %}
+              {% for target, target_count in target_counts.items() %}
                 To reach {{ target }} books I'd have to read {{ target_count | round_trunc(1) }} per week (1 every {{ (1 / target_count * 7) | round_trunc(1) }} days).
               {% endfor %}
             {% endif %}
