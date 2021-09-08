@@ -1,4 +1,4 @@
-from typing import Any, Type
+from typing import Any
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
@@ -28,23 +28,18 @@ class DetailView(generic.DetailView[ReadingList]):
         return context
 
 
-class CreateOrUpdateView(LoginRequiredMixin):
-    form_class: Type[ReadingListForm]
-    model: Type[ReadingList]
-
-
 class NewView(
-    CreateOrUpdateView, generic.edit.CreateView[ReadingList, ReadingListForm]
+    LoginRequiredMixin, generic.edit.CreateView[ReadingList, ReadingListForm]
 ):
-    form_class: Type[ReadingListForm]
-    model: Type[ReadingList]
+    form_class = ReadingListForm
+    model = ReadingList
 
 
 class EditView(
-    CreateOrUpdateView, generic.edit.UpdateView[ReadingList, ReadingListForm]
+    LoginRequiredMixin, generic.edit.UpdateView[ReadingList, ReadingListForm]
 ):
-    form_class: Type[ReadingListForm]
-    model: Type[ReadingList]
+    form_class = ReadingListForm
+    model = ReadingList
 
 
 class DeleteView(LoginRequiredMixin, generic.edit.DeleteView):
