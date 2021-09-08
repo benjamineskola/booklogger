@@ -22,9 +22,6 @@ from library.models import (
 )
 from library.utils import isbn10_to_isbn
 
-# This additional monkeypatch should be unnecessary
-ModelForm.__class_getitem__ = classmethod(lambda cls, *args, **kwargs: cls)  # type: ignore [attr-defined]
-
 
 class AuthorForm(ModelForm[Author]):
     class Meta:
