@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 from django.db.models import Q
 from django.http import HttpRequest, HttpResponse
@@ -8,13 +8,13 @@ from django.utils import timezone
 from library.models import Author, Book, BookQuerySet, LogEntry
 
 
-def _stats_for_queryset(books: BookQuerySet) -> Dict[str, Any]:
+def _stats_for_queryset(books: BookQuerySet) -> dict[str, Any]:
     fiction = books.fiction()
     nonfiction = books.nonfiction()
     poc = books.filter(
         Q(first_author__poc=True) | Q(additional_authors__poc=True)
     ).distinct()
-    result: Dict[str, Any] = {
+    result: dict[str, Any] = {
         "count": books.count(),
         "pages": books.page_count,
         "average_pages": books.page_count

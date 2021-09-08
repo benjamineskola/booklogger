@@ -1,5 +1,3 @@
-from typing import Dict
-
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 
@@ -7,7 +5,7 @@ from library.models import Book, Tag
 
 
 def tag_cloud(request: HttpRequest) -> HttpResponse:
-    tags: Dict[str, Dict[str, int]] = {
+    tags: dict[str, dict[str, int]] = {
         "untagged": {
             "total": Book.objects.exclude(tags__contains=["non-fiction"])
             .exclude(tags__contains=["fiction"])
@@ -28,7 +26,7 @@ def tag_cloud(request: HttpRequest) -> HttpResponse:
         tags["fiction"][tag.name] = books.fiction().count()
         tags["non-fiction"][tag.name] = books.nonfiction().count()
 
-    sorted_tags: Dict[str, Dict[str, Dict[str, int]]] = {"name": {}, "size": {}}
+    sorted_tags: dict[str, dict[str, dict[str, int]]] = {"name": {}, "size": {}}
     for key in ["fiction", "non-fiction", "all"]:
         sorted_tags["name"][key] = {
             k: v for k, v in sorted(tags[key].items(), key=lambda item: item[0])

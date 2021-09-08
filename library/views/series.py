@@ -1,5 +1,5 @@
 import re
-from typing import Any, Dict, Set
+from typing import Any
 
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
@@ -9,7 +9,7 @@ from library.models import Book
 
 def list(request: HttpRequest) -> HttpResponse:
     series_books = Book.objects.exclude(series="")
-    counts: Dict[str, Dict[str, Set[Any]]] = {}
+    counts: dict[str, dict[str, set[Any]]] = {}
     for book in series_books:
         series = book.series
         if series not in counts:

@@ -1,6 +1,6 @@
 import json
 import re
-from typing import Any, Dict
+from typing import Any
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -26,7 +26,7 @@ from library.utils import oxford_comma
 class IndexView(LoginRequiredMixin, generic.ListView[Book]):
     paginate_by = 100
 
-    filter_by: Dict[str, Any] = {}
+    filter_by: dict[str, Any] = {}
     sort_by = None
     reverse_sort = False
     page_title = "All Books"
@@ -89,7 +89,7 @@ class IndexView(LoginRequiredMixin, generic.ListView[Book]):
 
         return books.filter_by_request(self.request).distinct()
 
-    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["formats"] = Book.Format.choices
         context["format"] = self.kwargs.get("format")
@@ -169,7 +169,7 @@ class SeriesIndexView(IndexView):
         books = books.filter(series=self.series)
         return books
 
-    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context[
             "page_title"
@@ -184,7 +184,7 @@ class PublisherIndexView(IndexView):
         books = books.filter(publisher=self.publisher)
         return books
 
-    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context[
             "page_title"
@@ -206,7 +206,7 @@ class TagIndexView(IndexView):
                 books &= Tag.objects[tag.name].books_recursive
             return books
 
-    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["tags"] = [
             Tag.objects[tag]
@@ -236,7 +236,7 @@ class UnreviewedView(IndexView):
 class DetailView(LoginRequiredMixin, generic.DetailView[Book]):
     model = Book
 
-    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         book = self.get_object()
         context["page_title"] = book.display_title + " by " + str(book.first_author)
@@ -246,7 +246,7 @@ class DetailView(LoginRequiredMixin, generic.DetailView[Book]):
 class GenericLogView(LoginRequiredMixin, generic.ListView[LogEntry]):
     context_object_name = "entries"
 
-    filter_by: Dict[str, Any] = {}
+    filter_by: dict[str, Any] = {}
     page_title = ""
 
     def get_queryset(self) -> LogEntryQuerySet:
@@ -277,7 +277,7 @@ class GenericLogView(LoginRequiredMixin, generic.ListView[LogEntry]):
 
         return entries.filter_by_request(self.request).distinct()
 
-    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["page_title"] = self.page_title
         context["year"] = self.kwargs.get("year")
@@ -493,8 +493,8 @@ class BookEditMixin(
             response = super(BookEditMixin, self).form_invalid(form)
         return response
 
-    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
-        context: Dict[str, Any] = super(BookEditMixin, self).get_context_data(**kwargs)
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context: dict[str, Any] = super(BookEditMixin, self).get_context_data(**kwargs)
 
         if self.request.POST:
             context["inline_formsets"] = [

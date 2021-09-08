@@ -1,5 +1,5 @@
 from itertools import groupby
-from typing import Callable, List, Optional, Tuple
+from typing import Callable, Optional
 
 from django.db.models import F, Q
 from django.http import HttpRequest, HttpResponse
@@ -10,7 +10,7 @@ from library.utils import flatten
 
 
 def report(request: HttpRequest, page: Optional[str] = None) -> HttpResponse:
-    categories: List[Tuple[str, Callable[[BookQuerySet], BookQuerySet]]] = [
+    categories: list[tuple[str, Callable[[BookQuerySet], BookQuerySet]]] = [
         (
             "Missing ISBN",
             lambda owned_books: owned_books.filter(isbn="")

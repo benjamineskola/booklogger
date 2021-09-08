@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import QuerySet
@@ -12,7 +12,7 @@ from library.models import Author
 class DetailView(LoginRequiredMixin, generic.DetailView[Author]):
     model = Author
 
-    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["page_title"] = str(self.get_object())
         return context
@@ -36,7 +36,7 @@ class IndexView(LoginRequiredMixin, generic.ListView[Author]):
 
         return qs
 
-    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["total_authors"] = self.get_queryset().count()
         context["page_title"] = "Authors"
@@ -57,7 +57,7 @@ class EditView(LoginRequiredMixin, generic.edit.UpdateView[Author, AuthorForm]):
     form_class = AuthorForm
     model = Author
 
-    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["page_title"] = f"Editing {self.object}"  # type: ignore [attr-defined]
         return context
@@ -67,7 +67,7 @@ class NewView(LoginRequiredMixin, generic.edit.CreateView[Author, AuthorForm]):
     form_class = AuthorForm
     model = Author
 
-    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["page_title"] = "New author"
         return context

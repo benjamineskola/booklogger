@@ -2,7 +2,7 @@ import os
 import re
 import time
 from datetime import date
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Optional
 from urllib.parse import quote
 
 import requests
@@ -82,7 +82,7 @@ class BaseBookManager(models.Manager["Book"]):
         )
         return qs
 
-    def find_on_goodreads(self, query: str) -> List[Dict[str, Any]]:
+    def find_on_goodreads(self, query: str) -> list[dict[str, Any]]:
         search_url = f"https://www.goodreads.com/search/index.xml?key={os.environ['GOODREADS_KEY']}&q={query}"
         data = requests.get(search_url).text
         xml = xmltodict.parse(data, dict_constructor=dict)
@@ -94,7 +94,7 @@ class BaseBookManager(models.Manager["Book"]):
         except TypeError:
             return []
 
-        results: List[Dict[str, Any]] = []
+        results: list[dict[str, Any]] = []
         if "id" in all_results:
             results = [all_results]
         else:
@@ -108,7 +108,7 @@ class BaseBookManager(models.Manager["Book"]):
         ]
 
     def create_from_goodreads(
-        self, query: Optional[str] = None, data: Optional[Dict[str, Any]] = None
+        self, query: Optional[str] = None, data: Optional[dict[str, Any]] = None
     ) -> Optional["Book"]:
         result = {}
         if query and not data:
@@ -471,7 +471,7 @@ class Book(models.Model):
         return reverse("library:book_details", args=[self.slug])
 
     @property
-    def authors(self) -> List[Author]:
+    def authors(self) -> list[Author]:
         additional_authors = list(
             self.additional_authors.filter(
                 bookauthor__role=self.first_author_role
@@ -483,7 +483,7 @@ class Book(models.Model):
             return additional_authors
 
     @property
-    def all_authors(self) -> List[Author]:
+    def all_authors(self) -> list[Author]:
         additional_authors = list(self.additional_authors.order_by("bookauthor__order"))
         if self.first_author:
             return [self.first_author] + additional_authors
@@ -853,7 +853,7 @@ class Book(models.Model):
         return True
 
     def update_from_goodreads(
-        self, data: Optional[Dict[str, Any]] = None
+        self, data: Optional[dict[str, Any]] = None
     ) -> Optional["Book"]:
         result = {}
         if data:
@@ -910,7 +910,7 @@ class Book(models.Model):
         return self.modified_date.date()
 
     @property
-    def ancestor_editions(self) -> List["Book"]:
+    def ancestor_editions(self) -> list["Book"]:
         return (
             [self.parent_edition] + self.parent_edition.ancestor_editions
             if self.parent_edition
@@ -984,19 +984,19 @@ class Tag(models.Model):
         )
 
     @property
-    def parents_recursive(self) -> Set["Tag"]:
+    def parents_recursive(self) -> set["Tag"]:
         return set(self.parents.all()) | set(
             [pp for p in self.parents.all() for pp in p.parents_recursive]
         )
 
     @property
-    def children_recursive(self) -> Set["Tag"]:
+    def children_recursive(self) -> set["Tag"]:
         return set(self.children.all()) | set(
             [cc for c in self.children.all() for cc in c.children_recursive]
         )
 
     @property
-    def related(self) -> Set["Tag"]:
+    def related(self) -> set["Tag"]:
         return set(
             [Tag.objects[tag] for child in self.books.all() for tag in child.tags]
         )
@@ -1020,7 +1020,7 @@ class Tag(models.Model):
             book.save()
         self.delete()
 
-    def delete(self, *args: Any, **kwargs: Any) -> Tuple[int, Dict[str, int]]:
+    def delete(self, *args: Any, **kwargs: Any) -> tuple[int, dict[str, int]]:
         for book in self.books:
             book.tags.remove(self.name)
             book.save()

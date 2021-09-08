@@ -1,5 +1,5 @@
 import re
-from typing import Any, MutableMapping, Set, Tuple
+from typing import Any, MutableMapping
 
 from django.contrib.postgres.search import TrigramSimilarity
 from django.db import models
@@ -37,7 +37,7 @@ class AuthorManager(models.Manager["Author"]):
             | Q(surname=names["surname"], preferred_forenames=names["forenames"])
         )
 
-    def get_or_create_by_single_name(self, name: str) -> Tuple["Author", bool]:
+    def get_or_create_by_single_name(self, name: str) -> tuple["Author", bool]:
         try:
             return (Author.objects.get_by_single_name(name), False)
         except self.model.DoesNotExist:
@@ -188,7 +188,7 @@ class Author(models.Model):
         return books
 
     @property
-    def identities(self) -> Set["Author"]:
+    def identities(self) -> set["Author"]:
         identities = set(self.pseudonyms.all())
         if self.primary_identity:
             identities.add(self.primary_identity)
