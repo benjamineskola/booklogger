@@ -32,10 +32,10 @@ from .author import Author
 LogEntry = models.Model
 
 
-class BaseBookManager(models.Manager):  # type: ignore [type-arg]
+class BaseBookManager(models.Manager["Book"]):
     def search(self, pattern: str) -> "BookQuerySet":
         qs: BookQuerySet = (
-            self.annotate(
+            self.annotate(  # type: ignore [assignment]
                 first_author_similarity=TrigramSimilarity(
                     "first_author__surname", pattern
                 ),
@@ -209,7 +209,7 @@ class BaseBookManager(models.Manager):  # type: ignore [type-arg]
         return ""
 
 
-class BookQuerySet(models.QuerySet):  # type: ignore [type-arg]
+class BookQuerySet(models.QuerySet["Book"]):
     def by_gender(self, *genders: int) -> "BookQuerySet":
         return self.filter(
             Q(first_author__gender__in=genders)
@@ -935,7 +935,7 @@ class BookAuthor(models.Model):
         return ": ".join([str(self.author), str(self.role), self.book.title])
 
 
-class TagManager(models.Manager):  # type: ignore [type-arg]
+class TagManager(models.Manager["Tag"]):
     def __getitem__(self, name: str) -> "Tag":
         return Tag.objects.get(name=name)
 

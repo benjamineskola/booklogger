@@ -167,7 +167,7 @@ def stats_for_year(request: HttpRequest, year: str) -> HttpResponse:
         result["acquired"] = books.filter(acquired_date__year=year).count()
 
     current_year = timezone.now().year
-    prediction = {}
+    prediction: Dict[str, Any] = {}
     if year == str(current_year):
         first_day = timezone.datetime(current_year, 1, 1)
         last_day = timezone.datetime(current_year, 12, 31)
@@ -185,13 +185,13 @@ def stats_for_year(request: HttpRequest, year: str) -> HttpResponse:
         result["predicted_pages"] = result["pages_per_day"] * year_days
 
         remaining_days = year_days - current_day
-        prediction["target_counts"] = {}  # type: ignore [assignment]
+        prediction["target_counts"] = {}
         for target in [26, 39, 52, 78, 104, 208]:
             if target > current_year_count:
-                prediction["target_counts"][target] = (  # type: ignore [index]
+                prediction["target_counts"][target] = (
                     (target - current_year_count) / max(1, remaining_days) * 7
                 )
-            if len(prediction["target_counts"].keys()) >= 3:  # type: ignore [attr-defined]
+            if len(prediction["target_counts"].keys()) >= 3:
                 break
     else:
         if year != "total" and year != "sometime":

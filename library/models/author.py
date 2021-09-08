@@ -17,7 +17,7 @@ Book = models.Model
 BookQuerySet = models.QuerySet[Book]
 
 
-class AuthorManager(models.Manager):  # type: ignore
+class AuthorManager(models.Manager["Author"]):
     def search(self, pattern: str) -> "models.QuerySet[Author]":
         return (
             Author.objects.annotate(

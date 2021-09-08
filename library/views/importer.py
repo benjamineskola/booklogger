@@ -1,5 +1,5 @@
 import json
-from typing import Optional
+from typing import List, Optional, Tuple, Union
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
@@ -48,7 +48,7 @@ def bulk_import(request: HttpRequest) -> HttpResponse:
     if request.POST:
         data = request.POST["data"]
 
-        results = []
+        results: List[Tuple[Union[Author, Book], bool]] = []
         failures = []
 
         for entry in data.strip("\r\n").split("\n"):

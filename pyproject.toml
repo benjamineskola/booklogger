@@ -33,6 +33,10 @@ warn_unused_ignores = true
 
 plugins = ["mypy_django_plugin.main"]
 
+# disabled at least until typeddjango/django-stubs#700 is fixed
+cache_dir = "/dev/null"
+no_incremental = true
+
 [tool.django-stubs]
 django_settings_module = "booklogger.settings"
 
