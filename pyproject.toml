@@ -60,7 +60,7 @@ PyYAML = "*"
 requests = "*"
 stripunicode = {git = "https://github.com/benjamineskola/stripunicode", branch = "main"}
 xmltodict = "*"
-django-stubs-ext = "^0.3.0"
+django-stubs-ext = "^0.3.1"
 typing-extensions = "^3.10.0"
 
 [tool.poetry.dev-dependencies]
