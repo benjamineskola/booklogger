@@ -732,8 +732,8 @@ python-versions = ">=3.5"
 
 [[package]]
 name = "stripunicode"
-version = "0.0.1"
-description = "calculate date differences"
+version = "0.0.3"
+description = "Remove diacritics in Unicode text."
 category = "main"
 optional = false
 python-versions = ">=3.5, <4"
@@ -743,7 +743,7 @@ develop = false
 type = "git"
 url = "https://github.com/benjamineskola/stripunicode"
 reference = "main"
-resolved_reference = "8f4ad7f9b66a67965a50f0fa8ea2b24a69b1dfb4"
+resolved_reference = "960974a6e457de228128fa81ab7248049c79d66f"
 
 [[package]]
 name = "text-unidecode"
