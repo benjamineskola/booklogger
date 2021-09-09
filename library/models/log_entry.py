@@ -4,6 +4,7 @@ from django.db import models
 from django.db.models import F, Q, signals
 from django.utils import timezone
 
+from library.models.timestamped_model import TimestampedModel
 from library.signals import update_timestamp_on_save
 from library.utils import str2bool
 
@@ -56,7 +57,7 @@ class LogEntryQuerySet(models.QuerySet["LogEntry"]):
 LogEntryManager = models.Manager.from_queryset(LogEntryQuerySet)
 
 
-class LogEntry(models.Model):
+class LogEntry(TimestampedModel):
     objects = LogEntryManager()
 
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name="log_entries")
@@ -79,9 +80,6 @@ class LogEntry(models.Model):
     end_precision = models.PositiveSmallIntegerField(
         choices=DatePrecision.choices, default=0
     )
-
-    created_date = models.DateTimeField(db_index=True, default=timezone.now)
-    modified_date = models.DateTimeField(db_index=True, default=timezone.now)
 
     def __str__(self) -> str:
         text = str(self.book)

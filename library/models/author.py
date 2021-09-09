@@ -7,13 +7,13 @@ from django.db.models import F, Q, signals
 from django.db.models.functions import Lower
 from django.db.models.indexes import Index
 from django.urls import reverse
-from django.utils import timezone
 from stripunicode import stripunicode
 
+from library.models.timestamped_model import TimestampedModel
 from library.signals import update_timestamp_on_save
 from library.utils import LANGUAGES
 
-Book = models.Model
+Book = TimestampedModel
 BookQuerySet = models.QuerySet[Book]
 
 
@@ -51,7 +51,7 @@ class AuthorManager(models.Manager["Author"]):
             author.save()
 
 
-class Author(models.Model):
+class Author(TimestampedModel):
     objects = AuthorManager()
 
     class Meta:
@@ -87,9 +87,6 @@ class Author(models.Model):
         null=True,
         on_delete=models.SET_NULL,
     )
-
-    created_date = models.DateTimeField(db_index=True, default=timezone.now)
-    modified_date = models.DateTimeField(db_index=True, default=timezone.now)
 
     def __str__(self) -> str:
         if not self.forenames:

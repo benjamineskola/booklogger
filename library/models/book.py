@@ -24,12 +24,13 @@ from django.urls import reverse
 from django.utils import timezone
 from stripunicode import stripunicode
 
+from library.models.timestamped_model import TimestampedModel
 from library.signals import update_timestamp_on_save
 from library.utils import LANGUAGES, isbn_to_isbn10, oxford_comma, str2bool
 
 from .author import Author
 
-LogEntry = models.Model
+LogEntry = TimestampedModel
 
 
 class BaseBookManager(models.Manager["Book"]):
@@ -317,7 +318,7 @@ class BookQuerySet(models.QuerySet["Book"]):
 BookManager = BaseBookManager.from_queryset(BookQuerySet)
 
 
-class Book(models.Model):
+class Book(TimestampedModel):
     objects = BookManager()
 
     class Meta:
@@ -414,9 +415,6 @@ class Book(models.Model):
     ebook_acquired_date = models.DateField(blank=True, null=True)
 
     editions = models.ManyToManyField("self", symmetrical=True, blank=True)
-
-    created_date = models.DateTimeField(db_index=True, default=timezone.now)
-    modified_date = models.DateTimeField(db_index=True, default=timezone.now)
 
     slug = models.SlugField(blank=True, default="")
 
@@ -918,7 +916,7 @@ class Book(models.Model):
         )
 
 
-class BookAuthor(models.Model):
+class BookAuthor(TimestampedModel):
     class Meta:
         ordering = ["order"]
         unique_together = ("author", "book")
@@ -927,9 +925,6 @@ class BookAuthor(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     role = models.CharField(db_index=True, max_length=255, blank=True, default="")
     order = models.PositiveSmallIntegerField(db_index=True, blank=True, null=True)
-
-    created_date = models.DateTimeField(db_index=True, default=timezone.now)
-    modified_date = models.DateTimeField(db_index=True, default=timezone.now)
 
     def __str__(self) -> str:
         return ": ".join([str(self.author), str(self.role), self.book.title])
@@ -940,7 +935,7 @@ class TagManager(models.Manager["Tag"]):
         return Tag.objects.get(name=name)
 
 
-class Tag(models.Model):
+class Tag(TimestampedModel):
     objects = TagManager()
 
     class Meta:
@@ -950,9 +945,6 @@ class Tag(models.Model):
     parents = models.ManyToManyField(
         "self", related_name="children", blank=True, symmetrical=False
     )
-
-    created_date = models.DateTimeField(db_index=True, default=timezone.now)
-    modified_date = models.DateTimeField(db_index=True, default=timezone.now)
 
     def __str__(self) -> str:
         return self.fullname
