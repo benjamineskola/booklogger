@@ -2,7 +2,7 @@ import os
 import re
 import time
 from datetime import date
-from typing import Any, Optional
+from typing import TYPE_CHECKING, Any, Optional
 from urllib.parse import quote
 
 import requests
@@ -29,7 +29,8 @@ from library.utils import LANGUAGES, isbn_to_isbn10, oxford_comma, str2bool
 
 from .author import Author
 
-LogEntry = TimestampedModel
+if TYPE_CHECKING:
+    from .log_entry import LogEntry
 
 
 class BaseBookManager(models.Manager["Book"]):

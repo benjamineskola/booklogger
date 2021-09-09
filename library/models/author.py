@@ -1,5 +1,5 @@
 import re
-from typing import Any, MutableMapping
+from typing import TYPE_CHECKING, Any, MutableMapping
 
 from django.contrib.postgres.search import TrigramSimilarity
 from django.db import models
@@ -12,8 +12,8 @@ from stripunicode import stripunicode
 from library.models.timestamped_model import TimestampedModel
 from library.utils import LANGUAGES
 
-Book = TimestampedModel
-BookQuerySet = models.QuerySet[Book]
+if TYPE_CHECKING:
+    from .book import Book, BookQuerySet
 
 
 class AuthorManager(models.Manager["Author"]):
@@ -135,8 +135,8 @@ class Author(TimestampedModel):
         return self.role_for_book(book) == "editor"
 
     def role_for_book(self, book: "Book") -> str:
-        if book.first_author == self:  # type: ignore [attr-defined]
-            return str(book.first_author_role)  # type: ignore [attr-defined]
+        if book.first_author == self:
+            return str(book.first_author_role)
         elif rel := self.bookauthor_set.get(book=book.pk):
             return rel.role
         else:
