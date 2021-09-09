@@ -4,7 +4,7 @@ from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.utils import timezone
 
-from library.models.timestamped_model import TimestampedModel
+from library.models.abc import TimestampedModel
 
 
 @receiver(pre_save)

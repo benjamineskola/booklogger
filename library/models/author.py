@@ -9,7 +9,7 @@ from django.db.models.indexes import Index
 from django.urls import reverse
 from stripunicode import stripunicode
 
-from library.models.timestamped_model import TimestampedModel
+from library.models.abc import SluggableModel, TimestampedModel
 from library.utils import LANGUAGES
 
 if TYPE_CHECKING:
@@ -50,7 +50,7 @@ class AuthorManager(models.Manager["Author"]):
             author.save()
 
 
-class Author(TimestampedModel):
+class Author(TimestampedModel, SluggableModel):
     objects = AuthorManager()
 
     class Meta:

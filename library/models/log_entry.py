@@ -4,7 +4,7 @@ from django.db import models
 from django.db.models import F, Q
 from django.utils import timezone
 
-from library.models.timestamped_model import TimestampedModel
+from library.models.abc import TimestampedModel
 from library.utils import str2bool
 
 from .author import Author

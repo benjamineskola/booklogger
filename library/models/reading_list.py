@@ -2,7 +2,7 @@ from django.db import models
 from django.urls import reverse
 
 from library.models.book import Book
-from library.models.timestamped_model import TimestampedModel
+from library.models.abc import TimestampedModel
 
 
 class ReadingList(TimestampedModel):

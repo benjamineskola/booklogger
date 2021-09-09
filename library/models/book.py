@@ -24,7 +24,7 @@ from django.urls import reverse
 from django.utils import timezone
 from stripunicode import stripunicode
 
-from library.models.timestamped_model import TimestampedModel
+from library.models.abc import SluggableModel, TimestampedModel
 from library.utils import LANGUAGES, isbn_to_isbn10, oxford_comma, str2bool
 
 from .author import Author
@@ -318,7 +318,7 @@ class BookQuerySet(models.QuerySet["Book"]):
 BookManager = BaseBookManager.from_queryset(BookQuerySet)
 
 
-class Book(TimestampedModel):
+class Book(TimestampedModel, SluggableModel):
     objects = BookManager()
 
     class Meta:
@@ -415,8 +415,6 @@ class Book(TimestampedModel):
     ebook_acquired_date = models.DateField(blank=True, null=True)
 
     editions = models.ManyToManyField("self", symmetrical=True, blank=True)
-
-    slug = models.SlugField(blank=True, default="")
 
     parent_edition = models.ForeignKey(
         "self",
