@@ -22,10 +22,15 @@ from django.db.models.functions import Lower
 from django.db.models.indexes import Index
 from django.urls import reverse
 from django.utils import timezone
-from stripunicode import stripunicode
 
 from library.models.abc import SluggableModel, TimestampedModel
-from library.utils import LANGUAGES, isbn_to_isbn10, oxford_comma, str2bool
+from library.utils import (
+    LANGUAGES,
+    isbn_to_isbn10,
+    oxford_comma,
+    remove_stopwords,
+    str2bool,
+)
 
 from .author import Author
 
@@ -652,9 +657,6 @@ class Book(TimestampedModel, SluggableModel):
         self.save()
 
     def save(self, *args: Any, **kwargs: Any) -> None:
-        if not self.slug:
-            self.slug = self._generate_slug()
-
         if "goodreads" in self.image_url or "amazon" in self.image_url:
             self.image_url = re.sub(r"\._.+_\.jpg$", ".jpg", self.image_url)
 
@@ -706,50 +708,16 @@ class Book(TimestampedModel, SluggableModel):
             entries |= edition.log_entries.all()
         return entries
 
-    def _generate_slug(self) -> str:
+    def _slug_fields(self) -> list[str]:
+        fields = []
         if self.first_author:
-            slug = self.first_author.surname.lower().replace(" ", "-")
-            slug = stripunicode(slug)
-            slug = re.sub(r"[^\w-]", "", slug)
-            slug += "-"
-        else:
-            slug = ""
+            fields.append(self.first_author.surname)
+        title = self.display_title.split(":")[0]
 
-        stopwords = [
-            "a",
-            "an",
-            "and",
-            "at",
-            "in",
-            "is",
-            "of",
-            "on",
-            "to",
-            "for",
-            "the",
-            "&",
-        ]
+        title = remove_stopwords(title)
 
-        title = self.edition_title if self.edition_title else self.title
-
-        title_words = title.split(":")[0].lower().split()
-        title_words = [word for word in title_words if word not in stopwords]
-
-        slug += re.sub(r"[^\w-]+", "", stripunicode("-".join(title_words)))
-
-        slug = slug[0:50].strip("-")
-        matches = Book.objects.filter(slug=slug).exclude(pk=self.id)
-        if not matches:
-            return slug
-        elif matches.count() == 1 and matches.first() == self:
-            return slug
-        else:
-            for idx in range(1, 10):
-                new_slug = slug[0:48].strip("-") + "-" + str(idx)
-                matches = Book.objects.filter(slug=new_slug).exclude(pk=self.id)
-                if not matches:
-                    return new_slug
-        return str(self.id)
+        fields.append(title)
+        return fields
 
     @property
     def isbn10(self) -> str:

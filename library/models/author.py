@@ -1,5 +1,5 @@
 import re
-from typing import TYPE_CHECKING, Any, MutableMapping
+from typing import TYPE_CHECKING, MutableMapping
 
 from django.contrib.postgres.search import TrigramSimilarity
 from django.db import models
@@ -7,10 +7,9 @@ from django.db.models import F, Q
 from django.db.models.functions import Lower
 from django.db.models.indexes import Index
 from django.urls import reverse
-from stripunicode import stripunicode
 
 from library.models.abc import SluggableModel, TimestampedModel
-from library.utils import LANGUAGES
+from library.utils import LANGUAGES, remove_stopwords
 
 if TYPE_CHECKING:
     from .book import Book, BookQuerySet
@@ -212,31 +211,7 @@ class Author(TimestampedModel, SluggableModel):
 
         return {"surname": surname, "forenames": forenames}
 
-    def _generate_slug(self) -> str:
-        words = self.name_with_initials.lower().split(" ")
-        slug = "-".join(
-            [word for word in words if word not in ["von", "van", "der", "le", "de"]]
-        )
-        slug = stripunicode(slug)
-        slug = re.sub(r"[^\w-]+", "", slug)
-
-        slug = slug[0:50].strip("-")
-        matches = Author.objects.filter(slug=slug)
-        if not matches:
-            return slug
-        elif matches.count() == 1 and matches.first() == self:
-            return slug
-        else:
-            idx = 1
-            for idx in range(1, 10):
-                new_slug = slug[0:48].strip("-") + "-" + str(idx)
-                matches = Author.objects.filter(slug=new_slug)
-                if not matches:
-                    return new_slug
-        return str(self.id)
-
-    def save(self, *args: Any, **kwargs: Any) -> None:
-        if not self.slug:
-            self.slug = self._generate_slug()
-
-        super().save(*args, **kwargs)
+    def _slug_fields(self) -> list[str]:
+        return [
+            remove_stopwords(self.name_with_initials, ["von", "van", "der", "le", "de"])
+        ]
