@@ -3,14 +3,13 @@ from typing import Any, MutableMapping
 
 from django.contrib.postgres.search import TrigramSimilarity
 from django.db import models
-from django.db.models import F, Q, signals
+from django.db.models import F, Q
 from django.db.models.functions import Lower
 from django.db.models.indexes import Index
 from django.urls import reverse
 from stripunicode import stripunicode
 
 from library.models.timestamped_model import TimestampedModel
-from library.signals import update_timestamp_on_save
 from library.utils import LANGUAGES
 
 Book = TimestampedModel
@@ -241,6 +240,3 @@ class Author(TimestampedModel):
             self.slug = self._generate_slug()
 
         super().save(*args, **kwargs)
-
-
-signals.pre_save.connect(receiver=update_timestamp_on_save, sender=Author)

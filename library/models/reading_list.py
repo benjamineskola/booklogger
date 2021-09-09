@@ -1,10 +1,8 @@
 from django.db import models
-from django.db.models import signals
 from django.urls import reverse
 
 from library.models.book import Book
 from library.models.timestamped_model import TimestampedModel
-from library.signals import update_timestamp_on_save
 
 
 class ReadingList(TimestampedModel):
@@ -31,7 +29,3 @@ class ReadingListEntry(TimestampedModel):
     reading_list = models.ForeignKey(ReadingList, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
     order = models.PositiveSmallIntegerField(db_index=True, blank=True, null=True)
-
-
-signals.pre_save.connect(receiver=update_timestamp_on_save, sender=ReadingList)
-signals.pre_save.connect(receiver=update_timestamp_on_save, sender=ReadingListEntry)

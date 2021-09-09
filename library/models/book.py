@@ -17,7 +17,7 @@ from django.contrib.postgres.search import (
     TrigramSimilarity,
 )
 from django.db import models
-from django.db.models import Case, F, Q, Sum, Value, When, signals
+from django.db.models import Case, F, Q, Sum, Value, When
 from django.db.models.functions import Lower
 from django.db.models.indexes import Index
 from django.urls import reverse
@@ -25,7 +25,6 @@ from django.utils import timezone
 from stripunicode import stripunicode
 
 from library.models.timestamped_model import TimestampedModel
-from library.signals import update_timestamp_on_save
 from library.utils import LANGUAGES, isbn_to_isbn10, oxford_comma, str2bool
 
 from .author import Author
@@ -1017,8 +1016,3 @@ class Tag(TimestampedModel):
             book.tags.remove(self.name)
             book.save()
         return super().delete(*args, **kwargs)
-
-
-signals.pre_save.connect(receiver=update_timestamp_on_save, sender=Book)
-signals.pre_save.connect(receiver=update_timestamp_on_save, sender=BookAuthor)
-signals.pre_save.connect(receiver=update_timestamp_on_save, sender=Tag)
