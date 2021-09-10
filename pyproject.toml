@@ -41,6 +41,9 @@ no_incremental = true
 [tool.django-stubs]
 django_settings_module = "booklogger.settings"
 
+[tool.isort]
+profile = "black"
+
 [tool.poetry]
 name = "booklogger"
 version = "0.1.0"
