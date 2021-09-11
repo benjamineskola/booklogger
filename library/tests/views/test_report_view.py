@@ -26,3 +26,17 @@ class TestReportView:
         resp = get_response(IndexView, page=str(page))
         assert resp.status_code == 200
         assert resp.context_data["page_title"] != "Reports"
+
+    def test_report_ordering(self, get_response, book_factory, user):
+        book1 = book_factory(title="Book A", page_count=200, isbn="", owned_by=user)
+        book2 = book_factory(title="Book B", page_count=100, isbn="", owned_by=user)
+        book1.save()
+        book2.save()
+
+        resp = get_response(IndexView, "order_by=title", page="1")
+        assert resp.status_code == 200
+        assert list(resp.context_data["object_list"]) == [book1, book2]
+
+        resp = get_response(IndexView, "order_by=page_count", page="1")
+        assert resp.status_code == 200
+        assert list(resp.context_data["object_list"]) == [book2, book1]
