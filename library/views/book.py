@@ -27,7 +27,7 @@ class IndexView(LoginRequiredMixin, generic.ListView[Book]):
     paginate_by = 100
 
     filter_by: dict[str, Any] = {}
-    sort_by = None
+    sort_by = ""
     reverse_sort = False
     page_title = "All Books"
     show_format_filters = False
@@ -494,7 +494,7 @@ class BookEditMixin(
         return response
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        context: dict[str, Any] = super(BookEditMixin, self).get_context_data(**kwargs)
+        context = super(BookEditMixin, self).get_context_data(**kwargs)
 
         if self.request.POST:
             context["inline_formsets"] = [

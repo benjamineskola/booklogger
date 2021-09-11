@@ -100,11 +100,7 @@ class BaseBookManager(models.Manager["Book"]):
         except TypeError:
             return []
 
-        results: list[dict[str, Any]] = []
-        if "id" in all_results:
-            results = [all_results]
-        else:
-            results = all_results
+        results = [all_results] if "id" in all_results else all_results
 
         return [
             result
@@ -116,14 +112,13 @@ class BaseBookManager(models.Manager["Book"]):
     def create_from_goodreads(
         self, query: Optional[str] = None, data: Optional[dict[str, Any]] = None
     ) -> Optional["Book"]:
-        result = {}
-        if query and not data:
+        if data:
+            result = data
+        elif query:
             results = self.find_on_goodreads(query)
             if not results:
                 return None
             result = results[0]
-        elif data:
-            result = data
         else:
             return None
 
@@ -819,7 +814,6 @@ class Book(TimestampedModel, SluggableModel):
     def update_from_goodreads(
         self, data: Optional[dict[str, Any]] = None
     ) -> Optional["Book"]:
-        result = {}
         if data:
             result = data
         else:
