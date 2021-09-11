@@ -33,10 +33,10 @@ class TestReportView:
         book1.save()
         book2.save()
 
-        resp = get_response(IndexView, "order_by=title", page="1")
+        resp = get_response(IndexView, {"order_by": "title"}, page="1")
         assert resp.status_code == 200
         assert list(resp.context_data["object_list"]) == [book1, book2]
 
-        resp = get_response(IndexView, "order_by=page_count", page="1")
+        resp = get_response(IndexView, {"order_by": "page_count"}, page="1")
         assert resp.status_code == 200
         assert list(resp.context_data["object_list"]) == [book2, book1]

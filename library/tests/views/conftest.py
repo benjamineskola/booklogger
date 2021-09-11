@@ -1,5 +1,6 @@
 import pytest
 from django.contrib.auth.models import User
+from django.http import QueryDict
 from django.test import RequestFactory
 
 
@@ -12,10 +13,12 @@ def user(user_factory):
 
 @pytest.fixture(autouse=True)
 def get_response(user):
-    def _get(view, qs="", **kwargs):
+    def _get(view, get=None, **kwargs):
         url = "/"  # doesn't matter — ignored in practice
-        if qs:
-            url += "?" + qs.lstrip("?")
+        if get:
+            q = QueryDict(mutable=True)
+            q.update(get)
+            url += "?" + q.urlencode()
 
         req = RequestFactory().get(url)
         req.user = user

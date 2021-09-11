@@ -126,12 +126,12 @@ class TestBook:
         assert book_fiction in resp.context_data["object_list"]
         assert book_nonfiction in resp.context_data["object_list"]
 
-        resp = get_response(view, "tags=fiction")
+        resp = get_response(view, {"tags": "fiction"})
         assert resp.status_code == 200
         assert book_fiction in resp.context_data["object_list"]
         assert book_nonfiction not in resp.context_data["object_list"]
 
-        resp = get_response(view, "tags=non-fiction")
+        resp = get_response(view, {"tags": "non-fiction"})
         assert resp.status_code == 200
         assert book_fiction not in resp.context_data["object_list"]
         assert book_nonfiction in resp.context_data["object_list"]
