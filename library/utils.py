@@ -1,5 +1,6 @@
+from collections.abc import Collection, Iterable, Sequence
 from math import floor, log
-from typing import Any, Iterable, Optional, Sequence
+from typing import Any, Optional
 
 # fmt: off
 LANGUAGES = {"af": "Afrikaans", "sq": "Albanian", "ar": "Arabic", "hy": "Armenian", "az": "Azerbaijani", "eu": "Basque", "be": "Belarusian", "bn": "Bengali", "bs": "Bosnian", "br": "Breton", "bg": "Bulgarian", "my": "Burmese", "ca": "Catalan", "zh": "Chinese", "hr": "Croatian", "cs": "Czech", "da": "Danish", "nl": "Dutch", "en": "English", "eo": "Esperanto", "et": "Estonian", "fi": "Finnish", "fr": "French", "fy": "Frisian", "gd": "Gaelic", "gl": "Galician", "ka": "Georgian", "de": "German", "el": "Greek", "he": "Hebrew", "hi": "Hindi", "hu": "Hungarian", "is": "Icelandic", "io": "Ido", "id": "Indonesian", "ia": "Interlingua", "ga": "Irish", "it": "Italian", "ja": "Japanese", "kn": "Kannada", "kk": "Kazakh", "km": "Khmer", "ko": "Korean", "sr": "Latin", "lv": "Latvian", "lt": "Lithuanian", "lb": "Luxembourgish", "mk": "Macedonian", "ml": "Malayalam", "mr": "Marathi", "mn": "Mongolian", "ne": "Nepali", "nb": "Norwegian", "nn": "Nynorsk", "os": "Ossetic", "fa": "Persian", "pl": "Polish", "pt": "Portuguese", "pa": "Punjabi", "ro": "Romanian", "ru": "Russian", "sk": "Slovak", "sl": "Slovenian", "es": "Spanish", "sw": "Swahili", "sv": "Swedish", "ta": "Tamil", "tt": "Tatar", "te": "Telugu", "th": "Thai", "tr": "Turkish", "uk": "Ukrainian", "ur": "Urdu", "uz": "Uzbek", "vi": "Vietnamese", "cy": "Welsh"}.items()  # noqa: B950
@@ -53,10 +54,9 @@ def isbn10_to_isbn(isbn: str) -> str:
         return "".join([str(c) for c in ints] + [str(checksum)])
 
 
-def oxford_comma(items: list[str]) -> str:
+def oxford_comma(items: Sequence[str]) -> str:
     if len(items) > 2:
-        items[-1] = "and " + items[-1]
-        return ", ".join(items)
+        return ", ".join(items[0:-1]) + ", and " + items[-1]
     else:
         return " and ".join(items)
 
@@ -84,7 +84,7 @@ def flatten(list_of_lists: Iterable[Optional[Iterable[Any]]]) -> Iterable[Any]:
     return [item for sublist in list_of_lists if sublist for item in sublist]
 
 
-def remove_stopwords(string: str, stopwords: Sequence[str] = ()) -> str:
+def remove_stopwords(string: str, stopwords: Collection[str] = ()) -> str:
     if not stopwords:
         stopwords = [
             "a",
