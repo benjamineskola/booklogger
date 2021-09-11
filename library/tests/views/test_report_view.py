@@ -11,6 +11,7 @@ class TestReportView:
         resp = get_response(IndexView)
         assert resp.status_code == 200
         assert len(resp.context_data["object_list"]) == 0
+        assert resp.context_data["page_title"] == "Reports"
 
     def test_report_page(self, get_response, book_factory, user):
         book_factory(isbn="", owned_by=user).save()
@@ -18,3 +19,10 @@ class TestReportView:
         resp = get_response(IndexView, page="1")
         assert resp.status_code == 200
         assert len(resp.context_data["object_list"]) == 1
+
+    @pytest.mark.parametrize("page", range(1, len(IndexView().categories)))
+    def test_report_all_pages(self, page, get_response, book_factory, user):
+        book_factory(owned_by=user).save()
+        resp = get_response(IndexView, page=str(page))
+        assert resp.status_code == 200
+        assert resp.context_data["page_title"] != "Reports"

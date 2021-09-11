@@ -151,6 +151,12 @@ class IndexView(LoginRequiredMixin, generic.ListView[Book]):
 
         context["categories"] = self.categories
         context["page"] = self.kwargs.get("page")
+
+        if page := self.kwargs.get("page"):
+            context["page_title"] = self.categories[int(page) - 1][0]
+        else:
+            context["page_title"] = "Reports"
+
         return context
 
 

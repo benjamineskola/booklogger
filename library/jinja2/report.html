@@ -16,9 +16,10 @@
         </li>
       {% endfor %}
     </ul>
+
+    <h3>Reports</h3>
   {% endif %}
 
-  <h3>Reports</h3>
   <ul>
     {% for i in categories %}
       <li><a href="/report/{{ loop.index }}/">{{ i[0] }}</a></li>
