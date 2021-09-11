@@ -2,11 +2,9 @@ import pytest
 from django.contrib.auth.models import User
 from django.test import RequestFactory
 
-from library.factories import user_factory  # noqa: F401
-
 
 @pytest.fixture
-def user(user_factory):  # noqa: F811
+def user(user_factory):
     if not User.objects.count():
         user_factory(username="ben").save()
     return User.objects.first()

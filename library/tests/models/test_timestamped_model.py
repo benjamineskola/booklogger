@@ -3,12 +3,10 @@ from datetime import timedelta
 import pytest
 from django.utils import timezone
 
-from library.factories import book_factory  # noqa: F401
-
 
 @pytest.mark.django_db
 class TestTimestampedModel:
-    def test_created_date(self, book_factory):  # noqa: F811
+    def test_created_date(self, book_factory):
         test_start = timezone.now()
         book = book_factory()
         book.save()
@@ -18,7 +16,7 @@ class TestTimestampedModel:
         assert book.created_date < test_end
         assert abs(book.modified_date - book.created_date) < timedelta(seconds=1)
 
-    def test_modified_date(self, book_factory):  # noqa: F811
+    def test_modified_date(self, book_factory):
         book = book_factory()
         book.save()
         orig_modified_date = book.modified_date

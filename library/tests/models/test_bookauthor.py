@@ -1,12 +1,10 @@
 import pytest
 
-from library.factories import author_factory, book_factory  # noqa: F401
-
 
 @pytest.mark.django_db
 class TestBookAuthor:
     @pytest.fixture
-    def mock_book(self, book_factory):  # noqa: F811
+    def mock_book(self, book_factory):
         mock_book = book_factory(title="Autobiography")
         mock_book.save()
         return mock_book
@@ -16,7 +14,7 @@ class TestBookAuthor:
         return mock_authors[0]
 
     @pytest.fixture
-    def mock_authors(self, author_factory):  # noqa: F811
+    def mock_authors(self, author_factory):
         authors = [
             author_factory(surname="Smithee", forenames="Alan"),
             author_factory(surname="Smithee", forenames="Boris"),

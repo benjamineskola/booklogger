@@ -1,6 +1,5 @@
 import pytest
 
-from library.factories import book_factory, user_factory  # noqa: F401
 from library.models import Book
 from library.views.book import (
     CurrentlyReadingView,
@@ -13,7 +12,7 @@ from library.views.book import (
 
 @pytest.mark.django_db
 class TestBook:
-    def test_currently_reading(self, get_response, book_factory):  # noqa: F811
+    def test_currently_reading(self, get_response, book_factory):
         view = CurrentlyReadingView
         book = book_factory()
         book.save()
@@ -34,7 +33,7 @@ class TestBook:
         assert resp.status_code == 200
         assert len(resp.context_data["object_list"]) == 0
 
-    def test_read(self, get_response, book_factory):  # noqa: F811
+    def test_read(self, get_response, book_factory):
         view = ReadView
         book = book_factory()
         book.save()
@@ -55,7 +54,7 @@ class TestBook:
         assert resp.status_code == 200
         assert len(resp.context_data["object_list"]) == 1
 
-    def test_toread(self, get_response, book_factory, user):  # noqa: F811
+    def test_toread(self, get_response, book_factory, user):
         view = UnreadIndexView
 
         resp = get_response(view)
@@ -81,7 +80,7 @@ class TestBook:
         assert resp.status_code == 200
         assert len(resp.context_data["object_list"]) == 0
 
-    def test_format_filters(self, get_response, book_factory, user):  # noqa: F811
+    def test_format_filters(self, get_response, book_factory, user):
         view = OwnedIndexView
 
         book_ebook = book_factory()
@@ -113,7 +112,7 @@ class TestBook:
         assert book_ebook not in resp.context_data["object_list"]
         assert book_paperback in resp.context_data["object_list"]
 
-    def test_tag_filters(self, get_response, book_factory, user):  # noqa: F811
+    def test_tag_filters(self, get_response, book_factory, user):
         view = IndexView
         book_fiction = book_factory()
         book_fiction.tags = ["fiction"]

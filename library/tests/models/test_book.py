@@ -1,16 +1,10 @@
 import pytest
 
-from library.factories import (  # noqa: F401
-    author_factory,
-    book_author_factory,
-    book_factory,
-)
-
 
 @pytest.mark.django_db
 class TestBook:
     @pytest.fixture
-    def mock_authors(self, author_factory):  # noqa: F811
+    def mock_authors(self, author_factory):
         authors = [
             author_factory(),
             author_factory(),
@@ -22,7 +16,7 @@ class TestBook:
         return authors
 
     @pytest.fixture
-    def mock_book(self, book_factory, mock_authors, book_author_factory):  # noqa: F811
+    def mock_book(self, book_factory, mock_authors, book_author_factory):
         mock_book = book_factory()
         mock_book.save()
         mock_book.add_author(mock_authors[0], order=1)
@@ -30,7 +24,8 @@ class TestBook:
 
     def test_book_display(self, mock_authors, mock_book):
         assert (
-            mock_book.display_details == f"{mock_authors[0]}, _{mock_book.display_title}_"
+            mock_book.display_details
+            == f"{mock_authors[0]}, _{mock_book.display_title}_"
         )
 
     def test_two_authors(self, mock_book, mock_authors):
