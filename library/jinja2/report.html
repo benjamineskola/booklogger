@@ -2,9 +2,9 @@
 {% extends "base.html" %}
 {% block content %}
   {% if page %}
-    <h3>{{ categories[page | int - 1][0] }} ({{ results.count() }})</h3>
+    <h3>{{ categories[page | int - 1][0] }} ({{ object_list.count() }})</h3>
     <ul>
-      {% for item in results %}
+      {% for item in object_list %}
         <li>
           <a href="{{ item.get_absolute_url() }}">{{ item }}</a>
           <small>(<a href="{{ url('library:book_edit', args=[item.slug]) }}">edit</a>

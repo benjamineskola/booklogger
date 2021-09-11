@@ -190,6 +190,8 @@ urlpatterns = [
     re_path(
         r"^report/tags(?:/(?P<base_tag>[^/]+))?/", views.report.tags, name="report_tags"
     ),
-    re_path(r"^report(?:/(?P<page>\d+))?/", views.report.report, name="report"),
+    re_path(
+        r"^report(?:/(?P<page>\d+))?/", views.report.IndexView.as_view(), name="report"
+    ),
     path("bulkimport/", views.importer.bulk_import, name="bulk_import"),
 ]
