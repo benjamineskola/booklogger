@@ -5,39 +5,36 @@ from library.models import Book, Tag
 
 
 def tag_cloud(request: HttpRequest) -> HttpResponse:
-    tags: dict[str, dict[str, int]] = {
+    tags = {
         "untagged": {
             "total": Book.objects.exclude(tags__contains=["non-fiction"])
             .exclude(tags__contains=["fiction"])
             .count()
         },
+        "all": {tag.name: tag.books.count() for tag in Tag.objects.all()},
+        "fiction": {tag.name: tag.books.fiction().count() for tag in Tag.objects.all()},
         "non-fiction": {
-            "no other tags": Tag.objects["non-fiction"].books_uniquely_tagged.count()
+            tag.name: tag.books.nonfiction().count() for tag in Tag.objects.all()
         },
-        "fiction": {
-            "no other tags": Tag.objects["fiction"].books_uniquely_tagged.count()
-        },
-        "all": {},
     }
 
-    for tag in Tag.objects.all():
-        books = tag.books
-        tags["all"][tag.name] = books.count()
-        tags["fiction"][tag.name] = books.fiction().count()
-        tags["non-fiction"][tag.name] = books.nonfiction().count()
+    tags["fiction"]["no other tags"] = Tag.objects[
+        "fiction"
+    ].books_uniquely_tagged.count()
+    tags["non-fiction"]["no other tags"] = Tag.objects[
+        "non-fiction"
+    ].books_uniquely_tagged.count()
 
-    sorted_tags: dict[str, dict[str, dict[str, int]]] = {"name": {}, "size": {}}
-    for key in ["fiction", "non-fiction", "all"]:
-        sorted_tags["name"][key] = {
-            k: v for k, v in sorted(tags[key].items(), key=lambda item: item[0])
-        }
-    for key in ["fiction", "non-fiction", "all"]:
-        sorted_tags["size"][key] = {
-            k: v
-            for k, v in sorted(
-                tags[key].items(), key=lambda item: item[1], reverse=True
-            )
-        }
+    sorted_tags = {
+        "name": {
+            key: dict(sorted(tags[key].items(), key=lambda item: item[0]))
+            for key in ["fiction", "non-fiction", "all"]
+        },
+        "size": {
+            key: dict(sorted(tags[key].items(), key=lambda item: item[1], reverse=True))
+            for key in ["fiction", "non-fiction", "all"]
+        },
+    }
 
     return render(
         request,
