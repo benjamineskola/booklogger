@@ -13,7 +13,7 @@ omit = [
 
 [tool.mypy]
 files = ["booklogger", "library"]
-exclude = "/(migrations|tests|management)/$"
+exclude = "/(migrations|tests|management|jinja2)/$"
 pretty = true
 show_error_codes = true
 
