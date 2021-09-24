@@ -11,5 +11,5 @@ updates:
       interval: "daily"
     allow:
       - dependency-type: "all"
-    reviewers:
+    assignees:
       - benjamineskola
