@@ -743,7 +743,7 @@ develop = false
 type = "git"
 url = "https://github.com/benjamineskola/stripunicode"
 reference = "main"
-resolved_reference = "960974a6e457de228128fa81ab7248049c79d66f"
+resolved_reference = "1a0f2b210a85c61dad586d2b9773987107ed0316"
 
 [[package]]
 name = "text-unidecode"
