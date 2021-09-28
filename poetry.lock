@@ -166,7 +166,7 @@ toml = ">=0.9.4"
 
 [[package]]
 name = "curtsies"
-version = "0.3.6"
+version = "0.3.7"
 description = "Curses-like terminal wrapper, with colored strings!"
 category = "main"
 optional = false
@@ -938,7 +938,7 @@ curlylint = [
     {file = "curlylint-0.13.0.tar.gz", hash = "sha256:0d38839f126b3fdd2561a7efa65d15a1c842aac98e555b2381f7c79478e1ff25"},
 ]
 curtsies = [
-    {file = "curtsies-0.3.6.tar.gz", hash = "sha256:ffe52cb5a0d87e914574418816b34965085db8f6cffd8951ec227bd7deec738f"},
+    {file = "curtsies-0.3.7.tar.gz", hash = "sha256:d512b237ea82ab9d7c0c9deea96f685be30e1c122366ee97ede602d1c31989aa"},
 ]
 cwcwidth = [
     {file = "cwcwidth-0.1.4-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:0614e892110401284fec5850ee45846d5ff163654574d3df040f86f02ec05399"},
