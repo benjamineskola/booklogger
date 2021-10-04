@@ -11,5 +11,8 @@ updates:
       interval: "daily"
     allow:
       - dependency-type: "all"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-patch"]
     assignees:
       - benjamineskola
