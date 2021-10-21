@@ -9,16 +9,22 @@ from library.forms import AuthorForm
 from library.models import Author
 
 
-class DetailView(LoginRequiredMixin, generic.DetailView[Author]):
+class DetailView(generic.DetailView[Author]):
     model = Author
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["page_title"] = str(self.get_object())
+        context["books"] = self.get_object().books.filter(
+            private__in=(
+                [True, False] if self.request.user.is_authenticated else [False]
+            )
+        )
+
         return context
 
 
-class IndexView(LoginRequiredMixin, generic.ListView[Author]):
+class IndexView(generic.ListView[Author]):
     model = Author
     paginate_by = 100
 

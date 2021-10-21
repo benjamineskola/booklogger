@@ -8,7 +8,10 @@ from library.models import Book
 
 
 def list(request: HttpRequest) -> HttpResponse:
-    series_books = Book.objects.exclude(series="")
+    series_books = Book.objects.exclude(series="").filter(
+        private__in=([True, False] if request.user.is_authenticated else [False])
+    )
+
     counts: dict[str, dict[str, set[Any]]] = {}
     for book in series_books:
         series = book.series

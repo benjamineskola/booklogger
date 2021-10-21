@@ -424,6 +424,8 @@ class Book(TimestampedModel, SluggableModel):
         on_delete=models.SET_NULL,
     )
 
+    private = models.BooleanField(db_index=True, default=False)
+
     def __str__(self) -> str:
         result = f"{self.first_author}, {self.display_title}"
 

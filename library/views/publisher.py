@@ -5,7 +5,10 @@ from library.models import Book
 
 
 def list(request: HttpRequest) -> HttpResponse:
-    publisher_books = Book.objects.exclude(publisher="")
+    publisher_books = Book.objects.exclude(publisher="").filter(
+        private__in=([True, False] if request.user.is_authenticated else [False])
+    )
+
     counts = {}
     for book in publisher_books:
         publisher = book.publisher

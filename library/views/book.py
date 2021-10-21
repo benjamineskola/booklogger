@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import F, Q
 from django.db.models.functions import Lower
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseNotFound
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.utils import timezone
@@ -23,7 +23,7 @@ from library.models import Book, BookQuerySet, LogEntry, LogEntryQuerySet, Tag
 from library.utils import oxford_comma
 
 
-class IndexView(LoginRequiredMixin, generic.ListView[Book]):
+class IndexView(generic.ListView[Book]):
     paginate_by = 100
 
     filter_by: dict[str, Any] = {}
@@ -36,7 +36,11 @@ class IndexView(LoginRequiredMixin, generic.ListView[Book]):
         books = (
             Book.objects.select_related("first_author")
             .prefetch_related("additional_authors", "log_entries")
-            .all()
+            .filter(
+                private__in=(
+                    [True, False] if self.request.user.is_authenticated else [False]
+                )
+            )
         )
 
         if "filter_by" in self.kwargs:
@@ -233,7 +237,7 @@ class UnreviewedView(IndexView):
         return super().get_queryset().filter(review="").read()
 
 
-class DetailView(LoginRequiredMixin, generic.DetailView[Book]):
+class DetailView(generic.DetailView[Book]):
     model = Book
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
@@ -242,8 +246,15 @@ class DetailView(LoginRequiredMixin, generic.DetailView[Book]):
         context["page_title"] = book.display_title + " by " + str(book.first_author)
         return context
 
+    def dispatch(self, *args: Any, **kwargs: Any) -> Any:
+        obj = self.get_object()
+        if obj.private and not self.request.user.is_authenticated:
+            return HttpResponseNotFound("Page not found")
 
-class GenericLogView(LoginRequiredMixin, generic.ListView[LogEntry]):
+        return super().dispatch(*args, **kwargs)
+
+
+class GenericLogView(generic.ListView[LogEntry]):
     context_object_name = "entries"
 
     filter_by: dict[str, Any] = {}
@@ -253,7 +264,11 @@ class GenericLogView(LoginRequiredMixin, generic.ListView[LogEntry]):
         entries = (
             LogEntry.objects.select_related("book", "book__first_author")
             .prefetch_related("book__additional_authors", "book__log_entries")
-            .all()
+            .filter(
+                book__private__in=(
+                    [True, False] if self.request.user.is_authenticated else [False]
+                )
+            )
             .order_by("end_date", "start_date")
         )
 

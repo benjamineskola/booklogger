@@ -15,7 +15,9 @@ def basic_search(request: HttpRequest) -> HttpResponse:
             books := Book.objects.filter(Q(isbn=query) | Q(asin=query))
         ) and books.count() == 1:
             return redirect(books[0])
-        books = Book.objects.search(query)
+        books = Book.objects.search(query).filter(
+            private__in=([True, False] if request.user.is_authenticated else [False])
+        )
         authors = Author.objects.search(query).filter(similarity__gt=0.25)
 
     return render(
