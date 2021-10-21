@@ -25,14 +25,14 @@ class TestBook:
     def test_book_display(self, mock_authors, mock_book):
         assert (
             mock_book.display_details
-            == f"{mock_authors[0]}, _{mock_book.display_title}_"
+            == f"{mock_authors[0]}, *{mock_book.display_title}*"
         )
 
     def test_two_authors(self, mock_book, mock_authors):
         mock_book.add_author(mock_authors[1], order=2)
         assert (
             mock_book.display_details
-            == f"{mock_authors[0]} and {mock_authors[1]}, _{mock_book.display_title}_"
+            == f"{mock_authors[0]} and {mock_authors[1]}, *{mock_book.display_title}*"
         )
 
     def test_three_authors(self, mock_book, mock_authors):
@@ -40,7 +40,7 @@ class TestBook:
         mock_book.add_author(mock_authors[2], order=3)
         assert (
             mock_book.display_details
-            == f"{mock_authors[0]}, {mock_authors[1]}, and {mock_authors[2]}, _{mock_book.display_title}_"
+            == f"{mock_authors[0]}, {mock_authors[1]}, and {mock_authors[2]}, *{mock_book.display_title}*"
         )
 
     def test_four_authors(self, mock_book, mock_authors):
@@ -49,5 +49,5 @@ class TestBook:
         mock_book.add_author(mock_authors[3], order=4)
         assert (
             mock_book.display_details
-            == f"{mock_authors[0]} and others, _{mock_book.display_title}_"
+            == f"{mock_authors[0]} and others, *{mock_book.display_title}*"
         )

@@ -14,9 +14,10 @@
 
 {%- for month, month_entries in year_entries | selectattr('end_precision', 'lt', 2) | groupby('end_date.month') %}
 
-- **{{ month_entries[0].end_date.strftime("%B") }}**
+-   **{{ month_entries[0].end_date.strftime("%B") }}**
+
 {% for entry in month_entries %}
-  - {{ entry.book.display_details | safe }}
+    -   {{ entry.book.display_details | safe }}
 {% endfor %}
 {% endfor %}
 

@@ -445,7 +445,7 @@ class Book(TimestampedModel, SluggableModel):
         else:
             result = oxford_comma([str(author) for author in self.authors])
 
-        result += ", _" + self.display_title + "_"
+        result += ", *" + self.display_title.replace("*", r"\*") + "*"
 
         if (
             self.editions.count()

@@ -44,7 +44,8 @@ class TestBookAuthor:
         mock_book.add_author(mock_authors[0])
         mock_book.add_author(mock_authors[1])
         assert (
-            mock_book.display_details == "Alan Smithee and Boris Smithee, _Autobiography_"
+            mock_book.display_details
+            == "Alan Smithee and Boris Smithee, *Autobiography*"
         )
 
     def test_author_role_none(self, mock_book, mock_author):
