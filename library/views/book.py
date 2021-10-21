@@ -339,6 +339,14 @@ class MarkdownReadView(GenericLogView):
             )
         )
 
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        if "verbose" in self.request.GET:
+            context["verbose"] = True
+        else:
+            context["verbose"] = False
+        return context
+
 
 class XmlReadView(GenericLogView):
     template_name = "logentry_list_feed.xml"

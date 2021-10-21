@@ -877,6 +877,13 @@ class Book(TimestampedModel, SluggableModel):
             else []
         )
 
+    @property
+    def review_url(self) -> str:
+        if self.review.startswith("http://") or self.review.startswith("https://"):
+            return self.review.split()[0]
+        else:
+            return ""
+
 
 class BookAuthor(TimestampedModel):
     class Meta:
