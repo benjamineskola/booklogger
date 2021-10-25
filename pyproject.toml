@@ -41,6 +41,16 @@ no_incremental = true
 [tool.django-stubs]
 django_settings_module = "booklogger.settings"
 
+[tool.flakehell]
+exclude = ["library/migrations"]
+extended_default_ignore=[]
+format = "grouped"
+
+[tool.flakehell.plugins]
+pyflakes = ["+*", "-E203", "-E501", "-W503"]
+"flake8-*" = ["+*"]
+flake8-docstrings = ["-D*"]
+
 [tool.isort]
 profile = "black"
 
@@ -73,7 +83,8 @@ django-stubs-ext = "^0.3.1"
 [tool.poetry.dev-dependencies]
 curlylint = "*"
 django-stubs = "^1.9"
-flake8 = "*"
+flakehell = "*"
+flake8 = "<4"
 flake8-bugbear = "*"
 flake8-docstrings = "*"
 lxml = "*"
