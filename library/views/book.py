@@ -199,15 +199,16 @@ class PublisherIndexView(IndexView):
 class TagIndexView(IndexView):
     def get_queryset(self) -> BookQuerySet:
         books = super().get_queryset()
-        tags = [tag.strip() for tag in self.kwargs["tag_name"].split(",")]
+        tags: list[str] = [tag.strip() for tag in self.kwargs["tag_name"].split(",")]
+
         if tags == ["untagged"]:
             return books.filter(tags__len=0)
         elif len(tags) == 1 and tags[0].endswith("!"):
             tag = get_object_or_404(Tag, name=tags[0][0:-1])
             return tag.books_uniquely_tagged
         else:
-            for tag in tags:
-                books &= Tag.objects[tag.name].books_recursive
+            for tag_name in tags:
+                books &= Tag.objects[tag_name].books_recursive
             return books
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
