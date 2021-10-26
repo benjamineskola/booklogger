@@ -19,6 +19,7 @@ from library.models import (
     LogEntry,
     ReadingList,
     ReadingListEntry,
+    Tag,
 )
 from library.utils import isbn10_to_isbn
 
@@ -69,6 +70,24 @@ class BookForm(ModelForm[Book]):
 
     def __init__(self, *args: Any, **kwargs: Any):
         super(BookForm, self).__init__(*args, **kwargs)
+
+        self.fields["publisher"].widget.choices += [
+            (publisher, publisher)
+            for publisher in Book.objects.exclude(publisher="")
+            .order_by("publisher")
+            .values_list("publisher", flat=True)
+            .distinct("publisher")
+            if publisher
+        ]
+        self.fields["series"].widget.choices += [
+            (series, series)
+            for series in Book.objects.exclude(series="")
+            .order_by("series")
+            .values_list("series", flat=True)
+            .distinct("series")
+            if series
+        ]
+        self.fields["tags"].widget.choices = Tag.objects.values_list("name", "name")
 
         instance = kwargs.get("instance")
         if instance:

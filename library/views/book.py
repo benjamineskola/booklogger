@@ -473,29 +473,6 @@ class BookEditMixin(
     form_class = BookForm
     model = Book
 
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        widgets = self.get_form()._meta.widgets  # type: ignore [attr-defined]
-        widgets["publisher"].choices += [
-            (publisher, publisher)
-            for publisher in Book.objects.exclude(publisher="")
-            .order_by("publisher")
-            .values_list("publisher", flat=True)
-            .distinct("publisher")
-            if publisher
-        ]
-        widgets["series"].choices += [
-            (series, series)
-            for series in Book.objects.exclude(series="")
-            .order_by("series")
-            .values_list("series", flat=True)
-            .distinct("series")
-            if series
-        ]
-        widgets["tags"].choices = Tag.objects.values_list("name", "name")
-
-        response: HttpResponse = super().get(request, *args, **kwargs)
-        return response
-
     def form_valid(self, form: BookForm) -> HttpResponse:
         context = self.get_context_data()
         self.object = form.save()
