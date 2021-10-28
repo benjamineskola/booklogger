@@ -172,6 +172,19 @@
           .on("click", function (event) {
             $(this).parent().parent().parent().parent().hide(1000);
           });
+
+        for (var el_id of ["acquired", "alienated", "ebook_acquired"]) {
+          $(`#div_id_${el_id}_date`).append(
+            `<a href="#" id="${el_id}_date_set_today">Set to today</a>`
+          );
+
+          $("#" + el_id + "_date_set_today").on(
+            "click",
+            null,
+            { el_id: el_id },
+            set_date_today
+          );
+        }
     });
 
   var bookauthor_formset_template = `{{ inline_formsets[0].empty_form }}`;
@@ -263,5 +276,21 @@
       $(this).parent().parent().parent().parent().hide(1000);
     });
   }
+
+    function set_date_today(event) {
+      event.preventDefault();
+      var el_id = event.data["el_id"];
+
+      var date = new Date();
+
+      $("#id_" + el_id + "_date_month").val(date.getMonth() + 1);
+      $("#id_" + el_id + "_date_month").trigger("change");
+
+      $("#id_" + el_id + "_date_year").val(date.getFullYear());
+      $("#id_" + el_id + "_date_year").trigger("change");
+
+      $("#id_" + el_id + "_date_day").val(date.getDate());
+      $("#id_" + el_id + "_date_day").trigger("change");
+    }
   </script>
 {% endblock footer%}
