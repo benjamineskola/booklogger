@@ -61,6 +61,9 @@
               </span>
             {%- endfor -%}
           </span>
+          {% if user.is_authenticated %}
+            <a href="{{ url('library:book_edit', args=[book.slug]) }}" class="fas fa-edit"></a>
+          {% endif %}
         </p>
 
         <span class="tags" id="tags-{{ book.id }}" data-book="{{ book.slug }}">

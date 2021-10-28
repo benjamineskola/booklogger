@@ -6,6 +6,14 @@ body {
   color: white;
 }
 
+a.fas,
+a.fas:active,
+a.fas:hover,
+a.fas:visited {
+  color: #212529;
+  text-decoration: none;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --dark: rgb(26, 26, 26);
@@ -84,6 +92,13 @@ body {
     .select2-search--inline
     .select2-search__field {
     background-color: transparent;
+    color: var(--light);
+  }
+
+  a.fas,
+  a.fas:active,
+  a.fas:hover,
+  a.fas:visited {
     color: var(--light);
   }
 }
