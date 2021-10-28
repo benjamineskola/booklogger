@@ -1,16 +1,18 @@
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: var(--dark);
+  background-color: var(--light);
 }
 
 .tags .badge a {
-  color: white;
+  color: var(--light);
 }
 
 a.fas,
 a.fas:active,
 a.fas:hover,
 a.fas:visited {
-  color: #212529;
+  color: var(--dark);
   text-decoration: none;
 }
 
