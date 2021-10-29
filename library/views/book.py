@@ -587,6 +587,11 @@ class BulkEditView(
                     queryset = queryset.filter(tags=[query_arg.strip("!")])
                 else:
                     queryset = queryset.filter(tags__contains=query_arg.split(","))
+            elif query == "author":
+                queryset = queryset.filter(
+                    Q(first_author__slug=query_arg)
+                    | Q(additional_authors__slug=query_arg)
+                )
 
         queryset = queryset.filter_by_request(self.request).distinct()
 

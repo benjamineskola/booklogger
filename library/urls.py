@@ -78,6 +78,11 @@ urlpatterns = [
         include(
             [
                 re_path(
+                    r"^(?P<query>author/.+)/edit/?$",
+                    views.book.BulkEditView.as_view(),
+                    name="books_bulk_edit",
+                ),
+                re_path(
                     r"(?P<query>.+)/edit/?$",
                     views.book.BulkEditView.as_view(),
                     name="books_bulk_edit",
