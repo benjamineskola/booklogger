@@ -36,6 +36,7 @@
           {% if book.display_series %}
             <a href="{{ url("library:series_details", args=[book.series.replace("/", "%2f")]) }}" class="text-muted small">({{ book.display_series }})</a>
           {% endif %}
+          {% if book.private %}<span class="fas fa-lock"></span>{% endif %}
         </h5>
         <h6 class="card-subtitle">
           by {{ author_list(book.authors, book=book) }}
