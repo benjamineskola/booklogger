@@ -216,13 +216,13 @@ class TagIndexView(IndexView):
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["tags"] = [
-            Tag.objects[tag]
+            Tag.objects[tag.strip("!")]
             for tag in self.kwargs["tag_name"].split(",")
             if tag != "untagged"
         ]
         context[
             "page_title"
-        ] = f"{self.get_queryset().count()} books tagged {oxford_comma(self.kwargs['tag_name'].split(','))}"
+        ] = f"{self.get_queryset().count()} books tagged {'only ' if '!' in self.kwargs['tag_name'] else ''}{oxford_comma([t.name for t in context['tags']])}"
         return context
 
 
