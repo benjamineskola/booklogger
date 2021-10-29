@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import F, Q
 from django.db.models.functions import Lower
+from django.forms import Form
 from django.http import HttpRequest, HttpResponse, HttpResponseNotFound
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
@@ -16,6 +17,7 @@ from django.views.decorators.http import require_POST
 from library.forms import (
     BookAuthorFormSet,
     BookForm,
+    BulkBookFormSet,
     LogEntryFormSet,
     ReadingListEntryFormSet,
 )
@@ -534,3 +536,65 @@ class DeleteView(LoginRequiredMixin, generic.edit.DeleteView):
     model = Book
     success_url = reverse_lazy("library:books_all")
     template_name = "confirm_delete.html"
+
+
+class BulkEditView(
+    LoginRequiredMixin,
+    generic.base.TemplateResponseMixin,
+    generic.edit.FormMixin[Form],
+    generic.edit.ProcessFormView,
+):
+    model = Book
+    form_class = Form
+    template_name = "book_bulk_form.html"
+    success_url = "/books/"
+
+    def form_valid(self, form: Form) -> HttpResponse:
+        context = self.get_context_data()
+        # self.object = form.save()
+
+        response: HttpResponse
+        formset = context["formset"]
+        if formset.is_valid():
+            formset.save()
+            response = super().form_valid(form)
+        else:
+            response = super().form_invalid(form)
+        return response
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+
+        queryset = Book.objects.all()
+        if query := self.kwargs.get("query"):
+            query, query_arg = query.split("/", 1)
+            if query == "read":
+                queryset = queryset.read()
+            elif query == "unread":
+                queryset = queryset.unread()
+            elif query == "owned":
+                queryset = queryset.filter(owned_by__username="ben")
+            elif query == "borrowed":
+                queryset = queryset.filter(owned_by__username="sara") | queryset.filter(
+                    was_borrowed=True
+                )
+            elif query == "unowned":
+                queryset = queryset.filter(owned_by__isnull=True)
+            elif query == "tag":
+                if query_arg == "untagged":
+                    queryset = queryset.filter(tags=[])
+                elif query_arg.endswith("!"):
+                    queryset = queryset.filter(tags=[query_arg.strip("!")])
+                else:
+                    queryset = queryset.filter(tags__contains=query_arg.split(","))
+
+        queryset = queryset.filter_by_request(self.request).distinct()
+
+        if self.request.POST:
+            context["formset"] = BulkBookFormSet(self.request.POST, queryset=queryset)
+        else:
+            context["formset"] = BulkBookFormSet(queryset=queryset)
+
+        context["page_title"] = f"Editing {self.kwargs.get('query')} books"
+
+        return context

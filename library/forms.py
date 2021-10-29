@@ -9,6 +9,7 @@ from django.forms import (
     SelectMultiple,
     ValidationError,
     inlineformset_factory,
+    modelformset_factory,
 )
 from django.utils import timezone
 
@@ -163,6 +164,18 @@ class ReadingListEntryForm(ModelForm[ReadingListEntry]):
         fields = ["reading_list", "order"]
 
 
+BulkBookFormSet = modelformset_factory(
+    Book,
+    fields=[
+        "title",
+        "first_author",
+        "series",
+        "series_order",
+        "edition_format",
+        "tags",
+    ],
+    extra=0,
+)
 BookAuthorFormSet = inlineformset_factory(
     Book, BookAuthor, form=BookAuthorForm, extra=0
 )
