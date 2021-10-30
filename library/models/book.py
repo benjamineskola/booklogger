@@ -829,9 +829,16 @@ class Book(TimestampedModel, SluggableModel):
         if data:
             result = data
         else:
+            if self.asin:
+                query = self.asin
+            elif self.isbn:
+                query = self.isbn
+            else:
+                query = self.search_query
+
             results = [
                 result
-                for result in Book.objects.find_on_goodreads(self.search_query)
+                for result in Book.objects.find_on_goodreads(query)
                 if (
                     not self.first_author
                     or self.first_author.surname.lower()
