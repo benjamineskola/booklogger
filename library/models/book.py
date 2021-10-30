@@ -686,6 +686,9 @@ class Book(TimestampedModel, SluggableModel):
         self.edition_title = smarten(self.edition_title)
         self.edition_subtitle = smarten(self.edition_subtitle)
 
+        if self.acquired_date and not self.alienated_date and not self.owned_by:
+            self.owned_by = User.objects.get(username="ben")
+
         super().save(*args, **kwargs)
 
         self.editions.all().update(
