@@ -29,6 +29,7 @@ from library.utils import (
     isbn_to_isbn10,
     oxford_comma,
     remove_stopwords,
+    smarten,
     str2bool,
 )
 
@@ -678,6 +679,12 @@ class Book(TimestampedModel, SluggableModel):
         )
         for tag in self.tags:
             Tag.objects.get_or_create(name=tag)
+
+        self.title = smarten(self.title)
+        self.subtitle = smarten(self.subtitle)
+        self.series = smarten(self.series)
+        self.edition_title = smarten(self.edition_title)
+        self.edition_subtitle = smarten(self.edition_subtitle)
 
         super().save(*args, **kwargs)
 

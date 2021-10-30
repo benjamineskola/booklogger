@@ -1,3 +1,4 @@
+import re
 from collections.abc import Collection, Iterable, Sequence
 from math import floor, log
 from typing import Any, Optional
@@ -101,3 +102,12 @@ def remove_stopwords(string: str, stopwords: Collection[str] = ()) -> str:
             "&",
         ]
     return " ".join([word for word in string.split() if not word.lower() in stopwords])
+
+
+def smarten(string: str) -> str:
+    string = re.sub(r"(\w)'(\w)", r"\1’\2", string)
+    string = re.sub(r"(\s|^)'(\w)", r"\1‘\2", string)
+    string = re.sub(r'(\s|^)"(\w)', r"\1“\2", string)
+    string = re.sub(r"(\w)'(\s|$)", r"\1’\2", string)
+    string = re.sub(r'(\w)"(\s|$)', r"\1”\2", string)
+    return string
