@@ -205,6 +205,7 @@ urlpatterns = [
     re_path(
         r"^report/tags(?:/(?P<base_tag>[^/]+))?/", views.report.tags, name="report_tags"
     ),
+    path("report/authors/", views.report.detached_authors, name="report_authors"),
     re_path(
         r"^report(?:/(?P<page>\d+))?/", views.report.IndexView.as_view(), name="report"
     ),

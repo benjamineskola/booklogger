@@ -7,7 +7,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.views import generic
 
-from library.models import Book, BookQuerySet, Tag
+from library.models import Author, Book, BookQuerySet, Tag
 from library.utils import flatten
 
 
@@ -216,4 +216,17 @@ def related_tags(request: HttpRequest, base_tag: str = "non-fiction") -> HttpRes
         request,
         "report_related_tags.html",
         {"results": results, "base_tag": base_tag, "excluded_tags": excluded_tags},
+    )
+
+
+def detached_authors(request: HttpRequest) -> HttpResponse:
+    return render(
+        request,
+        "report.html",
+        {
+            "object_list": Author.objects.exclude(
+                first_authored_books__isnull=False
+            ).exclude(additional_authored_books__isnull=False),
+            "page_title": "Authors without books",
+        },
     )
