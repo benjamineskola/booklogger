@@ -2,7 +2,7 @@ import os
 import re
 import time
 from datetime import date
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, Callable, Optional
 from urllib.parse import quote
 
 import requests
@@ -276,11 +276,28 @@ class BookQuerySet(models.QuerySet["Book"]):
         if tags := request.GET.get("tags"):
             qs = qs.tagged(*[tag.strip() for tag in tags.lower().split(",")])
         if owned := request.GET.get("owned"):
+            query: Callable[[str], Any] = lambda username: (
+                Q(owned_by__username=username)
+                | Q(parent_edition__owned_by__username=username)
+                # I can't make this recurse but three levels is the most I can foresee needing
+                | Q(parent_edition__parent_edition__owned_by__username=username)
+            )
             try:
-                val = not str2bool(owned)
-                qs = qs.filter(owned_by__isnull=val)
+                if str2bool(owned):
+                    qs = qs.filter(query("ben"))
+                else:
+                    qs = (
+                        qs.exclude(query("ben"))
+                        .exclude(query("sara"))
+                        .exclude(was_borrowed=True)
+                    )
             except ValueError:
-                qs = qs.filter(owned_by__username=owned)
+                if owned == "borrowed":
+                    qs = qs.exclude(owned_by=None).exclude(query("ben")) | qs.filter(
+                        was_borrowed=True
+                    )
+                else:
+                    qs = qs.filter(query(owned))
         if want_to_read := request.GET.get("want_to_read"):
             qs = qs.filter(want_to_read=str2bool(want_to_read))
         if read := request.GET.get("read"):
