@@ -8,6 +8,10 @@ body {
   color: var(--light);
 }
 
+a.fab,
+a.fab:active,
+a.fab:hover,
+a.fab:visited,
 a.fas,
 a.fas:active,
 a.fas:hover,
@@ -97,6 +101,10 @@ a.fas:visited {
     color: var(--light);
   }
 
+  a.fab,
+  a.fab:active,
+  a.fab:hover,
+  a.fab:visited,
   a.fas,
   a.fas:active,
   a.fas:hover,

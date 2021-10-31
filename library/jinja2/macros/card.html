@@ -113,6 +113,35 @@
             </form>
           {% endif %}
         </span>
+        <br>
+        <span>
+          {% if book.goodreads_id %}
+            <a href="https://www.goodreads.com/book/show/{{ book.goodreads_id }}" class="fab fa-goodreads-g"></a>
+          {% elif book.asin %}
+            <a href="https://www.goodreads.com/search/{{ book.asin }}" class="fab fa-goodreads-g"></a>
+          {% elif book.isbn %}
+            <a href="https://www.goodreads.com/search/{{ book.isbn }}" class="fab fa-goodreads-g"></a>
+          {% else %}
+            <a href="https://www.goodreads.com/search/{{ book.search_query }}" class="fab fa-goodreads-g"></a>
+          {% endif %}
+          {% if book.asin %}
+            <a href="https://www.amazon.co.uk/dp/{{ book.asin }}" class="fab fa-amazon"></a>
+          {% elif book.isbn %}
+            <a href="https://www.amazon.co.uk/s?k={{ book.isbn }}&i=stripbooks" class="fab fa-amazon"></a>
+          {% else %}
+            <a href="https://www.amazon.co.uk/s?k={{ book.search_query }}&i=stripbooks" class="fab fa-amazon"></a>
+          {% endif %}
+          {% if book.google_books_id %}
+            <a href="https://www.googleapis.com/books/v1/volumes/{{ book.google_books_id }}" class="fab fa-google"></a>
+          {% elif book.isbn %}
+            <a href="https://www.googleapis.com/books/v1/volumes?q=isbn:{{ book.isbn }}&i=stripbooks" class="fab fa-google"></a>
+          {% else %}
+            <a href="https://www.googleapis.com/books/v1/volumes?q={{ book.search_query }}&i=stripbooks" class="fab fa-google"></a>
+          {% endif %}
+          {% if book.publisher_url %}
+            <a href="{{ book.publisher_url }}" class="fas fa-book"></a>
+          {% endif %}
+        </span>
       </div>
     </div>
   </div>
