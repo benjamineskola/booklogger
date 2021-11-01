@@ -159,3 +159,5 @@ if os.environ.get("DYNO"):
 if "HEROKU_RELEASE_VERSION" in os.environ:
     os.environ["VERSION_NUMBER"] = os.environ["HEROKU_RELEASE_VERSION"]
     os.environ["COMMIT_ID"] = os.environ["HEROKU_SLUG_COMMIT"][0:7]
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
