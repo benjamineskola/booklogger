@@ -45,6 +45,7 @@ class IndexView(LoginRequiredMixin, generic.ListView[Book]):
                         "No Starch Press",
                         "Pragmatic Bookshelf",
                         "iTunes",
+                        "Saqi",
                     ]
                 ),
             ),
@@ -88,6 +89,7 @@ class IndexView(LoginRequiredMixin, generic.ListView[Book]):
                         "Repeater",
                         "Jacobin Foundation",
                         "Tribune",
+                        "Saqi",
                     ]
                 ),
             ),
