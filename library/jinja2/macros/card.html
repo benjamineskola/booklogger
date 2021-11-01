@@ -98,7 +98,7 @@
             {{ book_label("reading", url("library:books_currently_reading"), True) }}
           {% elif book.want_to_read and (book.owned_by or book.was_borrowed) %}
             {{ book_label("to read", url("library:books_to_read"), True) }}
-          {% elif book.want_to_read and not book.was_borrowed %}
+          {% elif book.want_to_read and not (book.owned or book.was_borrowed) %}
             {{ book_label("wishlist", url("library:books_unowned"), True) }}
           {% endif %}
           {% if book.read %}
