@@ -138,7 +138,9 @@ class IndexView(LoginRequiredMixin, generic.ListView[Book]):
         results = Book.objects.none()
 
         if page := self.kwargs.get("page"):
-            owned_books = Book.objects.filter(owned_by__isnull=False)
+            owned_books = Book.objects.filter(
+                Q(owned_by__isnull=False) | Q(was_borrowed=True)
+            )
             results = self.categories[int(page) - 1][1](owned_books)
 
             if order_by := self.request.GET.get("order_by"):
