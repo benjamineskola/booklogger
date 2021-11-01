@@ -20,5 +20,5 @@ def list(request: HttpRequest) -> HttpResponse:
     return render(
         request,
         "publisher_list.html",
-        {"publishers": counts, "count": publisher_books.count()},
+        {"publishers": counts, "count": len(counts.keys())},
     )
