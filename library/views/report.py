@@ -134,6 +134,14 @@ class IndexView(LoginRequiredMixin, generic.ListView[Book]):
                 "History without sufficient tags",
                 lambda _: Tag.objects["history"].books_uniquely_tagged,
             ),
+            (
+                "ASIN set for non-ebook",
+                lambda owned_books: owned_books.exclude(asin="").exclude(edition_format=3),
+            ),
+            (
+                "ASIN but no alternative ISBN",
+                lambda owned_books: owned_books.exclude(asin="").filter(isbn=""),
+            ),
         ]
 
     def get_queryset(self) -> BookQuerySet:
