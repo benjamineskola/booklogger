@@ -804,7 +804,9 @@ class Book(TimestampedModel, SluggableModel):
                 f"https://www.googleapis.com/books/v1/volumes?q=isbn:{self.isbn}"
             )
         else:
-            return True
+            search_url = (
+                f"https://www.googleapis.com/books/v1/volumes?q={self.search_query}"
+            )
 
         data = {}
         try:
