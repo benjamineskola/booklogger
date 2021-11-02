@@ -142,7 +142,7 @@ class IndexView(LoginRequiredMixin, generic.ListView[Book]):
             ),
             (
                 "ASIN but no alternative ISBN",
-                lambda owned_books: owned_books.exclude(asin="").filter(isbn=""),
+                lambda _: Book.objects.exclude(asin="").filter(isbn=""),
             ),
         ]
 
