@@ -2,7 +2,7 @@
 {% extends "base.html" %}
 {% block content %}
   {% set to_read_count = object.books.filter(want_to_read=True).count()%}
-  {% set to_read_owned_count = object.books.filter(want_to_read=True, owned_by__isnull=False).count()%}
+  {% set to_read_owned_count = object.books.owned().filter(want_to_read=True).count()%}
   <p>
     {{ object.books.count() }} books,
     {{ object.books.read().count() }} read,

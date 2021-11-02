@@ -105,7 +105,7 @@ class IndexView(generic.ListView[Book]):
         }
         context["stats"] = {
             "total": self.get_queryset().distinct().count(),
-            "owned": self.get_queryset().filter(owned_by__isnull=False).count(),
+            "owned": self.get_queryset().owned().count(),
             "read": self.get_queryset().read().count(),
         }
 
@@ -134,9 +134,12 @@ class IndexView(generic.ListView[Book]):
 
 
 class OwnedIndexView(IndexView):
-    filter_by = {"owned_by__username": "ben"}
     page_title = "Owned Books"
     show_format_filters = True
+
+    def get_queryset(self) -> BookQuerySet:
+        books = super().get_queryset()
+        return books.owned()
 
 
 class BorrowedIndexView(IndexView):
@@ -145,10 +148,7 @@ class BorrowedIndexView(IndexView):
 
     def get_queryset(self) -> BookQuerySet:
         books = super().get_queryset()
-        books = books.filter(owned_by__username="sara") | books.filter(
-            was_borrowed=True
-        )
-        return books
+        return books.borrowed()
 
 
 class UnreadIndexView(IndexView):
@@ -157,12 +157,10 @@ class UnreadIndexView(IndexView):
     show_format_filters = True
 
     def get_queryset(self) -> BookQuerySet:
+        books = super().get_queryset()
         books = (
-            super()
-            .get_queryset()
-            .filter(Q(owned_by__isnull=False) | Q(edition_format=Book.Format["WEB"]))
-            .exclude(tags__contains=["reference"])
-        )
+            books.owned() | books.filter(edition_format=Book.Format["WEB"])
+        ).exclude(tags__contains=["reference"])
         return books
 
 
@@ -573,13 +571,11 @@ class BulkEditView(
             elif query == "unread":
                 queryset = queryset.unread()
             elif query == "owned":
-                queryset = queryset.filter(owned_by__username="ben")
+                queryset = queryset.owned()
             elif query == "borrowed":
-                queryset = queryset.filter(owned_by__username="sara") | queryset.filter(
-                    was_borrowed=True
-                )
+                queryset = queryset.borrowed()
             elif query == "unowned":
-                queryset = queryset.filter(owned_by__isnull=True)
+                queryset = queryset.unowned()
             elif query == "tag":
                 if query_arg == "untagged":
                     queryset = queryset.filter(tags=[])

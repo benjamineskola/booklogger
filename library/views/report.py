@@ -125,7 +125,7 @@ class IndexView(LoginRequiredMixin, generic.ListView[Book]):
             ),
             (
                 "Wished for without ASIN",
-                lambda _: Book.objects.filter(owned_by__isnull=True)
+                lambda _: Book.objects.unowned()
                 .filter(want_to_read=True)
                 .filter(asin="")
                 .exclude(was_borrowed=True),
@@ -136,7 +136,9 @@ class IndexView(LoginRequiredMixin, generic.ListView[Book]):
             ),
             (
                 "ASIN set for non-ebook",
-                lambda owned_books: owned_books.exclude(asin="").exclude(edition_format=3),
+                lambda owned_books: owned_books.exclude(asin="").exclude(
+                    edition_format=3
+                ),
             ),
             (
                 "ASIN but no alternative ISBN",
@@ -148,9 +150,7 @@ class IndexView(LoginRequiredMixin, generic.ListView[Book]):
         results = Book.objects.none()
 
         if page := self.kwargs.get("page"):
-            owned_books = Book.objects.filter(
-                Q(owned_by__isnull=False) | Q(was_borrowed=True)
-            )
+            owned_books = Book.objects.owned() | Book.objects.borrowed()
             results = self.categories[int(page) - 1][1](owned_books)
 
             if order_by := self.request.GET.get("order_by"):

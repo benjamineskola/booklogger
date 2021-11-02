@@ -2,7 +2,7 @@ import os
 import re
 import time
 from datetime import date
-from typing import TYPE_CHECKING, Any, Callable, Optional
+from typing import TYPE_CHECKING, Any, Optional
 from urllib.parse import quote
 
 import requests
@@ -255,6 +255,26 @@ class BookQuerySet(models.QuerySet["Book"]):
             | Q(parent_edition__log_entries__end_date__isnull=False)
         ).distinct()
 
+    def owned(self) -> "BookQuerySet":
+        return self.owned_by("ben")
+
+    def owned_by(self, user: str) -> "BookQuerySet":
+        return self.filter(self._owned_query(user))
+
+    def _owned_query(self, user: str) -> Q:
+        return (
+            Q(owned_by__username=user)
+            | Q(parent_edition__owned_by__username=user)
+            # I can't make this recurse but three levels is the most I can fpresee needing
+            | Q(parent_edition__parent_edition__owned_by__username=user)
+        )
+
+    def borrowed(self) -> "BookQuerySet":
+        return self.exclude(owned_by=None).unowned() | self.filter(was_borrowed=True)
+
+    def unowned(self) -> "BookQuerySet":
+        return self.exclude(self._owned_query("ben"))
+
     def poc(self, is_poc: bool = True) -> "BookQuerySet":
         return self.filter(
             Q(first_author__poc=is_poc) | Q(additional_authors__poc=is_poc)
@@ -276,28 +296,16 @@ class BookQuerySet(models.QuerySet["Book"]):
         if tags := request.GET.get("tags"):
             qs = qs.tagged(*[tag.strip() for tag in tags.lower().split(",")])
         if owned := request.GET.get("owned"):
-            query: Callable[[str], Any] = lambda username: (
-                Q(owned_by__username=username)
-                | Q(parent_edition__owned_by__username=username)
-                # I can't make this recurse but three levels is the most I can foresee needing
-                | Q(parent_edition__parent_edition__owned_by__username=username)
-            )
             try:
                 if str2bool(owned):
-                    qs = qs.filter(query("ben"))
+                    qs = qs.owned()
                 else:
-                    qs = (
-                        qs.exclude(query("ben"))
-                        .exclude(query("sara"))
-                        .exclude(was_borrowed=True)
-                    )
+                    qs = qs.unowned()
             except ValueError:
                 if owned == "borrowed":
-                    qs = qs.exclude(owned_by=None).exclude(query("ben")) | qs.filter(
-                        was_borrowed=True
-                    )
+                    qs = qs.borrowed()
                 else:
-                    qs = qs.filter(query(owned))
+                    qs = qs.owned_by(owned)
         if want_to_read := request.GET.get("want_to_read"):
             qs = qs.filter(want_to_read=str2bool(want_to_read))
         if read := request.GET.get("read"):

@@ -112,14 +112,14 @@ def _stats_for_queryset(books: BookQuerySet) -> dict[str, Any]:
 
 def stats_index(request: HttpRequest) -> HttpResponse:
     books = Book.objects.all()
-    owned = books.filter(owned_by__username="ben")
+    owned = books.owned()
     owned_count = owned.count()
     read_books = books.read()
     owned_read = owned.read().count()
     want_to_read = owned.filter(want_to_read=True)
     want_to_read_count = want_to_read.count()
     reread = owned.read().filter(want_to_read=True).count()
-    unowned_read = books.exclude(owned_by__username="ben").read().count()
+    unowned_read = books.unowned().read().count()
 
     years = (
         LogEntry.objects.exclude(end_date__isnull=True)
