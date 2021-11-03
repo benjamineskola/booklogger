@@ -128,7 +128,8 @@ class IndexView(LoginRequiredMixin, generic.ListView[Book]):
                 lambda _: Book.objects.unowned()
                 .filter(want_to_read=True)
                 .filter(asin="")
-                .exclude(was_borrowed=True),
+                .exclude(was_borrowed=True)
+                .exclude(owned_by__isnull=False),
             ),
             (
                 "History without sufficient tags",
