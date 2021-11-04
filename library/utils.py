@@ -8,6 +8,32 @@ LANGUAGES = {"af": "Afrikaans", "sq": "Albanian", "ar": "Arabic", "hy": "Armenia
 # fmt: on
 
 
+def clean_publisher(publisher: str) -> str:
+    messy_re = r" (Books|Limited|Publishing|Publishers|Publications|Ltd\.?|Company|(& *)?Co\.?)*$"
+    while re.search(messy_re, publisher):
+        publisher = re.sub(messy_re, "", publisher)
+
+    publisher = publisher.strip(" &,")
+    publisher = publisher.removeprefix("The ")
+
+    publisher = re.sub("\bUniv. ", "University ", publisher)
+
+    if (
+        publisher
+        not in [
+            "Foreign Languages Press",
+            "Free Press",
+            "History Press",
+            "MIT Press",
+            "New Press",
+            "Polperro Heritage Press",
+        ]
+        and "University" not in publisher
+    ):
+        publisher = publisher.removesuffix(" Press")
+    return publisher
+
+
 def isbn_to_isbn10(isbn: str) -> str:
     if (
         not isbn

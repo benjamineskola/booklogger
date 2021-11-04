@@ -26,6 +26,7 @@ from django.utils import timezone
 from library.models.abc import SluggableModel, TimestampedModel
 from library.utils import (
     LANGUAGES,
+    clean_publisher,
     isbn_to_isbn10,
     oxford_comma,
     remove_stopwords,
@@ -766,6 +767,8 @@ class Book(TimestampedModel, SluggableModel):
         self.series = smarten(self.series)
         self.edition_title = smarten(self.edition_title)
         self.edition_subtitle = smarten(self.edition_subtitle)
+
+        self.publisher = clean_publisher(self.publisher)
 
         if self.acquired_date and not self.alienated_date and not self.owned_by:
             self.owned_by = User.objects.get(username="ben")
