@@ -259,21 +259,28 @@ class BookQuerySet(models.QuerySet["Book"]):
         return self.owned_by("ben")
 
     def owned_by(self, user: str) -> "BookQuerySet":
-        return self.filter(self._owned_query(user))
+        return self.filter(owned_by__username=user)
 
-    def _owned_query(self, user: str) -> Q:
+    def available(self) -> "BookQuerySet":
         return (
-            Q(owned_by__username=user)
-            | Q(parent_edition__owned_by__username=user)
-            # I can't make this recurse but three levels is the most I can fpresee needing
-            | Q(parent_edition__parent_edition__owned_by__username=user)
+            self.filter(
+                Q(owned_by__username="ben")
+                | Q(parent_edition__owned_by__username="ben")
+                # I can't make this recurse but three levels is the most I can fpresee needing
+                | Q(parent_edition__parent_edition__owned_by__username="ben")
+            )
+            | self.borrowed()
         )
 
     def borrowed(self) -> "BookQuerySet":
         return self.exclude(owned_by=None).unowned() | self.filter(was_borrowed=True)
 
     def unowned(self) -> "BookQuerySet":
-        return self.exclude(self._owned_query("ben"))
+        return self.filter(
+            owned_by__isnull=True,
+            parent_edition__owned_by__isnull=True,
+            parent_edition__parent_edition__owned_by__isnull=True,
+        )
 
     def poc(self, is_poc: bool = True) -> "BookQuerySet":
         return self.filter(
@@ -304,6 +311,8 @@ class BookQuerySet(models.QuerySet["Book"]):
             except ValueError:
                 if owned == "borrowed":
                     qs = qs.borrowed()
+                elif owned == "available":
+                    qs = qs.available()
                 else:
                     qs = qs.owned_by(owned)
         if want_to_read := request.GET.get("want_to_read"):

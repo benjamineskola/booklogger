@@ -159,7 +159,7 @@ class UnreadIndexView(IndexView):
     def get_queryset(self) -> BookQuerySet:
         books = super().get_queryset()
         books = (
-            books.owned() | books.filter(edition_format=Book.Format["WEB"])
+            books.available() | books.filter(edition_format=Book.Format["WEB"])
         ).exclude(tags__contains=["reference"])
         return books
 

@@ -27,7 +27,7 @@
       {{ filter_list('Subject', 'tags', {'fiction': 'fiction', 'non-fiction': 'non-fiction'}) }}
       {% if request.resolver_match.url_name not in ['books_owned', 'books_owned_by_date', 'books_unowned', 'books_borrowed', 'books_to_read'] %}
         <br>
-        {{ filter_list('Owned', 'owned', {'yes': 'true', 'borrowed': 'borrowed', 'no': 'false'}) }}
+        {{ filter_list('Owned', 'owned', {'yes': 'true', 'borrowed': 'borrowed', 'available': 'available', 'no': 'false'}) }}
       {% endif %}
       <br>
       {{ filter_list('Read', 'read', {'yes': 'true', 'no': 'false'}) }}
