@@ -26,10 +26,10 @@ class Command(BaseCommand):
                 print(f"found {title} in the database, skipping")
 
                 if not book.owned:
-                    book.mark_owned()
                     book.isbn = isbn
                     book.edition_format = Book.Format.EBOOK
                     book.publisher = "Verso"
+                    book.mark_owned()
                     book.save()
                 elif (
                     book.edition_format != Book.Format.EBOOK
@@ -49,10 +49,10 @@ class Command(BaseCommand):
                 if found_title.lower() == title.lower():
                     print(f"found {title} on goodreads")
                     book = Book.objects.create_from_goodreads(data=books[0])
-                    book.mark_owned()
                     book.isbn = isbn
                     book.edition_format = Book.Format.EBOOK
                     book.publisher = "Verso"
+                    book.mark_owned()
                     book.save()
                 else:
                     print(f"got {found_title} instead of {title}")
@@ -69,10 +69,10 @@ class Command(BaseCommand):
                 if found_title.lower() == title.lower():
                     print(f"found {title} on goodreads by name")
                     book = Book.objects.create_from_goodreads(data=books[0])
-                    book.mark_owned()
                     book.isbn = isbn
                     book.edition_format = Book.Format.EBOOK
                     book.publisher = "Verso"
+                    book.mark_owned()
                     book.save()
                 else:
                     print(f"got {found_title} instead of {title}")
