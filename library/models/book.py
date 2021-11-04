@@ -261,6 +261,9 @@ class BookQuerySet(models.QuerySet["Book"]):
     def owned_by(self, user: str) -> "BookQuerySet":
         return self.filter(owned_by__username=user)
 
+    def owned_by_any(self) -> "BookQuerySet":
+        return self.filter(owned_by__isnull=False)
+
     def available(self) -> "BookQuerySet":
         return (
             self.filter(

@@ -12,7 +12,7 @@ from library.utils import flatten
 
 
 class IndexView(LoginRequiredMixin, generic.ListView[Book]):
-    categories: list[tuple[str, Callable[[BookQuerySet], BookQuerySet]]]
+    categories: list[tuple[str, Callable[[], BookQuerySet]]]
     template_name = "report.html"
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
@@ -21,7 +21,8 @@ class IndexView(LoginRequiredMixin, generic.ListView[Book]):
         self.categories = [
             (
                 "Missing ISBN",
-                lambda owned_books: owned_books.filter(isbn="")
+                lambda: Book.objects.owned_by_any()
+                .filter(isbn="")
                 .exclude(
                     Q(owned_by__isnull=True, parent_edition__owned_by__isnull=False)
                     | Q(
@@ -38,9 +39,9 @@ class IndexView(LoginRequiredMixin, generic.ListView[Book]):
             ),
             (
                 "Missing ASIN",
-                lambda owned_books: owned_books.filter(
-                    edition_format=3, asin=""
-                ).exclude(
+                lambda: Book.objects.owned_by_any()
+                .filter(edition_format=3, asin="")
+                .exclude(
                     publisher__in=[
                         "Verso",
                         "Pluto",
@@ -58,7 +59,7 @@ class IndexView(LoginRequiredMixin, generic.ListView[Book]):
             ),
             (
                 "Messy Publisher",
-                lambda _: Book.objects.filter(
+                lambda: Book.objects.filter(
                     Q(publisher__endswith="Books")
                     | Q(publisher__contains="Company")
                     | Q(publisher__contains="Ltd")
@@ -79,25 +80,21 @@ class IndexView(LoginRequiredMixin, generic.ListView[Book]):
                     | Q(publisher="Pan Macmillan")
                 ),
             ),
-            ("Missing Goodreads", lambda _: Book.objects.filter(goodreads_id="")),
+            ("Missing Goodreads", lambda: Book.objects.filter(goodreads_id="")),
             (
                 "Missing Google",
-                lambda owned_books: owned_books.filter(google_books_id=""),
+                lambda: Book.objects.filter(google_books_id=""),
             ),
-            ("Missing Image", lambda owned_books: owned_books.filter(image_url="")),
+            ("Missing Image", lambda: Book.objects.owned_by_any().filter(image_url="")),
             (
                 "Missing Publisher",
-                lambda _: Book.objects.filter(publisher="").exclude(
-                    Q(owned_by__isnull=True, parent_edition__owned_by__isnull=False)
-                    | Q(
-                        owned_by__isnull=True,
-                        parent_edition__parent_edition__owned_by__isnull=False,
-                    )
-                ),
+                lambda: Book.objects.owned_by_any().filter(publisher=""),
             ),
             (
                 "Missing Publisher URL",
-                lambda owned_books: owned_books.filter(publisher_url="").filter(
+                lambda: Book.objects.owned_by_any()
+                .filter(publisher_url="")
+                .filter(
                     publisher__in=[
                         "Verso",
                         "Pluto",
@@ -111,37 +108,37 @@ class IndexView(LoginRequiredMixin, generic.ListView[Book]):
             ),
             (
                 "Missing Page Count",
-                lambda owned_books: owned_books.filter(
+                lambda: Book.objects.owned_by_any().filter(
                     Q(page_count=0) | Q(page_count__isnull=True)
                 ),
             ),
             (
                 "Missing Publication Date",
-                lambda _: Book.objects.filter(
+                lambda: Book.objects.filter(
                     Q(first_published=0) | Q(first_published__isnull=True)
                 ),
             ),
             (
                 "Ebook edition without ISBN or ASIN",
-                lambda owned_books: owned_books.filter(has_ebook_edition=True).filter(
-                    ebook_isbn="", ebook_asin=""
-                ),
+                lambda: Book.objects.owned_by_any()
+                .filter(has_ebook_edition=True)
+                .filter(ebook_isbn="", ebook_asin=""),
             ),
             (
                 "Public domain but no URL",
-                lambda _: Book.objects.filter(
+                lambda: Book.objects.filter(
                     borrowed_from="public domain", publisher_url=""
                 ),
             ),
             (
                 "First editions recorded as English for non-English authors",
-                lambda _: Book.objects.exclude(
+                lambda: Book.objects.exclude(
                     language=F("first_author__primary_language")
                 ),
             ),
             (
                 "Wished for without ASIN",
-                lambda _: Book.objects.unowned()
+                lambda: Book.objects.unowned()
                 .filter(want_to_read=True)
                 .filter(asin="")
                 .exclude(was_borrowed=True)
@@ -149,17 +146,17 @@ class IndexView(LoginRequiredMixin, generic.ListView[Book]):
             ),
             (
                 "History without sufficient tags",
-                lambda _: Tag.objects["history"].books_uniquely_tagged,
+                lambda: Tag.objects["history"].books_uniquely_tagged,
             ),
             (
                 "ASIN set for non-ebook",
-                lambda owned_books: owned_books.exclude(asin="").exclude(
-                    edition_format=3
-                ),
+                lambda: Book.objects.owned_by_any()
+                .exclude(asin="")
+                .exclude(edition_format=3),
             ),
             (
                 "ASIN but no alternative ISBN",
-                lambda _: Book.objects.exclude(asin="").filter(isbn=""),
+                lambda: Book.objects.exclude(asin="").filter(isbn=""),
             ),
         ]
 
@@ -167,8 +164,7 @@ class IndexView(LoginRequiredMixin, generic.ListView[Book]):
         results = Book.objects.none()
 
         if page := self.kwargs.get("page"):
-            owned_books = Book.objects.owned() | Book.objects.borrowed()
-            results = self.categories[int(page) - 1][1](owned_books)
+            results = self.categories[int(page) - 1][1]()
 
             if order_by := self.request.GET.get("order_by"):
                 results = results.order_by(order_by)
