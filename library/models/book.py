@@ -1,4 +1,3 @@
-import os
 import re
 import time
 from datetime import date
@@ -6,7 +5,6 @@ from typing import TYPE_CHECKING, Any, Optional
 from urllib.parse import quote
 
 import requests
-import xmltodict
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.indexes import GinIndex
@@ -27,6 +25,7 @@ from library.models.abc import SluggableModel, TimestampedModel
 from library.utils import (
     LANGUAGES,
     clean_publisher,
+    goodreads,
     isbn_to_isbn10,
     oxford_comma,
     remove_stopwords,
@@ -90,78 +89,6 @@ class BaseBookManager(models.Manager["Book"]):
         )
         return qs
 
-    def find_on_goodreads(self, query: str) -> list[dict[str, Any]]:
-        search_url = f"https://www.goodreads.com/search/index.xml?key={os.environ['GOODREADS_KEY']}&q={query}"
-        data = requests.get(search_url).text
-        xml = xmltodict.parse(data, dict_constructor=dict)
-
-        try:
-            all_results = xml["GoodreadsResponse"]["search"]["results"]["work"]
-        except KeyError:
-            return []
-        except TypeError:
-            return []
-
-        results = [all_results] if "id" in all_results else all_results
-
-        return [
-            result
-            for result in results
-            if result["best_book"]["author"]["name"]
-            not in ["SparkNotes", "BookRags", "BookHabits", "Bright Summaries"]
-        ]
-
-    def create_from_goodreads(
-        self, query: Optional[str] = None, data: Optional[dict[str, Any]] = None
-    ) -> Optional["Book"]:
-        if data:
-            result = data
-        elif query:
-            results = self.find_on_goodreads(query)
-            if not results:
-                return None
-            result = results[0]
-        else:
-            return None
-
-        goodreads_book = result["best_book"]
-
-        title = goodreads_book["title"].strip()
-        series_name = ""
-        series_order = None
-
-        if title.endswith(")"):
-            title, rest = title.split(" (", 2)
-            first_series = rest.split(";")[0]
-            series_name, *rest = first_series.split("#")
-            series_name = series_name.strip(" ,)")
-            if rest:
-                try:
-                    series_order = float(rest[0].strip(")"))
-                except ValueError:
-                    pass
-
-        book = Book(
-            title=title,
-            series=series_name,
-            series_order=series_order,
-        )
-
-        book.first_author, created = Author.objects.get_or_create_by_single_name(
-            goodreads_book["author"]["name"]
-        )
-
-        if query:
-            if len(query) == 13 and query.startswith("978"):
-                book.isbn = query
-            elif re.match(r"^B[A-Z0-9]{9}$", query):
-                book.asin = query
-                book.edition_format = Book.Format.EBOOK
-
-        book.save()
-
-        return book.update_from_goodreads(data=data)
-
     def regenerate_all_slugs(self) -> None:
         qs = self.get_queryset()
         qs.update(slug="")
@@ -199,17 +126,6 @@ class BaseBookManager(models.Manager["Book"]):
                 print(f"sleeping {sleep_time}")
                 time.sleep(sleep_time)
                 sleep_time *= 2
-
-    def scrape_goodreads_image(self, goodreads_id: str) -> str:
-        goodreads_url = f"https://www.goodreads.com/book/show/{goodreads_id}"
-        text = requests.get(goodreads_url).text
-        meta_tag = re.search(r"<meta[^>]*og:image[^>]*>", text)
-        if meta_tag:
-            image_url = re.search(r"https://.*\.jpg", meta_tag[0])
-            if image_url and ("nophoto" not in image_url[0]):
-                return str(image_url[0])
-
-        return ""
 
 
 class BookQuerySet(models.QuerySet["Book"]):
@@ -910,6 +826,7 @@ class Book(TimestampedModel, SluggableModel):
     def update_from_goodreads(
         self, data: Optional[dict[str, Any]] = None
     ) -> Optional["Book"]:
+        result: Optional[dict[str, Any]]
         if data:
             result = data
         else:
@@ -920,33 +837,20 @@ class Book(TimestampedModel, SluggableModel):
             else:
                 query = self.search_query
 
-            results = [
-                result
-                for result in Book.objects.find_on_goodreads(query)
-                if (
-                    not self.first_author
-                    or self.first_author.surname.lower()
-                    in result["best_book"]["author"]["name"].lower()
-                )
-            ]
-
-            if not results:
+            if not (result := goodreads.find(query)):
                 return None
-            result = results[0]
-
-        goodreads_book = result["best_book"]
 
         if not self.goodreads_id:
-            self.goodreads_id = goodreads_book["id"]["#text"]
+            self.goodreads_id = result["id"]["#text"]
 
         if not self.first_published:
             self.first_published = result["original_publication_year"].get("#text")
 
-        if goodreads_book["image_url"] and not self.image_url:
-            if "nophoto" not in goodreads_book["image_url"]:
-                self.image_url = goodreads_book["image_url"]
+        if result["image_url"] and not self.image_url:
+            if "nophoto" not in result["image_url"]:
+                self.image_url = result["image_url"]
             else:
-                self.image_url = Book.objects.scrape_goodreads_image(self.goodreads_id)
+                self.image_url = goodreads.scrape_image(self.goodreads_id)
 
         self.save()
 

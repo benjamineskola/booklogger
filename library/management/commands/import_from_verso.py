@@ -4,7 +4,8 @@ import sys
 from django.core.management.base import BaseCommand
 
 from library.models import Book
-from library.utils import flatten
+from library.utils import flatten, goodreads
+from library.utils.goodreads_create import goodreads_create
 
 
 class Command(BaseCommand):
@@ -43,12 +44,12 @@ class Command(BaseCommand):
             except Book.DoesNotExist:
                 print(f"no book named {title} in the database, continuing")
 
-            books = Book.objects.find_on_goodreads(isbn)
-            if books:
-                found_title, *_ = books[0]["best_book"]["title"].split(": ", 1)
+            goodreads_book = goodreads.find(isbn)
+            if goodreads_book:
+                found_title, *_ = goodreads_book["best_book"]["title"].split(": ", 1)
                 if found_title.lower() == title.lower():
                     print(f"found {title} on goodreads")
-                    book = Book.objects.create_from_goodreads(data=books[0])
+                    book = goodreads_create(data=goodreads_book)
                     book.isbn = isbn
                     book.edition_format = Book.Format.EBOOK
                     book.publisher = "Verso"
@@ -58,17 +59,17 @@ class Command(BaseCommand):
                     print(f"got {found_title} instead of {title}")
             else:
                 print(f"could not find {title} by isbn")
-                books = Book.objects.find_on_goodreads(f"{title} {' '.join(authors)}")
-                if not books:
+                goodreads_book = goodreads.find(f"{title} {' '.join(authors)}")
+                if not goodreads_book:
                     print(
                         f"!!! couldn't find any matches for {title} ({isbn}), aborting"
                     )
                     continue
 
-                found_title, *_ = books[0]["best_book"]["title"].split(": ", 1)
+                found_title, *_ = goodreads_book["best_book"]["title"].split(": ", 1)
                 if found_title.lower() == title.lower():
                     print(f"found {title} on goodreads by name")
-                    book = Book.objects.create_from_goodreads(data=books[0])
+                    book = goodreads_create(data=goodreads_book)
                     book.isbn = isbn
                     book.edition_format = Book.Format.EBOOK
                     book.publisher = "Verso"

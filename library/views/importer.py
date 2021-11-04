@@ -6,6 +6,8 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 
 from library.models import Author, Book
+from library.utils import goodreads
+from library.utils.goodreads_create import goodreads_create
 
 
 @login_required
@@ -16,7 +18,7 @@ def import_book(request: HttpRequest, query: Optional[str] = None) -> HttpRespon
     if request.method == "POST":
         data = json.loads(request.POST["data"])
         query = request.POST.get("query")
-        book = Book.objects.create_from_goodreads(data=data, query=query)
+        book = goodreads_create(data=data, query=query)
         if book:
             return redirect("library:book_edit", slug=book.slug)
         else:
@@ -24,7 +26,7 @@ def import_book(request: HttpRequest, query: Optional[str] = None) -> HttpRespon
     else:
         goodreads_results = []
         matches = {}
-        if query and (goodreads_results := Book.objects.find_on_goodreads(query)):
+        if query and (goodreads_results := goodreads.find_all(query)):
             for result in goodreads_results:
                 match = Book.objects.search(
                     f"{result['best_book']['author']['name']} {result['best_book']['title']}"
