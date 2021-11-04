@@ -17,7 +17,7 @@ from django.contrib.postgres.search import (
     TrigramSimilarity,
 )
 from django.db import models
-from django.db.models import Case, F, Q, Sum, Value, When
+from django.db.models import Case, CheckConstraint, F, Q, Sum, Value, When
 from django.db.models.functions import Lower
 from django.db.models.indexes import Index
 from django.urls import reverse
@@ -358,6 +358,43 @@ class Book(TimestampedModel, SluggableModel):
             "series",
             "series_order",
             "title",
+        ]
+        constraints = [
+            CheckConstraint(
+                check=(
+                    Q(
+                        # case one: both dates are set, so owner must not be set
+                        acquired_date__isnull=False,
+                        alienated_date__isnull=False,
+                        owned_by__isnull=True,
+                    )
+                    | Q(
+                        # case two: neither date is set, so owner must not be set
+                        acquired_date__isnull=True,
+                        alienated_date__isnull=True,
+                        owned_by__isnull=True,
+                    )
+                    | Q(
+                        # case three: acquired but not alienated so must have an owner
+                        acquired_date__isnull=False,
+                        alienated_date__isnull=True,
+                        owned_by__isnull=False,
+                    )
+                    | Q(
+                        # fallback case: neither date is set but might still be owned
+                        acquired_date__isnull=True,
+                        alienated_date__isnull=True,
+                        owned_by__isnull=False,
+                    )
+                    | Q(
+                        # default: neither date is set and it is not owned
+                        acquired_date__isnull=True,
+                        alienated_date__isnull=True,
+                        owned_by__isnull=True,
+                    )
+                ),
+                name="owned_dates_requires_owner",
+            )
         ]
 
     title = models.CharField(db_index=True, max_length=255)
