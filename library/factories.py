@@ -18,6 +18,7 @@ class BookFactory(factory.Factory):  # type: ignore
         model = Book
 
     title = factory.Faker("sentence", nb_words=4)
+    edition_format = 1
 
 
 class BookAuthorFactory(factory.Factory):  # type: ignore

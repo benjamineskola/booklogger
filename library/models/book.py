@@ -394,7 +394,14 @@ class Book(TimestampedModel, SluggableModel):
                     )
                 ),
                 name="owned_dates_requires_owner",
-            )
+            ),
+            CheckConstraint(
+                check=(
+                    Q(owned_by__isnull=False, edition_format__ne=0)
+                    | Q(owned_by__isnull=True, edition_format__gte=0)
+                ),
+                name="owned_must_have_format",
+            ),
         ]
 
     title = models.CharField(db_index=True, max_length=255)
