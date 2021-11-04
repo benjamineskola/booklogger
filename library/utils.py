@@ -136,4 +136,6 @@ def smarten(string: str) -> str:
     string = re.sub(r'(\s|^)"(\w)', r"\1“\2", string)
     string = re.sub(r"(\w)'(\s|$)", r"\1’\2", string)
     string = re.sub(r'(\w)"(\s|$)', r"\1”\2", string)
+    string = re.sub(r"(\d)-(\d)", r"\1–\2", string)
+    string = re.sub(r" - ", r" — ", string)
     return string
