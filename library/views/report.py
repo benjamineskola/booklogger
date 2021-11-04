@@ -23,6 +23,13 @@ class IndexView(LoginRequiredMixin, generic.ListView[Book]):
                 "Missing ISBN",
                 lambda owned_books: owned_books.filter(isbn="")
                 .exclude(
+                    Q(owned_by__isnull=True, parent_edition__owned_by__isnull=False)
+                    | Q(
+                        owned_by__isnull=True,
+                        parent_edition__parent_edition__owned_by__isnull=False,
+                    )
+                )
+                .exclude(
                     first_author__surname__in=["Jacobin", "Tribune", "New Left Review"]
                 )
                 .exclude(edition_format=3, asin__ne="")
@@ -80,7 +87,13 @@ class IndexView(LoginRequiredMixin, generic.ListView[Book]):
             ("Missing Image", lambda owned_books: owned_books.filter(image_url="")),
             (
                 "Missing Publisher",
-                lambda _: Book.objects.filter(publisher=""),
+                lambda _: Book.objects.filter(publisher="").exclude(
+                    Q(owned_by__isnull=True, parent_edition__owned_by__isnull=False)
+                    | Q(
+                        owned_by__isnull=True,
+                        parent_edition__parent_edition__owned_by__isnull=False,
+                    )
+                ),
             ),
             (
                 "Missing Publisher URL",
