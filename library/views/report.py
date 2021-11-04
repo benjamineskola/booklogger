@@ -78,7 +78,10 @@ class IndexView(LoginRequiredMixin, generic.ListView[Book]):
                 lambda owned_books: owned_books.filter(google_books_id=""),
             ),
             ("Missing Image", lambda owned_books: owned_books.filter(image_url="")),
-            ("Missing Publisher", lambda owned_books: owned_books.filter(publisher="")),
+            (
+                "Missing Publisher",
+                lambda _: Book.objects.filter(publisher=""),
+            ),
             (
                 "Missing Publisher URL",
                 lambda owned_books: owned_books.filter(publisher_url="").filter(
