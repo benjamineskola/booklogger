@@ -64,20 +64,24 @@ class IndexView(LoginRequiredMixin, generic.ListView[Book]):
                     | Q(publisher__contains="Company")
                     | Q(publisher__contains="Ltd")
                     | Q(publisher__contains="Limited")
-                    | Q(publisher__startswith="Bantam ")
-                    | Q(publisher__startswith="Bloomsbury ")
-                    | Q(publisher__startswith="Doubleday ")
-                    | Q(publisher__startswith="Faber ")
-                    | Q(publisher__startswith="Harper")
-                    | Q(publisher__startswith="Pan ")
-                    | Q(publisher__startswith="Penguin ")
-                    | Q(publisher__startswith="Simon & Schuster ")
-                    | Q(publisher__startswith="Vintage ")
-                ).exclude(
-                    Q(publisher__contains="University")
-                    | Q(publisher="Faber & Faber")
-                    | Q(publisher="HarperCollins")
-                    | Q(publisher="Pan Macmillan")
+                    | (
+                        Q(publisher__contains="Press")
+                        & ~Q(publisher="Foreign Languages Press")
+                        & ~Q(publisher="Free Press")
+                        & ~Q(publisher="History Press")
+                        & ~Q(publisher="MIT Press")
+                        & ~Q(publisher="New Press")
+                        & ~Q(publisher="Polperro Heritage Press")
+                        & ~Q(publisher__contains="University")
+                    )
+                    | (
+                        Q(publisher__endswith="Publishers")
+                        & ~Q(publisher="International Publishers")
+                    )
+                    | Q(publisher__endswith="Publishing")
+                    | Q(publisher__endswith="Publications")
+                    | Q(publisher__startswith="The ")
+                    | Q(publisher__contains="Univ.")
                 ),
             ),
             ("Missing Goodreads", lambda: Book.objects.filter(goodreads_id="")),
