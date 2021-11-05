@@ -183,14 +183,14 @@ class Author(TimestampedModel, SluggableModel):
         return books
 
     @property
-    def identities(self) -> set["Author"]:
-        identities = set(self.pseudonyms.all())
+    def identities(self) -> models.QuerySet["Author"]:
+        identities = self.pseudonyms.all()
         if self.primary_identity:
-            identities.add(self.primary_identity)
+            identities |= Author.objects.filter(id=self.primary_identity.id)
             identities |= self.primary_identity.identities
 
         if self in identities:
-            identities.remove(self)
+            identities &= Author.objects.exclude(id=self.id)
         return identities
 
     @staticmethod

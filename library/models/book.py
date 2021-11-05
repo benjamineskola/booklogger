@@ -1,6 +1,8 @@
+import operator
 import re
 import time
 from datetime import date
+from functools import reduce
 from typing import TYPE_CHECKING, Any, Optional
 from urllib.parse import quote
 
@@ -947,21 +949,26 @@ class Tag(TimestampedModel):
         )
 
     @property
-    def parents_recursive(self) -> set["Tag"]:
-        return set(self.parents.all()) | set(
-            [pp for p in self.parents.all() for pp in p.parents_recursive]
+    def parents_recursive(self) -> models.QuerySet["Tag"]:
+        return reduce(
+            operator.or_,
+            [p.parents_recursive for p in self.parents.all()],
+            self.parents.all(),
         )
 
     @property
-    def children_recursive(self) -> set["Tag"]:
-        return set(self.children.all()) | set(
-            [cc for c in self.children.all() for cc in c.children_recursive]
+    def children_recursive(self) -> models.QuerySet["Tag"]:
+        return reduce(
+            operator.or_,
+            [c.children_recursive for c in self.children.all()],
+            self.children.all(),
         )
 
     @property
-    def related(self) -> set["Tag"]:
-        return set(
-            [Tag.objects[tag] for child in self.books.all() for tag in child.tags]
+    def related(self) -> models.QuerySet["Tag"]:
+        return reduce(
+            operator.or_,
+            [Tag.objects.filter(name__in=book.tags) for book in self.books.all()],
         )
 
     def __lt__(self, other: "Tag") -> bool:
