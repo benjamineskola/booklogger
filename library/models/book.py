@@ -694,6 +694,14 @@ class Book(TimestampedModel, SluggableModel):
         if self.asin or self.isbn or (self.title and self.first_author):
             if not self.first_published or not self.goodreads_id or not self.image_url:
                 self.update_from_goodreads()
+        if self.isbn or self.google_books_id:
+            if (
+                not self.google_books_id
+                or not self.publisher
+                or not self.page_count
+                or not self.first_published
+            ):
+                self.update_from_google()
 
         self.editions.all().update(
             title=self.title,
@@ -851,16 +859,6 @@ class Book(TimestampedModel, SluggableModel):
 
         self.update(result)
         self.refresh_from_db()
-
-        if self.isbn or self.google_books_id:
-            if (
-                (self.isbn and not self.google_books_id)
-                or not self.publisher
-                or not self.page_count
-                or not self.first_published
-            ):
-                self.update_from_google()
-                self.refresh_from_db()
 
         return self
 
