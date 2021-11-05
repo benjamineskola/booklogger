@@ -691,6 +691,10 @@ class Book(TimestampedModel, SluggableModel):
 
         super().save(*args, **kwargs)
 
+        if self.asin or self.isbn or (self.title and self.first_author):
+            if not self.first_published or not self.goodreads_id or not self.image_url:
+                self.update_from_goodreads()
+
         self.editions.all().update(
             title=self.title,
             subtitle=self.subtitle,
@@ -866,12 +870,18 @@ class Book(TimestampedModel, SluggableModel):
         return self
 
     def update(self, data: dict[str, str], force: bool = False) -> "Book":
+        needs_save = False
+
         for key, value in data.items():
             if key == "id":
                 continue
             elif hasattr(self, key) and (force or not getattr(self, key)):
+                if value != getattr(self, key):
+                    needs_save = True
                 setattr(self, key, value)
-        self.save()
+
+        if needs_save:
+            self.save()
         return self
 
     @property
