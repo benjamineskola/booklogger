@@ -4,7 +4,6 @@ from datetime import date
 from typing import TYPE_CHECKING, Any, Optional
 from urllib.parse import quote
 
-import requests
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField
 from django.contrib.postgres.indexes import GinIndex
@@ -26,6 +25,7 @@ from library.utils import (
     LANGUAGES,
     clean_publisher,
     goodreads,
+    google,
     isbn_to_isbn10,
     oxford_comma,
     remove_stopwords,
@@ -792,51 +792,11 @@ class Book(TimestampedModel, SluggableModel):
         ) or self.edition_published == self.first_published
 
     def update_from_google(self) -> bool:
-        search_url = ""
-        if self.google_books_id:
-            search_url = (
-                f"https://www.googleapis.com/books/v1/volumes/{self.google_books_id}"
-            )
-        elif self.isbn:
-            search_url = (
-                f"https://www.googleapis.com/books/v1/volumes?q=isbn:{self.isbn}"
-            )
-        else:
+        data = google.fetch(self.google_books_id, self.isbn)
+        if data is not None:
+            self.update(data)
             return True
-
-        data = {}
-        try:
-            data = requests.get(search_url).json()
-        except requests.exceptions.ConnectionError:
-            return False
-
-        if "error" in data and data["error"]["status"] == "RESOURCE_EXHAUSTED":
-            return False
-
-        if "volumeInfo" in data:
-            volume = data["volumeInfo"]
-            google_id = ""
-        elif "items" in data and data["items"]:
-            volume = data["items"][0]["volumeInfo"]
-            google_id = data["items"][0]["id"]
-        else:
-            return True
-
-        first_published = volume["publishedDate"].split("-")[0]
-
-        self.update(
-            {
-                "google_books_id": google_id,
-                "publisher": volume["publisher"],
-                "page_count": volume["pageCount"],
-                "first_published": first_published
-                if first_published.isnumeric()
-                else "",
-            }
-        )
-
-        self.save()
-        return True
+        return False
 
     def update_from_goodreads(
         self, data: Optional[dict[str, Any]] = None
