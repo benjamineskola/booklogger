@@ -10,6 +10,20 @@ from django.views import generic
 from library.models import Author, Book, BookQuerySet, Tag
 from library.utils import flatten
 
+ebook_publishers = {
+    "Verso",
+    "Pluto",
+    "Haymarket",
+    "Repeater",
+    "New Socialist",
+    "Jacobin Foundation",
+    "Tribune",
+    "No Starch Press",
+    "Pragmatic Bookshelf",
+    "iTunes",
+    "Saqi",
+}
+
 
 class IndexView(LoginRequiredMixin, generic.ListView[Book]):
     categories: list[tuple[str, Callable[[], BookQuerySet]]]
@@ -41,21 +55,7 @@ class IndexView(LoginRequiredMixin, generic.ListView[Book]):
                 "Missing ASIN",
                 lambda: Book.objects.owned_by_any()
                 .filter(edition_format=3, asin="")
-                .exclude(
-                    publisher__in=[
-                        "Verso",
-                        "Pluto",
-                        "Haymarket",
-                        "Repeater",
-                        "New Socialist",
-                        "Jacobin Foundation",
-                        "Tribune",
-                        "No Starch Press",
-                        "Pragmatic Bookshelf",
-                        "iTunes",
-                        "Saqi",
-                    ]
-                ),
+                .exclude(publisher__in=ebook_publishers),
             ),
             (
                 "Messy Publisher",
@@ -146,7 +146,8 @@ class IndexView(LoginRequiredMixin, generic.ListView[Book]):
                 .filter(want_to_read=True)
                 .filter(asin="")
                 .exclude(was_borrowed=True)
-                .exclude(owned_by__isnull=False),
+                .exclude(owned_by__isnull=False)
+                .exclude(publisher__in=ebook_publishers),
             ),
             (
                 "History without sufficient tags",
