@@ -31,6 +31,7 @@ from library.utils import (
     remove_stopwords,
     smarten,
     str2bool,
+    verso,
 )
 
 from .author import Author
@@ -691,6 +692,7 @@ class Book(TimestampedModel, SluggableModel):
 
         super().save(*args, **kwargs)
 
+        self.update_from_verso()
         if self.asin or self.isbn or (self.title and self.first_author):
             if not self.first_published or not self.goodreads_id or not self.image_url:
                 self.update_from_goodreads()
@@ -702,6 +704,7 @@ class Book(TimestampedModel, SluggableModel):
                 or not self.first_published
             ):
                 self.update_from_google()
+                self.update_from_verso()
 
         self.editions.all().update(
             title=self.title,
@@ -860,6 +863,29 @@ class Book(TimestampedModel, SluggableModel):
         self.update(result)
         self.refresh_from_db()
 
+        return self
+
+    def update_from_verso(self) -> "Book":
+        if self.publisher != "Verso":
+            return self
+        if self.publisher_url and "versobooks.com" in self.image_url:
+            return self
+
+        title = re.sub(
+            r"[^A-Za-z0-9 -]+",
+            " ",
+            self.edition_title if self.edition_title else self.title,
+        )
+        title, *_ = title.split(": ", 1)
+
+        url = (
+            self.publisher_url
+            if self.publisher_url
+            else verso.find_page([self.search_query, title, str(self.first_author)])
+        )
+        if url:
+            self.update({"publisher_url": url, "image_url": verso.scrape_image(url)})
+            self.refresh_from_db()
         return self
 
     def update(self, data: dict[str, str], force: bool = False) -> "Book":
