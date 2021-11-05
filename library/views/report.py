@@ -163,6 +163,12 @@ class IndexView(LoginRequiredMixin, generic.ListView[Book]):
                 "ASIN but no alternative ISBN",
                 lambda: Book.objects.exclude(asin="").filter(isbn=""),
             ),
+            (
+                "ASIN set for inappropriate publisher",
+                lambda: Book.objects.owned_by_any()
+                .exclude(asin="")
+                .filter(publisher__in=ebook_publishers),
+            ),
         ]
 
     def get_queryset(self) -> BookQuerySet:
