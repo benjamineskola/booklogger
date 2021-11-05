@@ -10,9 +10,7 @@ from library.models import Author, Book
 def goodreads_create(
     data: dict[str, Any], query: Optional[str] = None
 ) -> Optional[Book]:
-    goodreads_book = data["best_book"]
-
-    title = goodreads_book["title"].strip()
+    title = data["title"].strip()
     series_name = ""
     series_order = None
 
@@ -34,7 +32,7 @@ def goodreads_create(
     )
 
     book.first_author, created = Author.objects.get_or_create_by_single_name(
-        goodreads_book["author"]["name"]
+        data["author"]
     )
 
     if query:
@@ -46,4 +44,4 @@ def goodreads_create(
 
     book.save()
 
-    return book.update_from_goodreads(data=data)
+    return book.update(data)

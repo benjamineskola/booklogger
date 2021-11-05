@@ -840,19 +840,11 @@ class Book(TimestampedModel, SluggableModel):
             if not (result := goodreads.find(query)):
                 return None
 
-        if not self.goodreads_id:
-            self.goodreads_id = result["id"]["#text"]
+        self.update(result)
+        self.refresh_from_db()
 
-        if not self.first_published:
-            self.first_published = result["original_publication_year"].get("#text")
-
-        if result["image_url"] and not self.image_url:
-            if "nophoto" not in result["image_url"]:
-                self.image_url = result["image_url"]
-            else:
-                self.image_url = goodreads.scrape_image(self.goodreads_id)
-
-        self.save()
+        if not self.image_url:
+            self.image_url = goodreads.scrape_image(self.goodreads_id)
 
         if self.isbn or self.google_books_id:
             if (
@@ -864,6 +856,15 @@ class Book(TimestampedModel, SluggableModel):
                 self.update_from_google()
                 self.refresh_from_db()
 
+        return self
+
+    def update(self, data: dict[str, str], force: bool = False) -> "Book":
+        for key, value in data.items():
+            if key != "id":
+                continue
+            elif hasattr(self, key) and (force or not getattr(self, key)):
+                setattr(self, key, value)
+        self.save()
         return self
 
     @property

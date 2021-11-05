@@ -8,13 +8,13 @@ import requests
 import xmltodict
 
 
-def find(query: str, author_name: str = "") -> Optional[dict[str, Any]]:
+def find(query: str, author_name: str = "") -> Optional[dict[str, str]]:
     results = find_all(query)
     if author_name:
         results = [
             result
             for result in results
-            if author_name.lower() in result["best_book"]["author"]["name"].lower()
+            if author_name.lower() in result["author"].lower()
         ]
     if results:
         return results[0]
@@ -22,7 +22,7 @@ def find(query: str, author_name: str = "") -> Optional[dict[str, Any]]:
         return None
 
 
-def find_all(query: str) -> list[dict[str, Any]]:
+def find_all(query: str) -> list[dict[str, str]]:
     search_url = f"https://www.goodreads.com/search/index.xml?key={os.environ['GOODREADS_KEY']}&q={query}"
     data = requests.get(search_url).text
     xml = xmltodict.parse(data, dict_constructor=dict)
@@ -39,7 +39,15 @@ def find_all(query: str) -> list[dict[str, Any]]:
     )
 
     results = [
-        dict(**result.pop("best_book"), **result)
+        {
+            "author": result["best_book"]["author"]["name"],
+            "title": result["best_book"]["title"],
+            "goodreads_id": result["best_book"]["id"]["#text"],
+            "first_published": result["original_publication_year"].get("#text"),
+            "image_url": result["best_book"]["image_url"]
+            if "nophoto" not in result["best_book"]["image_url"]
+            else "",
+        }
         for result in results
         if result["best_book"]["author"]["name"]
         not in ["SparkNotes", "BookRags", "BookHabits", "Bright Summaries"]
