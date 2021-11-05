@@ -9,14 +9,14 @@
           <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
           <input type="hidden" name="query" value="{{ query }}">
           <input type="hidden" name="data" value="{{ goodreads_result | json }}">
-          <label for="import-{{ goodreads_result["id"]["#text"] }}">
-            <a href="https://www.goodreads.com/book/show/{{ goodreads_result["best_book"]["id"]["#text"] }}">{{ goodreads_result["best_book"]["author"]["name"] }}, <em>{{ goodreads_result["best_book"]["title"] }}</em></a>.
+          <label for="import-{{ goodreads_result["goodreads_id"] }}">
+            <a href="https://www.goodreads.com/book/show/{{ goodreads_result["goodreads_id"] }}">{{ goodreads_result["author"] }}, <em>{{ goodreads_result["title"] }}</em></a>.
 
-            {% if matches[goodreads_result["id"]["#text"]] %}
-              This might already be in the library as {{ book_link_with_authors(matches[goodreads_result["id"]["#text"]]) }}.
+            {% if matches[goodreads_result["goodreads_id"]] %}
+              This might already be in the library as {{ book_link_with_authors(matches[goodreads_result["goodreads_id"]]) }}.
             {% endif %}
           </label>
-          <button id="import-{{ goodreads_result["id"]["#text"] }}" class="btn btn-primary" type="submit">Import</button>
+          <button id="import-{{ goodreads_result["goodreads_id"] }}" class="btn btn-primary" type="submit">Import</button>
         </form>
       {% endfor %}
     {% else %}
