@@ -17,7 +17,10 @@ def find(query: str, author_name: str = "") -> Optional[dict[str, str]]:
             if author_name.lower() in result["author"].lower()
         ]
     if results:
-        return results[0]
+        result = results[0]
+        if not result["image_url"]:
+            result["image_url"] = scrape_image(result["goodreads_id"])
+        return result
     else:
         return None
 

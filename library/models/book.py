@@ -852,11 +852,6 @@ class Book(TimestampedModel, SluggableModel):
         self.update(result)
         self.refresh_from_db()
 
-        if not self.image_url:
-            self.image_url = goodreads.scrape_image(self.goodreads_id)
-            if self.image_url:
-                self.save()
-
         if self.isbn or self.google_books_id:
             if (
                 (self.isbn and not self.google_books_id)
