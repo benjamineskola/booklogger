@@ -23,7 +23,11 @@ def find(query: str, author_name: str = "") -> Optional[dict[str, str]]:
 
 
 def find_all(query: str) -> list[dict[str, str]]:
-    search_url = f"https://www.goodreads.com/search/index.xml?key={os.environ['GOODREADS_KEY']}&q={query}"
+    try:
+        search_url = f"https://www.goodreads.com/search/index.xml?key={os.environ['GOODREADS_KEY']}&q={query}"
+    except KeyError:
+        return []
+
     data = requests.get(search_url).text
     xml = xmltodict.parse(data, dict_constructor=dict)
 
