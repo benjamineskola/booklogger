@@ -812,25 +812,25 @@ class Book(TimestampedModel, SluggableModel):
 
         if "volumeInfo" in data:
             volume = data["volumeInfo"]
+            google_id = ""
         elif "items" in data and data["items"]:
             volume = data["items"][0]["volumeInfo"]
-            if "id" in data["items"][0] and not self.google_books_id:
-                self.google_books_id = data["items"][0]["id"]
+            google_id = data["items"][0]["id"]
         else:
             return True
 
-        if "publisher" in volume and not self.publisher:
-            self.publisher = volume["publisher"]
-            self.tags.append("updated-from-google")
-        if "pageCount" in volume and not self.page_count:
-            self.page_count = volume["pageCount"]
-            self.tags.append("updated-from-google")
-        if "publishedDate" in volume and not self.first_published:
-            try:
-                self.first_published = int(volume["publishedDate"].split("-")[0])
-                self.tags.append("updated-from-google")
-            except ValueError:
-                pass
+        first_published = volume["publishedDate"].split("-")[0]
+
+        self.update(
+            {
+                "google_books_id": google_id,
+                "publisher": volume["publisher"],
+                "page_count": volume["pageCount"],
+                "first_published": first_published
+                if first_published.isnumeric()
+                else "",
+            }
+        )
 
         self.save()
         return True
