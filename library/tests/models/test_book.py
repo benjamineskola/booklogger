@@ -1,8 +1,19 @@
 import pytest
 
+from library.models import Book
+
 
 @pytest.mark.django_db
 class TestBook:
+    @pytest.fixture(scope="session")
+    def django_db_setup(django_db_setup, django_db_blocker):
+        """Test session DB setup."""
+        from django.db import connection
+
+        with django_db_blocker.unblock():
+            with connection.cursor() as cursor:
+                cursor.execute("CREATE EXTENSION IF NOT EXISTS pg_trgm;")
+
     @pytest.fixture
     def mock_authors(self, author_factory):
         authors = [
@@ -21,6 +32,12 @@ class TestBook:
         mock_book.save()
         mock_book.add_author(mock_authors[0], order=1)
         return mock_book
+
+    @pytest.fixture
+    def mock_book_with_author(self, mock_book, mock_authors):
+        book = mock_book
+        book.add_author(mock_authors[0])
+        return book
 
     def test_book_display(self, mock_authors, mock_book):
         assert (
@@ -51,3 +68,13 @@ class TestBook:
             mock_book.display_details
             == f"{mock_authors[0]} and others, *{mock_book.display_title}*"
         )
+
+    def test_search_by_title(self, mock_book_with_author):
+        book = mock_book_with_author
+        results = Book.objects.search(book.title)
+        assert book in results
+
+    def test_search_by_author(self, mock_book_with_author):
+        book = mock_book_with_author
+        results = Book.objects.search(book.first_author.surname)
+        assert book in results
