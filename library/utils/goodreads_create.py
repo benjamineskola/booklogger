@@ -28,9 +28,13 @@ def goodreads_create(data: dict[str, Any]) -> Optional[Book]:
     )
 
     book.first_author, created = Author.objects.get_or_create_by_single_name(
-        data["author"]
+        data["authors"][0]
     )
 
     book.save()
+
+    for name in data["authors"][1:]:
+        author, created = Author.objects.get_or_create_by_single_name(name)
+        book.additional_authors.add(author)
 
     return book.update(data)

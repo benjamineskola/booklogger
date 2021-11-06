@@ -106,12 +106,12 @@ class TestGoodreads:
 
     def test_find(self, mock_goodreads):
         result = goodreads.find(self.query)
-        assert result["author"] == "Karl Marx"
+        assert result["authors"] == ["Karl Marx"]
         assert "gr-assets" in result["image_url"]
 
     def test_find_with_author_name(self, mock_goodreads):
         result = goodreads.find("9781844678761", "Marx")
-        assert result["author"] == "Karl Marx"
+        assert result["authors"] == ["Karl Marx"]
         assert "gr-assets" in result["image_url"]
 
     def test_find_excluding_author_name(self, mock_goodreads):
@@ -120,7 +120,7 @@ class TestGoodreads:
 
     def test_find_and_scrape(self, mock_goodreads):
         result = goodreads.find(self.query + "_scrape")
-        assert result["author"] == "Karl Marx"
+        assert result["authors"] == ["Karl Marx"]
         assert "gr-assets" in result["image_url"]
 
     def test_failed_scrape(self, requests_mock, mock_goodreads):
@@ -129,5 +129,5 @@ class TestGoodreads:
             text="",
         )
         result = goodreads.find(self.query + "_scrape")
-        assert result["author"] == "Karl Marx"
+        assert result["authors"] == ["Karl Marx"]
         assert not result["image_url"]
