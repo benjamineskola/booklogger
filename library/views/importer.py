@@ -65,54 +65,22 @@ def bulk_import(request: HttpRequest) -> HttpResponse:
         for entry in data.strip("\r\n").split("\n"):
             title, *author_names = entry.strip("\r\n").split(";")
 
-            author_names = [i for i in author_names if i]
+            author_names = [j for i in author_names if (j := i.strip())]
 
             if not title.strip():
                 continue
 
             try:
-                book, book_created = Book.objects.get_or_create(
-                    title__iexact=title.strip()
+                book = goodreads_create(
+                    {
+                        "title": title.strip(),
+                        "authors": author_names,
+                    }
                 )
+                results.append((book, True))
             except Exception as e:
                 failures.append((title, author_names, e))
                 continue
-
-            if book_created:
-                book.title = title.strip()
-
-            first_author_name = author_names.pop(0).strip()
-            first_author_role = ""
-
-            if ":" in first_author_name:
-                first_author_name, first_author_role = first_author_name.split(":", 1)
-
-            (
-                first_author,
-                fa_created,
-            ) = Author.objects.get_or_create_by_single_name(first_author_name)
-            book.first_author = first_author
-            book.first_author_role = first_author_role
-            first_author.save()
-            book.save()
-            book.update_from_goodreads()
-
-            results.append((first_author, fa_created))
-
-            for order, name in enumerate(author_names, start=1):
-                role = ""
-                if ":" in name:
-                    name, role = name.split(":", 1)
-
-                author, created = Author.objects.get_or_create_by_single_name(
-                    name.strip()
-                )
-                if author not in book.additional_authors.all():
-                    book.add_author(author, order=order, role=role)
-
-                results.append((author, created))
-
-            results.append((book, book_created))
 
         return render(
             request,
