@@ -78,32 +78,3 @@ class TestGoodreadsCreate:
         assert book.goodreads_id == data["goodreads_id"]
         assert book.first_published == data["first_published"]
         assert str(book.first_author) == data["author"]
-
-    def test_create_with_isbn(self, faker):
-        data = {
-            "author": faker.name(),
-            "title": faker.sentence(),
-            "goodreads_id": str(randrange(1, 999999)),
-            "first_published": str(randrange(1600, 2022)),
-        }
-        isbn = "978" + faker.password(
-            special_chars=False, upper_case=False, lower_case=False
-        )
-
-        book = goodreads_create(data, isbn)
-
-        assert book.isbn == isbn
-
-    def test_create_with_asin(self, faker):
-        data = {
-            "author": faker.name(),
-            "title": faker.sentence(),
-            "goodreads_id": str(randrange(1, 999999)),
-            "first_published": str(randrange(1600, 2022)),
-        }
-        asin = "B" + faker.password(9, special_chars=False, lower_case=False)
-
-        book = goodreads_create(data, asin)
-
-        assert book.isbn == ""
-        assert book.asin == asin

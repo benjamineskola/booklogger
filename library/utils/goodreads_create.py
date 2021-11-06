@@ -1,15 +1,11 @@
 #!/usr/bin/env python
 
-
-import re
 from typing import Any, Optional
 
 from library.models import Author, Book
 
 
-def goodreads_create(
-    data: dict[str, Any], query: Optional[str] = None
-) -> Optional[Book]:
+def goodreads_create(data: dict[str, Any]) -> Optional[Book]:
     title = data["title"].strip()
     series_name = ""
     series_order = None
@@ -34,13 +30,6 @@ def goodreads_create(
     book.first_author, created = Author.objects.get_or_create_by_single_name(
         data["author"]
     )
-
-    if query:
-        if len(query) == 13 and query.startswith("978"):
-            book.isbn = query
-        elif re.match(r"^B[A-Z0-9]{9}$", query):
-            book.asin = query
-            book.edition_format = Book.Format.EBOOK
 
     book.save()
 

@@ -1,4 +1,5 @@
 import json
+import re
 from typing import Optional, Union
 
 from django.contrib.auth.decorators import login_required
@@ -18,7 +19,15 @@ def import_book(request: HttpRequest, query: Optional[str] = None) -> HttpRespon
     if request.method == "POST":
         data = json.loads(request.POST["data"])
         query = request.POST.get("query")
-        book = goodreads_create(data=data, query=query)
+
+        if query:
+            if len(query) == 13 and query.startswith("978"):
+                data["isbn"] = query
+            elif re.match(r"^B[A-Z0-9]{9}$", query):
+                data["asin"] = query
+                data["edition_format"] = Book.Format.EBOOK
+
+        book = goodreads_create(data)
         if book:
             return redirect("library:book_edit", slug=book.slug)
         else:

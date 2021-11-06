@@ -49,7 +49,7 @@ class Command(BaseCommand):
                 found_title, *_ = goodreads_book["title"].split(": ", 1)
                 if found_title.lower() == title.lower():
                     print(f"found {title} on goodreads")
-                    book = goodreads_create(data=goodreads_book)
+                    book = goodreads_create(goodreads_book)
                     book.isbn = isbn
                     book.edition_format = Book.Format.EBOOK
                     book.publisher = "Verso"
@@ -69,7 +69,7 @@ class Command(BaseCommand):
                 found_title, *_ = goodreads_book["title"].split(": ", 1)
                 if found_title.lower() == title.lower():
                     print(f"found {title} on goodreads by name")
-                    book = goodreads_create(data=goodreads_book)
+                    book = goodreads_create(goodreads_book)
                     book.isbn = isbn
                     book.edition_format = Book.Format.EBOOK
                     book.publisher = "Verso"
