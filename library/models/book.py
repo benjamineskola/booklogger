@@ -692,12 +692,21 @@ class Book(TimestampedModel, SluggableModel):
         if self.acquired_date and not self.alienated_date and not self.owned_by:
             self.owned_by = User.objects.get(username="ben")
 
+        orig_goodreads_id = self.goodreads_id
+        if self.isbn or self.asin:
+            old = Book.objects.get(pk=self.id)
+            if self.isbn != old.isbn or self.asin != old.asin:
+                self.goodreads_id = ""
+
         super().save(*args, **kwargs)
 
         self.update_from_verso()
         if self.asin or self.isbn or (self.title and self.first_author):
             if not self.first_published or not self.goodreads_id or not self.image_url:
                 self.update_from_goodreads()
+                if orig_goodreads_id and not self.goodreads_id:
+                    self.goodreads_id = orig_goodreads_id
+                    super().save(*args, **kwargs)
         if self.isbn or self.google_books_id:
             if (
                 not self.google_books_id
