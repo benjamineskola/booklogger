@@ -823,7 +823,6 @@ class Book(TimestampedModel, SluggableModel):
                 return None
 
         self.update(result)
-        self.refresh_from_db()
 
         return self
 
@@ -847,7 +846,6 @@ class Book(TimestampedModel, SluggableModel):
         )
         if url:
             self.update({"publisher_url": url, "image_url": verso.scrape_image(url)})
-            self.refresh_from_db()
         return self
 
     def update(self, data: dict[str, str], force: bool = False) -> "Book":
