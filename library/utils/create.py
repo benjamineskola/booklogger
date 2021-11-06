@@ -18,24 +18,25 @@ def book(data: dict[str, Any]) -> Book:
                 data["series_order"] = float(rest[0].strip(")"))
             except ValueError:
                 pass
-    print(data)
 
     new_book, book_created = Book.objects.get_or_create(
         title__iexact=data["title"],
-        first_author__surname__iendswith=data["authors"][0].rsplit(" ", 1)[-1],
+        first_author__surname__iendswith=data["authors"][0][0].rsplit(" ", 1)[-1],
     )
 
     if book_created:
         new_book.first_author, created = Author.objects.get_or_create_by_single_name(
-            data["authors"][0]
+            data["authors"][0][0]
         )
+        if data["authors"][0][1]:
+            data["first_author_role"] = data["authors"][0][1]
 
     new_book.update(data)
     new_book.save()
 
-    for order, name in enumerate(data["authors"][1:], start=1):
+    for order, (name, role) in enumerate(data["authors"][1:], start=1):
         author, created = Author.objects.get_or_create_by_single_name(name.strip())
         if author not in new_book.additional_authors.all():
-            new_book.add_author(author, order=order)
+            new_book.add_author(author, order=order, role=role)
 
     return new_book

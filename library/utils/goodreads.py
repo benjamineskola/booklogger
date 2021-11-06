@@ -14,7 +14,7 @@ def find(query: str, author_name: str = "") -> Optional[dict[str, str]]:
         results = [
             result
             for result in results
-            if author_name.lower() in result["authors"][0].lower()
+            if author_name.lower() in result["authors"][0][0].lower()
         ]
     if results:
         result = results[0]
@@ -47,7 +47,7 @@ def find_all(query: str) -> list[dict[str, str]]:
 
     results = [
         {
-            "authors": [result["best_book"]["author"]["name"]],
+            "authors": [(result["best_book"]["author"]["name"], "")],
             "title": result["best_book"]["title"],
             "goodreads_id": result["best_book"]["id"]["#text"],
             "first_published": result["original_publication_year"].get("#text"),

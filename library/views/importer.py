@@ -64,7 +64,11 @@ def bulk_import(request: HttpRequest) -> HttpResponse:
         for entry in data.strip("\r\n").split("\n"):
             title, *author_names = entry.strip("\r\n").split(";")
 
-            author_names = [j for i in author_names if (j := i.strip())]
+            authors = [
+                (j[0].strip(), j[1].strip() if len(j) > 1 else "")
+                for i in author_names
+                if (j := i.strip().split(":"))
+            ]
 
             if not title.strip():
                 continue
@@ -73,7 +77,7 @@ def bulk_import(request: HttpRequest) -> HttpResponse:
                 book = create.book(
                     {
                         "title": title.strip(),
-                        "authors": author_names,
+                        "authors": authors,
                     }
                 )
                 results.append((book, True))
