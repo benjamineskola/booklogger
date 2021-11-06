@@ -26,7 +26,7 @@ def import_book(request: HttpRequest, query: Optional[str] = None) -> HttpRespon
                 data["asin"] = query
                 data["edition_format"] = Book.Format.EBOOK
 
-        book = create.book(data)
+        book, *_ = create.book(data)
         if book:
             return redirect("library:book_edit", slug=book.slug)
         else:
@@ -74,13 +74,14 @@ def bulk_import(request: HttpRequest) -> HttpResponse:
                 continue
 
             try:
-                book = create.book(
+                book, created, author_results = create.book(
                     {
                         "title": title.strip(),
                         "authors": authors,
                     }
                 )
-                results.append((book, True))
+                results.append((book, created))
+                results += author_results
             except Exception as e:
                 failures.append((title, author_names, e))
                 continue

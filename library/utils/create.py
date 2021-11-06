@@ -5,7 +5,7 @@ from typing import Any
 from library.models import Author, Book
 
 
-def book(data: dict[str, Any]) -> Book:
+def book(data: dict[str, Any]) -> tuple[Book, bool, list[tuple[Author, bool]]]:
     data["title"] = data["title"].strip()
 
     if data["title"].endswith(")"):
@@ -24,12 +24,14 @@ def book(data: dict[str, Any]) -> Book:
         first_author__surname__iendswith=data["authors"][0][0].rsplit(" ", 1)[-1],
     )
 
+    authors = []
     if book_created:
         new_book.first_author, created = Author.objects.get_or_create_by_single_name(
             data["authors"][0][0]
         )
         if data["authors"][0][1]:
             data["first_author_role"] = data["authors"][0][1]
+        authors.append((new_book.first_author, created))
 
     new_book.update(data)
     new_book.save()
@@ -38,5 +40,6 @@ def book(data: dict[str, Any]) -> Book:
         author, created = Author.objects.get_or_create_by_single_name(name.strip())
         if author not in new_book.additional_authors.all():
             new_book.add_author(author, order=order, role=role)
+        authors.append((author, created))
 
-    return new_book
+    return (new_book, book_created, authors)

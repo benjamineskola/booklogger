@@ -15,7 +15,7 @@ class TestCreateBook:
             "first_published": str(randrange(1600, 2022)),
         }
 
-        book = create.book(data)
+        book, _, _ = create.book(data)
 
         assert book.title == data["title"]
         assert book.goodreads_id == data["goodreads_id"]
@@ -32,7 +32,7 @@ class TestCreateBook:
             "first_published": str(randrange(1600, 2022)),
         }
 
-        book = create.book(data)
+        book, _, _ = create.book(data)
 
         assert book.title == title
         assert book.series == series
@@ -51,7 +51,7 @@ class TestCreateBook:
             "first_published": str(randrange(1600, 2022)),
         }
 
-        book = create.book(data)
+        book, _, _ = create.book(data)
 
         assert book.title == title
         assert book.series == series
@@ -70,7 +70,7 @@ class TestCreateBook:
             "first_published": str(randrange(1600, 2022)),
         }
 
-        book = create.book(data)
+        book, _, _ = create.book(data)
 
         assert book.title == title
         assert book.series == series
@@ -87,7 +87,7 @@ class TestCreateBook:
             "first_published": str(randrange(1600, 2022)),
         }
 
-        book = create.book(data)
+        book, _, _ = create.book(data)
 
         assert book.title == data["title"]
         assert str(book.first_author) == data["authors"][0][0]
@@ -101,7 +101,7 @@ class TestCreateBook:
             "first_published": str(randrange(1600, 2022)),
         }
 
-        book = create.book(data)
+        book, _, _ = create.book(data)
 
         assert book.title == data["title"]
         assert str(book.first_author) == data["authors"][0][0]
@@ -115,7 +115,7 @@ class TestCreateBook:
             "first_published": str(randrange(1600, 2022)),
         }
 
-        book = create.book(data)
+        book, _, _ = create.book(data)
 
         assert book.title == data["title"]
         assert str(book.first_author) == data["authors"][0][0]
