@@ -5,7 +5,7 @@ from typing import Any
 from library.models import Author, Book
 
 
-def goodreads_create(data: dict[str, Any]) -> Book:
+def book(data: dict[str, Any]) -> Book:
     data["title"] = data["title"].strip()
 
     if data["title"].endswith(")"):
@@ -20,22 +20,22 @@ def goodreads_create(data: dict[str, Any]) -> Book:
                 pass
     print(data)
 
-    book, book_created = Book.objects.get_or_create(
+    new_book, book_created = Book.objects.get_or_create(
         title__iexact=data["title"],
         first_author__surname__iendswith=data["authors"][0].rsplit(" ", 1)[-1],
     )
 
     if book_created:
-        book.first_author, created = Author.objects.get_or_create_by_single_name(
+        new_book.first_author, created = Author.objects.get_or_create_by_single_name(
             data["authors"][0]
         )
 
-    book.update(data)
-    book.save()
+    new_book.update(data)
+    new_book.save()
 
     for order, name in enumerate(data["authors"][1:], start=1):
         author, created = Author.objects.get_or_create_by_single_name(name.strip())
-        if author not in book.additional_authors.all():
-            book.add_author(author, order=order)
+        if author not in new_book.additional_authors.all():
+            new_book.add_author(author, order=order)
 
-    return book
+    return new_book

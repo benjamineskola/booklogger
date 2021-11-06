@@ -7,8 +7,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 
 from library.models import Author, Book
-from library.utils import goodreads
-from library.utils.goodreads_create import goodreads_create
+from library.utils import create, goodreads
 
 
 @login_required
@@ -27,7 +26,7 @@ def import_book(request: HttpRequest, query: Optional[str] = None) -> HttpRespon
                 data["asin"] = query
                 data["edition_format"] = Book.Format.EBOOK
 
-        book = goodreads_create(data)
+        book = create.book(data)
         if book:
             return redirect("library:book_edit", slug=book.slug)
         else:
@@ -71,7 +70,7 @@ def bulk_import(request: HttpRequest) -> HttpResponse:
                 continue
 
             try:
-                book = goodreads_create(
+                book = create.book(
                     {
                         "title": title.strip(),
                         "authors": author_names,

@@ -4,8 +4,7 @@ import sys
 from django.core.management.base import BaseCommand
 
 from library.models import Book
-from library.utils import flatten, goodreads
-from library.utils.goodreads_create import goodreads_create
+from library.utils import create, flatten, goodreads
 
 
 class Command(BaseCommand):
@@ -49,7 +48,7 @@ class Command(BaseCommand):
                 found_title, *_ = goodreads_book["title"].split(": ", 1)
                 if found_title.lower() == title.lower():
                     print(f"found {title} on goodreads")
-                    book = goodreads_create(goodreads_book)
+                    book = create.book(goodreads_book)
                     book.isbn = isbn
                     book.edition_format = Book.Format.EBOOK
                     book.publisher = "Verso"
@@ -69,7 +68,7 @@ class Command(BaseCommand):
                 found_title, *_ = goodreads_book["title"].split(": ", 1)
                 if found_title.lower() == title.lower():
                     print(f"found {title} on goodreads by name")
-                    book = goodreads_create(goodreads_book)
+                    book = create.book(goodreads_book)
                     book.isbn = isbn
                     book.edition_format = Book.Format.EBOOK
                     book.publisher = "Verso"

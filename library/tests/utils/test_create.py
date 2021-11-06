@@ -2,11 +2,11 @@ from random import randrange
 
 import pytest
 
-from library.utils.goodreads_create import goodreads_create
+from library.utils import create
 
 
 @pytest.mark.django_db
-class TestGoodreadsCreate:
+class TestCreateBook:
     def test_create(self, faker):
         data = {
             "authors": [faker.name()],
@@ -15,7 +15,7 @@ class TestGoodreadsCreate:
             "first_published": str(randrange(1600, 2022)),
         }
 
-        book = goodreads_create(data)
+        book = create.book(data)
 
         assert book.title == data["title"]
         assert book.goodreads_id == data["goodreads_id"]
@@ -32,7 +32,7 @@ class TestGoodreadsCreate:
             "first_published": str(randrange(1600, 2022)),
         }
 
-        book = goodreads_create(data)
+        book = create.book(data)
 
         assert book.title == title
         assert book.series == series
@@ -51,7 +51,7 @@ class TestGoodreadsCreate:
             "first_published": str(randrange(1600, 2022)),
         }
 
-        book = goodreads_create(data)
+        book = create.book(data)
 
         assert book.title == title
         assert book.series == series
@@ -70,7 +70,7 @@ class TestGoodreadsCreate:
             "first_published": str(randrange(1600, 2022)),
         }
 
-        book = goodreads_create(data)
+        book = create.book(data)
 
         assert book.title == title
         assert book.series == series
@@ -87,7 +87,7 @@ class TestGoodreadsCreate:
             "first_published": str(randrange(1600, 2022)),
         }
 
-        book = goodreads_create(data)
+        book = create.book(data)
 
         assert book.title == data["title"]
         assert str(book.first_author) == data["authors"][0]
