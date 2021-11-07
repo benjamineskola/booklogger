@@ -8,18 +8,14 @@ from library.utils import create, flatten, goodreads
 
 
 class Command(BaseCommand):
-    def add_arguments(self, parser):
-        pass
-
-    def handle(self, **options):
+    def handle(self, *args: str, **options: str) -> None:
         lines = [i.strip() for i in sys.stdin.readlines() if i.strip()]
-        print(lines)
         for line in lines:
             title, _, isbn = line.rsplit(", ", 2)
             _, title = title.strip().split(" ", 1)
-            title, *authors = re.split(r" (?:Edited )*?by ", title, 1)
-            if authors:
-                authors = flatten([author.split(" and ") for author in authors])
+            title, *author_names = re.split(r" (?:Edited )*?by ", title, 1)
+            if author_names:
+                authors = flatten([author.split(" and ") for author in author_names])
 
             try:
                 book = Book.objects.get(title__istartswith=title.lower())

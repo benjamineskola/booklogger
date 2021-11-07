@@ -8,7 +8,7 @@ from library.utils import create
 
 
 class Command(BaseCommand):
-    def handle(self, **options):
+    def handle(self, *args: str, **options: str) -> None:
         while True:
             errors = 0
             while Queue.objects.count():
@@ -17,6 +17,8 @@ class Command(BaseCommand):
                 print(f"===== {Queue.objects.count()} =====")
                 try:
                     item = Queue.objects.first()
+                    if not item:
+                        break
                     data = item.data
                     item.delete()
 
@@ -35,5 +37,4 @@ class Command(BaseCommand):
                     print(f"===== error: {e} =====")
                     item = Queue(data=data)
                     item.save()
-            print("===== sleeping =====")
             sleep(60)
