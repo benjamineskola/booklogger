@@ -37,10 +37,9 @@ def import_book(request: HttpRequest, query: Optional[str] = None) -> HttpRespon
         if query and (goodreads_results := goodreads.find_all(query)):
             for result in goodreads_results:
                 match = Book.objects.search(
-                    f"{result['author']} {result['title']}"
+                    f"{result['authors'][0][0]} {result['title']}"
                 ).first()
-                if match:
-                    matches[result["goodreads_id"]] = match
+                matches[result["goodreads_id"]] = match
 
         return render(
             request,

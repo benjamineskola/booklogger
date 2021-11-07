@@ -10,7 +10,7 @@
           <input type="hidden" name="query" value="{{ query }}">
           <input type="hidden" name="data" value="{{ goodreads_result | json }}">
           <label for="import-{{ goodreads_result["goodreads_id"] }}">
-            <a href="https://www.goodreads.com/book/show/{{ goodreads_result["goodreads_id"] }}">{{ goodreads_result["author"] }}, <em>{{ goodreads_result["title"] }}</em></a>.
+            <a href="https://www.goodreads.com/book/show/{{ goodreads_result["goodreads_id"] }}">{{ goodreads_result["authors"][0][0] }}, <em>{{ goodreads_result["title"] }}</em></a>.
 
             {% if matches[goodreads_result["goodreads_id"]] %}
               This might already be in the library as {{ book_link_with_authors(matches[goodreads_result["goodreads_id"]]) }}.
