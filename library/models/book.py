@@ -816,19 +816,16 @@ class Book(TimestampedModel, SluggableModel):
         if data:
             result = data
         else:
-            if self.asin:
-                query = self.asin
-            elif self.isbn:
-                query = self.isbn
-            else:
-                query = self.search_query
+            result = {}
+            for query in [self.asin, self.isbn, self.search_query]:
+                if query and (
+                    result := goodreads.find(
+                        query, self.first_author.surname if self.first_author else ""
+                    )
+                ):
+                    break
 
-            if not (
-                result := goodreads.find(
-                    query,
-                    self.first_author.surname if self.first_author else "",
-                )
-            ):
+            if not result:
                 return None
 
         self.update(result)
