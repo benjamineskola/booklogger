@@ -33,7 +33,7 @@ def fetch(google_id: str = "", isbn: str = "") -> Optional[dict[str, str]]:
     first_published = volume["publishedDate"].split("-")[0]
     return {
         "google_books_id": google_id,
-        "publisher": volume["publisher"],
-        "page_count": volume["pageCount"],
+        "publisher": volume["publisher"] if "publisher" in volume else "",
+        "page_count": volume["pageCount"] if "pageCount" in volume else 0,
         "first_published": first_published if first_published.isnumeric() else "",
     }
