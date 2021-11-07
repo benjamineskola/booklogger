@@ -13,6 +13,8 @@
     </ul>
   {% endif %}
 
+  <p>Format is <code>title;author[:role][;author[:role]…]</code></p>
+
   <form action="{{ url('library:bulk_import') }}" method="POST">
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
     <textarea class="form-control mb-4" name="data" rows="25" cols="80"></textarea>
