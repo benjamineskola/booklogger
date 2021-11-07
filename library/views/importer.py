@@ -1,13 +1,13 @@
 import csv
 import json
 import re
-from typing import Optional, Union
+from typing import Optional
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 
-from library.models import Author, Book
+from library.models import Book, Queue
 from library.utils import create, goodreads
 
 
@@ -59,63 +59,47 @@ def bulk_import(request: HttpRequest) -> HttpResponse:
         data = str(request.POST["data"])
         lines = [line.strip() for line in data.split("\n")]
 
-        results: list[tuple[Union[Author, Book], bool]] = []
-        failures = []
-
         if request.POST["input_format"] == "csv":
             reader = csv.DictReader(
                 lines[1:], fieldnames=[n.lower() for n in lines[0].split(",")]
             )
             for entry in reader:
-                try:
-                    book, created, author_results = create.book(
-                        {
-                            "title": entry["title"].strip().split(":")[0],
-                            "authors": [(entry["author"], "")]
-                            + (
-                                [
-                                    (author, "")
-                                    for author in entry["additional authors"].split(
-                                        ", "
-                                    )
-                                ]
-                                if "additional authors" in entry
-                                and entry["additional authors"]
-                                else []
-                            ),
-                            # goodreads
-                            "first_published": entry["original publication year"]
-                            if "original publication year" in entry
-                            and entry["original publication year"].isnumeric()
-                            else 0,
-                            "isbn": entry["isbn13"].strip('="')
-                            if "isbn13" in entry
-                            else "",
-                            "page_count": entry["number of pages"]
-                            if "number of pages" in entry
-                            and entry["number of pages"].isnumeric()
-                            else 0,
-                            "want_to_read": entry["exclusive shelf"] != "read"
-                            if "exclusive shelf" in entry
-                            else True,
-                            "goodreads_id": entry["book id"]
-                            if "book id" in entry
-                            else "",
-                            # ereaderiq
-                            "asin": entry["asin"] if "asin" in entry else "",
-                            "image_url": entry["image url"]
-                            if "image url" in entry
-                            else "",
-                            "publisher": entry["publisher"]
-                            if "publisher" in entry
-                            else "",
-                        }
-                    )
-                    results.append((book, created))
-                    results += author_results
-                except Exception as e:
-                    failures.append((entry["title"], [entry["author"]], e))
-                    continue
+                queue_item = Queue(
+                    data={
+                        "title": entry["title"].strip().split(":")[0],
+                        "authors": [(entry["author"], "")]
+                        + (
+                            [
+                                (author, "")
+                                for author in entry["additional authors"].split(", ")
+                            ]
+                            if "additional authors" in entry
+                            and entry["additional authors"]
+                            else []
+                        ),
+                        # goodreads
+                        "first_published": entry["original publication year"]
+                        if "original publication year" in entry
+                        and entry["original publication year"].isnumeric()
+                        else 0,
+                        "isbn": entry["isbn13"].strip('="')
+                        if "isbn13" in entry
+                        else "",
+                        "page_count": entry["number of pages"]
+                        if "number of pages" in entry
+                        and entry["number of pages"].isnumeric()
+                        else 0,
+                        "want_to_read": entry["exclusive shelf"] != "read"
+                        if "exclusive shelf" in entry
+                        else True,
+                        "goodreads_id": entry["book id"] if "book id" in entry else "",
+                        # ereaderiq
+                        "asin": entry["asin"] if "asin" in entry else "",
+                        "image_url": entry["image url"] if "image url" in entry else "",
+                        "publisher": entry["publisher"] if "publisher" in entry else "",
+                    }
+                )
+                queue_item.save()
         else:
             for line in lines:
                 title, *author_names = line.strip("\r\n").split(";")
@@ -129,18 +113,8 @@ def bulk_import(request: HttpRequest) -> HttpResponse:
                 if not title.strip():
                     continue
 
-                try:
-                    book, created, author_results = create.book(
-                        {
-                            "title": title.strip(),
-                            "authors": authors,
-                        }
-                    )
-                    results.append((book, created))
-                    results += author_results
-                except Exception as e:
-                    failures.append((title, author_names, e))
-                    continue
+                queue_item = Queue(data={"title": title.strip, "authors": authors})
+                queue_item.save()
 
         return render(
             request,
@@ -148,8 +122,6 @@ def bulk_import(request: HttpRequest) -> HttpResponse:
             {
                 "page_title": "Import",
                 "data": data,
-                "results": results,
-                "failures": failures,
             },
         )
     else:

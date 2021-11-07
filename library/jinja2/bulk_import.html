@@ -1,18 +1,5 @@
 {% extends "base.html" %}
 {% block content %}
-  {% if results or failures %}
-    <ul>
-      {% for title, authors, exception in failures %}
-        <li>Failed to create {{", ".join(authors)}}, <em>{{ title }}</em> (“{{ exception }}”)</li>
-      {% endfor %}
-    </ul>
-    <ul>
-      {% for result, created in results %}
-        <li>{% if created %}Created{% else %}Updated{% endif %} {{ result.__class__.__name__.lower() }} <a href="{{ result.get_absolute_url() }}">{{ result }}</a></li>
-      {% endfor %}
-    </ul>
-  {% endif %}
-
   <form action="{{ url('library:bulk_import') }}" method="POST">
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
     <div class="form-check"><input checked class="form-check-input" type="radio" name="input_format" value="default" id="input_format_default"><label class="form-check-label" for="input_format_default">Default format: <code>title;author[:role][;author[:role]…]</code></label></div>
