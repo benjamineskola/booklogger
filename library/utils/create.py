@@ -34,11 +34,14 @@ def book(data: dict[str, Any]) -> tuple[Book, bool, list[tuple[Author, bool]]]:
         authors.append((new_book.first_author, created))
 
     new_book.update(data)
+    new_book.slug = ""
     new_book.save()
 
     for order, (name, role) in enumerate(data["authors"][1:], start=1):
         author, created = Author.objects.get_or_create_by_single_name(name.strip())
         if author not in new_book.additional_authors.all():
+            author.slug = ""
+            author.save()
             new_book.add_author(author, order=order, role=role)
         authors.append((author, created))
 

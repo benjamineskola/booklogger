@@ -1,3 +1,4 @@
+import csv
 import json
 import re
 from typing import Optional, Union
@@ -55,35 +56,91 @@ def import_book(request: HttpRequest, query: Optional[str] = None) -> HttpRespon
 @login_required
 def bulk_import(request: HttpRequest) -> HttpResponse:
     if request.POST:
-        data = request.POST["data"]
+        data = str(request.POST["data"])
+        lines = [line.strip() for line in data.split("\n")]
 
         results: list[tuple[Union[Author, Book], bool]] = []
         failures = []
 
-        for entry in data.strip("\r\n").split("\n"):
-            title, *author_names = entry.strip("\r\n").split(";")
+        if request.POST["input_format"] == "csv":
+            reader = csv.DictReader(
+                lines[1:], fieldnames=[n.lower() for n in lines[0].split(",")]
+            )
+            for entry in reader:
+                try:
+                    book, created, author_results = create.book(
+                        {
+                            "title": entry["title"].strip().split(":")[0],
+                            "authors": [(entry["author"], "")]
+                            + (
+                                [
+                                    (author, "")
+                                    for author in entry["additional authors"].split(
+                                        ", "
+                                    )
+                                ]
+                                if "additional authors" in entry
+                                and entry["additional authors"]
+                                else []
+                            ),
+                            # goodreads
+                            "first_published": entry["original publication year"]
+                            if "original publication year" in entry
+                            and entry["original publication year"].isnumeric()
+                            else 0,
+                            "isbn": entry["isbn13"].strip('="')
+                            if "isbn13" in entry
+                            else "",
+                            "page_count": entry["number of pages"]
+                            if "number of pages" in entry
+                            and entry["number of pages"].isnumeric()
+                            else 0,
+                            "want_to_read": entry["exclusive shelf"] != "read"
+                            if "exclusive shelf" in entry
+                            else True,
+                            "goodreads_id": entry["book id"]
+                            if "book id" in entry
+                            else "",
+                            # ereaderiq
+                            "asin": entry["asin"] if "asin" in entry else "",
+                            "image_url": entry["image url"]
+                            if "image url" in entry
+                            else "",
+                            "publisher": entry["publisher"]
+                            if "publisher" in entry
+                            else "",
+                        }
+                    )
+                    results.append((book, created))
+                    results += author_results
+                except Exception as e:
+                    failures.append((entry["title"], [entry["author"]], e))
+                    continue
+        else:
+            for line in lines:
+                title, *author_names = line.strip("\r\n").split(";")
 
-            authors = [
-                (j[0].strip(), j[1].strip() if len(j) > 1 else "")
-                for i in author_names
-                if (j := i.strip().split(":"))
-            ]
+                authors = [
+                    (j[0].strip(), j[1].strip() if len(j) > 1 else "")
+                    for i in author_names
+                    if (j := i.strip().split(":"))
+                ]
 
-            if not title.strip():
-                continue
+                if not title.strip():
+                    continue
 
-            try:
-                book, created, author_results = create.book(
-                    {
-                        "title": title.strip(),
-                        "authors": authors,
-                    }
-                )
-                results.append((book, created))
-                results += author_results
-            except Exception as e:
-                failures.append((title, author_names, e))
-                continue
+                try:
+                    book, created, author_results = create.book(
+                        {
+                            "title": title.strip(),
+                            "authors": authors,
+                        }
+                    )
+                    results.append((book, created))
+                    results += author_results
+                except Exception as e:
+                    failures.append((title, author_names, e))
+                    continue
 
         return render(
             request,
