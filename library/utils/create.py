@@ -2,7 +2,10 @@
 
 from typing import Any
 
+from django.db.models import Q
+
 from library.models import Author, Book
+from library.utils import smarten
 
 
 def book(data: dict[str, Any]) -> tuple[Book, bool, list[tuple[Author, bool]]]:
@@ -19,8 +22,9 @@ def book(data: dict[str, Any]) -> tuple[Book, bool, list[tuple[Author, bool]]]:
             except ValueError:
                 pass
 
-    new_book, book_created = Book.objects.get_or_create(
-        title__iexact=data["title"],
+    new_book, book_created = Book.objects.filter(
+        Q(title__iexact=data["title"]) | Q(title__iexact=smarten(data["title"]))
+    ).get_or_create(
         first_author__surname__iendswith=data["authors"][0][0].rsplit(" ", 1)[-1],
     )
 
