@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import os
 import re
 from typing import Any, Optional

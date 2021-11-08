@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 from urllib.parse import quote_plus
 
 import requests
