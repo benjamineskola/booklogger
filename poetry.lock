@@ -80,8 +80,8 @@ six = "*"
 
 [[package]]
 name = "bpython"
-version = "0.21"
-description = "Fancy Interface to the Python Interpreter"
+version = "0.22.1"
+description = ""
 category = "main"
 optional = false
 python-versions = ">=3.6"
@@ -93,8 +93,10 @@ greenlet = "*"
 pygments = "*"
 pyxdg = "*"
 requests = "*"
+typing-extensions = "*"
 
 [package.extras]
+clipboard = ["pyperclip"]
 jedi = ["jedi (>=0.16)"]
 urwid = ["urwid"]
 watch = ["watchdog"]
@@ -1013,8 +1015,8 @@ blessings = [
     {file = "blessings-1.7.tar.gz", hash = "sha256:98e5854d805f50a5b58ac2333411b0482516a8210f23f43308baeb58d77c157d"},
 ]
 bpython = [
-    {file = "bpython-0.21-py3-none-any.whl", hash = "sha256:64a2032052c629f0fc2d215cdcf3cbdc005d9001a4e8c11b2126e80899be77fb"},
-    {file = "bpython-0.21.tar.gz", hash = "sha256:88aa9b89974f6a7726499a2608fa7ded216d84c69e78114ab2ef996a45709487"},
+    {file = "bpython-0.22.1-py3-none-any.whl", hash = "sha256:27ab07d64b9f0268990612aa5c1ab7be8705aa819b14b72c9e4b3b0418458937"},
+    {file = "bpython-0.22.1.tar.gz", hash = "sha256:1fb1e0a52332579fc4e3dcf75e21796af67aae2be460179ecfcce9530a49a200"},
 ]
 bs4 = [
     {file = "bs4-0.0.1.tar.gz", hash = "sha256:36ecea1fd7cc5c0c6e4a1ff075df26d50da647b75376626cc186e2212886dd3a"},
