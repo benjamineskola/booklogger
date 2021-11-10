@@ -669,6 +669,8 @@ class Book(TimestampedModel, SluggableModel):
             self.edition_number = None
         if self.series_order == 0.0:
             self.series_order = None
+        if not self.rating:
+            self.rating = 0.0
 
         self.tags = sorted(
             set(
