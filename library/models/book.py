@@ -693,7 +693,7 @@ class Book(TimestampedModel, SluggableModel):
             self.owned_by = User.objects.get(username="ben")
 
         orig_goodreads_id = self.goodreads_id
-        if self.isbn or self.asin:
+        if self.id and (self.isbn or self.asin):
             old = Book.objects.get(pk=self.id)
             if self.isbn != old.isbn or self.asin != old.asin:
                 self.goodreads_id = ""
