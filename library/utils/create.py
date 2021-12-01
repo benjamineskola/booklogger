@@ -10,7 +10,7 @@ def book(data: dict[str, Any]) -> tuple[Book, bool, list[tuple[Author, bool]]]:
     data["title"] = data["title"].strip()
 
     if data["title"].endswith(")"):
-        data["title"], rest = data["title"].split(" (", 2)
+        data["title"], rest = data["title"].split(" (", 1)
         first_series = rest.split(";")
         data["series"], *rest = first_series[0].split("#")
         data["series"] = data["series"].strip(" ,)")
