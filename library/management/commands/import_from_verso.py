@@ -2,6 +2,7 @@ import re
 import sys
 
 from django.core.management.base import BaseCommand
+from django.utils import timezone
 
 from library.models import Book
 from library.utils import create, flatten, goodreads
@@ -34,6 +35,7 @@ class Command(BaseCommand):
                     # looks like a hard copy is already owned
                     book.ebook_isbn = isbn
                     book.has_ebook_edition = True
+                    book.ebook_acquired_date = timezone.now()
                     book.save()
                 continue
             except Book.DoesNotExist:
