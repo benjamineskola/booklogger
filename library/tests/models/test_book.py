@@ -6,7 +6,7 @@ from library.models import Book
 @pytest.mark.django_db
 class TestBook:
     @pytest.fixture(scope="session")
-    def django_db_setup(django_db_setup, django_db_blocker):
+    def django_db_setup(self, django_db_setup, django_db_blocker):
         """Test session DB setup."""
         from django.db import connection
 

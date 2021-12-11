@@ -55,9 +55,9 @@ jobs:
       - name: Lint with curlylint
         run: |
           poetry run find library/jinja2/ -name '*.html' -exec curlylint --rule 'indent: 2' {} +
-      - name: Lint with flakehell
+      - name: Lint with flake8
         run: |
-          poetry run flakehell lint
+          poetry run flake518
       - name: Lint with mypy
         run: |
           poetry run mypy
