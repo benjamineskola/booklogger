@@ -314,9 +314,9 @@ class ReadView(GenericLogView):
 
     def get_queryset(self) -> LogEntryQuerySet:
         entries = super().get_queryset()
-        if last := entries.last():
-            if last.end_date:
-                return entries.filter(end_date__year=last.end_date.year)
+        last = entries.last()
+        if last and last.end_date:
+            return entries.filter(end_date__year=last.end_date.year)
         return LogEntry.objects.none()
 
 
@@ -485,9 +485,8 @@ class BookEditMixin(
                 formset.save()
 
                 for subform in formset:
-                    if formset.data.get(subform.prefix + "-DELETE") == "on":
-                        if subform.instance.id:
-                            subform.instance.delete()
+                    if (formset.data.get(subform.prefix + "-DELETE") == "on" and subform.instance.id):
+                        subform.instance.delete()
 
             response = super(BookEditMixin, self).form_valid(form)
         else:

@@ -92,7 +92,4 @@ class LogEntry(TimestampedModel):
 
     @property
     def currently_reading(self) -> bool:
-        if self.start_date and not self.end_date:
-            return True
-        else:
-            return False
+        return self.start_date is not None and self.end_date is None

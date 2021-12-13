@@ -5,6 +5,8 @@ from django.db.models import Q
 from library.models import Author, Book
 from library.utils import smarten
 
+from contextlib import suppress
+
 
 def book(data: dict[str, Any]) -> tuple[Book, bool, list[tuple[Author, bool]]]:
     data["title"] = data["title"].strip()
@@ -15,10 +17,8 @@ def book(data: dict[str, Any]) -> tuple[Book, bool, list[tuple[Author, bool]]]:
         data["series"], *rest = first_series[0].split("#")
         data["series"] = data["series"].strip(" ,)")
         if rest:
-            try:
+            with suppress(ValueError):
                 data["series_order"] = float(rest[0].strip(")"))
-            except ValueError:
-                pass
 
     new_book, book_created = Book.objects.filter(
         Q(title__iexact=data["title"]) | Q(title__iexact=smarten(data["title"]))

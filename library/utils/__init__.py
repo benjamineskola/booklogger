@@ -127,7 +127,7 @@ def remove_stopwords(string: str, stopwords: Collection[str] = ()) -> str:
             "to",
             "&",
         ]
-    return " ".join([word for word in string.split() if not word.lower() in stopwords])
+    return " ".join([word for word in string.split() if word.lower() not in stopwords])
 
 
 def smarten(string: str) -> str:

@@ -673,12 +673,7 @@ class Book(TimestampedModel, SluggableModel):
             self.rating = 0.0
 
         self.tags = sorted(
-            set(
-                [
-                    tag.lower().replace(",", "").replace("/", "").strip()
-                    for tag in self.tags
-                ]
-            )
+            {tag.lower().replace(",", "").replace("/", "").strip() for tag in self.tags}
         )
         for tag in self.tags:
             Tag.objects.get_or_create(name=tag)
@@ -703,21 +698,31 @@ class Book(TimestampedModel, SluggableModel):
         super().save(*args, **kwargs)
 
         self.update_from_verso()
-        if self.asin or self.isbn or (self.title and self.first_author):
-            if not self.first_published or not self.goodreads_id or not self.image_url:
-                self.update_from_goodreads()
-                if orig_goodreads_id and not self.goodreads_id:
-                    self.goodreads_id = orig_goodreads_id
-                    super().save(*args, **kwargs)
-        if self.isbn or self.google_books_id:
-            if (
+        if (
+            self.asin
+            or self.isbn
+            or (self.title and self.first_author)
+            and (
+                not self.first_published or not self.goodreads_id or not self.image_url
+            )
+        ):
+            self.update_from_goodreads()
+            if orig_goodreads_id and not self.goodreads_id:
+                self.goodreads_id = orig_goodreads_id
+                super().save(*args, **kwargs)
+
+        if (
+            self.isbn
+            or self.google_books_id
+            and (
                 not self.google_books_id
                 or not self.publisher
                 or not self.page_count
                 or not self.first_published
-            ):
-                self.update_from_google()
-                self.update_from_verso()
+            )
+        ):
+            self.update_from_google()
+            self.update_from_verso()
 
         self.editions.all().update(
             title=self.title,

@@ -43,7 +43,7 @@ django_settings_module = "booklogger.settings"
 
 [tool.flake8]
 exclude = ["migrations"]
-select = ["C","E","F","W","N","B","B9"]
+select = ["C","DJ","E","F","W","N","B","B9","SIM"]
 extend-ignore = [
         # incompatible with black
         "E203",
@@ -84,11 +84,15 @@ xmltodict = "*"
 django-stubs-ext = "^0.3.1"
 
 [tool.poetry.dev-dependencies]
+coverage = {extras = ["toml"], version = "^6.0"}
 curlylint = "*"
 django-stubs = "^1.9"
 flake518 = "^1.1.0"
 flake8-bugbear = "*"
+flake8-comprehensions = "^3.7.0"
+flake8-django = "^1.1.2"
 flake8-docstrings = "*"
+flake8-simplify = "^0.14.2"
 lxml = "*"
 mypy = "*"
 mypy-extensions = "*"
@@ -96,9 +100,8 @@ pep8-naming = "*"
 pytest-cov = "*"
 pytest-django = "*"
 pytest-factoryboy = "*"
-types-requests = "*"
-coverage = {extras = ["toml"], version = "^6.0"}
 requests-mock = "^1.9.3"
+types-requests = "*"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

@@ -197,16 +197,15 @@ class IndexView(LoginRequiredMixin, generic.ListView[Book]):
 
 
 def tags(request: HttpRequest, base_tag: str = "non-fiction") -> HttpResponse:
-    excluded_tags = set(
-        [
-            base_tag,
-            "anthology",
-            "needs contributors",
-            "updated-from-google",
-        ]
-    )
+    excluded_tags = {
+        base_tag,
+        "anthology",
+        "needs contributors",
+        "updated-from-google",
+    }
+
     if base_tag not in ["fiction", "non-fiction"]:
-        excluded_tags |= set(["fiction", "non-fiction"])
+        excluded_tags |= {"fiction", "non-fiction"}
 
     books = Tag.objects[base_tag].books.select_related("first_author")
     toplevel_tags = set(flatten(books.values_list("tags", flat=True))) - excluded_tags
@@ -223,16 +222,14 @@ def tags(request: HttpRequest, base_tag: str = "non-fiction") -> HttpResponse:
 
 
 def related_tags(request: HttpRequest, base_tag: str = "non-fiction") -> HttpResponse:
-    excluded_tags = set(
-        [
-            base_tag,
-            "anthology",
-            "needs contributors",
-            "updated-from-google",
-        ]
-    )
+    excluded_tags = {
+        base_tag,
+        "anthology",
+        "needs contributors",
+        "updated-from-google",
+    }
     if base_tag not in ["fiction", "non-fiction"]:
-        excluded_tags |= set(["fiction", "non-fiction"])
+        excluded_tags |= {"fiction", "non-fiction"}
 
     books = Tag.objects[base_tag].books
     toplevel_tags = set(flatten(books.values_list("tags", flat=True))) - excluded_tags
