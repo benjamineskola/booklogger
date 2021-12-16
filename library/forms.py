@@ -31,7 +31,7 @@ class AuthorForm(ModelForm[Author]):
         exclude = ["created_date", "modified_date"]
 
     def __init__(self, *args: Any, **kwargs: Any):
-        super(AuthorForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class AuthorField(ModelChoiceField):
@@ -70,7 +70,7 @@ class BookForm(ModelForm[Book]):
         }
 
     def __init__(self, *args: Any, **kwargs: Any):
-        super(BookForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.fields["publisher"].widget.choices += [
             (publisher, publisher)
@@ -143,7 +143,7 @@ class BookAuthorForm(ModelForm[BookAuthor]):
         field_classes = {"author": AuthorField}
 
     def __init__(self, *args: Any, **kwargs: Any):
-        super(BookAuthorForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class LogEntryForm(ModelForm[LogEntry]):

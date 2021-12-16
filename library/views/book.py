@@ -489,13 +489,13 @@ class BookEditMixin(
                     if (formset.data.get(subform.prefix + "-DELETE") == "on" and subform.instance.id):
                         subform.instance.delete()
 
-            response = super(BookEditMixin, self).form_valid(form)
+            response = super().form_valid(form)
         else:
-            response = super(BookEditMixin, self).form_invalid(form)
+            response = super().form_invalid(form)
         return response
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        context = super(BookEditMixin, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
         if self.request.POST:
             context["inline_formsets"] = [
