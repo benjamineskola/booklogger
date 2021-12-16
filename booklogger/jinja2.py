@@ -32,7 +32,7 @@ def environment(**options: Any) -> Environment:
             "oxford_comma": oxford_comma,
             "round_trunc": round_trunc,
             "crispy": as_crispy_field,
-            "quote": lambda text: urllib.parse.quote(text),
+            "quote": urllib.parse.quote,
         }
     )
 

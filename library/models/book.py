@@ -697,27 +697,22 @@ class Book(TimestampedModel, SluggableModel):
         super().save(*args, **kwargs)
 
         self.update_from_verso()
-        if (
-            self.asin
-            or self.isbn
-            or (self.title and self.first_author)
-            and (
-                not self.first_published or not self.goodreads_id or not self.image_url
-            )
+        if any([self.asin, self.isbn, (self.title and self.first_author)]) and (
+            not all([self.first_published, self.goodreads_id, self.image_url])
         ):
             self.update_from_goodreads()
             if orig_goodreads_id and not self.goodreads_id:
                 self.goodreads_id = orig_goodreads_id
                 super().save(*args, **kwargs)
 
-        if (
-            self.isbn
-            or self.google_books_id
-            and (
-                not self.google_books_id
-                or not self.publisher
-                or not self.page_count
-                or not self.first_published
+        if any([self.isbn, self.google_books_id]) and (
+            not all(
+                [
+                    self.google_books_id,
+                    self.publisher,
+                    self.page_count,
+                    self.first_published,
+                ]
             )
         ):
             self.update_from_google()
@@ -764,16 +759,18 @@ class Book(TimestampedModel, SluggableModel):
 
     @property
     def owned(self) -> bool:
-        return (self.owned_by is not None and self.owned_by.username == "ben") or any(
-            ancestor.owned for ancestor in self.ancestor_editions
+        return (
+            self.owned_by.username == "ben"
+            if self.owned_by is not None
+            else any((ancestor.owned for ancestor in self.ancestor_editions))
         )
 
     @property
     def owned_by_sara(self) -> bool:
         return (
-            self.owned_by is not None
-            and self.owned_by.username == "sara"
-            or any(ancestor.owned_by_sara for ancestor in self.ancestor_editions)
+            self.owned_by.username == "sara"
+            if self.owned_by is not None
+            else any((ancestor.owned_by_sara for ancestor in self.ancestor_editions))
         )
 
     @property

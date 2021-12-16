@@ -194,7 +194,7 @@ def stats_for_year(request: HttpRequest, year: str) -> HttpResponse:
             if len(target_counts.keys()) >= 3:
                 break
     else:
-        if year != "total" and year != "sometime":
+        if year not in ("total", "sometime"):
             result["pages_per_day"] = result["pages"] / (
                 366 if int(year) % 4 == 0 else 365
             )

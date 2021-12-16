@@ -29,7 +29,7 @@ class NotEqual(Lookup):  # type: ignore [type-arg]
         lhs, lhs_params = self.process_lhs(compiler, connection)
         rhs, rhs_params = self.process_rhs(compiler, connection)
         params = lhs_params + rhs_params
-        return "%s <> %s" % (lhs, rhs), params
+        return f"{lhs} <> {rhs}", params
 
 
 Field.register_lookup(NotEqual)
