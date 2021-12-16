@@ -7,7 +7,7 @@ from django.shortcuts import render
 from library.models import Book
 
 
-def list(request: HttpRequest) -> HttpResponse:
+def index(request: HttpRequest) -> HttpResponse:
     series_books = Book.objects.exclude(series="").filter(
         private__in=([True, False] if request.user.is_authenticated else [False])
     )

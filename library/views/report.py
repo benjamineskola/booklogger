@@ -237,10 +237,9 @@ def related_tags(request: HttpRequest, base_tag: str = "non-fiction") -> HttpRes
     results = {}
     for tag in toplevel_tags:
         tagged_books = [book for book in books if tag in book.tags]
-        related_tags = sorted(flatten([book.tags for book in tagged_books]))
+        related = sorted(flatten([book.tags for book in tagged_books]))
         results[tag] = {
-            related_tag: len(list(books))
-            for related_tag, books in groupby(related_tags)
+            related_tag: len(list(books)) for related_tag, books in groupby(related)
         }
         results[tag]["total"] = len(tagged_books)
         results[tag][tag] = len([book for book in tagged_books if len(book.tags) > 2])

@@ -172,13 +172,13 @@ urlpatterns = [
         ),
     ),
     path("search/", views.search.basic_search, name="basic_search"),
-    path("series/", views.series.list, name="series_index"),
+    path("series/", views.series.index, name="series_index"),
     path(
         "series/<path:series>/",
         views.book.SeriesIndexView.as_view(),
         name="series_details",
     ),
-    path("publishers/", views.publisher.list, name="publisher_index"),
+    path("publishers/", views.publisher.index, name="publisher_index"),
     re_path(
         r"^publisher(?:/(?P<publisher>[^/]+))?(?:/(?P<page>\d+))?/",
         views.book.PublisherIndexView.as_view(),
