@@ -58,6 +58,9 @@ jobs:
       - name: Lint with flake8
         run: |
           poetry run flake518
+      - name: Lint with pylint
+        run: |
+          poetry run pylint -- */
       - name: Lint with mypy
         run: |
           poetry run mypy

@@ -1,0 +1,23 @@
+[MASTER]
+max-line-length = 88
+ignore = migrations,tests
+
+[MESSAGES CONTROL]
+disable =
+        # handled by isort
+        wrong-import-order,
+        # handled by mccabe
+        too-many-branches,
+        # handled by pycodestyle
+        unneeded-not, line-too-long, unnecessary-semicolon, trailing-whitespace, missing-final-newline, bad-indentation, multiple-statements, bare-except,
+        # handled by pydocstyle
+        missing-class-docstring, missing-function-docstring, missing-module-docstring,
+        # handled by pyflakes
+        undefined-variable, unused-import, unused-variable,
+        # handled by pep8-naming
+        invalid-name, bad-classmethod-argument, bad-mcs-classmethod-argument, no-self-argument,
+
+        # unhelpful for django?
+        no-member, too-few-public-methods, unsubscriptable-object, too-many-instance-attributes, too-many-public-methods, too-many-ancestors,
+
+        duplicate-code, no-self-use, attribute-defined-outside-init,
