@@ -765,7 +765,7 @@ class Book(TimestampedModel, SluggableModel):
     @property
     def owned(self) -> bool:
         return (self.owned_by is not None and self.owned_by.username == "ben") or any(
-            [ancestor.owned for ancestor in self.ancestor_editions]
+            ancestor.owned for ancestor in self.ancestor_editions
         )
 
     @property
@@ -773,13 +773,13 @@ class Book(TimestampedModel, SluggableModel):
         return (
             self.owned_by is not None
             and self.owned_by.username == "sara"
-            or any([ancestor.owned_by_sara for ancestor in self.ancestor_editions])
+            or any(ancestor.owned_by_sara for ancestor in self.ancestor_editions)
         )
 
     @property
     def parent_owned(self) -> bool:
         return (not self.owned_by) and any(
-            [ancestor.owned for ancestor in self.ancestor_editions]
+            ancestor.owned for ancestor in self.ancestor_editions
         )
 
     @property

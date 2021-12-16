@@ -480,7 +480,7 @@ class BookEditMixin(
         self.object = form.save()
 
         response: HttpResponse
-        if all([formset.is_valid() for formset in context["inline_formsets"]]):
+        if all(formset.is_valid() for formset in context["inline_formsets"]):
             for formset in context["inline_formsets"]:
                 formset.instance = self.object
                 formset.save()

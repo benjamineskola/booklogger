@@ -23,12 +23,11 @@ def list(request: HttpRequest) -> HttpResponse:
         for author in book.authors:
             counts[series]["authors"].add(author)
 
-    sorted_series = {
-        k: v
-        for k, v in sorted(
+    sorted_series = dict(
+        sorted(
             counts.items(), key=lambda s: str(re.sub(r"^(A|The) (.*)", r"\2, \1", s[0]))
         )
-    }
+    )
 
     return render(
         request,
