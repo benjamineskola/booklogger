@@ -145,6 +145,37 @@ def stats_index(request: HttpRequest) -> HttpResponse:
     )
 
 
+def calculate_year_progress(year: int) -> tuple[int, int]:
+    first_day = timezone.datetime(year, 1, 1)
+    last_day = timezone.datetime(year, 12, 31)
+    year_days = (last_day - first_day).days
+    current_day = (timezone.datetime.now() - first_day).days
+
+    return current_day, year_days
+
+
+def make_prediction(
+    books: BookQuerySet, year: int
+) -> tuple[dict[str, float], dict[int, float]]:
+    prediction = {}
+    target_counts = {}
+
+    current_day, year_days = calculate_year_progress(year)
+    current_year_count = books.filter(log_entries__end_date__year=year).count()
+    prediction["predicted_count"] = current_year_count / max(1, current_day) * year_days
+
+    remaining_days = year_days - current_day
+    for target in [26, 39, 52, 78, 104, 208]:
+        if target > current_year_count:
+            target_counts[target] = (
+                (target - current_year_count) / max(1, remaining_days) * 7
+            )
+        if len(target_counts.keys()) >= 3:
+            break
+
+    return prediction, target_counts
+
+
 def stats_for_year(request: HttpRequest, year: str) -> HttpResponse:
     books = Book.objects.all()
 
@@ -167,32 +198,15 @@ def stats_for_year(request: HttpRequest, year: str) -> HttpResponse:
         result["acquired"] = books.filter(acquired_date__year=year).count()
 
     current_year = timezone.now().year
-    prediction = {}
-    target_counts = {}
     if year == str(current_year):
-        first_day = timezone.datetime(current_year, 1, 1)
-        last_day = timezone.datetime(current_year, 12, 31)
-        year_days = (last_day - first_day).days
-        current_day = (timezone.datetime.now() - first_day).days
+        current_day, year_days = calculate_year_progress(current_year)
+        prediction, target_counts = make_prediction(books, current_year)
+
         current_week = (current_day // 7) + 1
-        current_year_count = books.filter(
-            log_entries__end_date__year=current_year
-        ).count()
-        prediction["predicted_count"] = (
-            current_year_count / max(1, current_day) * year_days
-        )
 
         result["pages_per_day"] = result["pages"] / current_day
         result["predicted_pages"] = result["pages_per_day"] * year_days
 
-        remaining_days = year_days - current_day
-        for target in [26, 39, 52, 78, 104, 208]:
-            if target > current_year_count:
-                target_counts[target] = (
-                    (target - current_year_count) / max(1, remaining_days) * 7
-                )
-            if len(target_counts.keys()) >= 3:
-                break
     else:
         if year not in ("total", "sometime"):
             result["pages_per_day"] = result["pages"] / (
