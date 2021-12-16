@@ -40,12 +40,12 @@ class AuthorField(ModelChoiceField):
             return None
         if value.isnumeric():
             return super().to_python(value)
-        else:
-            try:
-                author, _ = Author.objects.get_or_create_by_single_name(value)
-                return author
-            except Exception as e:
-                raise ValidationError(str(e))
+
+        try:
+            author, _ = Author.objects.get_or_create_by_single_name(value)
+            return author
+        except Exception as e:
+            raise ValidationError(str(e))
 
 
 class BookForm(ModelForm[Book]):
@@ -111,9 +111,8 @@ class BookForm(ModelForm[Book]):
                 and (matches := re.search(r"/(?:gp/product|dp)/([^/]+)/", asin))
             ):
                 return matches[1]
-            else:
-                raise ValidationError("Not a valid ASIN or Amazon URL")
-                return asin
+
+            raise ValidationError("Not a valid ASIN or Amazon URL")
         return asin
 
     def clean_asin(self) -> str:

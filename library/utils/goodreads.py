@@ -19,8 +19,8 @@ def find(query: str, author_name: str = "") -> Optional[dict[str, str]]:
         if not result["image_url"]:
             result["image_url"] = scrape_image(result["goodreads_id"])
         return result
-    else:
-        return None
+
+    return None
 
 
 def find_all(query: str) -> list[dict[str, str]]:

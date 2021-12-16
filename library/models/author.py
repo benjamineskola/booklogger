@@ -88,35 +88,31 @@ class Author(TimestampedModel, SluggableModel):
     def __str__(self) -> str:
         if not self.forenames:
             return self.surname
-        elif self.surname_first:
+        if self.surname_first:
             return self.surname + " " + (self.preferred_forenames or self.forenames)
-        else:
-            return (self.preferred_forenames or self.forenames) + " " + self.surname
+        return (self.preferred_forenames or self.forenames) + " " + self.surname
 
     @property
     def full_name(self) -> str:
         if not self.forenames:
             return self.surname
-        elif self.surname_first:
+        if self.surname_first:
             return self.surname + " " + self.forenames
-        else:
-            return self.forenames + " " + self.surname
+        return self.forenames + " " + self.surname
 
     @property
     def name_with_initials(self) -> str:
         if self.forenames:
             return self.surname + ", " + self.initials
-        else:
-            return self.surname
+        return self.surname
 
     @property
     def name_sortable(self) -> str:
         if not self.forenames:
             return self.surname
-        elif self.surname_first:
+        if self.surname_first:
             return self.surname + " " + (self.preferred_forenames or self.forenames)
-        else:
-            return self.surname + ", " + (self.preferred_forenames or self.forenames)
+        return self.surname + ", " + (self.preferred_forenames or self.forenames)
 
     def get_absolute_url(self) -> str:
         return reverse("library:author_details", args=[str(self.slug)])
@@ -135,10 +131,9 @@ class Author(TimestampedModel, SluggableModel):
     def role_for_book(self, book: "Book") -> str:
         if book.first_author == self:
             return str(book.first_author_role)
-        elif rel := self.bookauthor_set.get(book=book.pk):
+        if rel := self.bookauthor_set.get(book=book.pk):
             return rel.role
-        else:
-            return ""
+        return ""
 
     def display_role_for_book(self, book: "Book") -> str:
         return "ed." if (role := self.role_for_book(book)) == "editor" else role

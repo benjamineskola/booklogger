@@ -30,27 +30,26 @@ def import_book(request: HttpRequest, query: Optional[str] = None) -> HttpRespon
         book, *_ = create.book(data)
         if book:
             return redirect("library:book_edit", slug=book.slug)
-        else:
-            return redirect("library:book_import", query=query)
-    else:
-        goodreads_results = []
-        matches = {}
-        if query and (goodreads_results := goodreads.find_all(query)):
-            for result in goodreads_results:
-                match = Book.objects.search(
-                    f"{result['authors'][0][0]} {result['title']}"
-                ).first()
-                matches[result["goodreads_id"]] = match
+        return redirect("library:book_import", query=query)
 
-        return render(
-            request,
-            "import.html",
-            {
-                "query": query,
-                "goodreads_results": goodreads_results,
-                "matches": matches,
-            },
-        )
+    goodreads_results = []
+    matches = {}
+    if query and (goodreads_results := goodreads.find_all(query)):
+        for result in goodreads_results:
+            match = Book.objects.search(
+                f"{result['authors'][0][0]} {result['title']}"
+            ).first()
+            matches[result["goodreads_id"]] = match
+
+    return render(
+        request,
+        "import.html",
+        {
+            "query": query,
+            "goodreads_results": goodreads_results,
+            "matches": matches,
+        },
+    )
 
 
 @login_required
@@ -124,9 +123,9 @@ def bulk_import(request: HttpRequest) -> HttpResponse:
                 "data": data,
             },
         )
-    else:
-        return render(
-            request,
-            "bulk_import.html",
-            {"page_title": "Import"},
-        )
+
+    return render(
+        request,
+        "bulk_import.html",
+        {"page_title": "Import"},
+    )

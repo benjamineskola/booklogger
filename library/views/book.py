@@ -204,13 +204,12 @@ class TagIndexView(IndexView):
 
         if tags == ["untagged"]:
             return books.filter(tags__len=0)
-        elif len(tags) == 1 and tags[0].endswith("!"):
+        if len(tags) == 1 and tags[0].endswith("!"):
             tag = get_object_or_404(Tag, name=tags[0][0:-1])
             return tag.books_uniquely_tagged
-        else:
-            for tag_name in tags:
-                books &= Tag.objects[tag_name].books_recursive
-            return books
+        for tag_name in tags:
+            books &= Tag.objects[tag_name].books_recursive
+        return books
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -438,8 +437,7 @@ def remove_tags(request: HttpRequest, slug: str) -> HttpResponse:
 
     if next := request.GET.get("next"):
         return redirect(next)
-    else:
-        return redirect("library:book_details", slug=slug)
+    return redirect("library:book_details", slug=slug)
 
 
 @login_required
@@ -486,7 +484,10 @@ class BookEditMixin(
                 formset.save()
 
                 for subform in formset:
-                    if (formset.data.get(subform.prefix + "-DELETE") == "on" and subform.instance.id):
+                    if (
+                        formset.data.get(subform.prefix + "-DELETE") == "on"
+                        and subform.instance.id
+                    ):
                         subform.instance.delete()
 
             response = super().form_valid(form)

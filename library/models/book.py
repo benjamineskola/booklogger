@@ -268,8 +268,7 @@ class BookQuerySet(models.QuerySet["Book"]):
     def page_count(self) -> int:
         if count := self.aggregate(Sum("page_count"))["page_count__sum"]:
             return int(count)
-        else:
-            return 0
+        return 0
 
 
 BookManager = BaseBookManager.from_queryset(BookQuerySet)
@@ -461,10 +460,8 @@ class Book(TimestampedModel, SluggableModel):
         if self.editions.exclude(edition_language=self.edition_language).count():
             if self.edition_language:
                 return self.get_edition_language_display()
-            else:
-                return self.get_language_display()
-        else:
-            return self.get_edition_format_display().lower()
+            return self.get_language_display()
+        return self.get_edition_format_display().lower()
 
     def get_absolute_url(self) -> str:
         return reverse("library:book_details", args=[self.slug])
@@ -478,16 +475,14 @@ class Book(TimestampedModel, SluggableModel):
         )
         if self.first_author:
             return [self.first_author] + additional_authors
-        else:
-            return additional_authors
+        return additional_authors
 
     @property
     def all_authors(self) -> list[Author]:
         additional_authors = list(self.additional_authors.order_by("bookauthor__order"))
         if self.first_author:
             return [self.first_author] + additional_authors
-        else:
-            return additional_authors
+        return additional_authors
 
     @property
     def all_authors_editors(self) -> bool:
@@ -505,8 +500,7 @@ class Book(TimestampedModel, SluggableModel):
             return self.edition_title + (
                 ": " + self.edition_subtitle if self.edition_subtitle else ""
             )
-        else:
-            return self.title + (": " + self.subtitle if self.subtitle else "")
+        return self.title + (": " + self.subtitle if self.subtitle else "")
 
     @property
     def display_date(self) -> str:
@@ -516,12 +510,11 @@ class Book(TimestampedModel, SluggableModel):
             and self.edition_published != self.first_published
         ):
             return f"[{self.first_published}] {self.edition_published}"
-        elif self.edition_published:
+        if self.edition_published:
             return str(self.edition_published)
-        elif self.first_published:
+        if self.first_published:
             return str(self.first_published)
-        else:
-            return "n.d."
+        return "n.d."
 
     @property
     def note_title(self) -> str:
@@ -579,10 +572,9 @@ class Book(TimestampedModel, SluggableModel):
         if not percentage:
             if not page:
                 raise ValueError("Must specify percentage or page")
-            elif not self.page_count:
+            if not self.page_count:
                 raise ValueError("Must specify percentage when page count is unset")
-            else:
-                percentage = page / self.page_count * 100
+            percentage = page / self.page_count * 100
 
         entry = self.log_entries.get(end_date=None)
         entry.progress_date = timezone.now()
@@ -609,17 +601,15 @@ class Book(TimestampedModel, SluggableModel):
         entries = self.log_entries.filter(end_date=None).order_by("-start_date")
         if not entries:
             return False
-        else:
-            return bool(entries[0].currently_reading)
+        return bool(entries[0].currently_reading)
 
     @property
     def display_series(self) -> str:
         if not self.series:
             return ""
-        elif self.series_order:
+        if self.series_order:
             return f"{self.series}, #{str(self.series_order).replace('.0', '')}"
-        else:
-            return self.series
+        return self.series
 
     @property
     def read(self) -> bool:
@@ -863,7 +853,8 @@ class Book(TimestampedModel, SluggableModel):
         for key, value in data.items():
             if key == "id":
                 continue
-            elif hasattr(self, key) and (force or not getattr(self, key)):
+
+            if hasattr(self, key) and (force or not getattr(self, key)):
                 if value != getattr(self, key):
                     needs_save = True
                 setattr(self, key, value)
@@ -892,8 +883,7 @@ class Book(TimestampedModel, SluggableModel):
     def review_url(self) -> str:
         if self.review.startswith("http://") or self.review.startswith("https://"):
             return self.review.split()[0]
-        else:
-            return ""
+        return ""
 
 
 class BookAuthor(TimestampedModel):
@@ -933,8 +923,7 @@ class Tag(TimestampedModel):
     def fullname(self) -> str:
         if parent := self.parents.first():
             return parent.fullname + " :: " + self.name
-        else:
-            return self.name
+        return self.name
 
     @property
     def books(self) -> "BookQuerySet":

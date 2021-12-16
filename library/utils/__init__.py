@@ -53,39 +53,40 @@ def isbn_to_isbn10(isbn: str) -> str:
 def isbn10_to_isbn(isbn: str) -> str:
     if len(isbn) not in [9, 10, 13]:
         return ""
-    elif len(isbn) == 13:
+    if len(isbn) == 13:
         if not isbn.isnumeric():
             return ""
         return isbn
-    else:
-        if not isbn[0:-1].isnumeric():
-            return ""
-        if not (isbn[-1].isnumeric() or isbn[-1].upper() == "X"):
-            return ""
 
-        if len(isbn) == 9:
-            # let's assume it's a pre-ISBN SBN
-            isbn = "0" + isbn
+    if not isbn[0:-1].isnumeric():
+        return ""
+    if not (isbn[-1].isnumeric() or isbn[-1].upper() == "X"):
+        return ""
 
-        isbn = "978" + isbn
-        ints = [int(c) for c in isbn[0:-1]]
+    if len(isbn) == 9:
+        # let's assume it's a pre-ISBN SBN
+        isbn = "0" + isbn
 
-        checksum = 0
-        for i, j in enumerate(ints):
-            if i % 2 == 0:
-                checksum += j
-            else:
-                checksum += j * 3
-        checksum = 10 - checksum % 10
+    isbn = "978" + isbn
+    ints = [int(c) for c in isbn[0:-1]]
 
-        return "".join([str(c) for c in ints] + [str(checksum)])
+    checksum = 0
+    for i, j in enumerate(ints):
+        if i % 2 == 0:
+            checksum += j
+        else:
+            checksum += j * 3
+    checksum = 10 - checksum % 10
+
+    return "".join([str(c) for c in ints] + [str(checksum)])
 
 
 def oxford_comma(items: Sequence[str]) -> str:
-    if len(items) > 2:
-        return ", ".join(items[0:-1]) + ", and " + items[-1]
-    else:
-        return " and ".join(items)
+    return (
+        ", ".join(items[0:-1]) + ", and " + items[-1]
+        if len(items) > 2
+        else " and ".join(items)
+    )
 
 
 def round_trunc(number: float, digits: int = 2) -> str:
@@ -99,9 +100,9 @@ def round_trunc(number: float, digits: int = 2) -> str:
 def str2bool(s: str) -> bool:
     if s.isnumeric():
         return bool(int(s))
-    elif s.lower() in ["yes", "true", "y", "t"]:
+    if s.lower() in ["yes", "true", "y", "t"]:
         return True
-    elif s.lower() in ["no", "false", "n", "f"]:
+    if s.lower() in ["no", "false", "n", "f"]:
         return False
 
     raise ValueError(f"Cannot interpret '{s}' as boolean")

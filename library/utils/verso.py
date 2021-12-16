@@ -22,5 +22,5 @@ def scrape_image(url: str) -> str:
     images = page.find_all(class_="edition-single--cover-image")
     if images:
         return str(images[-1].img["src"])
-    else:
-        return ""
+
+    return ""
