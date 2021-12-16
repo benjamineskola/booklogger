@@ -11,10 +11,10 @@ from library.models.abc import TimestampedModel
 def update_timestamp_on_save(
     sender: Type[TimestampedModel],
     instance: TimestampedModel,
-    raw: bool,
-    using: str,
-    update_fields: dict[str, Any],
-    **kwargs: Any
+    raw: bool,  # pylint:disable=unused-argument
+    using: str,  # pylint:disable=unused-argument
+    update_fields: dict[str, Any],  # pylint:disable=unused-argument
+    **_kwargs: Any
 ) -> None:
     if issubclass(sender, TimestampedModel):
         instance.modified_date = timezone.now()

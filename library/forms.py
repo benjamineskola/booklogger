@@ -30,9 +30,6 @@ class AuthorForm(ModelForm[Author]):
         model = Author
         exclude = ["created_date", "modified_date"]
 
-    def __init__(self, *args: Any, **kwargs: Any):
-        super().__init__(*args, **kwargs)
-
 
 class AuthorField(ModelChoiceField):
     def to_python(self, value: Optional[str]) -> Optional[Author]:
@@ -45,7 +42,7 @@ class AuthorField(ModelChoiceField):
             author, _ = Author.objects.get_or_create_by_single_name(value)
             return author
         except Exception as e:
-            raise ValidationError(str(e))
+            raise ValidationError from e
 
 
 class BookForm(ModelForm[Book]):
@@ -140,9 +137,6 @@ class BookAuthorForm(ModelForm[BookAuthor]):
             "order",
         ]
         field_classes = {"author": AuthorField}
-
-    def __init__(self, *args: Any, **kwargs: Any):
-        super().__init__(*args, **kwargs)
 
 
 class LogEntryForm(ModelForm[LogEntry]):

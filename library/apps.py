@@ -5,4 +5,4 @@ class LibraryConfig(AppConfig):
     name = "library"
 
     def ready(self) -> None:
-        import library.signals  # noqa: F401
+        import library.signals  # noqa: F401, pylint: disable=import-outside-toplevel

@@ -371,7 +371,7 @@ class XmlReadView(GenericLogView):
 
 @login_required
 @require_POST
-def start_reading(request: HttpRequest, slug: str) -> HttpResponse:
+def start_reading(_request: HttpRequest, slug: str) -> HttpResponse:
     book = get_object_or_404(Book, slug=slug)
     book.start_reading()
     return redirect("library:book_details", slug=slug)
@@ -379,7 +379,7 @@ def start_reading(request: HttpRequest, slug: str) -> HttpResponse:
 
 @login_required
 @require_POST
-def finish_reading(request: HttpRequest, slug: str) -> HttpResponse:
+def finish_reading(_request: HttpRequest, slug: str) -> HttpResponse:
     book = get_object_or_404(Book, slug=slug)
     book.finish_reading()
     return redirect("library:book_details", slug=slug)
@@ -442,7 +442,7 @@ def remove_tags(request: HttpRequest, slug: str) -> HttpResponse:
 
 @login_required
 @require_POST
-def mark_owned(request: HttpRequest, slug: str) -> HttpResponse:
+def mark_owned(_request: HttpRequest, slug: str) -> HttpResponse:
     book = get_object_or_404(Book, slug=slug)
     book.mark_owned()
     return redirect("library:book_details", slug=slug)
@@ -450,7 +450,7 @@ def mark_owned(request: HttpRequest, slug: str) -> HttpResponse:
 
 @login_required
 @require_POST
-def mark_read_sometime(request: HttpRequest, slug: str) -> HttpResponse:
+def mark_read_sometime(_request: HttpRequest, slug: str) -> HttpResponse:
     book = get_object_or_404(Book, slug=slug)
     book.mark_read_sometime()
     return redirect("library:book_details", slug=slug)
