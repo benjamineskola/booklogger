@@ -63,6 +63,7 @@ class IndexView(generic.ListView[Book]):
             self.sort_by = self.kwargs["sort_by"]
 
         if self.sort_by:
+            # pylint: disable-next=protected-access
             field_names = [f.name for f in Book._meta.get_fields()]
             field_names.append("read_date")
 
@@ -81,8 +82,8 @@ class IndexView(generic.ListView[Book]):
                 if self.sort_by == "read_date":
                     self.sort_by = "log_entries__end_date"
 
-                if Book._meta.ordering:
-                    ordering = Book._meta.ordering
+                if Book._meta.ordering:  # pylint: disable=protected-access
+                    ordering = Book._meta.ordering  # pylint: disable=protected-access
                 else:
                     ordering = []
 

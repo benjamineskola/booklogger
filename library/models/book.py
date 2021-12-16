@@ -96,8 +96,7 @@ class BaseBookManager(models.Manager["Book"]):
         qs = self.get_queryset()
         qs.update(slug="")
         for book in qs:
-            book.slug = book._generate_slug()
-            book.save()
+            book.regenerate_slug()
 
     def update_all_from_google(self) -> None:
         candidate_ids = list(

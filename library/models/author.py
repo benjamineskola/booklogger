@@ -45,8 +45,7 @@ class AuthorManager(models.Manager["Author"]):
         qs = self.get_queryset()
         qs.update(slug="")
         for author in qs:
-            author.slug = author._generate_slug()
-            author.save()
+            author.regenerate_slug()
 
 
 class Author(TimestampedModel, SluggableModel):

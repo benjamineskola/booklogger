@@ -43,6 +43,10 @@ class SluggableModel(models.Model):
                     return new_slug
         return str(self.id)
 
+    def regenerate_slug(self) -> None:
+        self.slug = self._generate_slug()
+        self.save()
+
 
 class TimestampedModel(models.Model):
     created_date = models.DateTimeField(db_index=True, default=timezone.now)
