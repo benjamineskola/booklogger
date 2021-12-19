@@ -42,7 +42,7 @@ class AuthorField(ModelChoiceField):
             author, _ = Author.objects.get_or_create_by_single_name(value)
             return author
         except Exception as e:
-            raise ValidationError from e
+            raise ValidationError(str(e)) from e
 
 
 class BookForm(ModelForm[Book]):
