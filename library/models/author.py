@@ -1,5 +1,5 @@
 import re
-from typing import TYPE_CHECKING, MutableMapping
+from typing import TYPE_CHECKING, Any
 
 from django.contrib.postgres.search import TrigramSimilarity
 from django.db import models
@@ -188,7 +188,7 @@ class Author(TimestampedModel, SluggableModel):
         return identities
 
     @staticmethod
-    def normalise_name(name: str) -> MutableMapping[str, str]:
+    def normalise_name(name: str) -> dict[str, Any]:
         words = name.split(" ")
         surname = words.pop()
         while words and words[-1].lower() in [
