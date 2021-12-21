@@ -968,6 +968,7 @@ class Tag(TimestampedModel):
         return reduce(
             operator.or_,
             [Tag.objects.filter(name__in=book.tags) for book in self.books.all()],
+            Tag.objects.none(),
         )
 
     def __lt__(self, other: "Tag") -> bool:
