@@ -164,8 +164,11 @@ class BookQuerySet(models.QuerySet["Book"]):
 
     def read(self) -> "BookQuerySet":
         return self.filter(
-            Q(log_entries__end_date__isnull=False)
-            | Q(parent_edition__log_entries__end_date__isnull=False)
+            Q(log_entries__end_date__isnull=False, log_entries__abandoned=False)
+            | Q(
+                parent_edition__log_entries__end_date__isnull=False,
+                parent_edition__log_entries__abandoned=False,
+            )
         ).distinct()
 
     def unread(self) -> "BookQuerySet":
@@ -616,7 +619,7 @@ class Book(TimestampedModel, SluggableModel):
         if self.parent_edition and self.parent_edition.read:
             return True
 
-        return self.log_entries.filter(end_date__isnull=False).count() > 0
+        return self.log_entries.filter(end_date__isnull=False, abandoned=False).count() > 0
 
     def create_new_edition(self, edition_format: int) -> None:
         edition = Book(

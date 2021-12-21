@@ -155,6 +155,9 @@ a{% if book.get_edition_format_display().lower()[0] in ["a", "e", "i", "o", "u"]
                 {% if entry not in book.log_entries.all() %}
                   (<a href="{{ entry.book.get_absolute_url() }}">{{ entry.book.get_edition_disambiguator() }} edition</a>)
                 {% endif %}
+                {% if entry.abandoned %}
+                  (abandoned)
+                {% endif %}
               </li>
             {% else %}
               <li>No reading history</li>

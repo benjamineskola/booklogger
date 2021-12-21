@@ -67,6 +67,7 @@ class LogEntry(TimestampedModel):
     progress_date = models.DateTimeField(db_index=True, default=timezone.now)
 
     exclude_from_stats = models.BooleanField(default=False)
+    abandoned = models.BooleanField(default=False)
 
     class DatePrecision(models.IntegerChoices):
         DAY = 0

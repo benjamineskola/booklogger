@@ -309,7 +309,7 @@ class CurrentlyReadingView(GenericLogView):
 
 
 class ReadView(GenericLogView):
-    filter_by = {"end_date__isnull": False}
+    filter_by = {"end_date__isnull": False, "abandoned": False}
     page_title = "Read Books"
 
     def get_queryset(self) -> LogEntryQuerySet:
@@ -323,7 +323,7 @@ class ReadView(GenericLogView):
 class MarkdownReadView(GenericLogView):
     template_name = "logentry_list_markdown.md"
     content_type = "text/plain; charset=utf-8"
-    filter_by = {"end_date__isnull": False}
+    filter_by = {"end_date__isnull": False, "abandoned": False}
 
     def get_queryset(self) -> LogEntryQuerySet:
         return (
@@ -352,7 +352,7 @@ class MarkdownReadView(GenericLogView):
 class XmlReadView(GenericLogView):
     template_name = "logentry_list_feed.xml"
     content_type = "application/xml; charset=utf-8"
-    filter_by = {"end_date__isnull": False}
+    filter_by = {"end_date__isnull": False, "abandoned": False}
 
     def get_queryset(self) -> LogEntryQuerySet:
         return (

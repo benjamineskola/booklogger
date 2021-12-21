@@ -123,6 +123,7 @@ def stats_index(request: HttpRequest) -> HttpResponse:
 
     years = (
         LogEntry.objects.exclude(end_date__isnull=True)
+        .exclude(abandoned=True)
         .distinct("end_date__year")
         .values_list("end_date__year", flat=True)
     )

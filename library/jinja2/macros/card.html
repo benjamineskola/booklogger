@@ -16,7 +16,7 @@
 
 {% macro book_card(book, entry=None) %}
 {% if not entry and book.log_entries and book.log_entries.count() > 0 %}
-  {% set entry = book.log_entries.order_by('end_date').last() %}
+  {% set entry = book.log_entries.exclude(abandoned=True).order_by('end_date').last() %}
 {% endif %}
 
 <div class="book card mb-4" id="book-{{ book.id }}" data-book="{{ book.slug }}">
