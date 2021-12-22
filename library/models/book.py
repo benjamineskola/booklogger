@@ -1,3 +1,5 @@
+# pylint: disable=too-many-lines
+
 import operator
 import re
 import time
@@ -670,6 +672,8 @@ class Book(TimestampedModel, SluggableModel):
         for tag in self.tags:
             Tag.objects.get_or_create(name=tag)
 
+        self.tidy_tags()
+
         self.title = smarten(self.title)
         self.subtitle = smarten(self.subtitle)
         self.series = smarten(self.series)
@@ -887,6 +891,15 @@ class Book(TimestampedModel, SluggableModel):
         if self.review.startswith("http://") or self.review.startswith("https://"):
             return self.review.split()[0]
         return ""
+
+    def tidy_tags(self) -> None:
+        keep_tags = ["history", "fiction", "non-fiction"]
+        for tag_name in self.tags:
+            for ptag in Tag.objects[tag_name].parents_recursive:
+                if ptag.name in self.tags and ptag.name not in keep_tags:
+                    self.tags.remove(ptag.name)
+                if ptag.name not in self.tags and ptag.name in keep_tags:
+                    self.tags.append(ptag.name)
 
 
 class BookAuthor(TimestampedModel):
