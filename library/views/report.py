@@ -48,8 +48,10 @@ class IndexView(LoginRequiredMixin, generic.ListView[Book]):
                     first_author__surname__in=["Jacobin", "Tribune", "New Left Review"]
                 )
                 .exclude(edition_format=3, asin__ne="")
-                .exclude(edition_published__lt=1965)
-                .exclude(first_published__lt=1965, edition_published__isnull=True),
+                .exclude(edition_published__lt=1965, edition_published__gt=0)
+                .exclude(
+                    first_published__lt=1965, first_published__gt=0, edition_published=0
+                ),
             ),
             (
                 "Missing ASIN",
@@ -112,15 +114,11 @@ class IndexView(LoginRequiredMixin, generic.ListView[Book]):
             ),
             (
                 "Missing Page Count",
-                lambda: Book.objects.owned_by_any().filter(
-                    Q(page_count=0) | Q(page_count__isnull=True)
-                ),
+                lambda: Book.objects.owned_by_any().filter(page_count=0),
             ),
             (
                 "Missing Publication Date",
-                lambda: Book.objects.filter(
-                    Q(first_published=0) | Q(first_published__isnull=True)
-                ),
+                lambda: Book.objects.filter(first_published=0),
             ),
             (
                 "Ebook edition without ISBN or ASIN",

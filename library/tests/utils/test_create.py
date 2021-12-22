@@ -55,7 +55,7 @@ class TestCreateBook:
 
         assert book.title == title
         assert book.series == series
-        assert book.series_order is None
+        assert book.series_order == 0.0
         assert book.goodreads_id == data["goodreads_id"]
         assert book.first_published == data["first_published"]
         assert str(book.first_author) == data["authors"][0][0]
@@ -74,7 +74,7 @@ class TestCreateBook:
 
         assert book.title == title
         assert book.series == series
-        assert book.series_order is None
+        assert book.series_order == 0.0
         assert book.goodreads_id == data["goodreads_id"]
         assert book.first_published == data["first_published"]
         assert str(book.first_author) == data["authors"][0][0]

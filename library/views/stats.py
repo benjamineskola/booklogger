@@ -17,12 +17,9 @@ def _stats_for_queryset(books: BookQuerySet) -> dict[str, Any]:
     result: dict[str, Any] = {
         "count": books.count(),
         "pages": books.page_count,
-        "average_pages": books.page_count
-        / max(1, books.exclude(page_count__isnull=True).count()),
-        "shortest_book": books.order_by("page_count").first(),
-        "longest_book": books.exclude(page_count__isnull=True)
-        .order_by("page_count")
-        .last(),
+        "average_pages": books.page_count / max(1, books.exclude(page_count=0).count()),
+        "shortest_book": books.exclude(page_count=0).order_by("page_count").first(),
+        "longest_book": books.exclude(page_count=0).order_by("page_count").last(),
         "both": {
             "count": books.by_multiple_genders().count(),
             "pages": books.by_multiple_genders().page_count,
@@ -221,7 +218,7 @@ def stats_for_year(request: HttpRequest, year: str) -> HttpResponse:
                 )  # technically incorrect but valid until AD 2100.
 
     result["all_time_average_pages"] = books.read().page_count / max(
-        1, books.read().exclude(page_count__isnull=True).count()
+        1, books.read().exclude(page_count=0).count()
     )
 
     return render(

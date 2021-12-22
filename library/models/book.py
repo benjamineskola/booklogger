@@ -106,11 +106,9 @@ class BaseBookManager(models.Manager["Book"]):
             .exclude(isbn="", google_books_id="")
             .filter(
                 Q(publisher="")
-                | Q(page_count__isnull=True)
                 | Q(page_count=0)
                 | Q(google_books_id="")
                 | Q(first_published=0)
-                | Q(first_published__isnull=True)
             )
             .values_list("id", flat=True)
         )
@@ -361,21 +359,21 @@ class Book(TimestampedModel, SluggableModel):
         EBOOK = 3
         WEB = 4
 
-    first_published = models.PositiveSmallIntegerField(blank=True, null=True)
+    first_published = models.PositiveSmallIntegerField(blank=True, default=0)
     language = models.CharField(max_length=2, default="en", choices=LANGUAGES)
 
     series = models.CharField(db_index=True, max_length=255, blank=True)
-    series_order = models.FloatField(db_index=True, blank=True, null=True)
+    series_order = models.FloatField(db_index=True, blank=True, default=0.0)
 
     # these at least in theory relate only to an edition, not every edition
     # edition could be a separate models but it would almost always be one-to-one
-    edition_published = models.PositiveSmallIntegerField(blank=True, null=True)
+    edition_published = models.PositiveSmallIntegerField(blank=True, default=0)
     publisher = models.CharField(max_length=255, blank=True)
     edition_format = models.IntegerField(
         db_index=True, choices=Format.choices, default=0
     )
-    edition_number = models.PositiveSmallIntegerField(blank=True, null=True)
-    page_count = models.PositiveSmallIntegerField(blank=True, null=True)
+    edition_number = models.PositiveSmallIntegerField(blank=True, default=0)
+    page_count = models.PositiveSmallIntegerField(blank=True, default=0)
     goodreads_id = models.CharField(max_length=255, blank=True)
     google_books_id = models.CharField(max_length=255, blank=True)
     isbn = models.CharField(max_length=13, blank=True)
@@ -655,16 +653,6 @@ class Book(TimestampedModel, SluggableModel):
         if "goodreads" in self.image_url or "amazon" in self.image_url:
             self.image_url = re.sub(r"\._.+_\.jpg$", ".jpg", self.image_url)
 
-        if self.first_published == 0:
-            self.first_published = None
-        if self.edition_published == 0:
-            self.edition_published = None
-        if self.page_count == 0:
-            self.page_count = None
-        if self.edition_number == 0:
-            self.edition_number = None
-        if self.series_order == 0.0:
-            self.series_order = None
         if not self.rating:
             self.rating = 0.0
 

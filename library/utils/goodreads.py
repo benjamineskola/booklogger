@@ -48,7 +48,7 @@ def find_all(query: str) -> list[dict[str, str]]:
             "authors": [(result["best_book"]["author"]["name"], "")],
             "title": result["best_book"]["title"],
             "goodreads_id": result["best_book"]["id"]["#text"],
-            "first_published": result["original_publication_year"].get("#text"),
+            "first_published": result["original_publication_year"].get("#text", 0),
             "image_url": result["best_book"]["image_url"]
             if "nophoto" not in result["best_book"]["image_url"]
             else "",
