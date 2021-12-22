@@ -175,7 +175,6 @@ def make_prediction(year: int) -> tuple[dict[str, float], dict[int, float]]:
 
 
 def stats_for_year(request: HttpRequest, year: str) -> HttpResponse:
-    books = Book.objects.all()
     result: dict[str, Any] = {
         "page_title": "Library Stats",
         "year": "1" if year == "sometime" else year,
@@ -184,41 +183,34 @@ def stats_for_year(request: HttpRequest, year: str) -> HttpResponse:
     }
 
     log_entries = LogEntry.objects.filter(exclude_from_stats=False, abandoned=False)
+    if year != "total":
+        log_entries = log_entries.filter(end_date__year=result["year"])
+        result["result"]["acquired"] = Book.objects.filter(
+            acquired_date__year=year
+        ).count()
 
-    if year == "total":
-        read_books = Book.objects.filter(
-            id__in=log_entries.values_list("book", flat=True)
+    read_books = Book.objects.filter(id__in=log_entries.values_list("book", flat=True))
+    result["result"] = _stats_for_queryset(read_books)
+
+    if year == str(result["current_year"]):
+        result["prediction"], result["target_counts"] = make_prediction(
+            result["current_year"]
         )
-        result["result"] = _stats_for_queryset(read_books)
-    else:
-        read_books = Book.objects.filter(
-            id__in=log_entries.filter(end_date__year=result["year"]).values_list(
-                "book", flat=True
-            )
+
+        current_day, year_days = calculate_year_progress(result["current_year"])
+        result["current_week"] = (current_day // 7) + 1
+        result["result"]["pages_per_day"] = result["result"]["pages"] / current_day
+        result["result"]["predicted_pages"] = (
+            result["result"]["pages_per_day"] * year_days
         )
-        result["result"] = _stats_for_queryset(read_books)
-        result["result"]["acquired"] = books.filter(acquired_date__year=year).count()
 
-        if year == str(result["current_year"]):
-            result["prediction"], result["target_counts"] = make_prediction(
-                result["current_year"]
-            )
+    elif year not in ("total", "sometime"):
+        result["result"]["pages_per_day"] = result["result"]["pages"] / (
+            366 if int(year) % 4 == 0 else 365
+        )  # technically incorrect but valid until AD 2100.
 
-            current_day, year_days = calculate_year_progress(result["current_year"])
-            result["current_week"] = (current_day // 7) + 1
-            result["result"]["pages_per_day"] = result["result"]["pages"] / current_day
-            result["result"]["predicted_pages"] = (
-                result["result"]["pages_per_day"] * year_days
-            )
-
-        else:
-            if year != "sometime":
-                result["result"]["pages_per_day"] = result["result"]["pages"] / (
-                    366 if int(year) % 4 == 0 else 365
-                )  # technically incorrect but valid until AD 2100.
-
-    result["all_time_average_pages"] = books.read().page_count / max(
-        1, books.read().exclude(page_count=0).count()
+    result["all_time_average_pages"] = Book.objects.read().page_count / max(
+        1, Book.objects.read().exclude(page_count=0).count()
     )
 
     return render(
