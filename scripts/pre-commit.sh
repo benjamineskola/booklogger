@@ -1,5 +1,6 @@
 #!/bin/sh
 set -e
+poetry run black --quiet --check --exclude library/migrations/ .
 poetry run find library/jinja2/ -name '*.html' -exec curlylint --rule 'indent: 2' {} +
 poetry run flake518
 poetry run pylint -- */

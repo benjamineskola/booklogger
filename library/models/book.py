@@ -621,7 +621,9 @@ class Book(TimestampedModel, SluggableModel):
         if self.parent_edition and self.parent_edition.read:
             return True
 
-        return self.log_entries.filter(end_date__isnull=False, abandoned=False).count() > 0
+        return (
+            self.log_entries.filter(end_date__isnull=False, abandoned=False).count() > 0
+        )
 
     def create_new_edition(self, edition_format: int) -> None:
         edition = Book(
