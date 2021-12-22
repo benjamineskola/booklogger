@@ -152,14 +152,14 @@ def calculate_year_progress(year: int) -> tuple[int, int]:
     return current_day, year_days
 
 
-def make_prediction(
-    books: BookQuerySet, year: int
-) -> tuple[dict[str, float], dict[int, float]]:
+def make_prediction(year: int) -> tuple[dict[str, float], dict[int, float]]:
     prediction = {}
     target_counts = {}
 
     current_day, year_days = calculate_year_progress(year)
-    current_year_count = books.filter(log_entries__end_date__year=year).count()
+    current_year_count = LogEntry.objects.filter(
+        end_date__year=year, abandoned=False, exclude_from_stats=False
+    ).count()
     prediction["predicted_count"] = current_year_count / max(1, current_day) * year_days
 
     remaining_days = year_days - current_day
@@ -183,25 +183,25 @@ def stats_for_year(request: HttpRequest, year: str) -> HttpResponse:
         "current_year": timezone.now().year,
     }
 
+    log_entries = LogEntry.objects.filter(exclude_from_stats=False, abandoned=False)
+
     if year == "total":
         read_books = Book.objects.filter(
-            id__in=LogEntry.objects.exclude(exclude_from_stats=True).values_list(
-                "book", flat=True
-            )
+            id__in=log_entries.values_list("book", flat=True)
         )
         result["result"] = _stats_for_queryset(read_books)
     else:
         read_books = Book.objects.filter(
-            id__in=LogEntry.objects.exclude(exclude_from_stats=True)
-            .filter(end_date__year=result["year"])
-            .values_list("book", flat=True)
+            id__in=log_entries.filter(end_date__year=result["year"]).values_list(
+                "book", flat=True
+            )
         )
         result["result"] = _stats_for_queryset(read_books)
         result["result"]["acquired"] = books.filter(acquired_date__year=year).count()
 
         if year == str(result["current_year"]):
             result["prediction"], result["target_counts"] = make_prediction(
-                books, result["current_year"]
+                result["current_year"]
             )
 
             current_day, year_days = calculate_year_progress(result["current_year"])
