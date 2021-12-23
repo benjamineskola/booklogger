@@ -55,8 +55,10 @@ a{% if book.get_edition_format_display().lower()[0] in ["a", "e", "i", "o", "u"]
                 : {{ book.subtitle }}
               {%- endif -%}
               </em>
-            {% endif %}
-            in {{ book.first_published }}.
+            {%- endif %}
+            {%- if book.first_published %}
+              in {{ book.first_published }}
+            {%- endif %}.
 
             {% if (not book.is_first_edition) or book.publisher or book.publisher_url or (not book.has_original_title) %}
               This
