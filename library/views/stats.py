@@ -180,6 +180,7 @@ def stats_for_year(request: HttpRequest, year: str) -> HttpResponse:
         "year": "1" if year == "sometime" else year,
         "current_week": 52,  # potentially overridden later
         "current_year": timezone.now().year,
+        "result": {},
     }
 
     log_entries = LogEntry.objects.filter(exclude_from_stats=False, abandoned=False)
@@ -190,7 +191,7 @@ def stats_for_year(request: HttpRequest, year: str) -> HttpResponse:
         ).count()
 
     read_books = Book.objects.filter(id__in=log_entries.values_list("book", flat=True))
-    result["result"] = _stats_for_queryset(read_books)
+    result["result"].update(_stats_for_queryset(read_books))
 
     if year == str(result["current_year"]):
         result["prediction"], result["target_counts"] = make_prediction(
