@@ -209,7 +209,12 @@ class BookQuerySet(models.QuerySet["Book"]):
 
     def poc(self, is_poc: bool = True) -> "BookQuerySet":
         return self.filter(
-            Q(first_author__poc=is_poc) | Q(additional_authors__poc=is_poc)
+            Q(first_author__poc=is_poc, first_author_role__in=["", "author", "editor"])
+            | Q(
+                id__in=BookAuthor.objects.filter(
+                    role__in=["", "author", "editor"], author__poc=is_poc
+                ).values_list("book", flat=True)
+            )
         )
 
     def filter_by_request(self, request: Any) -> "BookQuerySet":
