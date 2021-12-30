@@ -1,6 +1,8 @@
 import json
 import urllib.parse
-from typing import Any
+from datetime import date, datetime
+from itertools import groupby
+from typing import Any, Iterable, TypeVar
 
 import commonmark
 from crispy_forms.templatetags.crispy_forms_filters import as_crispy_field
@@ -10,6 +12,36 @@ from django.urls import reverse
 from jinja2 import Environment, Markup  # type: ignore [attr-defined]
 
 from library.utils import oxford_comma, round_trunc
+
+V = TypeVar("V")
+
+
+def groupby_date(
+    value: Iterable[V],
+    attribute: str,
+    fmt: str = "%d %B, %Y",
+    default: str = "None",
+    rev: bool = False,
+) -> list[tuple[str, list[V]]]:
+    def attrgetter_sort(item: Any) -> Any:
+        result = getattr(item, attribute)
+        undefined = (result is not None) if rev else (result is None)
+        return (undefined, result)
+
+    def attrgetter_fmt(item: Any) -> str:
+        if result := getattr(item, attribute):
+            if isinstance(result, (date, datetime)):
+                if result.year == 1:
+                    return default
+
+                return result.strftime(fmt)
+            return str(result)
+        return default
+
+    return [
+        (key, list(values))
+        for key, values in groupby(sorted(value, key=attrgetter_sort), attrgetter_fmt)
+    ]
 
 
 def environment(**options: Any) -> Environment:
@@ -33,6 +65,7 @@ def environment(**options: Any) -> Environment:
             "round_trunc": round_trunc,
             "crispy": as_crispy_field,
             "quote": urllib.parse.quote,
+            "groupby_date": groupby_date,
         }
     )
 
