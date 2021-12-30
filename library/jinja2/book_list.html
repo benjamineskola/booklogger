@@ -87,7 +87,7 @@
     {% if group_by in ['created_date', 'modified_date'] %}
       {% set groups = page_obj | groupby(group_by + "_date") | sort %}
     {% else %}
-      {% set groups = page_obj | groupby(group_by) | sort %}
+      {% set groups = page_obj | selectattr(group_by) | groupby(group_by) | sort %}
     {% endif %}
     {% if reverse_sort %}
       {% set groups = groups | reverse %}
