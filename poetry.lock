@@ -326,7 +326,7 @@ text-unidecode = "1.3"
 
 [[package]]
 name = "flake518"
-version = "1.1.0"
+version = "1.2.0"
 description = "A small wrapper around flake8 to support PEP518 pyproject.toml as configuration file."
 category = "dev"
 optional = false
@@ -985,7 +985,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "00e509a1579f8a88cfbfbe70b171bcb7201be1bf0ce72be32e4efee79eaa5ca2"
+content-hash = "0bfd2cce104fdbe52c6217e1622963930622a208f547b0189ebc8c9a2bbbe918"
 
 [metadata.files]
 asgiref = [
@@ -1168,8 +1168,8 @@ faker = [
     {file = "Faker-11.1.0.tar.gz", hash = "sha256:89c359e153f6a27820ff1d491e851018064dd65731f7894e226f93e2aa980655"},
 ]
 flake518 = [
-    {file = "flake518-1.1.0-py3-none-any.whl", hash = "sha256:e71158bffc89dd88e55ab0a48813fb09fe5d67431cbee4954a8f3918e358080f"},
-    {file = "flake518-1.1.0.tar.gz", hash = "sha256:a46fd38d70c3a3cb65c0ba701a5d036641bf20aa702212a16fc99c78ab078e0c"},
+    {file = "flake518-1.2.0-py3-none-any.whl", hash = "sha256:8ef3ce6f0aab3043373e10b39bd207972b76bc3412574ec431e6473f9de712d5"},
+    {file = "flake518-1.2.0.tar.gz", hash = "sha256:5c7a2f597504f670657ea0d4ee55785bca7a9bf26ef27e1d1df8e156e7da60fb"},
 ]
 flake8 = [
     {file = "flake8-3.9.2-py2.py3-none-any.whl", hash = "sha256:bf8fd333346d844f616e8d47905ef3a3384edae6b4e9beb0c5101e25e3110907"},
