@@ -84,7 +84,7 @@ xmltodict = "*"
 django-stubs-ext = "^0.3.1"
 
 [tool.poetry.dev-dependencies]
-coverage = {extras = ["toml"], version = "^6.0"}
+coverage = {extras = ["toml"], version = "^6.3"}
 curlylint = "*"
 django-stubs = "^1.9"
 flake518 = "^1.2.0"
