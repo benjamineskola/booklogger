@@ -91,7 +91,7 @@ def oxford_comma(items: Sequence[str]) -> str:
 
 def round_trunc(number: float, digits: int = 2) -> str:
     if number:
-        num_digits = max(1, int(floor(log(number, 10) + 1)))
+        num_digits = max(1, int(floor(log(abs(number), 10) + 1)))
     else:
         num_digits = 1 + digits
     return f"{{:.{num_digits + digits}g}}".format(number)
