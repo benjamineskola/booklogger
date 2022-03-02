@@ -1,11 +1,9 @@
-import hashlib
 import json
 import re
 from typing import Any
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.models import User
 from django.db.models import F, Q
 from django.db.models.functions import Lower
 from django.forms import Form
@@ -16,7 +14,6 @@ from django.utils import timezone
 from django.views import generic
 from django.views.decorators.http import require_POST
 
-from booklogger import settings
 from library.forms import (
     BookAuthorFormSet,
     BookForm,
@@ -25,7 +22,7 @@ from library.forms import (
     ReadingListEntryFormSet,
 )
 from library.models import Book, BookQuerySet, LogEntry, LogEntryQuerySet, Tag
-from library.utils import oxford_comma
+from library.utils import is_authenticated, oxford_comma
 
 
 class IndexView(generic.ListView[Book]):
@@ -265,24 +262,14 @@ class GenericLogView(generic.ListView[LogEntry]):
     page_title = ""
 
     def get_queryset(self) -> LogEntryQuerySet:
-        is_authenticated = self.request.user.is_authenticated
-        if not is_authenticated and (apikey := self.request.GET.get("key")):
-            for user in User.objects.all():
-                password = hashlib.scrypt(
-                    user.password.encode("utf-8"),
-                    salt=settings.SECRET_KEY.encode("utf-8"),
-                    n=2,
-                    r=2,
-                    p=1,
-                ).hex()
-                if password == apikey:
-                    is_authenticated = True
-                    break
-
         entries = (
             LogEntry.objects.select_related("book", "book__first_author")
             .prefetch_related("book__additional_authors", "book__log_entries")
-            .filter(book__private__in=([True, False] if is_authenticated else [False]))
+            .filter(
+                book__private__in=(
+                    [True, False] if is_authenticated(self.request) else [False]
+                )
+            )
             .order_by("end_date", "start_date")
         )
 
