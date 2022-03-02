@@ -5,7 +5,8 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
 
-from library.models import Author, Book, BookQuerySet, LogEntry
+from library.models import Author, Book, BookQuerySet, LogEntry, LogEntryQuerySet
+from library.utils import is_authenticated
 
 
 def _stats_for_queryset(books: BookQuerySet) -> dict[str, Any]:
@@ -109,6 +110,9 @@ def _stats_for_queryset(books: BookQuerySet) -> dict[str, Any]:
 
 def stats_index(request: HttpRequest) -> HttpResponse:
     books = Book.objects.all()
+    if not is_authenticated(request):
+        books = books.filter(private=False)
+
     owned = books.owned()
     owned_count = owned.count()
     read_books = books.read()
@@ -152,14 +156,14 @@ def calculate_year_progress(year: int) -> tuple[int, int]:
     return current_day, year_days
 
 
-def make_prediction(year: int) -> tuple[dict[str, float], dict[int, float]]:
+def make_prediction(
+    year: int, log_entries: LogEntryQuerySet
+) -> tuple[dict[str, float], dict[int, float]]:
     prediction = {}
     target_counts = {}
 
     current_day, year_days = calculate_year_progress(year)
-    current_year_count = LogEntry.objects.filter(
-        end_date__year=year, abandoned=False, exclude_from_stats=False
-    ).count()
+    current_year_count = log_entries.count()
     prediction["predicted_count"] = current_year_count / max(1, current_day) * year_days
 
     remaining_days = year_days - current_day
@@ -191,11 +195,15 @@ def stats_for_year(request: HttpRequest, year: str) -> HttpResponse:
         ).count()
 
     read_books = Book.objects.filter(id__in=log_entries.values_list("book", flat=True))
+
+    if not is_authenticated(request):
+        read_books = read_books.filter(private=False)
+
     result["result"].update(_stats_for_queryset(read_books))
 
     if year == str(result["current_year"]):
         result["prediction"], result["target_counts"] = make_prediction(
-            result["current_year"]
+            result["current_year"], log_entries
         )
 
         current_day, year_days = calculate_year_progress(result["current_year"])
