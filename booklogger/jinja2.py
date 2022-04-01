@@ -9,7 +9,8 @@ from crispy_forms.templatetags.crispy_forms_filters import as_crispy_field
 from django.contrib.humanize.templatetags.humanize import intcomma, ordinal
 from django.templatetags.static import static
 from django.urls import reverse
-from jinja2 import Environment, Markup  # type: ignore [attr-defined]
+from jinja2 import Environment
+from markupsafe import Markup
 
 from library.utils import oxford_comma, round_trunc
 
