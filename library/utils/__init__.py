@@ -151,16 +151,17 @@ def smarten(string: str) -> str:
 def is_authenticated(request: HttpRequest) -> bool:
     if request.user.is_authenticated:
         return True
-    if not is_authenticated and (apikey := request.GET.get("key")):
-        for user in User.objects.all():
-            password = hashlib.scrypt(
-                user.password.encode("utf-8"),
-                salt=settings.SECRET_KEY.encode("utf-8"),
-                n=2,
-                r=2,
-                p=1,
-            ).hex()
-            if password == apikey:
-                return True
+
+    apikey = request.GET.get("key")
+    for user in User.objects.all():
+        password = hashlib.scrypt(
+            user.password.encode("utf-8"),
+            salt=settings.SECRET_KEY.encode("utf-8"),
+            n=2,
+            r=2,
+            p=1,
+        ).hex()
+        if password == apikey:
+            return True
 
     return False
