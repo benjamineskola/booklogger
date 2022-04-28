@@ -52,18 +52,4 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
           poetry install
-      - name: Lint with curlylint
-        run: |
-          poetry run find library/jinja2/ -name '*.html' -exec curlylint --rule 'indent: 2' {} +
-      - name: Lint with flake8
-        run: |
-          poetry run flake518
-      - name: Lint with pylint
-        run: |
-          poetry run pylint -- */
-      - name: Lint with mypy
-        run: |
-          poetry run mypy
-      - name: Test with pytest
-        run: |
-          poetry run pytest
+      - uses: pre-commit/action@v2.0.3

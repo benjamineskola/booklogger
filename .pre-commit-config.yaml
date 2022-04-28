@@ -1,0 +1,56 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.2.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+  - repo: local
+    hooks:
+      - id: shellcheck
+        name: shellcheck
+        language: system
+        entry: shellcheck
+        types: [shell]
+      - id: shfmt
+        name: shfmt
+        language: system
+        entry: shfmt -i 4 -p -s -d
+        types: [shell]
+      - id: flake518
+        name: flake518
+        language: system
+        entry: poetry run flake518
+        types: [python]
+        exclude: "^library/migrations"
+      - id: pytest
+        name: pytest
+        language: system
+        entry: poetry run pytest
+        types: [python]
+        pass_filenames: false
+        always_run: true
+      - id: mypy
+        name: mypy
+        language: system
+        entry: poetry run mypy
+        types: [python]
+        pass_filenames: false
+      - id: pylint
+        name: pylint
+        language: system
+        entry: poetry run pylint
+        types: [python]
+        files: "^[^/]+/"
+        exclude: "^library/(migrations|tests|management)"
+      - id: curlylint
+        name: curlylint
+        language: system
+        entry: "poetry run curlylint --rule 'indent: 2'"
+        types: [html]
+  - repo: https://github.com/psf/black
+    rev: 22.3.0
+    hooks:
+      - id: black
+        exclude: "^library/migrations"
