@@ -6,24 +6,15 @@ repos:
       - id: end-of-file-fixer
       - id: check-yaml
       - id: check-added-large-files
-  - repo: local
+  - repo: https://github.com/benjamineskola/dotfiles.git
+    rev: 2d5c4923a0fb61359171f7e6b90e5d9a1ce6d194
     hooks:
       - id: shellcheck
-        name: shellcheck
-        language: system
-        entry: shellcheck
-        types: [shell]
       - id: shfmt
-        name: shfmt
-        language: system
-        entry: shfmt -i 4 -p -s -d
-        types: [shell]
       - id: flake518
-        name: flake518
-        language: system
-        entry: poetry run flake518
-        types: [python]
         exclude: "^library/migrations"
+  - repo: local
+    hooks:
       - id: pytest
         name: pytest
         language: system
