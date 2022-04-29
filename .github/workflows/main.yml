@@ -48,8 +48,14 @@ jobs:
           path: ~/.cache/pypoetry/virtualenvs
           key: ${{ runner.os }}-python-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('poetry.lock') }}
         id: cache
+      - uses: actions/cache@v2
+        with:
+          path: ~/.cache/pre-commit
+          key: precommit-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('.pre-commit-config.yaml') }}
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
           poetry install
-      - uses: pre-commit/action@v2.0.3
+      - name: pre-commit
+        run: |
+          poetry run pre-commit run --all-files

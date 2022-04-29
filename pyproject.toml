@@ -103,6 +103,7 @@ pytest-django = "*"
 pytest-factoryboy = "*"
 requests-mock = "^1.9.3"
 types-requests = "*"
+pre-commit = "^2.18.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
