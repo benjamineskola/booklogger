@@ -1,11 +1,10 @@
+from contextlib import suppress
 from typing import Any
 
 from django.db.models import Q
 
 from library.models import Author, Book
 from library.utils import smarten
-
-from contextlib import suppress
 
 
 def book(data: dict[str, Any]) -> tuple[Book, bool, list[tuple[Author, bool]]]:
