@@ -1,4 +1,12 @@
 [[package]]
+name = "appdirs"
+version = "1.4.4"
+description = "A small Python module for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
+category = "dev"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "asgiref"
 version = "3.5.0"
 description = "ASGI specs, helper code, and adapters"
@@ -570,6 +578,22 @@ htmlsoup = ["beautifulsoup4"]
 source = ["Cython (>=0.29.7)"]
 
 [[package]]
+name = "mako"
+version = "1.2.0"
+description = "A super-fast templating language that borrows the best ideas from the existing templating languages."
+category = "dev"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+MarkupSafe = ">=0.9.2"
+
+[package.extras]
+babel = ["babel"]
+lingua = ["lingua"]
+testing = ["pytest"]
+
+[[package]]
 name = "markupsafe"
 version = "2.1.0"
 description = "Safely add untrusted strings to HTML/XML markup."
@@ -837,16 +861,19 @@ testing = ["django", "django-configurations (>=2.0)"]
 
 [[package]]
 name = "pytest-factoryboy"
-version = "2.1.0"
+version = "2.2.0"
 description = "Factory Boy support for pytest."
 category = "dev"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 
 [package.dependencies]
+appdirs = "*"
 factory-boy = ">=2.10.0"
 inflection = "*"
-pytest = ">=4.6"
+mako = "*"
+pytest = ">=5.0.0"
+typing-extensions = "*"
 
 [[package]]
 name = "python-dateutil"
@@ -1087,6 +1114,10 @@ python-versions = "^3.9"
 content-hash = "f88503f0ffa09832e3e64eb1ac25a2d76b06680f417769524de2b73582e3ba6a"
 
 [metadata.files]
+appdirs = [
+    {file = "appdirs-1.4.4-py2.py3-none-any.whl", hash = "sha256:a841dacd6b99318a741b166adb07e19ee71a274450e68237b4650ca1055ab128"},
+    {file = "appdirs-1.4.4.tar.gz", hash = "sha256:7d5d0167b2b1ba821647616af46a749d1c653740dd0d2415100fe26e27afdf41"},
+]
 asgiref = [
     {file = "asgiref-3.5.0-py3-none-any.whl", hash = "sha256:88d59c13d634dcffe0510be048210188edd79aeccb6a6c9028cdad6f31d730a9"},
     {file = "asgiref-3.5.0.tar.gz", hash = "sha256:2f8abc20f7248433085eda803936d98992f1343ddb022065779f37c5da0181d0"},
@@ -1490,6 +1521,10 @@ lxml = [
     {file = "lxml-4.8.0-pp38-pypy38_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_24_x86_64.whl", hash = "sha256:8b99ec73073b37f9ebe8caf399001848fced9c08064effdbfc4da2b5a8d07b93"},
     {file = "lxml-4.8.0.tar.gz", hash = "sha256:f63f62fc60e6228a4ca9abae28228f35e1bd3ce675013d1dfb828688d50c6e23"},
 ]
+mako = [
+    {file = "Mako-1.2.0-py3-none-any.whl", hash = "sha256:23aab11fdbbb0f1051b93793a58323ff937e98e34aece1c4219675122e57e4ba"},
+    {file = "Mako-1.2.0.tar.gz", hash = "sha256:9a7c7e922b87db3686210cf49d5d767033a41d4010b284e747682c92bddd8b39"},
+]
 markupsafe = [
     {file = "MarkupSafe-2.1.0-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:3028252424c72b2602a323f70fbf50aa80a5d3aa616ea6add4ba21ae9cc9da4c"},
     {file = "MarkupSafe-2.1.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:290b02bab3c9e216da57c1d11d2ba73a9f73a614bbdcc027d299a60cdfabb11a"},
@@ -1598,6 +1633,8 @@ pre-commit = [
     {file = "pre_commit-2.18.1.tar.gz", hash = "sha256:5d445ee1fa8738d506881c5d84f83c62bb5be6b2838e32207433647e8e5ebe10"},
 ]
 psycopg2 = [
+    {file = "psycopg2-2.9.1-cp310-cp310-win32.whl", hash = "sha256:25615574419dd9bda6fdfdcd58afb22e721f5b807cb3d5e62f488c8acf8cb754"},
+    {file = "psycopg2-2.9.1-cp310-cp310-win_amd64.whl", hash = "sha256:e5a8ed9dbfca8dc162c4ada5ab017e10d5a66c542b4c73569f103fa5f342f498"},
     {file = "psycopg2-2.9.1-cp36-cp36m-win32.whl", hash = "sha256:7f91312f065df517187134cce8e395ab37f5b601a42446bdc0f0d51773621854"},
     {file = "psycopg2-2.9.1-cp36-cp36m-win_amd64.whl", hash = "sha256:830c8e8dddab6b6716a4bf73a09910c7954a92f40cf1d1e702fb93c8a919cc56"},
     {file = "psycopg2-2.9.1-cp37-cp37m-win32.whl", hash = "sha256:89409d369f4882c47f7ea20c42c5046879ce22c1e4ea20ef3b00a4dfc0a7f188"},
@@ -1649,8 +1686,8 @@ pytest-django = [
     {file = "pytest_django-4.5.2-py3-none-any.whl", hash = "sha256:c60834861933773109334fe5a53e83d1ef4828f2203a1d6a0fa9972f4f75ab3e"},
 ]
 pytest-factoryboy = [
-    {file = "pytest-factoryboy-2.1.0.tar.gz", hash = "sha256:23bc562ab32cc39eddfbbbf70e618a1b30e834a4cfa451c4bedc36216f0a7b19"},
-    {file = "pytest_factoryboy-2.1.0-py3-none-any.whl", hash = "sha256:10c02d2736cb52c7af28065db9617e7f50634e95eaa07eeb9a007026aa3dc0a8"},
+    {file = "pytest-factoryboy-2.2.0.tar.gz", hash = "sha256:546d02a76bb1d2748cd9b352f13e2748c25aad8b9b13d2609a904abc7ce947d1"},
+    {file = "pytest_factoryboy-2.2.0-py3-none-any.whl", hash = "sha256:f8708963d59267ecc675cc6889d5d612c4bac0fb8d050d5861e872336365d82d"},
 ]
 python-dateutil = [
     {file = "python-dateutil-2.8.2.tar.gz", hash = "sha256:0123cacc1627ae19ddf3c27a5de5bd67ee4586fbdd6440d9748f8abb483d3e86"},
