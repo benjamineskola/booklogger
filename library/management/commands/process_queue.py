@@ -7,13 +7,14 @@ from library.utils import create
 
 
 class Command(BaseCommand):
-    def handle(self, *args: str, **options: str) -> None:
+    def handle(self, *_args: str, **_options: str) -> None:
         while True:
             errors = 0
             while Queue.objects.count():
                 if errors == Queue.objects.count():
                     break
                 print(f"===== {Queue.objects.count()} =====")
+                data = {}
                 try:
                     item = Queue.objects.first()
                     if not item:
@@ -31,7 +32,7 @@ class Command(BaseCommand):
                             print(f"created {author}")
                         else:
                             print(f"updated {author}")
-                except Exception as e:
+                except Exception as e:  # pylint: disable=broad-except
                     errors += 1
                     print(f"===== error: {e} =====")
                     item = Queue(data=data)

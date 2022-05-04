@@ -9,7 +9,7 @@ class Command(BaseCommand):
         parser.add_argument("-i", "--isbn", action="store_true", default=False)
         parser.add_argument("-a", "--asin", action="store_true", default=False)
 
-    def handle(self, *args: str, **options: str) -> None:
+    def handle(self, *_args: str, **options: str) -> None:
         if not options["isbn"] and not options["asin"]:
             print("no identifier chosen")
             return

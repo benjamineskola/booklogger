@@ -1,5 +1,6 @@
 import re
 import sys
+from typing import Any
 
 from django.core.management.base import BaseCommand
 from django.utils import timezone
@@ -9,7 +10,7 @@ from library.utils import create, flatten, goodreads
 
 
 class Command(BaseCommand):
-    def handle(self, *args: str, **options: str) -> None:
+    def handle(self, *_args: str, **_options: str) -> None:
         lines = [i.strip() for i in sys.stdin.readlines() if i.strip()]
         for line in lines:
             title, _, isbn = line.rsplit(", ", 2)
@@ -46,12 +47,7 @@ class Command(BaseCommand):
                 found_title, *_ = goodreads_book["title"].split(": ", 1)
                 if found_title.lower() == title.lower():
                     print(f"found {title} on goodreads")
-                    book, *_ = create.book(goodreads_book)
-                    book.isbn = isbn
-                    book.edition_format = Book.Format.EBOOK
-                    book.publisher = "Verso"
-                    book.mark_owned()
-                    book.save()
+                    self._process(goodreads_book, isbn)
                 else:
                     print(f"got {found_title} instead of {title}")
             else:
@@ -66,12 +62,15 @@ class Command(BaseCommand):
                 found_title, *_ = goodreads_book["title"].split(": ", 1)
                 if found_title.lower() == title.lower():
                     print(f"found {title} on goodreads by name")
-                    book, *_ = create.book(goodreads_book)
-                    book.isbn = isbn
-                    book.edition_format = Book.Format.EBOOK
-                    book.publisher = "Verso"
-                    book.mark_owned()
-                    book.save()
+                    self._process(goodreads_book, isbn)
                 else:
                     print(f"got {found_title} instead of {title}")
                     print(f"!!! need to manually import {title} ({isbn})")
+
+    def _process(self, goodreads_book: dict[str, Any], isbn: str) -> None:
+        book, *_ = create.book(goodreads_book)
+        book.isbn = isbn
+        book.edition_format = Book.Format.EBOOK
+        book.publisher = "Verso"
+        book.mark_owned()
+        book.save()
