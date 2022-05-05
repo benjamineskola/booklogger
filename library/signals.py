@@ -1,4 +1,4 @@
-from typing import Any, Type
+from typing import Any
 
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
@@ -9,7 +9,7 @@ from library.models.abc import TimestampedModel
 
 @receiver(pre_save)
 def update_timestamp_on_save(
-    sender: Type[TimestampedModel],
+    sender: type[TimestampedModel],
     instance: TimestampedModel,
     raw: bool,  # pylint:disable=unused-argument
     using: str,  # pylint:disable=unused-argument

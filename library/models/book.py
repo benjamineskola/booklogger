@@ -495,7 +495,7 @@ class Book(TimestampedModel, SluggableModel):
     @property
     def all_authors_editors(self) -> bool:
         return len(self.authors) > 1 and all(
-            (author.is_editor_of(self) for author in self.all_authors)
+            author.is_editor_of(self) for author in self.all_authors
         )
 
     @property
@@ -754,7 +754,7 @@ class Book(TimestampedModel, SluggableModel):
         return (
             self.owned_by.username == "ben"
             if self.owned_by is not None
-            else any((ancestor.owned for ancestor in self.ancestor_editions))
+            else any(ancestor.owned for ancestor in self.ancestor_editions)
         )
 
     @property
@@ -762,7 +762,7 @@ class Book(TimestampedModel, SluggableModel):
         return (
             self.owned_by.username == "sara"
             if self.owned_by is not None
-            else any((ancestor.owned_by_sara for ancestor in self.ancestor_editions))
+            else any(ancestor.owned_by_sara for ancestor in self.ancestor_editions)
         )
 
     @property
