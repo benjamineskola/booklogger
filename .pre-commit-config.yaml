@@ -44,5 +44,9 @@ repos:
         files: "^[^/]+/"
         exclude: "^library/(migrations|tests)"
         additional_dependencies: [django, django-stubs, dj_database_url, psycopg2, django-extensions, django-crispy-forms, text-unidecode, requests, xmltodict, bs4, types-requests]
+  -   repo: https://github.com/asottile/pyupgrade
+      rev: v2.32.1
+      hooks:
+      -   id: pyupgrade
 
 exclude: "^library/migrations"
