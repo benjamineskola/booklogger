@@ -1,12 +1,12 @@
 import os
 import re
-from typing import Any, Optional
+from typing import Any
 
 import requests
 import xmltodict
 
 
-def find(query: str, author_name: str = "") -> Optional[dict[str, str]]:
+def find(query: str, author_name: str = "") -> dict[str, str] | None:
     results = find_all(query)
     if author_name:
         results = [

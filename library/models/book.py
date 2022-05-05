@@ -544,7 +544,7 @@ class Book(TimestampedModel, SluggableModel):
         return title
 
     def add_author(
-        self, author: "Author", role: str = "", order: Optional[int] = None
+        self, author: "Author", role: str = "", order: int | None = None
     ) -> None:
         if author.id is not self.first_author_id and author not in self.authors:
             if not self.first_author:
@@ -575,7 +575,7 @@ class Book(TimestampedModel, SluggableModel):
                 self.parent_edition.finish_reading()
 
     def update_progress(
-        self, percentage: Optional[float] = None, page: Optional[int] = None
+        self, percentage: float | None = None, page: int | None = None
     ) -> float:
         if not percentage:
             if not page:
@@ -805,9 +805,9 @@ class Book(TimestampedModel, SluggableModel):
         return False
 
     def update_from_goodreads(
-        self, data: Optional[dict[str, Any]] = None
+        self, data: dict[str, Any] | None = None
     ) -> Optional["Book"]:
-        result: Optional[dict[str, Any]]
+        result: dict[str, Any] | None
         if data:
             result = data
         else:

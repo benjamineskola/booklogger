@@ -1,9 +1,7 @@
-from typing import Optional
-
 import requests
 
 
-def fetch(google_id: str = "", isbn: str = "") -> Optional[dict[str, str]]:
+def fetch(google_id: str = "", isbn: str = "") -> dict[str, str] | None:
     if google_id:
         search_url = f"https://www.googleapis.com/books/v1/volumes/{google_id}"
     elif isbn:

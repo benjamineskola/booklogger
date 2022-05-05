@@ -1,7 +1,6 @@
 import csv
 import json
 import re
-from typing import Optional
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
@@ -12,7 +11,7 @@ from library.utils import create, goodreads
 
 
 @login_required
-def import_book(request: HttpRequest, query: Optional[str] = None) -> HttpResponse:
+def import_book(request: HttpRequest, query: str | None = None) -> HttpResponse:
     if request.method == "GET" and not query:
         query = request.GET.get("query")
 
