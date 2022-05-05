@@ -1,5 +1,5 @@
 import re
-from typing import Any, Optional
+from typing import Any
 
 from django.forms import (
     ModelChoiceField,
@@ -32,7 +32,7 @@ class AuthorForm(ModelForm[Author]):
 
 
 class AuthorField(ModelChoiceField):
-    def to_python(self, value: Optional[str]) -> Optional[Author]:
+    def to_python(self, value: str | None) -> Author | None:
         if not value:
             return None
         if value.isnumeric():

@@ -2,7 +2,7 @@ import hashlib
 import re
 from collections.abc import Collection, Iterable, Sequence
 from math import floor, log
-from typing import Any, Optional
+from typing import Any
 
 from django.contrib.auth.models import User
 from django.http import HttpRequest
@@ -114,7 +114,7 @@ def str2bool(s: str) -> bool:
     raise ValueError(f"Cannot interpret '{s}' as boolean")
 
 
-def flatten(list_of_lists: Iterable[Optional[Iterable[Any]]]) -> Iterable[Any]:
+def flatten(list_of_lists: Iterable[Iterable[Any] | None]) -> Iterable[Any]:
     return [item for sublist in list_of_lists if sublist for item in sublist]
 
 
