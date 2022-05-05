@@ -43,6 +43,6 @@ repos:
       - id: mypy
         files: "^[^/]+/"
         exclude: "^library/(migrations|tests)"
-        additional_dependencies: [django, django-stubs, dj_database_url, psycopg2, django-extensions, django-crispy-forms, 'stripunicode @ git+https://github.com/benjamineskola/stripunicode@main', requests, xmltodict, bs4, types-requests]
+        additional_dependencies: [django, django-stubs, dj_database_url, psycopg2, django-extensions, django-crispy-forms, text-unidecode, requests, xmltodict, bs4, types-requests]
 
 exclude: "^library/migrations"

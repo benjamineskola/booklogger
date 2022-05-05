@@ -3,7 +3,7 @@ from typing import Any
 
 from django.db import models
 from django.utils import timezone
-from stripunicode import stripunicode
+from text_unidecode import unidecode
 
 
 class SluggableModel(models.Model):
@@ -26,7 +26,7 @@ class SluggableModel(models.Model):
         slug = "-".join(
             [field.lower().replace(" ", "-") for field in self._slug_fields()]
         )
-        slug = stripunicode(slug)
+        slug = unidecode(slug)
         slug = re.sub(r"[^\w-]+", "", slug)
 
         slug = slug[0:50].strip("-")
