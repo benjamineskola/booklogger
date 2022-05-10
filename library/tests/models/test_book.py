@@ -68,6 +68,20 @@ class TestBook:
             == f"{mock_authors[0]} and others, *{mock_book.display_title}*"
         )
 
+    def test_editor(self, mock_book, mock_authors):
+        mock_book.first_author_role = "editor"
+        assert (
+            mock_book.display_details
+            == f"*{mock_book.display_title}*, ed. by {mock_authors[0]}"
+        )
+
+    def test_author_and_editor(self, mock_book, mock_authors):
+        mock_book.add_author(mock_authors[1], order=2, role="editor")
+        assert (
+            mock_book.display_details
+            == f"{mock_authors[0]}, *{mock_book.display_title}*, ed. by {mock_authors[1]}"
+        )
+
     def test_search_by_title(self, mock_book_with_author):
         book = mock_book_with_author
         results = Book.objects.search(book.title)

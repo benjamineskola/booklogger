@@ -448,12 +448,28 @@ class Book(TimestampedModel, SluggableModel):
 
     @property
     def display_details(self) -> str:
-        if len(self.authors) > 3:
-            result = str(self.first_author) + " and others"
-        else:
-            result = oxford_comma([str(author) for author in self.authors])
+        result = ""
 
-        result += ", *" + self.display_title.replace("*", r"\*") + "*"
+        if self.first_author_role != "editor":
+            if len(self.authors) > 3:
+                result = str(self.first_author) + " and others"
+            else:
+                result = oxford_comma([str(author) for author in self.authors])
+
+            result += ", "
+
+        result += "*" + self.display_title.replace("*", r"\*") + "*"
+
+        if any(author.is_editor_of(self) for author in self.all_authors):
+            result += ", ed. by "
+            editors = [
+                str(author) for author in self.all_authors if author.is_editor_of(self)
+            ]
+
+            if len(editors) > 3:
+                result += str(editors[0]) + " and others"
+            else:
+                result += oxford_comma(editors)
 
         if (
             self.editions.count()
@@ -461,7 +477,8 @@ class Book(TimestampedModel, SluggableModel):
             and self.edition_title
             in self.editions.all().values_list("edition_title", flat=True)
         ):
-            result += f" ({self.get_edition_disambiguator()} edition)"
+            result += f", {self.get_edition_disambiguator()} edn."
+
         return result
 
     def get_edition_disambiguator(self) -> str:
