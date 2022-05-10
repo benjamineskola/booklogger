@@ -479,6 +479,9 @@ class Book(TimestampedModel, SluggableModel):
         ):
             result += f", {self.get_edition_disambiguator()} edn."
 
+        if self.publisher or self.edition_published or self.first_published:
+            result += f" ({self.publisher + ', ' if self.publisher else ''}{self.edition_published if self.edition_published else self.first_published})"
+
         return result
 
     def get_edition_disambiguator(self) -> str:
