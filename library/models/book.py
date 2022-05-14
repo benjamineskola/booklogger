@@ -5,7 +5,7 @@ import re
 import time
 from datetime import date
 from functools import reduce
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 from urllib.parse import quote
 
 from django.contrib.auth.models import User
@@ -809,26 +809,16 @@ class Book(TimestampedModel, SluggableModel):
             return True
         return False
 
-    def update_from_goodreads(
-        self, data: dict[str, Any] | None = None
-    ) -> Optional["Book"]:
-        result: dict[str, Any] | None
-        if data:
-            result = data
-        else:
-            result = {}
-            for query in [self.asin, self.isbn, self.search_query]:
-                if query and (
-                    result := goodreads.find(
-                        query, self.first_author.surname if self.first_author else ""
-                    )
-                ):
-                    break
-
-            if not result:
-                return None
-
-        self.update(result)
+    def update_from_goodreads(self) -> "Book":
+        result: dict[str, str] | None = {}
+        for query in [self.asin, self.isbn, self.search_query]:
+            if query and (
+                result := goodreads.find(
+                    query, self.first_author.surname if self.first_author else ""
+                )
+            ):
+                self.update(result)
+                break
 
         return self
 
