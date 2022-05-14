@@ -1,0 +1,23 @@
+coverage==6.3.3
+curlylint==0.13.1
+django-stubs==1.9.0
+django-stubs-ext==0.4.0
+flake8==4.0.1
+flake8-bugbear==22.4.25
+flake8-comprehensions==3.8.0
+flake8-django @ git+https://github.com/rocioar/flake8-django.git@master
+flake8-docstrings==1.6.0
+flake8-polyfill==1.0.2
+flake8-simplify==0.19.2
+lxml==4.8.0
+mypy==0.950
+mypy-extensions==0.4.3
+pep8-naming==0.12.1
+pre-commit==2.18.1
+pylint==2.13.4
+pytest==7.1.0
+pytest-cov==3.0.0
+pytest-django==4.5.2
+pytest-factoryboy==2.2.0
+requests-mock==1.9.3
+types-requests==2.27.9
