@@ -1,4 +1,4 @@
-beautifulsoup4==4.10.0
+beautifulsoup4==4.11.1
 bpython==0.22.1
 commonmark==0.9.1
 dj-database-url==0.5.0
