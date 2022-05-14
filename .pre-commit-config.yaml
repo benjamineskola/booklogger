@@ -6,6 +6,7 @@ repos:
       - id: check-toml
       - id: check-yaml
       - id: end-of-file-fixer
+      - id: requirements-txt-fixer
       - id: trailing-whitespace
   - repo: https://github.com/benjamineskola/pre-commit-hooks.git
     rev: e6f507658a32156b4de20749ab6343c6ad8bb1f1
@@ -19,7 +20,7 @@ repos:
       - id: curlylint
         name: curlylint
         language: system
-        entry: "poetry run curlylint --quiet --rule 'indent: 2'"
+        entry: "curlylint --quiet --rule 'indent: 2'"
         types: [html]
   - repo: https://github.com/PyCQA/isort
     rev: 5.10.1
