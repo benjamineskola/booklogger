@@ -546,22 +546,7 @@ class Book(TimestampedModel, SluggableModel):
 
     @property
     def note_title(self) -> str:
-        title = ""
-        for author in self.authors:
-            if len(self.authors) > 1 and author == self.authors[-1]:
-                title += "and "
-            title += author.name_sortable
-            if len(self.authors) > 1 and author != self.authors[-1]:
-                title += ", "
-
-        title += f" ({self.first_published}), "
-
-        if self.edition_title:
-            title += self.edition_title.replace(":", ",")
-        else:
-            title += self.title.replace(":", ",")
-
-        return title
+        return self.display_details.replace(":", ",")
 
     def add_author(
         self, author: "Author", role: str = "", order: int | None = None
