@@ -1,0 +1,5 @@
+[flake8]
+exclude = migrations
+select = C, DJ, E, F, W, N, B, B9, SIM
+extend-ignore = E203, E501, W503
+max-line-length = 88

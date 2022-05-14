@@ -41,19 +41,6 @@ no_incremental = true
 [tool.django-stubs]
 django_settings_module = "booklogger.settings"
 
-[tool.flake8]
-exclude = ["migrations"]
-select = ["C","DJ","E","F","W","N","B","B9","SIM"]
-extend-ignore = [
-        # incompatible with black
-        "E203",
-        # superseded by flake8-bugbear B950
-        "E501",
-        # incompatible with black
-        "W503",
-]
-max-line-length = 88
-
 [tool.isort]
 profile = "black"
 
@@ -87,10 +74,8 @@ text-unidecode = "^1.3"
 coverage = {extras = ["toml"], version = "^6.3"}
 curlylint = "*"
 django-stubs = "^1.9"
-flake518 = "^1.2.0"
 flake8-bugbear = "*"
 flake8-comprehensions = "^3.8.0"
-flake8-django = "^1.1.2"
 flake8-docstrings = "*"
 flake8-simplify = "^0.19.2"
 lxml = "*"
@@ -104,6 +89,8 @@ pytest-factoryboy = "*"
 requests-mock = "^1.9.3"
 types-requests = "*"
 pre-commit = "^2.18.1"
+flake8 = "^4.0.1"
+flake8-django = {git = "https://github.com/rocioar/flake8-django.git", rev = "master"}
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
