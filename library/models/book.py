@@ -458,7 +458,7 @@ class Book(TimestampedModel, SluggableModel):
 
             result += ", "
 
-        result += "*" + self.display_title.replace("*", r"\*") + "*"
+        result += "_" + self.display_title.replace("_", r"\_") + "_"
 
         if any(author.is_editor_of(self) for author in self.all_authors):
             result += ", ed. by "
