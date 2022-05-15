@@ -25,16 +25,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = (
-    "not-a-real-secret"
-    if not os.environ.get("DYNO")
-    else os.environ["DJANGO_SECRET_KEY"]
-)
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "not-a-real-secret")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG") if os.environ.get("DYNO") else True
 
 ALLOWED_HOSTS = ["*"]
+CSRF_TRUSTED_ORIGINS = ["https://booklogger.fly.dev"]
 
 
 # Application definition
@@ -153,6 +150,9 @@ if os.environ.get("DYNO"):
     import django_heroku
 
     django_heroku.settings(locals())
+else:
+    BASE_DIR = "/app"
+    STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 if "HEROKU_RELEASE_VERSION" in os.environ:
     os.environ["VERSION_NUMBER"] = os.environ["HEROKU_RELEASE_VERSION"]
