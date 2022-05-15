@@ -1,9 +1,8 @@
 import os
 import re
-from typing import Any
 
 import requests
-import xmltodict
+from bs4 import BeautifulSoup
 
 
 def find(query: str, author_name: str = "") -> dict[str, str] | None:
@@ -29,32 +28,24 @@ def find_all(query: str) -> list[dict[str, str]]:
     except KeyError:
         return []
 
-    data = requests.get(search_url).text
-    xml = xmltodict.parse(data, dict_constructor=dict)
+    xml = BeautifulSoup(requests.get(search_url).text)
 
-    try:
-        all_results = xml["GoodreadsResponse"]["search"]["results"]["work"]
-    except KeyError:
+    all_results = xml.goodreadsresponse.search.results.find_all("work")
+    if not all_results:
         return []
-    except TypeError:
-        return []
-
-    results: list[dict[str, Any]] = (
-        [all_results] if "id" in all_results else all_results
-    )
 
     results = [
         {
-            "authors": [(result["best_book"]["author"]["name"], "")],
-            "title": result["best_book"]["title"],
-            "goodreads_id": result["best_book"]["id"]["#text"],
-            "first_published": result["original_publication_year"].get("#text", 0),
-            "image_url": result["best_book"]["image_url"]
-            if "nophoto" not in result["best_book"]["image_url"]
+            "authors": [(result.best_book.author.find("name").text, "")],
+            "title": result.best_book.title.text,
+            "goodreads_id": result.best_book.id.text,
+            "first_published": result.original_publication_year.text or 0,
+            "image_url": result.best_book.image_url.text
+            if "nophoto" not in result.best_book.image_url.text
             else "",
         }
-        for result in results
-        if result["best_book"]["author"]["name"]
+        for result in all_results
+        if result.best_book.author.find("name").text
         not in ["SparkNotes", "BookRags", "BookHabits", "Bright Summaries"]
     ]
     return results
