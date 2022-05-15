@@ -1,5 +1,4 @@
 import os
-import re
 
 import requests
 from bs4 import BeautifulSoup
@@ -53,11 +52,10 @@ def find_all(query: str) -> list[dict[str, str]]:
 
 def scrape_image(goodreads_id: str) -> str:
     goodreads_url = f"https://www.goodreads.com/book/show/{goodreads_id}"
-    text = requests.get(goodreads_url).text
-    meta_tag = re.search(r"<meta[^>]*og:image[^>]*>", text)
-    if meta_tag:
-        image_url = re.search(r"https://.*\.jpg", meta_tag[0])
-        if image_url and ("nophoto" not in image_url[0]):
-            return str(image_url[0])
+    data = BeautifulSoup(requests.get(goodreads_url).text)
+    if meta_tag := data.find(
+        "meta", property="og:image", content=lambda x: "nophoto" not in x
+    ):
+        return str(meta_tag.get("content"))
 
     return ""
