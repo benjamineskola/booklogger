@@ -9,6 +9,7 @@ omit = [
         "*/urls.py",
         "booklogger/?sgi.py",
         "library/migrations/*",
+        "library/tests/*"
     ]
 
 [tool.mypy]
