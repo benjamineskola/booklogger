@@ -14,7 +14,8 @@ repos:
       - id: shellcheck
       - id: shfmt
       - id: pytest
-        always_run: true
+        types: [python]
+        pass_filenames: false
   - repo: local
     hooks:
       - id: curlylint
