@@ -13,9 +13,6 @@ repos:
     hooks:
       - id: shellcheck
       - id: shfmt
-      - id: pytest
-        types: [python]
-        pass_filenames: false
   - repo: local
     hooks:
       - id: curlylint
@@ -37,6 +34,14 @@ repos:
     rev: 22.3.0
     hooks:
       - id: black
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v2.32.1
+    hooks:
+      - id: pyupgrade
+  - repo: https://github.com/pycqa/flake8
+    rev: "4.0.1"
+    hooks:
+      - id: flake8
   - repo: https://github.com/PyCQA/pylint
     rev: v2.13.7
     hooks:
@@ -64,13 +69,11 @@ repos:
             bs4,
             types-requests,
           ]
-  - repo: https://github.com/asottile/pyupgrade
-    rev: v2.32.1
+  - repo: https://github.com/benjamineskola/pre-commit-hooks.git
+    rev: e6f507658a32156b4de20749ab6343c6ad8bb1f1
     hooks:
-      - id: pyupgrade
-  - repo: https://github.com/pycqa/flake8
-    rev: "4.0.1"
-    hooks:
-      - id: flake8
+      - id: pytest
+        types: [python]
+        pass_filenames: false
 
 exclude: "^library/migrations"
