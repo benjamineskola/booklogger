@@ -31,7 +31,7 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "not-a-real-secret")
 DEBUG = os.environ.get("DEBUG") if os.environ.get("DYNO") else True
 
 ALLOWED_HOSTS = ["*"]
-CSRF_TRUSTED_ORIGINS = ["https://booklogger.fly.dev"]
+CSRF_TRUSTED_ORIGINS = ["https://booklogger.eskola.uk", "https://booklogger.fly.dev"]
 
 
 # Application definition
