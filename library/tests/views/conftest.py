@@ -5,7 +5,7 @@ from django.test import RequestFactory
 
 @pytest.fixture(autouse=True)
 def get_response(user):
-    def _get(view, get=None, **kwargs):
+    def _get(view, status_code=200, get=None, **kwargs):
         url = "/"  # doesn't matter — ignored in practice
         if get:
             q = QueryDict(mutable=True)
@@ -14,6 +14,9 @@ def get_response(user):
 
         req = RequestFactory().get(url)
         req.user = user
-        return view.as_view()(req, **kwargs)
+
+        resp = view.as_view()(req, **kwargs)
+        assert resp.status_code == status_code
+        return resp
 
     yield _get
