@@ -102,3 +102,15 @@ class TestBook:
             assert book in resp.context_data["object_list"]
         else:
             assert book not in resp.context_data["object_list"]
+
+    def test_sort_order(self, get_response, book_factory):
+        book1 = book_factory(title="AAAAA", first_published=1999)
+        book2 = book_factory(title="BBBBB", first_published=2000)
+
+        resp = get_response(IndexView, sort_by="title")
+        assert resp.context_data["object_list"][0] == book1
+        assert resp.context_data["object_list"][1] == book2
+
+        resp = get_response(IndexView, sort_by="first_published")
+        assert resp.context_data["object_list"][0] == book2
+        assert resp.context_data["object_list"][1] == book1
