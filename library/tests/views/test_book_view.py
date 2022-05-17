@@ -4,6 +4,7 @@ from library.models import Book, Tag
 from library.views.book import (
     CurrentlyReadingView,
     IndexView,
+    OwnedIndexView,
     ReadView,
     UnreadIndexView,
 )
@@ -63,6 +64,18 @@ class TestBook:
 
         resp = get_response(view)
         assert len(resp.context_data["object_list"]) == 0
+
+    def test_owned(self, get_response, book, user):
+        view = OwnedIndexView
+
+        resp = get_response(view)
+        assert len(resp.context_data["object_list"]) == 0
+
+        book.owned_by = user
+        book.save()
+
+        resp = get_response(view)
+        assert len(resp.context_data["object_list"]) == 1
 
     @pytest.mark.parametrize("format", ["EBOOK", "PAPERBACK", "HARDBACK", "WEB"])
     @pytest.mark.parametrize("view_format", ["EBOOK", "PAPERBACK", "HARDBACK", "WEB"])
