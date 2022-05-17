@@ -9,9 +9,6 @@ class TestModel:
         book1 = book_factory()
         book2 = book_factory()
 
-        book1.save()
-        book2.save()
-
         queryset = Book.objects.filter(title__ne=book1.title)
         assert book1 not in queryset
         assert book2 in queryset

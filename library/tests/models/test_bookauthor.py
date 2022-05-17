@@ -4,64 +4,56 @@ import pytest
 @pytest.mark.django_db
 class TestBookAuthor:
     @pytest.fixture
-    def mock_book(self, book_factory):
-        mock_book = book_factory(title="Autobiography")
-        mock_book.save()
-        return mock_book
+    def book(self, book_factory):
+        return book_factory(first_author=None, title="Autobiography")
 
     @pytest.fixture
-    def mock_author(self, mock_authors):
-        return mock_authors[0]
+    def author(self, authors):
+        return authors[0]
 
     @pytest.fixture
-    def mock_authors(self, author_factory):
+    def authors(self, author_factory):
         authors = [
             author_factory(surname="Smithee", forenames="Alan"),
             author_factory(surname="Smithee", forenames="Boris"),
         ]
-        authors[0].save()
-        authors[1].save()
+
         return authors
 
-    def test_add_author(self, mock_book, mock_author):
-        assert len(mock_book.authors) == 0
-        mock_book.add_author(mock_author)
-        assert len(mock_book.authors) == 1
+    def test_add_author(self, book, author):
+        assert len(book.authors) == 0
+        book.add_author(author)
+        assert len(book.authors) == 1
 
-    def test_add_two_authors(self, mock_book, mock_authors):
-        assert len(mock_book.authors) == 0
-        mock_book.add_author(mock_authors[0])
-        mock_book.add_author(mock_authors[1])
-        assert len(mock_book.authors) == 2
+    def test_add_two_authors(self, book, authors):
+        assert len(book.authors) == 0
+        book.first_author = authors[0]
+        book.add_author(authors[1])
+        assert len(book.authors) == 2
 
-    def test_add_same_author_twice(self, mock_book, mock_author):
-        assert len(mock_book.authors) == 0
-        mock_book.add_author(mock_author)
-        mock_book.add_author(mock_author)
-        assert len(mock_book.authors) == 1
+    def test_add_same_author_twice(self, book, author):
+        assert len(book.authors) == 0
+        book.add_author(author)
+        book.add_author(author)
+        assert len(book.authors) == 1
 
-    def test_add_author_and_role(self, mock_book, mock_authors):
-        mock_book.add_author(mock_authors[0])
-        mock_book.add_author(mock_authors[1])
-        assert (
-            mock_book.display_details
-            == "Alan Smithee and Boris Smithee, _Autobiography_"
-        )
+    def test_add_author_and_role(self, book, authors):
+        book.first_author = authors[0]
+        book.add_author(authors[1])
+        assert book.display_details == "Alan Smithee and Boris Smithee, _Autobiography_"
 
-    def test_author_role_none(self, mock_book, mock_author):
-        mock_book.add_author(mock_author)
-        assert mock_author.role_for_book(mock_book) == ""
-        assert mock_author.attribution_for(mock_book, True) == "Smithee, A."
+    def test_author_role_none(self, book, author):
+        book.add_author(author)
+        assert author.role_for_book(book) == ""
+        assert author.attribution_for(book, True) == "Smithee, A."
 
-    def test_author_role_simple(self, mock_book, mock_author):
-        mock_book.add_author(mock_author, role="introduction")
-        assert mock_author.role_for_book(mock_book) == "introduction"
-        assert (
-            mock_author.attribution_for(mock_book, True) == "Smithee, A. (introduction)"
-        )
+    def test_author_role_simple(self, book, author):
+        book.add_author(author, role="introduction")
+        assert author.role_for_book(book) == "introduction"
+        assert author.attribution_for(book, True) == "Smithee, A. (introduction)"
 
-    def test_author_role_editor_abbr(self, mock_book, mock_author):
-        mock_book.add_author(mock_author, role="editor")
-        assert mock_author.role_for_book(mock_book) == "editor"
-        assert mock_author.display_role_for_book(mock_book) == "ed."
-        assert mock_author.attribution_for(mock_book, True) == "Smithee, A. (ed.)"
+    def test_author_role_editor_abbr(self, book, author):
+        book.add_author(author, role="editor")
+        assert author.role_for_book(book) == "editor"
+        assert author.display_role_for_book(book) == "ed."
+        assert author.attribution_for(book, True) == "Smithee, A. (ed.)"

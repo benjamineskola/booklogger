@@ -39,8 +39,8 @@ class TestAuthor:
         assert author.initials == "A.A."
         assert str(author) == "A.A. Smithee"
 
-    def test_author_preferred_name(self):
-        author = Author(
+    def test_author_preferred_name(self, author_factory):
+        author = author_factory(
             surname="Tolkien",
             forenames="John Ronald Reuel",
             preferred_forenames="J.R.R.",
@@ -50,23 +50,20 @@ class TestAuthor:
         assert author.full_name == "John Ronald Reuel Tolkien"
         assert author.name_with_initials == "Tolkien, J.R.R."
 
-    def test_author_get_by_all_names(self, transactional_db):
-        author = Author(
+    def test_author_get_by_all_names(self, author_factory):
+        author = author_factory(
             surname="Tolkien",
             forenames="John Ronald Reuel",
             preferred_forenames="J.R.R.",
         )
-        author.save()
         assert Author.objects.get_by_single_name("J.R.R. Tolkien") == author
         assert Author.objects.get_by_single_name("J. R. R. Tolkien") == author
         assert Author.objects.get_by_single_name("John Ronald Reuel Tolkien") == author
 
-    def test_author_get_by_single_name(self, author, transactional_db):
-        author.forenames = "Alan"
-        author.save()
+    def test_author_get_by_single_name(self, author_factory):
+        author = author_factory(forenames="Alan", surname="Smithee")
         assert Author.objects.get_by_single_name("Alan Smithee") == author
 
-    def test_author_get_by_single_name_organisation(self, transactional_db):
-        author = Author(surname="Smithee Books")
-        author.save()
+    def test_author_get_by_single_name_organisation(self, author_factory):
+        author = author_factory(forenames="", surname="Smithee Books")
         assert Author.objects.get_by_single_name("Smithee Books") == author

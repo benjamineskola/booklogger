@@ -1,8 +1,7 @@
 import factory
 from django.contrib.auth.models import User
-from pytest_factoryboy import register
 
-from library.models import Author, Book, BookAuthor
+from library.models import Author, Book
 
 
 class AuthorFactory(factory.django.DjangoModelFactory):  # type: ignore
@@ -19,19 +18,11 @@ class BookFactory(factory.django.DjangoModelFactory):  # type: ignore
 
     title = factory.Faker("sentence", nb_words=4)
     edition_format = 1
+    first_author = factory.SubFactory(AuthorFactory)
 
 
-class BookAuthorFactory(factory.Factory):  # type: ignore
-    class Meta:
-        model = BookAuthor
-
-
-class UserFactory(factory.Factory):  # type: ignore
+class UserFactory(factory.django.DjangoModelFactory):  # type: ignore
     class Meta:
         model = User
 
-
-register(AuthorFactory)
-register(BookFactory)
-register(BookAuthorFactory)
-register(UserFactory)
+    username = "ben"

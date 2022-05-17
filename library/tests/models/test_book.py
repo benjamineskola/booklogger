@@ -15,79 +15,58 @@ class TestBook:
 
     @pytest.fixture
     def mock_authors(self, author_factory):
-        authors = [
-            author_factory(),
-            author_factory(),
-            author_factory(),
-            author_factory(),
-        ]
-        for author in authors:
-            author.save()
-        return authors
+        return author_factory.create_batch(4)
 
-    @pytest.fixture
-    def mock_book(self, book_factory, mock_authors, book_author_factory):
-        mock_book = book_factory()
-        mock_book.save()
-        mock_book.add_author(mock_authors[0], order=1)
-        return mock_book
+    def test_book_display(self, author, book):
+        book.first_author = author
+        assert book.display_details == f"{author}, _{book.display_title}_"
 
-    @pytest.fixture
-    def mock_book_with_author(self, mock_book, mock_authors):
-        book = mock_book
-        book.add_author(mock_authors[0])
-        return book
-
-    def test_book_display(self, mock_authors, mock_book):
+    def test_two_authors(self, book, mock_authors):
+        book.first_author = mock_authors[0]
+        book.add_author(mock_authors[1], order=2)
         assert (
-            mock_book.display_details
-            == f"{mock_authors[0]}, _{mock_book.display_title}_"
+            book.display_details
+            == f"{mock_authors[0]} and {mock_authors[1]}, _{book.display_title}_"
         )
 
-    def test_two_authors(self, mock_book, mock_authors):
-        mock_book.add_author(mock_authors[1], order=2)
+    def test_three_authors(self, book, mock_authors):
+        book.first_author = mock_authors[0]
+        book.add_author(mock_authors[1], order=2)
+        book.add_author(mock_authors[2], order=3)
         assert (
-            mock_book.display_details
-            == f"{mock_authors[0]} and {mock_authors[1]}, _{mock_book.display_title}_"
+            book.display_details
+            == f"{mock_authors[0]}, {mock_authors[1]}, and {mock_authors[2]}, _{book.display_title}_"
         )
 
-    def test_three_authors(self, mock_book, mock_authors):
-        mock_book.add_author(mock_authors[1], order=2)
-        mock_book.add_author(mock_authors[2], order=3)
+    def test_four_authors(self, book, mock_authors):
+        book.first_author = mock_authors[0]
+        book.add_author(mock_authors[1], order=2)
+        book.add_author(mock_authors[2], order=3)
+        book.add_author(mock_authors[3], order=4)
         assert (
-            mock_book.display_details
-            == f"{mock_authors[0]}, {mock_authors[1]}, and {mock_authors[2]}, _{mock_book.display_title}_"
+            book.display_details
+            == f"{mock_authors[0]} and others, _{book.display_title}_"
         )
 
-    def test_four_authors(self, mock_book, mock_authors):
-        mock_book.add_author(mock_authors[1], order=2)
-        mock_book.add_author(mock_authors[2], order=3)
-        mock_book.add_author(mock_authors[3], order=4)
+    def test_editor(self, book):
+        book.first_author_role = "editor"
         assert (
-            mock_book.display_details
-            == f"{mock_authors[0]} and others, _{mock_book.display_title}_"
+            book.display_details
+            == f"_{book.display_title}_, ed. by {book.first_author}"
         )
 
-    def test_editor(self, mock_book, mock_authors):
-        mock_book.first_author_role = "editor"
+    def test_author_and_editor(self, book, author_factory):
+        author = author_factory()
+        book.add_author(author, order=2, role="editor")
         assert (
-            mock_book.display_details
-            == f"_{mock_book.display_title}_, ed. by {mock_authors[0]}"
+            book.display_details
+            == f"{book.first_author}, _{book.display_title}_, ed. by {author}"
         )
 
-    def test_author_and_editor(self, mock_book, mock_authors):
-        mock_book.add_author(mock_authors[1], order=2, role="editor")
-        assert (
-            mock_book.display_details
-            == f"{mock_authors[0]}, _{mock_book.display_title}_, ed. by {mock_authors[1]}"
-        )
-
-    def test_search_by_title(self, mock_book_with_author):
-        book = mock_book_with_author
+    def test_search_by_title(self, book):
         results = Book.objects.search(book.title)
         assert book in results
 
-    def test_search_by_author(self, mock_book_with_author):
-        book = mock_book_with_author
+    def test_search_by_author(self, book):
         results = Book.objects.search(book.first_author.surname)
         assert book in results

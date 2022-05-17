@@ -9,16 +9,13 @@ class TestTimestampedModel:
     def test_created_date(self, book_factory):
         test_start = timezone.now()
         book = book_factory()
-        book.save()
         test_end = timezone.now()
 
         assert book.created_date > test_start
         assert book.created_date < test_end
         assert abs(book.modified_date - book.created_date) < timedelta(seconds=1)
 
-    def test_modified_date(self, book_factory):
-        book = book_factory()
-        book.save()
+    def test_modified_date(self, book):
         orig_modified_date = book.modified_date
 
         test_start = timezone.now()

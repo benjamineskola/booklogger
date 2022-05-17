@@ -1,14 +1,6 @@
 import pytest
-from django.contrib.auth.models import User
 from django.http import QueryDict
 from django.test import RequestFactory
-
-
-@pytest.fixture
-def user(user_factory):
-    if not User.objects.count():
-        user_factory(username="ben").save()
-    return User.objects.first()
 
 
 @pytest.fixture(autouse=True)

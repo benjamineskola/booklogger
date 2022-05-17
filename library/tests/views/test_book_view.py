@@ -12,10 +12,8 @@ from library.views.book import (
 
 @pytest.mark.django_db
 class TestBook:
-    def test_currently_reading(self, get_response, book_factory):
+    def test_currently_reading(self, get_response, book):
         view = CurrentlyReadingView
-        book = book_factory()
-        book.save()
 
         resp = get_response(view)
         assert resp.status_code == 200
@@ -33,10 +31,8 @@ class TestBook:
         assert resp.status_code == 200
         assert len(resp.context_data["object_list"]) == 0
 
-    def test_read(self, get_response, book_factory):
+    def test_read(self, get_response, book):
         view = ReadView
-        book = book_factory()
-        book.save()
 
         resp = get_response(view)
         assert resp.status_code == 200
@@ -54,14 +50,13 @@ class TestBook:
         assert resp.status_code == 200
         assert len(resp.context_data["object_list"]) == 1
 
-    def test_toread(self, get_response, book_factory, user):
+    def test_toread(self, get_response, book, user):
         view = UnreadIndexView
 
         resp = get_response(view)
         assert resp.status_code == 200
         assert len(resp.context_data["object_list"]) == 0
 
-        book = book_factory()
         book.owned_by = user
         book.save()
 
@@ -83,14 +78,10 @@ class TestBook:
     def test_format_filters(self, get_response, book_factory, user):
         view = OwnedIndexView
 
-        book_ebook = book_factory()
-        book_ebook.owned_by = user
-        book_ebook.edition_format = Book.Format["EBOOK"]
-        book_ebook.save()
-        book_paperback = book_factory()
-        book_paperback.owned_by = user
-        book_paperback.edition_format = Book.Format["PAPERBACK"]
-        book_paperback.save()
+        book_ebook = book_factory(owned_by=user, edition_format=Book.Format["EBOOK"])
+        book_paperback = book_factory(
+            owned_by=user, edition_format=Book.Format["PAPERBACK"]
+        )
 
         resp = get_response(view)
         assert resp.status_code == 200
@@ -114,12 +105,8 @@ class TestBook:
 
     def test_tag_filters(self, get_response, book_factory, user):
         view = IndexView
-        book_fiction = book_factory()
-        book_fiction.tags = ["fiction"]
-        book_fiction.save()
-        book_nonfiction = book_factory()
-        book_nonfiction.tags = ["non-fiction"]
-        book_nonfiction.save()
+        book_fiction = book_factory(tags=["fiction"])
+        book_nonfiction = book_factory(tags=["non-fiction"])
 
         resp = get_response(view)
         assert resp.status_code == 200
