@@ -1,10 +1,9 @@
 import pytest
 
-from library.models import Book
+from library.models import Book, Tag
 from library.views.book import (
     CurrentlyReadingView,
     IndexView,
-    OwnedIndexView,
     ReadView,
     UnreadIndexView,
 )
@@ -65,43 +64,28 @@ class TestBook:
         resp = get_response(view)
         assert len(resp.context_data["object_list"]) == 0
 
-    def test_format_filters(self, get_response, book_factory, user):
-        view = OwnedIndexView
+    @pytest.mark.parametrize("format", ["EBOOK", "PAPERBACK", "HARDBACK", "WEB"])
+    @pytest.mark.parametrize("view_format", ["EBOOK", "PAPERBACK", "HARDBACK", "WEB"])
+    def test_format_filters(self, get_response, book_factory, format, view_format):
+        book = book_factory(edition_format=Book.Format[format])
 
-        book_ebook = book_factory(owned_by=user, edition_format=Book.Format["EBOOK"])
-        book_paperback = book_factory(
-            owned_by=user, edition_format=Book.Format["PAPERBACK"]
-        )
+        resp = get_response(IndexView, format=view_format)
 
-        resp = get_response(view)
-        assert book_ebook in resp.context_data["object_list"]
-        assert book_paperback in resp.context_data["object_list"]
+        if view_format == format or (
+            format in ["PAPERBACK", "HARDBACK"] and view_format == "PHYSICAL"
+        ):
+            assert book in resp.context_data["object_list"]
+        else:
+            assert book not in resp.context_data["object_list"]
 
-        resp = get_response(view, format="ebook")
-        assert book_ebook in resp.context_data["object_list"]
-        assert book_paperback not in resp.context_data["object_list"]
+    @pytest.mark.parametrize("tag", ["fiction", "non-fiction"])
+    @pytest.mark.parametrize("view_tag", ["fiction", "non-fiction"])
+    def test_tag_filters(self, get_response, book_factory, tag, view_tag):
+        book = book_factory(tags=[tag])
+        [Tag(name=name).save() for name in ["fiction", "non-fiction"]]
 
-        resp = get_response(view, format="paperback")
-        assert book_ebook not in resp.context_data["object_list"]
-        assert book_paperback in resp.context_data["object_list"]
-
-        resp = get_response(view, format="physical")
-        assert book_ebook not in resp.context_data["object_list"]
-        assert book_paperback in resp.context_data["object_list"]
-
-    def test_tag_filters(self, get_response, book_factory, user):
-        view = IndexView
-        book_fiction = book_factory(tags=["fiction"])
-        book_nonfiction = book_factory(tags=["non-fiction"])
-
-        resp = get_response(view)
-        assert book_fiction in resp.context_data["object_list"]
-        assert book_nonfiction in resp.context_data["object_list"]
-
-        resp = get_response(view, get={"tags": "fiction"})
-        assert book_fiction in resp.context_data["object_list"]
-        assert book_nonfiction not in resp.context_data["object_list"]
-
-        resp = get_response(view, get={"tags": "non-fiction"})
-        assert book_fiction not in resp.context_data["object_list"]
-        assert book_nonfiction in resp.context_data["object_list"]
+        resp = get_response(IndexView, get={"tags": view_tag})
+        if tag == view_tag:
+            assert book in resp.context_data["object_list"]
+        else:
+            assert book not in resp.context_data["object_list"]
