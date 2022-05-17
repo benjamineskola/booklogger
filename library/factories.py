@@ -5,7 +5,7 @@ from pytest_factoryboy import register
 from library.models import Author, Book, BookAuthor
 
 
-class AuthorFactory(factory.Factory):  # type: ignore
+class AuthorFactory(factory.django.DjangoModelFactory):  # type: ignore
     class Meta:
         model = Author
 
@@ -13,7 +13,7 @@ class AuthorFactory(factory.Factory):  # type: ignore
     forenames = factory.Faker("first_name")
 
 
-class BookFactory(factory.Factory):  # type: ignore
+class BookFactory(factory.django.DjangoModelFactory):  # type: ignore
     class Meta:
         model = Book
 

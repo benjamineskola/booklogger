@@ -3,6 +3,7 @@ import pytest
 from library.models import Author
 
 
+@pytest.mark.django_db
 class TestAuthor:
     @pytest.fixture
     def author(self, author_factory):
