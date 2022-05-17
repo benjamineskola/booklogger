@@ -23,6 +23,12 @@ repos:
         language: system
         entry: "curlylint --quiet --rule 'indent: 2'"
         types: [html]
+      - id: migrations
+        name: migrations
+        language: system
+        entry: python ./manage.py makemigrations --check --dry-run
+        types: [python]
+        pass_filenames: false
   - repo: https://github.com/PyCQA/isort
     rev: 5.10.1
     hooks:
@@ -44,11 +50,24 @@ repos:
       - id: mypy
         files: "^[^/]+/"
         exclude: "^library/(migrations|tests)"
-        additional_dependencies: [django, django-stubs, dj_database_url, psycopg2, django-extensions, django-crispy-forms, text-unidecode, requests, xmltodict, bs4, types-requests]
-  -   repo: https://github.com/asottile/pyupgrade
-      rev: v2.32.1
-      hooks:
-      -   id: pyupgrade
+        additional_dependencies:
+          [
+            django,
+            django-stubs,
+            dj_database_url,
+            psycopg2,
+            django-extensions,
+            django-crispy-forms,
+            text-unidecode,
+            requests,
+            xmltodict,
+            bs4,
+            types-requests,
+          ]
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v2.32.1
+    hooks:
+      - id: pyupgrade
   - repo: https://github.com/pycqa/flake8
     rev: "4.0.1"
     hooks:
