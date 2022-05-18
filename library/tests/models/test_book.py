@@ -1,6 +1,6 @@
 import pytest
 
-from library.models import Book, LogEntry
+from library.models import Book, LogEntry, Tag
 
 
 @pytest.mark.django_db
@@ -90,3 +90,16 @@ class TestBook:
         if gender == 2:
             assert book not in Book.objects.by_men()
             assert book in Book.objects.by_women()
+
+    @pytest.mark.parametrize("tag", ["fiction", "non-fiction"])
+    def test_query_by_subject(self, book_factory, tag):
+        [Tag(name=name).save() for name in ["fiction", "non-fiction"]]
+        book = book_factory(tags=[tag])
+
+        if tag == "fiction":
+            assert book in Book.objects.fiction()
+            assert book not in Book.objects.nonfiction()
+
+        if tag == "non-fiction":
+            assert book in Book.objects.nonfiction()
+            assert book not in Book.objects.fiction()
