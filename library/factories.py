@@ -1,7 +1,7 @@
 import factory
 from django.contrib.auth.models import User
 
-from library.models import Author, Book
+from library.models import Author, Book, Tag
 
 
 class AuthorFactory(factory.django.DjangoModelFactory):  # type: ignore
@@ -19,6 +19,13 @@ class BookFactory(factory.django.DjangoModelFactory):  # type: ignore
     title = factory.Faker("sentence", nb_words=4)
     edition_format = 1
     first_author = factory.SubFactory(AuthorFactory)
+
+
+class TagFactory(factory.django.DjangoModelFactory):  # type: ignore
+    class Meta:
+        model = Tag
+
+    name = factory.Faker("word")
 
 
 class UserFactory(factory.django.DjangoModelFactory):  # type: ignore
