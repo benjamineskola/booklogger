@@ -78,7 +78,9 @@ class TestBook:
         assert len(resp.context_data["object_list"]) == 1
 
     @pytest.mark.parametrize("format", ["EBOOK", "PAPERBACK", "HARDBACK", "WEB"])
-    @pytest.mark.parametrize("view_format", ["EBOOK", "PAPERBACK", "HARDBACK", "WEB"])
+    @pytest.mark.parametrize(
+        "view_format", ["EBOOK", "PAPERBACK", "HARDBACK", "WEB", "PHYSICAL"]
+    )
     def test_format_filters(self, get_response, book_factory, format, view_format):
         book = book_factory(edition_format=Book.Format[format])
 
