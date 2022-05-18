@@ -25,6 +25,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from library.models.abc import SluggableModel, TimestampedModel
+from library.models.book_with_editions import BookWithEditions
 from library.utils import (
     LANGUAGES,
     clean_publisher,
@@ -282,7 +283,7 @@ class BookQuerySet(models.QuerySet["Book"]):
 BookManager = BaseBookManager.from_queryset(BookQuerySet)
 
 
-class Book(TimestampedModel, SluggableModel):
+class Book(TimestampedModel, SluggableModel, BookWithEditions):
     objects = BookManager()
 
     class Meta:
@@ -422,8 +423,6 @@ class Book(TimestampedModel, SluggableModel):
     ebook_asin = models.CharField(max_length=255, blank=True)
     ebook_acquired_date = models.DateField(blank=True, null=True)
 
-    editions = models.ManyToManyField("self", symmetrical=True, blank=True)
-
     parent_edition = models.ForeignKey(
         "self",
         related_name="subeditions",
@@ -485,13 +484,6 @@ class Book(TimestampedModel, SluggableModel):
             result += f" ({self.publisher + ', ' if self.publisher else ''}{self.edition_published if self.edition_published else self.first_published})"
 
         return result
-
-    def get_edition_disambiguator(self) -> str:
-        if self.editions.exclude(edition_language=self.edition_language).count():
-            if self.edition_language:
-                return self.get_edition_language_display()
-            return self.get_language_display()
-        return self.get_edition_format_display().lower()
 
     def get_absolute_url(self) -> str:
         return reverse("library:book_details", args=[self.slug])
@@ -641,32 +633,6 @@ class Book(TimestampedModel, SluggableModel):
             self.log_entries.filter(end_date__isnull=False, abandoned=False).count() > 0
         )
 
-    def create_new_edition(self, edition_format: int) -> None:
-        edition = Book(
-            title=self.title,
-            subtitle=self.subtitle,
-            edition_format=edition_format,
-            first_author=self.first_author,
-            first_author_role=self.first_author_role,
-            first_published=self.first_published,
-            language=self.language,
-            image_url=self.image_url,
-            publisher_url=self.publisher_url,
-            want_to_read=self.want_to_read,
-            series=self.series,
-            series_order=self.series_order,
-            tags=self.tags,
-            review=self.review,
-            rating=self.rating,
-            # technically this is per-edition but this is convenient
-            goodreads_id=self.goodreads_id,
-        )
-        edition.save()
-        for author in self.bookauthor_set.all():
-            edition.add_author(author.author, role=author.role, order=author.order)
-        self.editions.add(edition)
-        self.save()
-
     def save(self, *args: Any, **kwargs: Any) -> None:
         if "goodreads" in self.image_url or "amazon" in self.image_url:
             self.image_url = re.sub(r"\._.+_\.jpg$", ".jpg", self.image_url)
@@ -723,21 +689,7 @@ class Book(TimestampedModel, SluggableModel):
             google.update(self)
             verso.update(self)
 
-        self.editions.all().update(
-            title=self.title,
-            subtitle=self.subtitle,
-            first_author=self.first_author,
-            first_author_role=self.first_author_role,
-            first_published=self.first_published,
-            language=self.language,
-            want_to_read=self.want_to_read,
-            tags=self.tags,
-            review=self.review,
-            rating=self.rating,
-            series=self.series,
-            series_order=self.series_order,
-        )
-
+        self.save_other_editions()
         self.subeditions.all().update(want_to_read=self.want_to_read)
 
     @property
