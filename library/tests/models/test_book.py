@@ -1,6 +1,6 @@
 import pytest
 
-from library.models import Book
+from library.models import Book, LogEntry
 
 
 @pytest.mark.django_db
@@ -70,3 +70,23 @@ class TestBook:
     def test_search_by_author(self, book):
         results = Book.objects.search(book.first_author.surname)
         assert book in results
+
+    @pytest.mark.parametrize("gender", [1, 2])
+    @pytest.mark.parametrize("other_gender", [1, 2])
+    def test_query_by_gender(self, book_factory, gender, other_gender):
+        book = book_factory(first_author__gender=gender)
+        book.mark_read_sometime()
+        assert book in Book.objects.by_gender(gender)
+        assert book.log_entries.first() in LogEntry.objects.by_gender(gender)
+        if gender != other_gender:
+            assert book not in Book.objects.by_gender(other_gender)
+            assert book.log_entries.first() not in LogEntry.objects.by_gender(
+                other_gender
+            )
+
+        if gender == 1:
+            assert book in Book.objects.by_men()
+            assert book not in Book.objects.by_women()
+        if gender == 2:
+            assert book not in Book.objects.by_men()
+            assert book in Book.objects.by_women()
