@@ -91,6 +91,16 @@ class TestBook:
             assert book not in Book.objects.by_men()
             assert book in Book.objects.by_women()
 
+        assert book not in Book.objects.by_multiple_genders()
+
+    def test_query_by_multiple_genders(self, book_factory, author_factory):
+        book = book_factory(first_author__gender=1)
+        book.add_author(author_factory(gender=2))
+        assert book in Book.objects.by_gender(1)
+        assert book in Book.objects.by_gender(2)
+        assert book not in Book.objects.by_gender(3)
+        assert book in Book.objects.by_multiple_genders()
+
     @pytest.mark.parametrize("tag", ["fiction", "non-fiction"])
     def test_query_by_subject(self, book_factory, tag):
         [Tag(name=name).save() for name in ["fiction", "non-fiction"]]
