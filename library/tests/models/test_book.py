@@ -113,3 +113,16 @@ class TestBook:
         if tag == "non-fiction":
             assert book in Book.objects.nonfiction()
             assert book not in Book.objects.fiction()
+
+    def test_series(self, book_factory):
+        book_collection = book_factory(series="Foo")
+        book1 = book_factory(
+            series="Foo", series_order=1, parent_edition=book_collection
+        )
+        book2 = book_factory(
+            series="Foo", series_order=2, parent_edition=book_collection
+        )
+
+        assert book1.display_series == "Foo, #1"
+        assert book2.display_series == "Foo, #2"
+        assert book_collection.display_series == "Foo, #1–2"

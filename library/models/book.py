@@ -620,6 +620,12 @@ class Book(TimestampedModel, SluggableModel):
     def display_series(self) -> str:
         if not self.series:
             return ""
+        if self.subeditions.count() > 1 and all(
+            book.series == self.series for book in self.subeditions.all()
+        ):
+            series_orders = sorted(book.series_order for book in self.subeditions.all())
+            return f"{self.series}, #{str(min(series_orders)).replace('.0', '')}–{str(max(series_orders)).replace('.0', '')}"
+
         if self.series_order:
             return f"{self.series}, #{str(self.series_order).replace('.0', '')}"
         return self.series
