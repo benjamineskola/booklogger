@@ -20,6 +20,11 @@ class TestBookAuthor:
 
         return authors
 
+    def test_str(self, book, authors):
+        book.add_author(authors[0])
+        book.add_author(authors[1], role="editor")
+        assert str(book.bookauthor_set.first()) == f"{authors[1]}: editor: {book.title}"
+
     def test_add_author(self, book, author):
         assert len(book.authors) == 0
         book.add_author(author)
