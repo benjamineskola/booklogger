@@ -1,7 +1,35 @@
+import re
+from typing import TYPE_CHECKING
 from urllib.parse import quote_plus
 
 import requests
 from bs4 import BeautifulSoup
+
+if TYPE_CHECKING:
+    from library.models import Book
+
+
+def update(book: "Book") -> "Book":
+    if book.publisher != "Verso":
+        return book
+    if book.publisher_url and "versobooks.com" in book.image_url:
+        return book
+
+    title = re.sub(
+        r"[^A-Za-z0-9 -]+",
+        " ",
+        book.edition_title if book.edition_title else book.title,
+    )
+    title, *_ = title.split(": ", 1)
+
+    url = (
+        book.publisher_url
+        if book.publisher_url
+        else find_page([book.search_query, title, str(book.first_author)])
+    )
+    if url:
+        book.update({"publisher_url": url, "image_url": scrape_image(url)})
+    return book
 
 
 def find_page(queries: list[str]) -> str:

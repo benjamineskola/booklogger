@@ -118,7 +118,7 @@ class BaseBookManager(models.Manager["Book"]):
         while candidate_ids:
             candidate_id = candidate_ids.pop(0)
             candidate = Book.objects.get(pk=candidate_id)
-            if candidate.update_from_google():
+            if google.update(candidate):
                 sleep_time = 1
                 print(".", end="", flush=True)
                 if (count := len(candidate_ids)) % 20 == 0:
@@ -701,11 +701,11 @@ class Book(TimestampedModel, SluggableModel):
 
         super().save(*args, **kwargs)
 
-        self.update_from_verso()
+        verso.update(self)
         if any([self.asin, self.isbn, (self.title and self.first_author)]) and (
             not all([self.first_published, self.goodreads_id, self.image_url])
         ):
-            self.update_from_goodreads()
+            goodreads.update(self)
             if orig_goodreads_id and not self.goodreads_id:
                 self.goodreads_id = orig_goodreads_id
                 super().save(*args, **kwargs)
@@ -720,8 +720,8 @@ class Book(TimestampedModel, SluggableModel):
                 ]
             )
         ):
-            self.update_from_google()
-            self.update_from_verso()
+            google.update(self)
+            verso.update(self)
 
         self.editions.all().update(
             title=self.title,
@@ -809,48 +809,6 @@ class Book(TimestampedModel, SluggableModel):
         return (
             not self.edition_published
         ) or self.edition_published == self.first_published
-
-    def update_from_google(self) -> bool:
-        data = google.fetch(self.google_books_id, self.isbn)
-        if data is not None:
-            self.update(data)
-            return True
-        return False
-
-    def update_from_goodreads(self) -> "Book":
-        result: dict[str, str] | None = {}
-        for query in [self.asin, self.isbn, self.search_query]:
-            if query and (
-                result := goodreads.find(
-                    query, self.first_author.surname if self.first_author else ""
-                )
-            ):
-                self.update(result)
-                break
-
-        return self
-
-    def update_from_verso(self) -> "Book":
-        if self.publisher != "Verso":
-            return self
-        if self.publisher_url and "versobooks.com" in self.image_url:
-            return self
-
-        title = re.sub(
-            r"[^A-Za-z0-9 -]+",
-            " ",
-            self.edition_title if self.edition_title else self.title,
-        )
-        title, *_ = title.split(": ", 1)
-
-        url = (
-            self.publisher_url
-            if self.publisher_url
-            else verso.find_page([self.search_query, title, str(self.first_author)])
-        )
-        if url:
-            self.update({"publisher_url": url, "image_url": verso.scrape_image(url)})
-        return self
 
     def update(self, data: dict[str, str], force: bool = False) -> "Book":
         needs_save = False

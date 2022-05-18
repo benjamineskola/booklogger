@@ -1,4 +1,17 @@
+from typing import TYPE_CHECKING
+
 import requests
+
+if TYPE_CHECKING:
+    from library.models import Book
+
+
+def update(book: "Book") -> bool:
+    data = fetch(book.google_books_id, book.isbn)
+    if data is not None:
+        book.update(data)
+        return True
+    return False
 
 
 def fetch(google_id: str = "", isbn: str = "") -> dict[str, str] | None:

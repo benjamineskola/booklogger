@@ -1,7 +1,25 @@
 import os
+from typing import TYPE_CHECKING
 
 import requests
 from bs4 import BeautifulSoup
+
+if TYPE_CHECKING:
+    from library.models import Book
+
+
+def update(book: "Book") -> "Book":
+    result: dict[str, str] | None = {}
+    for query in [book.asin, book.isbn, book.search_query]:
+        if query and (
+            result := find(
+                query, book.first_author.surname if book.first_author else ""
+            )
+        ):
+            book.update(result)
+            break
+
+    return book
 
 
 def find(query: str, author_name: str = "") -> dict[str, str] | None:
