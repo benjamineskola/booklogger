@@ -17,9 +17,9 @@
 ## {{ month_entries[0].end_date.strftime("%B") }}{% if verbose %} {{ '{#' +  month_entries[0].end_date.strftime("%B-%Y").lower()  + '}' }}{% endif %}
 
 {% for entry in month_entries %}
--   {{ entry.book.display_details | safe }}{% if verbose and ( entry.book.goodreads_id or entry.book.review_url ) %} [{% if entry.book.goodreads_id %}([goodreads](https://www.goodreads.com/book/show/{{ entry.book.goodreads_id }}){% endif %}
+-   {{ entry.book.display_details | safe }}{% if verbose and ( entry.book.goodreads_id or entry.book.review_url ) %} [{% if entry.book.goodreads_id %}<a href="https://www.goodreads.com/book/show/{{ entry.book.goodreads_id }}" class="fab fa-goodreads"></a>{% endif %}
     {%- if entry.book.goodreads_id and entry.book.review_url %}, {% endif -%}
-    {% if entry.book.review_url %}[review]({{ entry.book.review_url }}){% endif %})]{.small .text-muted}{% endif %}
+    {% if entry.book.review_url %}([review]({{ entry.book.review_url }})){% endif %}]{.small .text-muted}{% endif %}
 
 {% endfor %}
 {% endfor %}
