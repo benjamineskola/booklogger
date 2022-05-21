@@ -43,7 +43,7 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: ~/.venv
-          key: ${{ runner.os }}-python-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('requirements.txt') }}-hashFiles('requirements-dev.txt') }}
+          key: ${{ runner.os }}-python-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('requirements.txt') }}-${{ hashFiles('requirements-dev.txt') }}
         id: cache
       - uses: actions/cache@v2
         with:
