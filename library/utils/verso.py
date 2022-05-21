@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 def update(book: "Book") -> "Book":
     if book.publisher != "Verso":
         return book
-    if book.publisher_url and "versobooks.com" in book.image_url:
+    if book.publisher_url and "://versobooks.com" in book.image_url:
         return book
 
     title = re.sub(

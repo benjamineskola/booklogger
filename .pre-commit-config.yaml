@@ -19,6 +19,7 @@ repos:
         name: curlylint
         language: system
         entry: "curlylint --quiet --rule 'indent: 2'"
+        files: "^library/jinja2/"
         types: [html]
       - id: migrations
         name: migrations
@@ -76,4 +77,4 @@ repos:
         types: [python]
         pass_filenames: false
 
-exclude: "^library/migrations"
+exclude: "^library/(migrations|fixtures)"
