@@ -68,7 +68,6 @@ class TestTag:
         assert "foo" not in book.tags
         assert "bar" in book.tags
 
-        print(tag2.children.all())
         assert tag2.children.first().name == "bar"
 
     def test_books_uniquely_tagged(self, book_factory, tag_factory):
@@ -78,3 +77,9 @@ class TestTag:
         tag = Tag.objects["foo"]
         assert book1 in tag.books_uniquely_tagged
         assert book2 not in tag.books_uniquely_tagged
+
+    def test_tags_case_insensitive(self, book_factory, tag_factory):
+        book_factory(tags=["foo"])
+        book_factory(tags=["Foo"])
+
+        assert Tag.objects["foo"] == Tag.objects["Foo"]

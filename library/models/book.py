@@ -826,7 +826,7 @@ class BookAuthor(TimestampedModel):
 
 class TagManager(models.Manager["Tag"]):
     def __getitem__(self, name: str) -> "Tag":
-        return Tag.objects.get(name=name)
+        return Tag.objects.get(name=name.lower())
 
 
 class Tag(TimestampedModel):
@@ -916,3 +916,7 @@ class Tag(TimestampedModel):
             book.tags.remove(self.name)
             book.save()
         return super().delete(*args, **kwargs)
+
+    def save(self, *args: Any, **kwargs: Any) -> None:
+        self.name = self.name.lower()
+        super().save(*args, **kwargs)
