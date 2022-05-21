@@ -12,7 +12,7 @@ from library.models.abc import SluggableModel, TimestampedModel
 from library.utils import LANGUAGES, remove_stopwords
 
 if TYPE_CHECKING:
-    from .book import Book, BookQuerySet
+    from .book import Book, BookQuerySet  # pragma: no cover
 
 
 class AuthorManager(models.Manager["Author"]):

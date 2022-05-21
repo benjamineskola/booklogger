@@ -42,7 +42,7 @@ from library.utils import (
 from .author import Author
 
 if TYPE_CHECKING:
-    from .log_entry import LogEntry
+    from .log_entry import LogEntry  # pragma: no cover
 
 
 class BaseBookManager(models.Manager["Book"]):

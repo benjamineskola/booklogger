@@ -5,7 +5,7 @@ import requests
 from bs4 import BeautifulSoup
 
 if TYPE_CHECKING:
-    from library.models import Book
+    from library.models import Book  # pragma: no cover
 
 
 def update(book: "Book") -> "Book":

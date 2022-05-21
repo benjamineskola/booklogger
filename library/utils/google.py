@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 import requests
 
 if TYPE_CHECKING:
-    from library.models import Book
+    from library.models import Book  # pragma: no cover
 
 
 def update(book: "Book") -> bool:
