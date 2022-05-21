@@ -45,9 +45,9 @@ def find_all(query: str) -> list[dict[str, str]]:
     except KeyError:
         return []
 
-    xml = BeautifulSoup(requests.get(search_url).text)
+    xml = BeautifulSoup(requests.get(search_url).text, features="xml")
 
-    all_results = xml.goodreadsresponse.search.results.find_all("work")
+    all_results = xml.GoodreadsResponse.search.results.find_all("work")
     if not all_results:
         return []
 
@@ -70,7 +70,7 @@ def find_all(query: str) -> list[dict[str, str]]:
 
 def scrape_image(goodreads_id: str) -> str:
     goodreads_url = f"https://www.goodreads.com/book/show/{goodreads_id}"
-    data = BeautifulSoup(requests.get(goodreads_url).text)
+    data = BeautifulSoup(requests.get(goodreads_url).text, features="lxml")
     if meta_tag := data.find(
         "meta", property="og:image", content=lambda x: "nophoto" not in x
     ):
