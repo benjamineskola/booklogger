@@ -50,3 +50,12 @@ class TestGoodreads:
         result = goodreads.find(self.query + "_scrape")
         assert result["authors"] == [("Karl Marx", "")]
         assert not result["image_url"]
+
+    def test_no_result(self, requests_mock, goodreads_key):
+        query = "something ridiculous and nonexistent"
+        requests_mock.get(
+            f"https://www.goodreads.com/search/index.xml?key=TEST_FAKE&q={query}",
+            text='<?xml version="1.0" encoding="UTF-8"?>\n<GoodreadsResponse><search><results></results></search></GoodreadsResponse>',
+        )
+        result = goodreads.find(query)
+        assert not result
