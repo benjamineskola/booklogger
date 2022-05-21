@@ -126,3 +126,15 @@ class TestBook:
         assert book1.display_series == "Foo, #1"
         assert book2.display_series == "Foo, #2"
         assert book_collection.display_series == "Foo, #1–2"
+
+    @pytest.mark.parametrize(
+        "actual,expected",
+        [
+            ("Something Books", "Something"),
+            ("Something Press", "Something"),
+            ("Something University Press", "Something University Press"),
+        ],
+    )
+    def test_clean_publisher(self, book_factory, actual, expected):
+        book = book_factory(publisher=actual)
+        assert book.publisher == expected
