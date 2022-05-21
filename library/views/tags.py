@@ -1,5 +1,5 @@
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import render
+from django.template.response import TemplateResponse
 
 from library.models import Book, Tag
 
@@ -36,7 +36,7 @@ def tag_cloud(request: HttpRequest) -> HttpResponse:
         },
     }
 
-    return render(
+    return TemplateResponse(
         request,
         "tag_list.html",
         {"page_title": "Tags", "tags": sorted_tags},
