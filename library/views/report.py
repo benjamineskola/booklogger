@@ -5,6 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import F, Q
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
+from django.template.response import TemplateResponse
 from django.views import generic
 
 from library.models import Author, Book, BookQuerySet, Tag
@@ -212,7 +213,7 @@ def tags(request: HttpRequest, base_tag: str = "non-fiction") -> HttpResponse:
         tag: [book for book in books if tag in book.tags] for tag in toplevel_tags
     }
 
-    return render(
+    return TemplateResponse(
         request,
         "report_tag_combinations.html",
         {"results": results, "excluded_tags": excluded_tags},
@@ -242,7 +243,7 @@ def related_tags(request: HttpRequest, base_tag: str = "non-fiction") -> HttpRes
         results[tag]["total"] = len(tagged_books)
         results[tag][tag] = len([book for book in tagged_books if len(book.tags) > 2])
 
-    return render(
+    return TemplateResponse(
         request,
         "report_related_tags.html",
         {"results": results, "base_tag": base_tag, "excluded_tags": excluded_tags},

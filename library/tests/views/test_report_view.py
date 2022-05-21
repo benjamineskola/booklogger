@@ -37,3 +37,37 @@ class TestReportView:
 
         resp = admin_client.get("/report/1/", {"order_by": "page_count"})
         assert list(resp.context_data["object_list"]) == [book2, book1]
+
+    def test_tag_report(self, admin_client, book_factory, tag_factory):
+        base_tag = tag_factory(name="non-fiction")
+        base_tag.children.add(tag_factory(name="history"))
+        base_tag.children.add(tag_factory(name="politics"))
+        book1 = book_factory(tags=["history"])
+        book2 = book_factory(tags=["history", "politics"])
+
+        resp = admin_client.get("/report/tags/")
+
+        assert book1 in resp.context_data["results"]["history"]
+        assert book1 not in resp.context_data["results"]["politics"]
+        assert book2 in resp.context_data["results"]["history"]
+        assert book2 in resp.context_data["results"]["politics"]
+
+    def test_tag_related_report(self, admin_client, book_factory, tag_factory):
+        base_tag = tag_factory(name="non-fiction")
+        base_tag.children.add(tag_factory(name="history"))
+        base_tag.children.add(tag_factory(name="politics"))
+        base_tag.children.add(tag_factory(name="philosophy"))
+
+        book_factory(tags=["history", "politics"])
+        book_factory(tags=["philosophy"])
+
+        resp = admin_client.get("/report/tags/related/")
+        results = resp.context_data["results"]
+
+        assert "history" in results["politics"]
+        assert "politics" in results["history"]
+
+        assert "philosophy" not in results["politics"]
+        assert "philosophy" not in results["history"]
+        assert "history" not in results["philosophy"]
+        assert "politics" not in results["philosophy"]
