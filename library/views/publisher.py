@@ -1,5 +1,5 @@
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import render
+from django.template.response import TemplateResponse
 
 from library.models import Book
 
@@ -17,7 +17,7 @@ def index(request: HttpRequest) -> HttpResponse:
 
         counts[publisher] += 1
 
-    return render(
+    return TemplateResponse(
         request,
         "publisher_list.html",
         {"publishers": counts, "count": len(counts.keys())},
