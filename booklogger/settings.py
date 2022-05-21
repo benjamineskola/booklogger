@@ -159,3 +159,5 @@ if "HEROKU_RELEASE_VERSION" in os.environ:
     os.environ["COMMIT_ID"] = os.environ["HEROKU_SLUG_COMMIT"][0:7]
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
+GOODREADS_KEY = os.environ.get("GOODREADS_KEY")

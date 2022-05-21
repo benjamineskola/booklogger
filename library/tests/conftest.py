@@ -1,5 +1,4 @@
-import os
-
+import pytest
 from pytest_factoryboy import register
 
 from library.factories import (  # noqa: F401
@@ -15,5 +14,11 @@ register(TagFactory)
 register(UserFactory)
 
 
-if "GOODREADS_KEY" in os.environ:
-    del os.environ["GOODREADS_KEY"]
+@pytest.fixture(autouse=True)
+def unset_goodreads_key(settings):
+    settings.GOODREADS_KEY = None
+
+
+@pytest.fixture
+def goodreads_key(settings):
+    settings.GOODREADS_KEY = "TEST_FAKE"

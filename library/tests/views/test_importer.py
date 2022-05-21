@@ -1,5 +1,4 @@
 import json
-import os
 
 import pytest
 
@@ -9,9 +8,7 @@ from library.models import Book
 @pytest.mark.django_db
 class TestImporter:
     @pytest.fixture
-    def goodreads_mock(self, requests_mock):
-        os.environ["GOODREADS_KEY"] = "TEST_FAKE"
-
+    def goodreads_mock(self, requests_mock, goodreads_key):
         text = open("library/fixtures/wuthering_heights.xml").read()
         requests_mock.get(
             "https://www.goodreads.com/search/index.xml?key=TEST_FAKE&q=Wuthering%20Heights",
@@ -29,10 +26,6 @@ class TestImporter:
             "https://www.googleapis.com/books/v1/volumes?q=isbn:9780199541898",
             text="{}",
         )
-
-    @classmethod
-    def teardown_class(cls):
-        del os.environ["GOODREADS_KEY"]
 
     def test_import_get_without_query(self, admin_client):
         resp = admin_client.get("/book/import/")
@@ -69,7 +62,6 @@ class TestImporter:
         ],
     )
     def test_import_post(self, admin_client, goodreads_mock, query_string, expected):
-        print(query_string)
         query = admin_client.get("/book/import/", {"query": query_string})
         resp = admin_client.post(
             "/book/import/",

@@ -1,8 +1,8 @@
-import os
 from typing import TYPE_CHECKING
 
 import requests
 from bs4 import BeautifulSoup
+from django.conf import settings
 
 if TYPE_CHECKING:
     from library.models import Book  # pragma: no cover
@@ -40,10 +40,10 @@ def find(query: str, author_name: str = "") -> dict[str, str] | None:
 
 
 def find_all(query: str) -> list[dict[str, str]]:
-    try:
-        search_url = f"https://www.goodreads.com/search/index.xml?key={os.environ['GOODREADS_KEY']}&q={query}"
-    except KeyError:
+    if not settings.GOODREADS_KEY:
         return []
+
+    search_url = f"https://www.goodreads.com/search/index.xml?key={settings.GOODREADS_KEY}&q={query}"
 
     xml = BeautifulSoup(requests.get(search_url).text, features="xml")
 
