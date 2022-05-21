@@ -4,7 +4,8 @@ import re
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
+from django.template.response import TemplateResponse
 
 from library.models import Book, Queue
 from library.utils import create, goodreads
@@ -40,7 +41,7 @@ def import_book(request: HttpRequest, query: str | None = None) -> HttpResponse:
             ).first()
             matches[result["goodreads_id"]] = match
 
-    return render(
+    return TemplateResponse(
         request,
         "import.html",
         {
@@ -114,7 +115,7 @@ def bulk_import(request: HttpRequest) -> HttpResponse:
                 queue_item = Queue(data={"title": title.strip, "authors": authors})
                 queue_item.save()
 
-        return render(
+        return TemplateResponse(
             request,
             "bulk_import.html",
             {
@@ -123,7 +124,7 @@ def bulk_import(request: HttpRequest) -> HttpResponse:
             },
         )
 
-    return render(
+    return TemplateResponse(
         request,
         "bulk_import.html",
         {"page_title": "Import"},

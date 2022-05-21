@@ -1,0 +1,439 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GoodreadsResponse>
+  <Request>
+    <authentication>true</authentication>
+      <key><![CDATA[TEST_FAKE]]></key>
+    <method><![CDATA[search_index]]></method>
+  </Request>
+  <search>
+  <query><![CDATA[Wuthering Heights]]></query>
+    <results-start>1</results-start>
+    <results-end>20</results-end>
+    <total-results>503</total-results>
+    <source>Goodreads</source>
+    <query-time-seconds>0.10</query-time-seconds>
+    <results>
+        <work>
+  <id type="integer">1565818</id>
+  <books_count type="integer">9318</books_count>
+  <ratings_count type="integer">1559173</ratings_count>
+  <text_reviews_count type="integer">47049</text_reviews_count>
+  <original_publication_year type="integer">1847</original_publication_year>
+  <original_publication_month type="integer">12</original_publication_month>
+  <original_publication_day type="integer" nil="true"/>
+  <average_rating>3.88</average_rating>
+  <best_book type="Book">
+    <id type="integer">6185</id>
+    <title>Wuthering Heights</title>
+    <author>
+      <id type="integer">4191</id>
+      <name>Emily Brontë</name>
+    </author>
+    <image_url>https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1630501681l/6185._SX98_.jpg</image_url>
+    <small_image_url>https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1630501681l/6185._SY75_.jpg</small_image_url>
+  </best_book>
+</work>
+
+        <work>
+  <id type="integer">46028536</id>
+  <books_count type="integer">3</books_count>
+  <ratings_count type="integer">26136</ratings_count>
+  <text_reviews_count type="integer">367</text_reviews_count>
+  <original_publication_year type="integer">1985</original_publication_year>
+  <original_publication_month type="integer">4</original_publication_month>
+  <original_publication_day type="integer">4</original_publication_day>
+  <average_rating>4.14</average_rating>
+  <best_book type="Book">
+    <id type="integer">130346</id>
+    <title>Wuthering Heights by Emily Brontë</title>
+    <author>
+      <id type="integer">69725</id>
+      <name>Hilda D. Spear</name>
+    </author>
+    <image_url>https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1634033368l/130346._SX98_.jpg</image_url>
+    <small_image_url>https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1634033368l/130346._SY75_.jpg</small_image_url>
+  </best_book>
+</work>
+
+        <work>
+  <id type="integer">40170388</id>
+  <books_count type="integer">6</books_count>
+  <ratings_count type="integer">10751</ratings_count>
+  <text_reviews_count type="integer">176</text_reviews_count>
+  <original_publication_year type="integer">1847</original_publication_year>
+  <original_publication_month type="integer" nil="true"/>
+  <original_publication_day type="integer" nil="true"/>
+  <average_rating>4.33</average_rating>
+  <best_book type="Book">
+    <id type="integer">107972</id>
+    <title>The Brontë Sisters: Wuthering Heights and Jane Eyre</title>
+    <author>
+      <id type="integer">4191</id>
+      <name>Emily Brontë</name>
+    </author>
+    <image_url>https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1581789392l/107972._SX98_.jpg</image_url>
+    <small_image_url>https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1581789392l/107972._SX50_.jpg</small_image_url>
+  </best_book>
+</work>
+
+        <work>
+  <id type="integer">85101814</id>
+  <books_count type="integer">2</books_count>
+  <ratings_count type="integer">3144</ratings_count>
+  <text_reviews_count type="integer">55</text_reviews_count>
+  <original_publication_year type="integer" nil="true"/>
+  <original_publication_month type="integer" nil="true"/>
+  <original_publication_day type="integer" nil="true"/>
+  <average_rating>4.01</average_rating>
+  <best_book type="Book">
+    <id type="integer">1612350</id>
+    <title>Wuthering Heights, Agnès Grey &amp; Villette</title>
+    <author>
+      <id type="integer">4191</id>
+      <name>Emily Brontë</name>
+    </author>
+    <image_url>https://s.gr-assets.com/assets/nophoto/book/111x148-bcc042a9c91a29c1d680899eff700a03.png</image_url>
+    <small_image_url>https://s.gr-assets.com/assets/nophoto/book/50x75-a91bf249278a81aabab721ef782c4a74.png</small_image_url>
+  </best_book>
+</work>
+
+        <work>
+  <id type="integer">44890111</id>
+  <books_count type="integer">12</books_count>
+  <ratings_count type="integer">794</ratings_count>
+  <text_reviews_count type="integer">184</text_reviews_count>
+  <original_publication_year type="integer">2015</original_publication_year>
+  <original_publication_month type="integer">8</original_publication_month>
+  <original_publication_day type="integer">13</original_publication_day>
+  <average_rating>3.88</average_rating>
+  <best_book type="Book">
+    <id type="integer">25673956</id>
+    <title>Nelly Dean: A Return to Wuthering Heights</title>
+    <author>
+      <id type="integer">1695662</id>
+      <name>Alison Case</name>
+    </author>
+    <image_url>https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1435193318l/25673956._SX98_.jpg</image_url>
+    <small_image_url>https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1435193318l/25673956._SY75_.jpg</small_image_url>
+  </best_book>
+</work>
+
+        <work>
+  <id type="integer">21738752</id>
+  <books_count type="integer">10</books_count>
+  <ratings_count type="integer">281</ratings_count>
+  <text_reviews_count type="integer">85</text_reviews_count>
+  <original_publication_year type="integer">2013</original_publication_year>
+  <original_publication_month type="integer">1</original_publication_month>
+  <original_publication_day type="integer">1</original_publication_day>
+  <average_rating>3.13</average_rating>
+  <best_book type="Book">
+    <id type="integer">17162784</id>
+    <title>Wuthering Nights: An Erotic Retelling of Wuthering Heights</title>
+    <author>
+      <id type="integer">4841217</id>
+      <name>I.J. Miller</name>
+    </author>
+    <image_url>https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1356924239l/17162784._SX98_.jpg</image_url>
+    <small_image_url>https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1356924239l/17162784._SY75_.jpg</small_image_url>
+  </best_book>
+</work>
+
+        <work>
+  <id type="integer">80123299</id>
+  <books_count type="integer">3</books_count>
+  <ratings_count type="integer">31</ratings_count>
+  <text_reviews_count type="integer">27</text_reviews_count>
+  <original_publication_year type="integer">2022</original_publication_year>
+  <original_publication_month type="integer">7</original_publication_month>
+  <original_publication_day type="integer">5</original_publication_day>
+  <average_rating>4.16</average_rating>
+  <best_book type="Book">
+    <id type="integer">58484146</id>
+    <title>What Souls Are Made Of: A Wuthering Heights Remix</title>
+    <author>
+      <id type="integer">17718309</id>
+      <name>Tasha Suri</name>
+    </author>
+    <image_url>https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1636719443l/58484146._SX98_.jpg</image_url>
+    <small_image_url>https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1636719443l/58484146._SY75_.jpg</small_image_url>
+  </best_book>
+</work>
+
+        <work>
+  <id type="integer">21855992</id>
+  <books_count type="integer">3</books_count>
+  <ratings_count type="integer">533</ratings_count>
+  <text_reviews_count type="integer">71</text_reviews_count>
+  <original_publication_year type="integer">2013</original_publication_year>
+  <original_publication_month type="integer">2</original_publication_month>
+  <original_publication_day type="integer">1</original_publication_day>
+  <average_rating>3.95</average_rating>
+  <best_book type="Book">
+    <id type="integer">16065380</id>
+    <title>Wuthering Heights: A BabyLit  Weather Primer</title>
+    <author>
+      <id type="integer">895119</id>
+      <name>Jennifer Adams</name>
+    </author>
+    <image_url>https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1363378555l/16065380._SX98_.jpg</image_url>
+    <small_image_url>https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1363378555l/16065380._SX50_.jpg</small_image_url>
+  </best_book>
+</work>
+
+        <work>
+  <id type="integer">59236482</id>
+  <books_count type="integer">1</books_count>
+  <ratings_count type="integer">296</ratings_count>
+  <text_reviews_count type="integer">75</text_reviews_count>
+  <original_publication_year type="integer">2018</original_publication_year>
+  <original_publication_month type="integer">8</original_publication_month>
+  <original_publication_day type="integer">18</original_publication_day>
+  <average_rating>3.35</average_rating>
+  <best_book type="Book">
+    <id type="integer">37646074</id>
+    <title>I Am Heathcliff: Stories Inspired by Wuthering Heights</title>
+    <author>
+      <id type="integer">9343</id>
+      <name>Kate Mosse</name>
+    </author>
+    <image_url>https://s.gr-assets.com/assets/nophoto/book/111x148-bcc042a9c91a29c1d680899eff700a03.png</image_url>
+    <small_image_url>https://s.gr-assets.com/assets/nophoto/book/50x75-a91bf249278a81aabab721ef782c4a74.png</small_image_url>
+  </best_book>
+</work>
+
+        <work>
+  <id type="integer">90745147</id>
+  <books_count type="integer">1</books_count>
+  <ratings_count type="integer">27</ratings_count>
+  <text_reviews_count type="integer">0</text_reviews_count>
+  <original_publication_year type="integer" nil="true"/>
+  <original_publication_month type="integer" nil="true"/>
+  <original_publication_day type="integer" nil="true"/>
+  <average_rating>4.26</average_rating>
+  <best_book type="Book">
+    <id type="integer">57922220</id>
+    <title>Wuthering Heights: Annotated</title>
+    <author>
+      <id type="integer">20234225</id>
+      <name>Wuthering Heights</name>
+    </author>
+    <image_url>https://s.gr-assets.com/assets/nophoto/book/111x148-bcc042a9c91a29c1d680899eff700a03.png</image_url>
+    <small_image_url>https://s.gr-assets.com/assets/nophoto/book/50x75-a91bf249278a81aabab721ef782c4a74.png</small_image_url>
+  </best_book>
+</work>
+
+        <work>
+  <id type="integer">25531270</id>
+  <books_count type="integer">7</books_count>
+  <ratings_count type="integer">809</ratings_count>
+  <text_reviews_count type="integer">62</text_reviews_count>
+  <original_publication_year type="integer">2011</original_publication_year>
+  <original_publication_month type="integer">3</original_publication_month>
+  <original_publication_day type="integer">1</original_publication_day>
+  <average_rating>3.89</average_rating>
+  <best_book type="Book">
+    <id type="integer">13231664</id>
+    <title>Wuthering Heights The Graphic Novel: Original Text</title>
+    <author>
+      <id type="integer">148066</id>
+      <name>Sean Michael Wilson</name>
+    </author>
+    <image_url>https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1328692964l/13231664._SX98_.jpg</image_url>
+    <small_image_url>https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1328692964l/13231664._SX50_.jpg</small_image_url>
+  </best_book>
+</work>
+
+        <work>
+  <id type="integer">55388369</id>
+  <books_count type="integer">13</books_count>
+  <ratings_count type="integer">129</ratings_count>
+  <text_reviews_count type="integer">3</text_reviews_count>
+  <original_publication_year type="integer" nil="true"/>
+  <original_publication_month type="integer" nil="true"/>
+  <original_publication_day type="integer" nil="true"/>
+  <average_rating>3.93</average_rating>
+  <best_book type="Book">
+    <id type="integer">34691645</id>
+    <title>100 Books You Must Read Before You Die - volume 1 [newly updated] [Pride and Prejudice; Jane Eyre; Wuthering Heights; Tarzan of the Apes; The Count of ... (The Greatest Writers of All Time)</title>
+    <author>
+      <id type="integer">16223577</id>
+      <name>Book House</name>
+    </author>
+    <image_url>https://s.gr-assets.com/assets/nophoto/book/111x148-bcc042a9c91a29c1d680899eff700a03.png</image_url>
+    <small_image_url>https://s.gr-assets.com/assets/nophoto/book/50x75-a91bf249278a81aabab721ef782c4a74.png</small_image_url>
+  </best_book>
+</work>
+
+        <work>
+  <id type="integer">21430830</id>
+  <books_count type="integer">42</books_count>
+  <ratings_count type="integer">1436</ratings_count>
+  <text_reviews_count type="integer">56</text_reviews_count>
+  <original_publication_year type="integer">1847</original_publication_year>
+  <original_publication_month type="integer" nil="true"/>
+  <original_publication_day type="integer" nil="true"/>
+  <average_rating>4.25</average_rating>
+  <best_book type="Book">
+    <id type="integer">15945610</id>
+    <title>The Brontë Sisters: Three Novels: Jane Eyre, Wuthering Heights, Agnes Grey</title>
+    <author>
+      <id type="integer">1036615</id>
+      <name>Charlotte Brontë</name>
+    </author>
+    <image_url>https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1363262651l/15945610._SX98_.jpg</image_url>
+    <small_image_url>https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1363262651l/15945610._SY75_.jpg</small_image_url>
+  </best_book>
+</work>
+
+        <work>
+  <id type="integer">289405</id>
+  <books_count type="integer">22</books_count>
+  <ratings_count type="integer">343</ratings_count>
+  <text_reviews_count type="integer">22</text_reviews_count>
+  <original_publication_year type="integer">1982</original_publication_year>
+  <original_publication_month type="integer">8</original_publication_month>
+  <original_publication_day type="integer">27</original_publication_day>
+  <average_rating>4.34</average_rating>
+  <best_book type="Book">
+    <id type="integer">496246</id>
+    <title>The Brontës: Three Great Novels: Jane Eyre, Wuthering Heights and The Tenant of Wildfell Hall</title>
+    <author>
+      <id type="integer">1036615</id>
+      <name>Charlotte Brontë</name>
+    </author>
+    <image_url>https://s.gr-assets.com/assets/nophoto/book/111x148-bcc042a9c91a29c1d680899eff700a03.png</image_url>
+    <small_image_url>https://s.gr-assets.com/assets/nophoto/book/50x75-a91bf249278a81aabab721ef782c4a74.png</small_image_url>
+  </best_book>
+</work>
+
+        <work>
+  <id type="integer">1158838</id>
+  <books_count type="integer">21</books_count>
+  <ratings_count type="integer">431</ratings_count>
+  <text_reviews_count type="integer">52</text_reviews_count>
+  <original_publication_year type="integer">1992</original_publication_year>
+  <original_publication_month type="integer">7</original_publication_month>
+  <original_publication_day type="integer" nil="true"/>
+  <average_rating>3.36</average_rating>
+  <best_book type="Book">
+    <id type="integer">1171087</id>
+    <title>H: The Story of Heathcliff's Journey Back to Wuthering Heights</title>
+    <author>
+      <id type="integer">52125</id>
+      <name>Lin Haire-Sargeant</name>
+    </author>
+    <image_url>https://s.gr-assets.com/assets/nophoto/book/111x148-bcc042a9c91a29c1d680899eff700a03.png</image_url>
+    <small_image_url>https://s.gr-assets.com/assets/nophoto/book/50x75-a91bf249278a81aabab721ef782c4a74.png</small_image_url>
+  </best_book>
+</work>
+
+        <work>
+  <id type="integer">21940281</id>
+  <books_count type="integer">12</books_count>
+  <ratings_count type="integer">385</ratings_count>
+  <text_reviews_count type="integer">34</text_reviews_count>
+  <original_publication_year type="integer">1992</original_publication_year>
+  <original_publication_month type="integer">3</original_publication_month>
+  <original_publication_day type="integer">1</original_publication_day>
+  <average_rating>3.80</average_rating>
+  <best_book type="Book">
+    <id type="integer">3177308</id>
+    <title>Wuthering Heights (Oxford Bookworms Library)</title>
+    <author>
+      <id type="integer">5248</id>
+      <name>Clare West</name>
+    </author>
+    <image_url>https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1408923293l/3177308._SX98_.jpg</image_url>
+    <small_image_url>https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1408923293l/3177308._SY75_.jpg</small_image_url>
+  </best_book>
+</work>
+
+        <work>
+  <id type="integer">75877542</id>
+  <books_count type="integer">7</books_count>
+  <ratings_count type="integer">98</ratings_count>
+  <text_reviews_count type="integer">1</text_reviews_count>
+  <original_publication_year type="integer" nil="true"/>
+  <original_publication_month type="integer" nil="true"/>
+  <original_publication_day type="integer" nil="true"/>
+  <average_rating>4.65</average_rating>
+  <best_book type="Book">
+    <id type="integer">36385209</id>
+    <title>The Brontë Sisters Boxed Set: Jane Eyre, Wuthering Heights, The Tenant of Wildfell Hall, Villette (NTMC Classics)</title>
+    <author>
+      <id type="integer">1036615</id>
+      <name>Charlotte Brontë</name>
+    </author>
+    <image_url>https://s.gr-assets.com/assets/nophoto/book/111x148-bcc042a9c91a29c1d680899eff700a03.png</image_url>
+    <small_image_url>https://s.gr-assets.com/assets/nophoto/book/50x75-a91bf249278a81aabab721ef782c4a74.png</small_image_url>
+  </best_book>
+</work>
+
+        <work>
+  <id type="integer">85100913</id>
+  <books_count type="integer">3</books_count>
+  <ratings_count type="integer">103</ratings_count>
+  <text_reviews_count type="integer">7</text_reviews_count>
+  <original_publication_year type="integer" nil="true"/>
+  <original_publication_month type="integer" nil="true"/>
+  <original_publication_day type="integer" nil="true"/>
+  <average_rating>4.37</average_rating>
+  <best_book type="Book">
+    <id type="integer">31174</id>
+    <title>Selected Works of the Brontë Sisters: Jane Eyre / Villette / Wuthering Heights / Agnes Grey / The Tenant of Wildfell Hall</title>
+    <author>
+      <id type="integer">1036615</id>
+      <name>Charlotte Brontë</name>
+    </author>
+    <image_url>https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1168239261l/31174._SX98_.jpg</image_url>
+    <small_image_url>https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1168239261l/31174._SY75_.jpg</small_image_url>
+  </best_book>
+</work>
+
+        <work>
+  <id type="integer">46211887</id>
+  <books_count type="integer">5</books_count>
+  <ratings_count type="integer">214</ratings_count>
+  <text_reviews_count type="integer">21</text_reviews_count>
+  <original_publication_year type="integer" nil="true"/>
+  <original_publication_month type="integer" nil="true"/>
+  <original_publication_day type="integer" nil="true"/>
+  <average_rating>4.07</average_rating>
+  <best_book type="Book">
+    <id type="integer">1063424</id>
+    <title>Wuthering Heights and Poems</title>
+    <author>
+      <id type="integer">4191</id>
+      <name>Emily Brontë</name>
+    </author>
+    <image_url>https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1538047973l/1063424._SX98_.jpg</image_url>
+    <small_image_url>https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1538047973l/1063424._SY75_.jpg</small_image_url>
+  </best_book>
+</work>
+
+        <work>
+  <id type="integer">13992882</id>
+  <books_count type="integer">1</books_count>
+  <ratings_count type="integer">167</ratings_count>
+  <text_reviews_count type="integer">1</text_reviews_count>
+  <original_publication_year type="integer" nil="true"/>
+  <original_publication_month type="integer" nil="true"/>
+  <original_publication_day type="integer" nil="true"/>
+  <average_rating>4.31</average_rating>
+  <best_book type="Book">
+    <id type="integer">6429302</id>
+    <title>Wuthering Heights And Emma</title>
+    <author>
+      <id type="integer">8060190</id>
+      <name>C.M. Harbin</name>
+    </author>
+    <image_url>https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1347142836l/6429302._SX98_.jpg</image_url>
+    <small_image_url>https://i.gr-assets.com/images/S/compressed.photo.goodreads.com/books/1347142836l/6429302._SX50_.jpg</small_image_url>
+  </best_book>
+</work>
+
+    </results>
+</search>
+
+</GoodreadsResponse>
