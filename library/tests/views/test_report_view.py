@@ -71,3 +71,12 @@ class TestReportView:
         assert "philosophy" not in results["history"]
         assert "history" not in results["philosophy"]
         assert "politics" not in results["philosophy"]
+
+    def test_detached_author_report(self, admin_client, author_factory, book_factory):
+        author1 = author_factory()
+        author2 = author_factory()
+        book_factory(first_author=author1)
+
+        resp = admin_client.get("/report/authors/")
+        assert author1 not in resp.context_data["object_list"]
+        assert author2 in resp.context_data["object_list"]

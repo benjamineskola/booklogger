@@ -4,7 +4,6 @@ from typing import Any, Callable
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import F, Q
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import render
 from django.template.response import TemplateResponse
 from django.views import generic
 
@@ -251,7 +250,7 @@ def related_tags(request: HttpRequest, base_tag: str = "non-fiction") -> HttpRes
 
 
 def detached_authors(request: HttpRequest) -> HttpResponse:
-    return render(
+    return TemplateResponse(
         request,
         "report.html",
         {
