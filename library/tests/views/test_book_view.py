@@ -101,3 +101,65 @@ class TestBook:
         resp = client.get("/books/", {"sort_by": "first_published"})
         assert resp.context_data["object_list"][0] == book2
         assert resp.context_data["object_list"][1] == book1
+
+    def test_start_reading(self, admin_client, book):
+        admin_client.post(f"{book.get_absolute_url()}start/")
+        assert book.currently_reading
+
+    def test_finish_reading(self, admin_client, book):
+        book.start_reading()
+        admin_client.post(f"{book.get_absolute_url()}finish/")
+        assert book.read
+
+    def test_update_progress_percentage(self, admin_client, book):
+        book.start_reading()
+        admin_client.post(
+            f"{book.get_absolute_url()}update/",
+            {"progress_type": "percentage", "value": 50},
+        )
+        assert book.log_entries.last().progress_percentage == 50
+
+    def test_update_progress_pages(self, admin_client, book_factory):
+        book = book_factory(page_count=500)
+        book.start_reading()
+        admin_client.post(
+            f"{book.get_absolute_url()}update/",
+            {"progress_type": "pages", "value": 250},
+        )
+        assert book.log_entries.last().progress_page == 250
+        assert book.log_entries.last().progress_percentage == 50
+
+    def test_add_tags(self, admin_client, book):
+        admin_client.post(f"{book.get_absolute_url()}add_tags/", {"tags": "foo,bar"})
+        book.refresh_from_db()
+        assert book.tags == ["bar", "foo"]
+
+    def test_add_tags_noop(self, admin_client, book_factory):
+        book = book_factory(tags=["foo"])
+        resp = admin_client.post(
+            f"{book.get_absolute_url()}add_tags/", {"tags": "foo,bar"}
+        )
+        book.refresh_from_db()
+        assert book.tags == ["bar", "foo"]
+        assert resp.content == b'{"tags": ["bar"]}'
+
+    def test_remove_tags(self, admin_client, book_factory):
+        book = book_factory(tags=["foo", "bar"])
+        admin_client.post(f"{book.get_absolute_url()}remove_tags/", {"tags": "foo"})
+        book.refresh_from_db()
+        assert book.tags == ["bar"]
+
+    def test_mark_owned(self, admin_client, book, user):
+        admin_client.post(f"{book.get_absolute_url()}mark_owned/")
+        book.refresh_from_db()
+        assert book.owned
+
+    def test_mark_read_sometime(self, admin_client, book):
+        admin_client.post(f"{book.get_absolute_url()}mark_read_sometime/")
+        book.refresh_from_db()
+        assert book.read
+
+    def test_rate(self, admin_client, book, user):
+        admin_client.post(f"{book.get_absolute_url()}rate/", {"rating": 5})
+        book.refresh_from_db()
+        assert book.rating == 5

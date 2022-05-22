@@ -320,8 +320,6 @@ def remove_tags(request: HttpRequest, slug: str) -> HttpResponse:
         book.tags.remove(tag)
     book.save()
 
-    if dest := request.GET.get("next"):
-        return redirect(dest)
     return redirect("library:book_details", slug=slug)
 
 
