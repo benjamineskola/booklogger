@@ -6,6 +6,7 @@ from . import (  # noqa: F401
     author,
     book,
     importer,
+    log_entry,
     publisher,
     reading_list,
     report,

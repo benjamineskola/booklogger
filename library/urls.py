@@ -4,7 +4,7 @@ from . import views
 
 app_name = "library"
 urlpatterns = [
-    path("", views.book.CurrentlyReadingView.as_view(), name="index"),
+    path("", views.log_entry.CurrentlyReadingView.as_view(), name="index"),
     path("robots.txt", views.robots_txt),
     re_path(r".*/[^./]+[^/]$", views.add_slash),
     path("author/new/", views.author.NewView.as_view(), name="author_new"),
@@ -89,7 +89,7 @@ urlpatterns = [
                 ),
                 path(
                     "reading/",
-                    views.book.CurrentlyReadingView.as_view(),
+                    views.log_entry.CurrentlyReadingView.as_view(),
                     name="books_currently_reading",
                 ),
                 re_path(
@@ -110,17 +110,17 @@ urlpatterns = [
                 ),
                 re_path(
                     r"^read(?:/(?P<year>(\d+|sometime)))?\.md",
-                    views.book.MarkdownReadView.as_view(),
+                    views.log_entry.MarkdownReadView.as_view(),
                     name="books_read_markdown",
                 ),
                 re_path(
                     r"^read\.xml",
-                    views.book.XmlReadView.as_view(),
+                    views.log_entry.XmlReadView.as_view(),
                     name="books_read_xml",
                 ),
                 re_path(
                     r"^read(?:/(?P<year>(\d+|sometime)))?/",
-                    views.book.ReadView.as_view(),
+                    views.log_entry.ReadView.as_view(),
                     name="books_read",
                 ),
                 re_path(
