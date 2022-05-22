@@ -19,6 +19,7 @@ class BookFactory(factory.django.DjangoModelFactory):  # type: ignore
     title = factory.Faker("sentence", nb_words=4)
     edition_format = 1
     first_author = factory.SubFactory(AuthorFactory)
+    isbn = factory.Faker("isbn13", separator="")
 
 
 class TagFactory(factory.django.DjangoModelFactory):  # type: ignore

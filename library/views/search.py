@@ -1,6 +1,7 @@
 from django.db.models import Q
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
+from django.template.response import TemplateResponse
 
 from library.models import Author, Book
 
@@ -20,7 +21,7 @@ def basic_search(request: HttpRequest) -> HttpResponse:
         )
         authors = Author.objects.search(query).filter(similarity__gt=0.25)
 
-    return render(
+    return TemplateResponse(
         request,
         "search.html",
         {

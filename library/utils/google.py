@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 
 import requests
+from django.conf import settings
 
 if TYPE_CHECKING:
     from library.models import Book  # pragma: no cover
@@ -15,6 +16,9 @@ def update(book: "Book") -> bool:
 
 
 def fetch(google_id: str = "", isbn: str = "") -> dict[str, str] | None:
+    if not settings.GOODREADS_KEY:
+        return {}
+
     if google_id:
         search_url = f"https://www.googleapis.com/books/v1/volumes/{google_id}"
     elif isbn:
