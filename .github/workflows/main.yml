@@ -44,16 +44,10 @@ jobs:
             requirements.txt
             requirements-dev.txt
         id: setup-python
-      - name: Cache pre-commit hooks
-        uses: actions/cache@v2
-        with:
-          path: ~/.cache/pre-commit
-          key: precommit-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('.pre-commit-config.yaml') }}
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: pip install -r requirements.txt -r requirements-dev.txt
-      - name: pre-commit
-        run: pre-commit run --all-files
+      - uses: pre-commit/action@v2.0.3
 
   deploy:
     name: Deploy app
