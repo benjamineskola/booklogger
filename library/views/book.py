@@ -261,6 +261,7 @@ class GenericLogView(generic.ListView[LogEntry]):
     filter_by: dict[str, Any] = {}
     page_title = ""
     reverse_sort = False
+    single_year = False
 
     def get_queryset(self) -> LogEntryQuerySet:
         entries = (
@@ -291,6 +292,9 @@ class GenericLogView(generic.ListView[LogEntry]):
                 entries = entries.filter(end_date__year=1)
             else:
                 entries = entries.filter(end_date__year=year)
+        elif self.single_year:
+            if (last := entries.last()) and last.end_date:
+                entries = entries.filter(end_date__year=last.end_date.year)
 
         return entries.filter_by_request(self.request).distinct()
 
@@ -298,6 +302,7 @@ class GenericLogView(generic.ListView[LogEntry]):
         context = super().get_context_data(**kwargs)
         context["page_title"] = self.page_title
         context["year"] = self.kwargs.get("year")
+        context["verbose"] = "verbose" in self.request.GET
         return context
 
 
@@ -312,31 +317,20 @@ class CurrentlyReadingView(GenericLogView):
 class ReadView(GenericLogView):
     filter_by = {"end_date__isnull": False, "abandoned": False}
     page_title = "Read Books"
-
-    def get_queryset(self) -> LogEntryQuerySet:
-        entries = super().get_queryset()
-        last = entries.last()
-        if last and last.end_date:
-            return entries.filter(end_date__year=last.end_date.year)
-        return LogEntry.objects.none()
+    single_year = True
 
 
-class MarkdownReadView(GenericLogView):
+class MarkdownReadView(ReadView):
     template_name = "logentry_list_markdown.md"
     content_type = "text/plain; charset=utf-8"
-    filter_by = {"end_date__isnull": False, "abandoned": False}
-
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs)
-        context["verbose"] = "verbose" in self.request.GET
-        return context
+    single_year = False
 
 
-class XmlReadView(GenericLogView):
+class XmlReadView(ReadView):
     template_name = "logentry_list_feed.xml"
     content_type = "application/xml; charset=utf-8"
-    filter_by = {"end_date__isnull": False, "abandoned": False}
     reverse_sort = True
+    single_year = False
 
     def get_queryset(self) -> LogEntryQuerySet:
         return super().get_queryset()[0:20]
