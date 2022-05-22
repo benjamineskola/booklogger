@@ -260,6 +260,7 @@ class GenericLogView(generic.ListView[LogEntry]):
 
     filter_by: dict[str, Any] = {}
     page_title = ""
+    reverse_sort = False
 
     def get_queryset(self) -> LogEntryQuerySet:
         entries = (
@@ -270,7 +271,14 @@ class GenericLogView(generic.ListView[LogEntry]):
                     [True, False] if is_authenticated(self.request) else [False]
                 )
             )
-            .order_by("end_date", "start_date")
+            .order_by(
+                "-end_date" if self.reverse_sort else "end_date",
+                Lower(F("book__first_author__surname")),
+                Lower(F("book__first_author__forenames")),
+                "book__series",
+                "book__series_order",
+                "book__title",
+            )
         )
 
         if self.filter_by:
@@ -280,14 +288,7 @@ class GenericLogView(generic.ListView[LogEntry]):
             if self.request.GET.get("infinite") == "true":
                 self.page_title = ""
             if year == "sometime" or str(year) == "1":
-                ordering = [
-                    Lower(F("book__first_author__surname")),
-                    Lower(F("book__first_author__forenames")),
-                    "book__series",
-                    "book__series_order",
-                    "book__title",
-                ]
-                entries = entries.filter(end_date__year=1).order_by(*ordering)
+                entries = entries.filter(end_date__year=1)
             else:
                 entries = entries.filter(end_date__year=year)
 
@@ -325,27 +326,9 @@ class MarkdownReadView(GenericLogView):
     content_type = "text/plain; charset=utf-8"
     filter_by = {"end_date__isnull": False, "abandoned": False}
 
-    def get_queryset(self) -> LogEntryQuerySet:
-        return (
-            super()
-            .get_queryset()
-            .order_by(
-                "-end_date__year",
-                "end_date",
-                "book__first_author__surname",
-                "book__first_author__forenames",
-                "book__series",
-                "book__series_order",
-                "book__title",
-            )
-        )
-
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        if "verbose" in self.request.GET:
-            context["verbose"] = True
-        else:
-            context["verbose"] = False
+        context["verbose"] = "verbose" in self.request.GET
         return context
 
 
@@ -353,20 +336,10 @@ class XmlReadView(GenericLogView):
     template_name = "logentry_list_feed.xml"
     content_type = "application/xml; charset=utf-8"
     filter_by = {"end_date__isnull": False, "abandoned": False}
+    reverse_sort = True
 
     def get_queryset(self) -> LogEntryQuerySet:
-        return (
-            super()
-            .get_queryset()
-            .order_by(
-                "-end_date",
-                "book__first_author__surname",
-                "book__first_author__forenames",
-                "book__series",
-                "book__series_order",
-                "book__title",
-            )[0:20]
-        )
+        return super().get_queryset()[0:20]
 
 
 @login_required
