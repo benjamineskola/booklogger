@@ -36,7 +36,7 @@ class TestStats:
 
     def test_stats_for_queryset_genre(self, stats, books):
         assert stats["fiction"]["count"] == 1
-        assert stats["nonfiction"]["count"] == 1
+        assert stats["non-fiction"]["count"] == 1
 
         assert stats["fiction"]["pages"] == 75
-        assert stats["nonfiction"]["pages"] == 125
+        assert stats["non-fiction"]["pages"] == 125
