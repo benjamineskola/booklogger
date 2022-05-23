@@ -1,7 +1,12 @@
 import pytest
+from freezegun import freeze_time
 
 from library.models import Book, Tag
-from library.views.stats import _counts_for_queryset, _stats_for_queryset
+from library.views.stats import (
+    _counts_for_queryset,
+    _stats_for_queryset,
+    calculate_year_progress,
+)
 
 
 @pytest.mark.django_db
@@ -52,3 +57,23 @@ class TestStats:
 
         assert stats["fiction"]["pages"] == 75
         assert stats["non-fiction"]["pages"] == 125
+
+    @freeze_time("2022-01-01")
+    def test_calculate_year_progress_nyd(self):
+        assert calculate_year_progress(2022) == (1, 365)
+
+    @freeze_time("2022-12-31")
+    def test_calculate_year_progress_nye(self):
+        assert calculate_year_progress(2022) == (365, 365)
+
+    @freeze_time("2022-06-30")
+    def test_calculate_year_progress_midsummer(self):
+        assert calculate_year_progress(2022) == (181, 365)
+
+    @freeze_time("2024-02-29")
+    def test_calculate_year_progress_leap(self):
+        assert calculate_year_progress(2024) == (60, 366)
+
+    @freeze_time("2024-12-31")
+    def test_calculate_year_progress_leap_nye(self):
+        assert calculate_year_progress(2024) == (366, 366)
