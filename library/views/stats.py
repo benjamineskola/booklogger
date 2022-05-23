@@ -1,6 +1,5 @@
 from typing import Any
 
-from django.db.models import Q
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
@@ -10,37 +9,48 @@ from library.utils import is_authenticated
 
 GENRES = ["fiction", "non-fiction"]
 
+Numeric = int | float
 
-def _stats_for_queryset(books: BookQuerySet) -> dict[str, Any]:
-    poc = books.filter(
-        Q(first_author__poc=True) | Q(additional_authors__poc=True)
-    ).distinct()
-    result: dict[str, Any] = {
+
+def _counts_for_queryset(
+    books: BookQuerySet, total_count: int = 0, total_pages: int = 0
+) -> dict[str, Numeric]:
+    result: dict[str, Numeric] = {
         "count": books.count(),
         "pages": books.page_count,
-        "average_pages": books.page_count / max(1, books.exclude(page_count=0).count()),
-        "shortest_book": books.exclude(page_count=0).order_by("page_count").first(),
-        "longest_book": books.exclude(page_count=0).order_by("page_count").last(),
-        "both": {
-            "count": books.by_multiple_genders().count(),
-            "pages": books.by_multiple_genders().page_count,
-        },
-        "poc": {
-            "count": poc.count(),
-            "pages": poc.page_count,
-            "percent": poc.count() / max(1, books.count()) * 100,
-        },
-        "breakdowns": {"gender": {}, "genre": {}},
     }
+
+    if total_count:
+        result["percent"] = books.count() / total_count
+    if total_pages:
+        result["pages_percent"] = books.page_count / total_pages
+
+    return result
+
+
+def _stats_for_queryset(books: BookQuerySet) -> dict[str, Any]:
+    result: dict[str, Any] = _counts_for_queryset(books)
     result.update(
         {
-            genre: {
-                "count": books.tagged(genre).count(),
-                "pages": books.tagged(genre).page_count,
-            }
+            "average_pages": books.page_count
+            / max(1, books.exclude(page_count=0).count()),
+            "shortest_book": books.exclude(page_count=0).order_by("page_count").first(),
+            "longest_book": books.exclude(page_count=0).order_by("page_count").last(),
+            "breakdowns": {"gender": {}, "genre": {}},
+        }
+    )
+    result.update(
+        {
+            genre: _counts_for_queryset(
+                books.tagged(genre), result["count"], result["pages"]
+            )
             for genre in GENRES
         }
     )
+    result["both"] = _counts_for_queryset(
+        books.by_multiple_genders(), result["count"], result["pages"]
+    )
+    result["poc"] = _counts_for_queryset(books.poc(), result["count"], result["pages"])
 
     gender_labels = {int(i): Author.Gender(i).label.lower() for i in Author.Gender}
     gender_labels[1] = "men"
@@ -48,47 +58,28 @@ def _stats_for_queryset(books: BookQuerySet) -> dict[str, Any]:
     gender_labels[3] = "organisations"
 
     for i, label in gender_labels.items():
-        result[label] = {
-            "count": books.by_gender(i).count(),
-            "pages": books.by_gender(i).page_count,
-        }
-
-        result[label]["percent"] = (
-            result[label].get("count", 0) / max(1, result["count"]) * 100
+        result[label] = _counts_for_queryset(
+            books.by_gender(i), result["count"], result["pages"]
         )
 
         result["breakdowns"]["gender"][label] = {
-            genre: {
-                "count": books.tagged(genre).by_gender(i).count(),
-                "percentage": books.tagged(genre).by_gender(i).count()
-                / max(1, result[label]["count"])
-                * 100,
-            }
+            genre: dict(
+                key=i,
+                **_counts_for_queryset(
+                    books.tagged(genre).by_gender(i), result[label]["count"]
+                )
+            )
             for genre in GENRES
         }
-        result["breakdowns"]["gender"][label]["key"] = i
-
-    result["both"]["percent"] = result["both"]["count"] / max(1, result["count"]) * 100
-
-    for category in list(gender_labels.values()) + [
-        "both",
-        "fiction",
-        "non-fiction",
-        "poc",
-    ]:
-        result[category]["pages_percent"] = (
-            result[category].get("pages", 0) / max(1, result["pages"]) * 100
-        )
 
     result["breakdowns"]["genre"] = {
         genre: {
-            gender: {
-                "key": i,
-                "count": books.tagged(genre).by_gender(i).count(),
-                "percentage": books.tagged(genre).by_gender(i).count()
-                / max(1, books.tagged(genre).count())
-                * 100,
-            }
+            gender: dict(
+                key=i,
+                **_counts_for_queryset(
+                    books.tagged(genre).by_gender(i), books.tagged(genre).count()
+                )
+            )
             for i, gender in gender_labels.items()
         }
         for genre in GENRES
