@@ -9,10 +9,12 @@ repos:
       - id: requirements-txt-fixer
       - id: trailing-whitespace
   - repo: https://github.com/benjamineskola/pre-commit-hooks.git
-    rev: e6f507658a32156b4de20749ab6343c6ad8bb1f1
+    rev: af21d0fdea02731583f480bb508fc4dac9ccb703
     hooks:
       - id: shellcheck
       - id: shfmt
+      - id: prettier
+      - id: standard
   - repo: local
     hooks:
       - id: curlylint
@@ -71,7 +73,7 @@ repos:
             types-requests,
           ]
   - repo: https://github.com/benjamineskola/pre-commit-hooks.git
-    rev: e6f507658a32156b4de20749ab6343c6ad8bb1f1
+    rev: af21d0fdea02731583f480bb508fc4dac9ccb703
     hooks:
       - id: pytest
         types: [python]

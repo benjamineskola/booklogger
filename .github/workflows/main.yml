@@ -44,9 +44,16 @@ jobs:
             requirements.txt
             requirements-dev.txt
         id: setup-python
-      - name: Install dependencies
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Install Python dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: pip install -r requirements.txt -r requirements-dev.txt
+      - name: Install Node dependencies
+        run: |
+          npm install .
+          echo node_modules/.bin >> $GITHUB_PATH
       - uses: pre-commit/action@v2.0.3
         env:
           SKIP: mypy
