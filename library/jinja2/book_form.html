@@ -164,8 +164,8 @@
         $('#id_acquired_date_month, #id_alienated_date_month, #id_ebook_acquired_date_month').parent().addClass('form-row')
         $('#id_acquired_date_month, #id_alienated_date_month, #id_ebook_acquired_date_month').parent().find('span').each(function(){ $(this).addClass('mr-2') })
 
-        $("#card-bookauthor_set .card-footer a").on("click", add_author);
-        $("#card-readinglistentry_set .card-footer a").on("click", add_listentry);
+        $("#card-bookauthor_set .card-footer a").on("click", {template: bookauthor_formset_template}, add_author);
+        $("#card-readinglistentry_set .card-footer a").on("click", {template: listentry_formset_template}, add_listentry);
 
         $("#card-bookauthor_set, #card-logentry_set, #card-readinglistentry_set")
           .find(".form-check-input")
@@ -173,15 +173,15 @@
             $(this).parent().parent().parent().parent().hide(1000);
           });
 
-        for (var el_id of ["acquired", "alienated", "ebook_acquired"]) {
-          $(`#div_id_${el_id}_date`).append(
-            `<a href="#" id="${el_id}_date_set_today">Set to today</a>`
+        for (var elementId of ["acquired", "alienated", "ebook_acquired"]) {
+          $(`#div_id_${elementId}_date`).append(
+            `<a href="#" id="${elementId}_date_set_today">Set to today</a>`
           );
 
-          $("#" + el_id + "_date_set_today").on(
+          $("#" + elementId + "_date_set_today").on(
             "click",
             null,
-            { el_id: el_id },
+            { elementId: elementId },
             set_date_today
           );
         }
@@ -200,107 +200,5 @@
   var bookauthor_formset_template = `{{ inline_formsets[0].empty_form }}`;
   var listentry_formset_template = `{{ inline_formsets[2].empty_form }}`;
 
-  function add_author(event) {
-    event.preventDefault();
-
-    var parent = $("#formset-bookauthor_set");
-    var total_forms = $('input[name="bookauthor_set-TOTAL_FORMS"]');
-    var index = parseInt(total_forms.val());
-
-    var inline_form = $('<div class="form-inline"></div>');
-    var select_field = $(
-      bookauthor_formset_template.replace(/__prefix__/g, index)
-    ).find("select");
-
-    var author_form_group = $('<div class="form-group"></div>');
-    author_form_group.append(
-      `<label for="id_bookauthor_set-${index}-author" class="mr-2 requiredField">Author*</label>`
-    );
-    var select_div = $('<div class="mr-2 mt-2"></div>');
-    select_div.append(select_field);
-    author_form_group.append(select_div);
-    inline_form.append(author_form_group);
-
-    inline_form.append(
-      $(
-        `<div class="form-group"><label for="bookauthor_set-${index}-role" class="mr-2">Role</label><div class="mr-2 mt-2"><input type="text" name="bookauthor_set-${index}-role" maxlength="255" class="textinput textInput form-control" id="id_bookauthor_set-${index}-role"></div></div>`
-      )
-    );
-    inline_form.append(
-      $(
-        `<div class="form-group"><label for="bookauthor_set-${index}-order" class="mr-2">Order</label><div class="mr-2 mt-2"><input type="number" name="bookauthor_set-${index}-order" maxlength="255" class="textinput textInput form-control" id="id_bookauthor_set-${index}-role"></div></div>`
-      )
-    );
-    inline_form.append(
-      $(
-        `<div class="form-group"><div class="mr-2 mt-2"><div class="form-check"><input type="checkbox" name="bookauthor_set-${index}-DELETE" class="checkboxinput form-check-input" id="id_bookauthor_set-${index}-DELETE"><label for="id_bookauthor_set-${index}-DELETE" class="form-check-label">Delete </label></div></div></div>`
-      )
-    );
-
-    parent.append(inline_form);
-    total_forms.val(index + 1);
-
-    select_field.select2({ theme: "bootstrap", tags: "true" });
-    inline_form.find(".form-check-input").on("click", function (event) {
-      $(this).parent().parent().parent().parent().hide(1000);
-    });
-  }
-
-  function add_listentry(event) {
-    event.preventDefault();
-
-    var parent = $("#formset-readinglistentry_set");
-    var total_forms = $('input[name="readinglistentry_set-TOTAL_FORMS"]');
-    var index = parseInt(total_forms.val());
-
-    var inline_form = $('<div class="form-inline"></div>');
-    var select_field = $(
-      listentry_formset_template.replace(/__prefix__/g, index)
-    ).find("select");
-
-    var author_form_group = $('<div class="form-group"></div>');
-    author_form_group.append(
-      `<label for="id_readinglistentry_set-${index}-reading_list}" class="mr-2 requiredField">Reading list*</label>`
-    );
-    var select_div = $('<div class="mr-2 mt-2"></div>');
-    select_div.append(select_field);
-    author_form_group.append(select_div);
-    inline_form.append(author_form_group);
-
-    inline_form.append(
-      $(
-        `<div class="form-group"><label for="readinglistentry_set-${index}-order" class="mr-2">Order</label><div class="mr-2 mt-2"><input type="number" name="readinglistentry_set-${index}-order" maxlength="255" class="textinput textInput form-control" id="id_readinglistentry_set-${index}-role"></div></div>`
-      )
-    );
-    inline_form.append(
-      $(
-        `<div class="form-group"><div class="mr-2 mt-2"><div class="form-check"><input type="checkbox" name="readinglistentry_set-${index}-DELETE" class="checkboxinput form-check-input" id="id_readinglistentry_set-${index}-DELETE"><label for="id_readinglistentry_set-${index}-DELETE" class="form-check-label">Delete </label></div></div></div>`
-      )
-    );
-
-    parent.append(inline_form);
-    total_forms.val(index + 1);
-
-    select_field.select2({ theme: "bootstrap" });
-    inline_form.find(".form-check-input").on("click", function (event) {
-      $(this).parent().parent().parent().parent().hide(1000);
-    });
-  }
-
-    function set_date_today(event) {
-      event.preventDefault();
-      var el_id = event.data["el_id"];
-
-      var date = new Date();
-
-      $("#id_" + el_id + "_date_month").val(date.getMonth() + 1);
-      $("#id_" + el_id + "_date_month").trigger("change");
-
-      $("#id_" + el_id + "_date_year").val(date.getFullYear());
-      $("#id_" + el_id + "_date_year").trigger("change");
-
-      $("#id_" + el_id + "_date_day").val(date.getDate());
-      $("#id_" + el_id + "_date_day").trigger("change");
-    }
   </script>
 {% endblock footer%}
