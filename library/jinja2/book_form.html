@@ -131,70 +131,84 @@
 {% block footer %}
   <script>
     $(document).ready(function() {
-        $('select').select2({
-          theme: 'bootstrap',
-        });
-        $('#id_first_author, #id_publisher, #id_series, #formset-bookauthor_set select').select2({
-          theme: 'bootstrap',
-          tags: true,
-        });
-        $('#id_tags').select2({
-          theme: 'bootstrap',
-          tags: true,
-          tokenSeparators: [','],
-        });
-        {% if form.instance %}
-        $('#id_tags').val({{ form.instance.tags | json | safe }});
-        $('#id_tags').trigger("change");
-        {% endif %}
-        $('#id_acquired_date_day, #id_alienated_date_day, #id_ebook_acquired_date_day').select2({
-          theme: 'bootstrap',
-          width: '5em',
-        });
-        $('#id_acquired_date_month, #id_alienated_date_month, #id_ebook_acquired_date_month').select2({
-          theme: 'bootstrap',
-          width: '9em',
-        });
-        $('#id_acquired_date_year, #id_alienated_date_year, #id_ebook_acquired_date_year').select2({
-          theme: 'bootstrap',
-          tags: true,
-          width: '6em',
-        });
+      $('select').select2({ theme: 'bootstrap' })
+      $(
+        '#id_first_author, #id_publisher, #id_series, #formset-bookauthor_set select'
+      ).select2({ theme: 'bootstrap', tags: true })
+      $('#id_tags').select2({
+        theme: 'bootstrap',
+        tags: true,
+        tokenSeparators: [',']
+      })
 
-        $('#id_acquired_date_month, #id_alienated_date_month, #id_ebook_acquired_date_month').parent().addClass('form-row')
-        $('#id_acquired_date_month, #id_alienated_date_month, #id_ebook_acquired_date_month').parent().find('span').each(function(){ $(this).addClass('mr-2') })
+      {% if form.instance %}
+      $('#id_tags').val({{ form.instance.tags | json | safe }})
+      $('#id_tags').trigger('change')
+      {% endif %}
 
-        $("#card-bookauthor_set .card-footer a").on("click", {template: bookauthor_formset_template}, add_author);
-        $("#card-readinglistentry_set .card-footer a").on("click", {template: listentry_formset_template}, add_listentry);
+      $(
+        '#id_acquired_date_day, #id_alienated_date_day, #id_ebook_acquired_date_day'
+      ).select2({ theme: 'bootstrap', width: '5em' })
+      $(
+        '#id_acquired_date_month, #id_alienated_date_month, #id_ebook_acquired_date_month'
+      ).select2({ theme: 'bootstrap', width: '9em' })
+      $(
+        '#id_acquired_date_year, #id_alienated_date_year, #id_ebook_acquired_date_year'
+      ).select2({ theme: 'bootstrap', tags: true, width: '6em' })
 
-        $("#card-bookauthor_set, #card-logentry_set, #card-readinglistentry_set")
-          .find(".form-check-input")
-          .on("click", function (event) {
-            $(this).parent().parent().parent().parent().hide(1000);
-          });
+      $(
+        '#id_acquired_date_month, #id_alienated_date_month, #id_ebook_acquired_date_month'
+      )
+        .parent()
+        .addClass('form-row')
+      $(
+        '#id_acquired_date_month, #id_alienated_date_month, #id_ebook_acquired_date_month'
+      )
+        .parent()
+        .find('span')
+        .each(function () {
+          $(this).addClass('mr-2')
+        })
 
-        for (var elementId of ["acquired", "alienated", "ebook_acquired"]) {
-          $(`#div_id_${elementId}_date`).append(
-            `<a href="#" id="${elementId}_date_set_today">Set to today</a>`
-          );
+      $('#card-bookauthor_set .card-footer a').on(
+        'click',
+        { template: bookauthor_formset_template },
+        add_author
+      )
+      $('#card-readinglistentry_set .card-footer a').on(
+        'click',
+        { template: listentry_formset_template },
+        add_listentry
+      )
 
-          $("#" + elementId + "_date_set_today").on(
-            "click",
-            null,
-            { elementId: elementId },
-            set_date_today
-          );
-        }
+      $('#card-bookauthor_set, #card-logentry_set, #card-readinglistentry_set')
+        .find('.form-check-input')
+        .on('click', function (event) {
+          $(this).parent().parent().parent().parent().hide(1000)
+        })
 
-        $("#id_isbn, #id_ebook_isbn").on("paste", function (ev) {
-          ev.preventDefault();
-          var pastedText = ev.originalEvent.clipboardData.getData("text/plain");
-          this.value = pastedText.replace(/\D/g, "");
-        });
-        $("#id_isbn, #id_ebook_isbn").on("input", function (ev) {
-          ev.preventDefault();
-          this.value = this.value.replace(/\D/g, "");
-        });
+      for (const elementId of ['acquired', 'alienated', 'ebook_acquired']) {
+        $(`#div_id_${elementId}_date`).append(
+          `<a href="#" id="${elementId}_date_set_today">Set to today</a>`
+        )
+
+        $(`#${elementId}_date_set_today`).on(
+          'click',
+          null,
+          { elementId },
+          set_date_today
+        )
+      }
+
+      $('#id_isbn, #id_ebook_isbn').on('paste', function (ev) {
+        ev.preventDefault()
+        const pastedText = ev.originalEvent.clipboardData.getData('text/plain')
+        this.value = pastedText.replace(/\D/g, '')
+      })
+      $('#id_isbn, #id_ebook_isbn').on('input', function (ev) {
+        ev.preventDefault()
+        this.value = this.value.replace(/\D/g, '')
+      })
     });
 
   var bookauthor_formset_template = `{{ inline_formsets[0].empty_form }}`;
