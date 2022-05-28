@@ -11,8 +11,11 @@ $(document).ready(function () {
   })
 })
 
-/* eslint-disable-next-line no-unused-vars */
-function loadNextPage (year, url) {
+/**
+ * @param {string} year
+ * @param {string} url
+ */
+function loadNextPage (year, url) { // eslint-disable-line no-unused-vars
   const placeholder = $('.loader')
   $.ajax({
     type: 'GET',
@@ -28,12 +31,15 @@ function loadNextPage (year, url) {
       body.find('span.rating-star').on('click', rateBook)
 
       if (window.location.hash.split('-').pop() === year) {
-        $('html, body').animate(
-          {
-            scrollTop: body.offset().top
-          },
-          10
-        )
+        const offset = body.offset()
+        if (typeof offset !== 'undefined') {
+          $('html, body').animate(
+            {
+              scrollTop: offset.top
+            },
+            10
+          )
+        }
       }
     },
     error: function () {
@@ -43,8 +49,9 @@ function loadNextPage (year, url) {
   })
 }
 
-function loadStatsForYear (e) {
-  const div = $(e)
+/** @param {Element} element */
+function loadStatsForYear (element) {
+  const div = $(element)
   const year = div.data('year')
 
   $.ajax({
@@ -54,7 +61,7 @@ function loadStatsForYear (e) {
       $('.spinner-grow').show()
       div.html(data)
     },
-    error: function (data) {
+    error: function () {
       div.html(`
           <div id="error-${year}" class="alert alert-danger">
             <i class="exclamation circle icon"></i>
@@ -70,12 +77,13 @@ function loadStatsForYear (e) {
             <span class="sr-only">Loading...</span>
           </div>
         `)
-        return loadStatsForYear(e)
+        return loadStatsForYear(element)
       })
     }
   })
 }
 
+/** @this Element, @param {Event} event */
 function addTag (event) {
   event.preventDefault()
   const form = $(this)
@@ -96,13 +104,14 @@ function addTag (event) {
         )
       }
       inputField.val('')
+      // @ts-ignore
       form.collapse('hide')
     }
   })
 }
 
+/** @this Element  */
 function rateBook () {
-  console.log(this)
   let value = $(this).data('rating')
   const ratings = $(this).parent()
   const book = ratings.data('book')
@@ -118,10 +127,10 @@ function rateBook () {
     type: 'POST',
     url: `/book/${book}/rate/`,
     data: { rating: Number(value) },
-    beforeSend: function (xhr, settings) {
-      xhr.setRequestHeader('X-CSRFToken', $('[name=csrfmiddlewaretoken]').val())
+    beforeSend: function (xhr) {
+      xhr.setRequestHeader('X-CSRFToken', String($('[name=csrfmiddlewaretoken]').val()))
     },
-    success: function (data) {
+    success: function () {
       ratings.data('rating', value)
       ratings.children().each(function (i, star) {
         if (value >= i + 1) {
@@ -136,6 +145,7 @@ function rateBook () {
   })
 }
 
+/** @this Element */
 function removeTag () {
   const tag = $(this).data('tag')
   const label = $(this).parent()
@@ -144,16 +154,19 @@ function removeTag () {
     type: 'POST',
     url: `/book/${book}/remove_tag/`,
     data: { tags: tag },
-    beforeSend: function (xhr, settings) {
-      xhr.setRequestHeader('X-CSRFToken', $('[name=csrfmiddlewaretoken]').val())
-      return confirm(`Remove tag ${tag}?`)
+    beforeSend: function (xhr) {
+      xhr.setRequestHeader('X-CSRFToken', String($('[name=csrfmiddlewaretoken]').val()))
+      if (!confirm(`Remove tag ${tag}?`)) {
+        return false
+      }
     },
-    success: function (data) {
+    success: function () {
       label.remove()
     }
   })
 }
 
+/** @this Element, @param {Event} event */
 function updateProgress (event) {
   event.preventDefault()
   const form = $(this)
@@ -182,32 +195,37 @@ function updateProgress (event) {
   })
 }
 
-/* eslint-disable-next-line no-unused-vars */
-function updateScrollPosition () {
+function updateScrollPosition () { // eslint-disable-line no-unused-vars
   $('h2').each(function () {
     const height = $(window).height()
+    if (typeof height === 'undefined') { return }
+
     const top = window.pageYOffset
-    const distance = top - $(this).offset().top
+    const offset = $(this).offset()
+    if (typeof offset === 'undefined') { return }
+
+    const distance = top - offset.top
     const hash = $(this).attr('href')
+
     if (Math.abs(distance) < height * 0.75) {
       if (window.location.hash !== hash) {
         if (history.pushState) {
-          history.pushState(null, null, hash)
-        } else {
+          history.pushState(null, '', hash)
+        } else if (typeof hash !== 'undefined') {
           window.location.hash = hash
         }
       }
-    } else if (0 - distance > height && hash === window.location.hash) {
+    } else if (-distance > height && hash === window.location.hash) {
       const year = hash.split('-').pop()
       let newYear
       if (year === 'sometime') {
         newYear = 2004
       } else {
-        newYear = parseInt(year) + 1
+        newYear = parseInt(String(year)) + 1
       }
       const newHash = `#read-${newYear}`
       if (history.pushState) {
-        history.pushState(null, null, newHash)
+        history.pushState(null, '', newHash)
       } else {
         window.location.hash = newHash
       }

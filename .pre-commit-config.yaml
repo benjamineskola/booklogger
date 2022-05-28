@@ -29,6 +29,11 @@ repos:
         entry: python ./manage.py makemigrations --check --dry-run
         types: [python]
         pass_filenames: false
+      - id: typescript
+        name: typescript
+        language: system
+        entry: tsc --strict --checkJs --noEmit
+        types: [javascript]
   - repo: https://github.com/asottile/pyupgrade
     rev: v2.32.1
     hooks:

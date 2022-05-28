@@ -3,7 +3,9 @@
 $(document).ready(function () {
   configureSelectFields()
 
+  // @ts-ignore
   if (document.formTags !== null) {
+    // @ts-ignore
     $('#id_tags').val(document.formTags)
     $('#id_tags').trigger('change')
   }
@@ -14,11 +16,13 @@ $(document).ready(function () {
 
   $('#card-bookauthor_set .card-footer a').on(
     'click',
+    // @ts-ignore
     { template: document.bookauthor_formset_template },
     addAuthorField
   )
   $('#card-readinglistentry_set .card-footer a').on(
     'click',
+    // @ts-ignore
     { template: document.listentry_formset_template },
     addListEntryField
   )
@@ -36,12 +40,13 @@ $(document).ready(function () {
   isbnFieldPasteFilter('#id_isbn, #id_ebook_isbn')
 })
 
+/** @param {JQueryEventObject} event */
 function addAuthorField (event) {
   event.preventDefault()
 
   const parent = $('#formset-bookauthor_set')
   const totalForms = $('input[name="bookauthor_set-TOTAL_FORMS"]')
-  const index = parseInt(totalForms.val())
+  const index = parseInt(String(totalForms.val()))
 
   const inlineForm = $('<div class="form-inline"></div>')
   const selectField = $(
@@ -76,18 +81,20 @@ function addAuthorField (event) {
   parent.append(inlineForm)
   totalForms.val(index + 1)
 
+  // @ts-ignore
   selectField.select2({ theme: 'bootstrap', tags: 'true' })
   inlineForm.find('.form-check-input').on('click', function (event) {
     $(this).parent().parent().parent().parent().hide(1000)
   })
 }
 
+/** @param {JQueryEventObject} event */
 function addListEntryField (event) {
   event.preventDefault()
 
   const parent = $('#formset-readinglistentry_set')
   const totalForms = $('input[name="readinglistentry_set-TOTAL_FORMS"]')
-  const index = parseInt(totalForms.val())
+  const index = parseInt(String(totalForms.val()))
 
   const inlineForm = $('<div class="form-inline"></div>')
   const selectField = $(
@@ -118,11 +125,12 @@ function addListEntryField (event) {
   totalForms.val(index + 1)
 
   selectField.select2({ theme: 'bootstrap' })
-  inlineForm.find('.form-check-input').on('click', function (event) {
+  inlineForm.find('.form-check-input').on('click', function () {
     $(this).parent().parent().parent().parent().hide(1000)
   })
 }
 
+/** @param {JQueryEventObject} event */
 function setDateToday (event) {
   event.preventDefault()
   const elementId = event.data.elementId
@@ -151,6 +159,7 @@ function configureSelectFields () {
   })
 }
 
+/** @param {string} fieldName */
 function configureDateFields (fieldName) {
   $(`#id_${fieldName}_day`).select2({ theme: 'bootstrap', width: '5em' })
   $(`#id_${fieldName}_month`).select2({ theme: 'bootstrap', width: '9em' })
@@ -171,6 +180,7 @@ function configureDateFields (fieldName) {
     })
 }
 
+/** @param {string} elementId */
 function addSetDateTodayButton (elementId) {
   $(`#div_id_${elementId}_date`).append(
     `<a href="#" id="${elementId}_date_set_today">Set to today</a>`
@@ -184,14 +194,17 @@ function addSetDateTodayButton (elementId) {
   )
 }
 
+/** @param {string} selector, @this {Element} */
 function isbnFieldPasteFilter (selector) {
+  const elem = $(this)
   $(selector).on('paste', function (ev) {
     ev.preventDefault()
+    // @ts-ignore
     const pastedText = ev.originalEvent.clipboardData.getData('text/plain')
-    this.value = pastedText.replace(/\D/g, '')
+    elem.val(pastedText.replace(/\D/g, ''))
   })
   $(selector).on('input', function (ev) {
     ev.preventDefault()
-    this.value = this.value.replace(/\D/g, '')
+    elem.val(String(elem.val()).replace(/\D/g, ''))
   })
 }
