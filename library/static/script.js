@@ -11,8 +11,8 @@ $(document).ready(function () {
   })
 })
 
-/* eslint-disable-next-line camelcase, no-unused-vars */
-function load_next_page (year, url) {
+/* eslint-disable-next-line no-unused-vars */
+function loadNextPage (year, url) {
   const placeholder = $('.loader')
   $.ajax({
     type: 'GET',
@@ -182,8 +182,8 @@ function updateProgress (event) {
   })
 }
 
-/* eslint-disable-next-line camelcase, no-unused-vars */
-function update_scroll_position () {
+/* eslint-disable-next-line no-unused-vars */
+function updateScrollPosition () {
   $('h2').each(function () {
     const height = $(window).height()
     const top = window.pageYOffset

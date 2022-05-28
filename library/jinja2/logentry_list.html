@@ -3,7 +3,7 @@
 {% extends "base.html" %}
 {% block header %}
   <script>
-    $(document).scroll(update_scroll_position);
+    $(document).scroll(updateScrollPosition)
   </script>
 {% endblock header %}
 
@@ -72,12 +72,12 @@
         </div>
         <script>
           {% if next_year == "sometime" %}
-            var delay = 2000;
+            var delay = 2000
           {% else %}
-            if (parseInt(window.location.hash.split("-").pop()) <= {{ next_year }}) {
-              var delay = 100;
+            if (parseInt(window.location.hash.split('-').pop()) <= {{ next_year }}) {
+              var delay = 100
             } else {
-              var delay = 2000;
+              var delay = 2000
             }
           {% endif %}
 
@@ -87,12 +87,12 @@
             {% set _ = params.update({'infinite': 'true'}) %}
           {% endif %}
 
-            load_next_page("{{ next_year }}", "{{ url("library:books_read", kwargs={"year": next_year}) }}?{{ params.urlencode() | safe }}");
-          }, delay);
+            loadNextPage('{{ next_year }}', '{{ url("library:books_read", kwargs={"year": next_year}) }}?{{ params.urlencode() | safe }}')
+          }, delay)
 
-          $(".alert-danger .btn").on("click", function () {
-            load_next_page("{{ next_year }}", "{{ url("library:books_read", kwargs={"year": next_year}) }}?{{ params.urlencode() | safe }}");
-          });
+          $('.alert-danger .btn').on('click', function () {
+            loadNextPage('{{ next_year }}', '{{ url("library:books_read", kwargs={"year": next_year}) }}?{{ params.urlencode() | safe }}')
+          })
         </script>
       {% endif %}
     {% endif %}
