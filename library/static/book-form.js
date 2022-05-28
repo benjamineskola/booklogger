@@ -15,12 +15,12 @@ $(document).ready(function () {
   $('#card-bookauthor_set .card-footer a').on(
     'click',
     { template: document.bookauthor_formset_template },
-    add_author
+    addAuthorField
   )
   $('#card-readinglistentry_set .card-footer a').on(
     'click',
     { template: document.listentry_formset_template },
-    add_listentry
+    addListEntryField
   )
 
   $('#card-bookauthor_set, #card-logentry_set, #card-readinglistentry_set')
@@ -36,8 +36,7 @@ $(document).ready(function () {
   isbnFieldPasteFilter('#id_isbn, #id_ebook_isbn')
 })
 
-/* eslint-disable-next-line camelcase, no-unused-vars */
-function add_author (event) {
+function addAuthorField (event) {
   event.preventDefault()
 
   const parent = $('#formset-bookauthor_set')
@@ -83,8 +82,7 @@ function add_author (event) {
   })
 }
 
-/* eslint-disable-next-line camelcase, no-unused-vars */
-function add_listentry (event) {
+function addListEntryField (event) {
   event.preventDefault()
 
   const parent = $('#formset-readinglistentry_set')
@@ -125,8 +123,7 @@ function add_listentry (event) {
   })
 }
 
-/* eslint-disable-next-line camelcase */
-function set_date_today (event) {
+function setDateToday (event) {
   event.preventDefault()
   const elementId = event.data.elementId
 
@@ -183,7 +180,7 @@ function addSetDateTodayButton (elementId) {
     'click',
     null,
     { elementId },
-    set_date_today
+    setDateToday
   )
 }
 
