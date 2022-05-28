@@ -48,6 +48,8 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: pip install -r requirements.txt -r requirements-dev.txt
       - uses: pre-commit/action@v2.0.3
+        env:
+          SKIP: mypy
 
   deploy:
     name: Deploy app
