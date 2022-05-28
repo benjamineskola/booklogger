@@ -141,10 +141,10 @@
         tokenSeparators: [',']
       })
 
-      {% if form.instance %}
-      $('#id_tags').val({{ form.instance.tags | json | safe }})
-      $('#id_tags').trigger('change')
-      {% endif %}
+      if (formTags !== null) {
+        $('#id_tags').val(formTags)
+        $('#id_tags').trigger('change')
+      }
 
       $(
         '#id_acquired_date_day, #id_alienated_date_day, #id_ebook_acquired_date_day'
@@ -213,6 +213,7 @@
 
   var bookauthor_formset_template = `{{ inline_formsets[0].empty_form }}`;
   var listentry_formset_template = `{{ inline_formsets[2].empty_form }}`;
+  var formTags = {% if form.instance %}{{ form.instance.tags | json | safe }}{% else %}null{% endif %}
 
   </script>
 {% endblock footer%}
