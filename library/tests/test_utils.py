@@ -56,6 +56,7 @@ class TestUtils:
             ((pi, 3), "3.142"),
             ((pi, 5), "3.14159"),
             ((0,), "0"),
+            (("not a number",), "??"),
         ],
     )
     def test_round_trunc(self, test_input, expected):
