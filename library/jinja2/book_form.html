@@ -130,9 +130,9 @@
 
 {% block footer %}
   <script>
-    var bookauthor_formset_template = `{{ inline_formsets[0].empty_form }}`;
-    var listentry_formset_template = `{{ inline_formsets[2].empty_form }}`;
-    var formTags = {% if form.instance %}{{ form.instance.tags | json | safe }}{% else %}null{% endif %}
+    document.bookauthor_formset_template = `{{ inline_formsets[0].empty_form }}`
+    document.listentry_formset_template = `{{ inline_formsets[2].empty_form }}`
+    document.formTags = {% if form.instance %}{{ form.instance.tags | json | safe }}{% else %}null{% endif %}
   </script>
   <script src="{{ static("book-form.js") }}?_v={{ VERSION_NUMBER }}"></script>
 {% endblock footer%}
