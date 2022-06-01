@@ -21,7 +21,7 @@ function loadNextPage (year, url) { // eslint-disable-line no-unused-vars
     type: 'GET',
     url,
     success: function (data) {
-      const body = $(data).find('.book.card').parent().parent().parent()
+      const body = $(data).find('.book.card').closest('body')
       body.insertAfter(placeholder.parent())
       placeholder.remove()
 

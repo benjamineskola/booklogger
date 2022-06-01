@@ -30,7 +30,7 @@ $(document).ready(function () {
   $('#card-bookauthor_set, #card-logentry_set, #card-readinglistentry_set')
     .find('.form-check-input')
     .on('click', function (event) {
-      $(this).parent().parent().parent().parent().hide(1000)
+      $(this).closest('.form-inline').hide(1000)
     })
 
   for (const elementId of ['acquired', 'alienated', 'ebook_acquired']) {
@@ -84,7 +84,7 @@ function addAuthorField (event) {
   // @ts-ignore
   selectField.select2({ theme: 'bootstrap', tags: 'true' })
   inlineForm.find('.form-check-input').on('click', function (event) {
-    $(this).parent().parent().parent().parent().hide(1000)
+    $(this).closest('.form-inline').hide(1000)
   })
 }
 
@@ -126,7 +126,7 @@ function addListEntryField (event) {
 
   selectField.select2({ theme: 'bootstrap' })
   inlineForm.find('.form-check-input').on('click', function () {
-    $(this).parent().parent().parent().parent().hide(1000)
+    $(this).closest('.form-inline').hide(1000)
   })
 }
 
