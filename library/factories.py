@@ -1,7 +1,10 @@
 import factory
+import faker
 from django.contrib.auth.models import User
 
 from library.models import Author, Book, Tag
+
+fake = faker.Faker()
 
 
 class AuthorFactory(factory.django.DjangoModelFactory):  # type: ignore
@@ -26,7 +29,7 @@ class TagFactory(factory.django.DjangoModelFactory):  # type: ignore
     class Meta:
         model = Tag
 
-    name = factory.Faker("word")
+    name = factory.LazyAttribute(lambda _: fake.unique.word())
 
 
 class UserFactory(factory.django.DjangoModelFactory):  # type: ignore
