@@ -43,8 +43,8 @@ class TestStats:
             all_books.tagged("fiction"), all_books.count(), all_books.page_count
         )
 
-        assert counts["percent"] == 0.25
-        assert counts["pages_percent"] == 0.1875
+        assert counts["percent"] == 25
+        assert counts["pages_percent"] == 18.75
 
     def test_stats_for_queryset_counts(self, stats, books):
         assert stats["average_pages"] == 100

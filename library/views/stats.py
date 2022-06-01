@@ -21,9 +21,9 @@ def _counts_for_queryset(
     }
 
     if total_count:
-        result["percent"] = books.count() / total_count
+        result["percent"] = (books.count() / total_count) * 100
     if total_pages:
-        result["pages_percent"] = books.page_count / total_pages
+        result["pages_percent"] = (books.page_count / total_pages) * 100
 
     return result
 
