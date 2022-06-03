@@ -104,7 +104,7 @@ class TestBook:
     @pytest.mark.parametrize("tag", ["fiction", "non-fiction"])
     def test_query_by_subject(self, book_factory, tag):
         [Tag(name=name).save() for name in ["fiction", "non-fiction"]]
-        book = book_factory(tags=[tag])
+        book = book_factory(tags_list=[tag])
 
         if tag == "fiction":
             assert book in Book.objects.fiction()

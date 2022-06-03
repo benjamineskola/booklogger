@@ -24,7 +24,7 @@ class TestReportView:
 
     @pytest.mark.parametrize("page", range(1, len(IndexView().categories)))
     def test_report_all_pages(self, page, admin_client, book_factory, user):
-        book_factory(owned_by=user, tags=["non-fiction", "history"])
+        book_factory(owned_by=user, tags_list=["non-fiction", "history"])
         resp = admin_client.get(f"/report/{page}/")
         assert resp.context_data["page_title"] != "Reports"
 
@@ -42,8 +42,8 @@ class TestReportView:
         base_tag = tag_factory(name="non-fiction")
         base_tag.children.add(tag_factory(name="history"))
         base_tag.children.add(tag_factory(name="politics"))
-        book1 = book_factory(tags=["history"])
-        book2 = book_factory(tags=["history", "politics"])
+        book1 = book_factory(tags_list=["history"])
+        book2 = book_factory(tags_list=["history", "politics"])
 
         resp = admin_client.get("/report/tags/")
 
@@ -58,8 +58,8 @@ class TestReportView:
         base_tag.children.add(tag_factory(name="politics"))
         base_tag.children.add(tag_factory(name="philosophy"))
 
-        book_factory(tags=["history", "politics"])
-        book_factory(tags=["philosophy"])
+        book_factory(tags_list=["history", "politics"])
+        book_factory(tags_list=["philosophy"])
 
         resp = admin_client.get("/report/tags/related/")
         results = resp.context_data["results"]

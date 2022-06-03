@@ -19,7 +19,7 @@ class BookWithEditions(models.Model):
             "first_published",
             "language",
             "want_to_read",
-            "tags",
+            "tags_list",
             "review",
             "rating",
             "series",

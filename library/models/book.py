@@ -63,7 +63,9 @@ class BaseBookManager(models.Manager["Book"]):
                     "edition_subtitle", pattern
                 ),
                 review_similarity=TrigramSimilarity("review", pattern),
-                tags_similarity=SearchRank(SearchVector("tags"), SearchQuery(pattern)),
+                tags_similarity=SearchRank(
+                    SearchVector("tags_list"), SearchQuery(pattern)
+                ),
                 similarity=(
                     F("first_author_similarity")
                     + Case(
@@ -289,7 +291,7 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
     class Meta:
         indexes = [
             Index(fields=["series", "series_order", "title"]),
-            GinIndex(fields=["tags"]),
+            GinIndex(fields=["tags_list"]),
         ]
         ordering = [
             Lower("first_author__surname"),
@@ -407,7 +409,7 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
 
     want_to_read = models.BooleanField(db_index=True, default=True)
 
-    tags = ArrayField(models.CharField(max_length=32), default=list, blank=True)
+    tags_list = ArrayField(models.CharField(max_length=32), default=list, blank=True)
 
     review = models.TextField(blank=True)
     rating = models.DecimalField(
@@ -640,8 +642,11 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
         if not self.rating:
             self.rating = 0.0
 
-        self.tags = sorted(
-            {tag.lower().replace(",", "").replace("/", "").strip() for tag in self.tags}
+        self.tags_list = sorted(
+            {
+                tag.lower().replace(",", "").replace("/", "").strip()
+                for tag in self.tags_list
+            }
         )
         for tag in self.tags:
             Tag.objects.get_or_create(name=tag)
@@ -809,6 +814,10 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
                 if ptag.name not in self.tags and ptag.name in keep_tags:
                     self.tags.append(ptag.name)
 
+    @property
+    def tags(self) -> list[str]:
+        return self.tags_list
+
 
 class BookAuthor(TimestampedModel):
     class Meta:
@@ -851,7 +860,7 @@ class Tag(TimestampedModel):
 
     @property
     def books(self) -> "BookQuerySet":
-        return Book.objects.filter(tags__contains=[self.name]).distinct()
+        return Book.objects.filter(tags_list__contains=[self.name]).distinct()
 
     @property
     def books_recursive(self) -> "BookQuerySet":
@@ -863,9 +872,9 @@ class Tag(TimestampedModel):
     @property
     def books_uniquely_tagged(self) -> "BookQuerySet":
         return Book.objects.filter(
-            Q(tags=[self.name])
-            | Q(tags=sorted(["fiction", self.name]))
-            | Q(tags=sorted(["non-fiction", self.name]))
+            Q(tags_list=[self.name])
+            | Q(tags_list=sorted(["fiction", self.name]))
+            | Q(tags_list=sorted(["non-fiction", self.name]))
         )
 
     @property

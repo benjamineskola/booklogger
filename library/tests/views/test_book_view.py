@@ -81,7 +81,7 @@ class TestBook:
     @pytest.mark.parametrize("tag", ["fiction", "non-fiction"])
     @pytest.mark.parametrize("view_tag", ["fiction", "non-fiction"])
     def test_tag_filters(self, client, book_factory, tag, view_tag):
-        book = book_factory(tags=[tag])
+        book = book_factory(tags_list=[tag])
         [Tag(name=name).save() for name in ["fiction", "non-fiction"]]
 
         resp = client.get("/books/", {"tags": view_tag})
@@ -135,7 +135,7 @@ class TestBook:
         assert book.tags == ["bar", "foo"]
 
     def test_add_tags_noop(self, admin_client, book_factory):
-        book = book_factory(tags=["foo"])
+        book = book_factory(tags_list=["foo"])
         resp = admin_client.post(
             f"{book.get_absolute_url()}add_tags/", {"tags": "foo,bar"}
         )
@@ -144,7 +144,7 @@ class TestBook:
         assert resp.content == b'{"tags": ["bar"]}'
 
     def test_remove_tags(self, admin_client, book_factory):
-        book = book_factory(tags=["foo", "bar"])
+        book = book_factory(tags_list=["foo", "bar"])
         admin_client.post(f"{book.get_absolute_url()}remove_tags/", {"tags": "foo"})
         book.refresh_from_db()
         assert book.tags == ["bar"]

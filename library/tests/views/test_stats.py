@@ -15,8 +15,8 @@ class TestStats:
         books = [
             book_factory(page_count=50),
             book_factory(page_count=150),
-            book_factory(page_count=75, tags=["fiction"]),
-            book_factory(page_count=125, tags=["non-fiction"]),
+            book_factory(page_count=75, tags_list=["fiction"]),
+            book_factory(page_count=125, tags_list=["non-fiction"]),
         ]
 
         for book in books:

@@ -7,8 +7,8 @@ from library.models import Book, Tag
 def tag_cloud(request: HttpRequest) -> HttpResponse:
     tags = {
         "untagged": {
-            "total": Book.objects.exclude(tags__contains=["non-fiction"])
-            .exclude(tags__contains=["fiction"])
+            "total": Book.objects.exclude(tags_list__contains=["non-fiction"])
+            .exclude(tags_list__contains=["fiction"])
             .count()
         },
         "all": {tag.name: tag.books.count() for tag in Tag.objects.all()},

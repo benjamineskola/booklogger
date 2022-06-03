@@ -165,7 +165,7 @@ BulkBookFormSet = modelformset_factory(
         "series",
         "series_order",
         "edition_format",
-        "tags",
+        "tags_list",
     ],
     extra=0,
 )

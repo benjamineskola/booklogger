@@ -206,7 +206,9 @@ def tags(request: HttpRequest, base_tag: str = "non-fiction") -> HttpResponse:
         excluded_tags |= {"fiction", "non-fiction"}
 
     books = Tag.objects[base_tag].books.select_related("first_author")
-    toplevel_tags = set(flatten(books.values_list("tags", flat=True))) - excluded_tags
+    toplevel_tags = (
+        set(flatten(books.values_list("tags_list", flat=True))) - excluded_tags
+    )
 
     results = {
         tag: [book for book in books if tag in book.tags] for tag in toplevel_tags
@@ -230,7 +232,9 @@ def related_tags(request: HttpRequest, base_tag: str = "non-fiction") -> HttpRes
         excluded_tags |= {"fiction", "non-fiction"}
 
     books = Tag.objects[base_tag].books
-    toplevel_tags = set(flatten(books.values_list("tags", flat=True))) - excluded_tags
+    toplevel_tags = (
+        set(flatten(books.values_list("tags_list", flat=True))) - excluded_tags
+    )
 
     results = {}
     for tag in toplevel_tags:

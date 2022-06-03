@@ -10,9 +10,9 @@ class TestTag:
         base_tag.children.add(tag_factory(name="politics"))
         base_tag.children.add(tag_factory(name="philosophy"))
 
-        book_factory(tags=["history", "politics"])
-        book_factory(tags=["history"])
-        book_factory(tags=["philosophy"])
+        book_factory(tags_list=["history", "politics"])
+        book_factory(tags_list=["history"])
+        book_factory(tags_list=["philosophy"])
 
         resp = client.get("/tags/")
         tags = resp.context_data["tags"]

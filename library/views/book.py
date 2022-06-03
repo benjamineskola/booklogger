@@ -160,7 +160,7 @@ class UnreadIndexView(IndexView):
         books = super().get_queryset()
         books = (
             books.available() | books.filter(edition_format=Book.Format["WEB"])
-        ).exclude(tags__contains=["reference"])
+        ).exclude(tags_list__contains=["reference"])
         return books
 
 
@@ -202,7 +202,7 @@ class TagIndexView(IndexView):
         tags: list[str] = [tag.strip() for tag in self.kwargs["tag_name"].split(",")]
 
         if tags == ["untagged"]:
-            return books.filter(tags__len=0)
+            return books.filter(tags_list__len=0)
         if len(tags) == 1 and tags[0].endswith("!"):
             tag = get_object_or_404(Tag, name=tags[0][0:-1])
             return tag.books_uniquely_tagged
@@ -304,7 +304,7 @@ def add_tags(request: HttpRequest, slug: str) -> HttpResponse:
 
     if tags:
         start_tags = book.tags.copy()
-        book.tags += tags
+        book.tags.extend(tags)
         book.save()
         tags = sorted(set(book.tags).difference(start_tags))
 
@@ -462,11 +462,11 @@ class BulkEditView(
                 queryset = queryset.unowned()
             elif query == "tag":
                 if query_arg == "untagged":
-                    queryset = queryset.filter(tags=[])
+                    queryset = queryset.filter(tags_list=[])
                 elif query_arg.endswith("!"):
-                    queryset = queryset.filter(tags=[query_arg.strip("!")])
+                    queryset = queryset.filter(tags_list=[query_arg.strip("!")])
                 else:
-                    queryset = queryset.filter(tags__contains=query_arg.split(","))
+                    queryset = queryset.filter(tags_list__contains=query_arg.split(","))
             elif query == "author":
                 queryset = queryset.filter(
                     Q(first_author__slug=query_arg)
