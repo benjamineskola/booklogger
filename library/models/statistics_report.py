@@ -55,8 +55,12 @@ class StatisticsReport(TimestampedModel):
         )
 
         if self.count:
-            self.shortest = books.order_by("page_count")[0]
-            self.longest = books.order_by("-page_count")[0]
+            self.shortest = (
+                books.filter(page_count__gt=0).order_by("page_count").first()
+            )
+            self.longest = (
+                books.filter(page_count__gt=0).order_by("-page_count").first()
+            )
 
         self.by_men = self._counts_for_queryset(
             books.by_men(), self.count, self.page_count
