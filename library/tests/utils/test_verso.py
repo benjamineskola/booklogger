@@ -24,10 +24,11 @@ class TestVerso:
         assert book.image_url == dummy_url
 
     def test_update_from_publisher_url(self, book_factory, requests_mock):
-        requests_mock.get(
-            "https://www.versobooks.com/books/960-liberalism",
-            text=open("library/fixtures/losurdo.html").read(),
-        )
+        with open("library/fixtures/losurdo.html") as file:
+            requests_mock.get(
+                "https://www.versobooks.com/books/960-liberalism",
+                text=file.read(),
+            )
 
         book = book_factory(
             publisher="Verso",

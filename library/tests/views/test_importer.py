@@ -9,19 +9,20 @@ from library.models import Book
 class TestImporter:
     @pytest.fixture
     def goodreads_mock(self, requests_mock, goodreads_key):
-        text = open("library/fixtures/wuthering_heights.xml").read()
-        requests_mock.get(
-            "https://www.goodreads.com/search/index.xml?key=TEST_FAKE&q=Wuthering%20Heights",
-            text=text,
-        )
-        requests_mock.get(
-            "https://www.goodreads.com/search/index.xml?key=TEST_FAKE&q=9780199541898",
-            text=text,
-        )
-        requests_mock.get(
-            "https://www.goodreads.com/search/index.xml?key=TEST_FAKE&q=B002RI97IO",
-            text=text,
-        )
+        with open("library/fixtures/wuthering_heights.xml") as file:
+            text = file.read()
+            requests_mock.get(
+                "https://www.goodreads.com/search/index.xml?key=TEST_FAKE&q=Wuthering%20Heights",
+                text=text,
+            )
+            requests_mock.get(
+                "https://www.goodreads.com/search/index.xml?key=TEST_FAKE&q=9780199541898",
+                text=text,
+            )
+            requests_mock.get(
+                "https://www.goodreads.com/search/index.xml?key=TEST_FAKE&q=B002RI97IO",
+                text=text,
+            )
         requests_mock.get(
             "https://www.googleapis.com/books/v1/volumes?q=isbn:9780199541898",
             text="{}",

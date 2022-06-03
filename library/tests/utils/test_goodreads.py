@@ -8,15 +8,17 @@ class TestGoodreads:
 
     @pytest.fixture
     def mock_goodreads(self, requests_mock, goodreads_key):
-        requests_mock.get(
-            f"https://www.goodreads.com/search/index.xml?key=TEST_FAKE&q={self.query}",
-            text=open("library/fixtures/marx.xml").read(),
-        )
+        with open("library/fixtures/marx.xml") as fixture:
+            requests_mock.get(
+                f"https://www.goodreads.com/search/index.xml?key=TEST_FAKE&q={self.query}",
+                text=fixture.read(),
+            )
 
-        requests_mock.get(
-            f"https://www.goodreads.com/search/index.xml?key=TEST_FAKE&q={self.query}_scrape",
-            text=open("library/fixtures/marx_scrape.xml").read(),
-        )
+        with open("library/fixtures/marx_scrape.xml") as fixture:
+            requests_mock.get(
+                f"https://www.goodreads.com/search/index.xml?key=TEST_FAKE&q={self.query}_scrape",
+                text=fixture.read(),
+            )
 
         requests_mock.get(
             "https://www.goodreads.com/book/show/13403951",
