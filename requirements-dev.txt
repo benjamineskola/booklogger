@@ -12,7 +12,7 @@ flake8-simplify==0.19.2
 freezegun==1.2.1
 mypy
 mypy-extensions==0.4.3
-pep8-naming==0.12.1
+pep8-naming==0.13.0
 pre-commit==2.19.0
 pylint==2.13.4
 pytest==7.1.0
