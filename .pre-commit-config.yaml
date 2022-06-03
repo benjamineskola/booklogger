@@ -51,6 +51,11 @@ repos:
     rev: "4.0.1"
     hooks:
       - id: flake8
+        additional_dependencies:
+          - flake8-bugbear
+          - flake8-comprehensions
+          - "flake8-django @ git+https://github.com/rocioar/flake8-django.git@master"
+          - flake8-simplify
   - repo: https://github.com/PyCQA/pylint
     rev: v2.13.7
     hooks:
