@@ -1,12 +1,8 @@
 import pytest
 from freezegun import freeze_time
 
-from library.models import Book, Tag
-from library.views.stats import (
-    _counts_for_queryset,
-    _stats_for_queryset,
-    calculate_year_progress,
-)
+from library.models.book import Tag
+from library.views.stats import calculate_year_progress
 
 
 @pytest.mark.django_db
@@ -27,36 +23,6 @@ class TestStats:
             book.start_reading()
             book.finish_reading()
         yield books
-
-    @pytest.fixture
-    def stats(self, books):
-        yield _stats_for_queryset(Book.objects.all())
-
-    def test_counts_for_queryset(self):
-        counts = _counts_for_queryset(Book.objects.all())
-        assert counts["count"] == 4
-        assert counts["pages"] == 400
-
-    def test_counts_for_queryset_percentages(self):
-        all_books = Book.objects.all()
-        counts = _counts_for_queryset(
-            all_books.tagged("fiction"), all_books.count(), all_books.page_count
-        )
-
-        assert counts["percent"] == 25
-        assert counts["pages_percent"] == 18.75
-
-    def test_stats_for_queryset_counts(self, stats, books):
-        assert stats["average_pages"] == 100
-        assert stats["shortest_book"] == books[0]
-        assert stats["longest_book"] == books[1]
-
-    def test_stats_for_queryset_genre(self, stats, books):
-        assert stats["fiction"]["count"] == 1
-        assert stats["non-fiction"]["count"] == 1
-
-        assert stats["fiction"]["pages"] == 75
-        assert stats["non-fiction"]["pages"] == 125
 
     @freeze_time("2022-01-01")
     def test_calculate_year_progress_nyd(self):

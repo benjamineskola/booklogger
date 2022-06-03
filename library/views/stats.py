@@ -4,88 +4,8 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
 
-from library.models import Author, Book, BookQuerySet, LogEntry, LogEntryQuerySet
+from library.models import Book, LogEntry, LogEntryQuerySet, StatisticsReport
 from library.utils import is_authenticated
-
-GENRES = ["fiction", "non-fiction"]
-
-Numeric = int | float
-
-
-def _counts_for_queryset(
-    books: BookQuerySet, total_count: int = 0, total_pages: int = 0
-) -> dict[str, Numeric]:
-    result: dict[str, Numeric] = {
-        "count": books.count(),
-        "pages": books.page_count,
-    }
-
-    if total_count:
-        result["percent"] = (books.count() / total_count) * 100
-    if total_pages:
-        result["pages_percent"] = (books.page_count / total_pages) * 100
-
-    return result
-
-
-def _stats_for_queryset(books: BookQuerySet) -> dict[str, Any]:
-    result: dict[str, Any] = _counts_for_queryset(books)
-    result.update(
-        {
-            "average_pages": books.page_count
-            / max(1, books.exclude(page_count=0).count()),
-            "shortest_book": books.exclude(page_count=0).order_by("page_count").first(),
-            "longest_book": books.exclude(page_count=0).order_by("page_count").last(),
-            "breakdowns": {"gender": {}, "genre": {}},
-        }
-    )
-    result.update(
-        {
-            genre: _counts_for_queryset(
-                books.tagged(genre), result["count"], result["pages"]
-            )
-            for genre in GENRES
-        }
-    )
-    result["both"] = _counts_for_queryset(
-        books.by_multiple_genders(), result["count"], result["pages"]
-    )
-    result["poc"] = _counts_for_queryset(books.poc(), result["count"], result["pages"])
-
-    gender_labels = {int(i): Author.Gender(i).label.lower() for i in Author.Gender}
-    gender_labels[1] = "men"
-    gender_labels[2] = "women"
-    gender_labels[3] = "organisations"
-
-    for i, label in gender_labels.items():
-        result[label] = _counts_for_queryset(
-            books.by_gender(i), result["count"], result["pages"]
-        )
-
-        result["breakdowns"]["gender"][label] = {
-            genre: dict(
-                key=i,
-                **_counts_for_queryset(
-                    books.tagged(genre).by_gender(i), result[label]["count"]
-                )
-            )
-            for genre in GENRES
-        }
-
-    result["breakdowns"]["genre"] = {
-        genre: {
-            gender: dict(
-                key=i,
-                **_counts_for_queryset(
-                    books.tagged(genre).by_gender(i), books.tagged(genre).count()
-                )
-            )
-            for i, gender in gender_labels.items()
-        }
-        for genre in GENRES
-    }
-
-    return result
 
 
 def stats_index(request: HttpRequest) -> HttpResponse:
@@ -161,7 +81,7 @@ def make_prediction(
 def stats_for_year(request: HttpRequest, year: str) -> HttpResponse:
     result: dict[str, Any] = {
         "page_title": "Library Stats",
-        "year": "1" if year == "sometime" else year,
+        "year": 1 if year == "sometime" else 0 if year == "total" else int(year),
         "current_week": 52,  # potentially overridden later
         "current_year": timezone.now().year,
         "result": {},
@@ -179,7 +99,7 @@ def stats_for_year(request: HttpRequest, year: str) -> HttpResponse:
     if not is_authenticated(request):
         read_books = read_books.filter(private=False)
 
-    result["result"].update(_stats_for_queryset(read_books))
+    result["report"], _ = StatisticsReport.objects.get_or_create(year=result["year"])
 
     if year == str(result["current_year"]):
         result["prediction"], result["target_counts"] = make_prediction(
@@ -188,19 +108,24 @@ def stats_for_year(request: HttpRequest, year: str) -> HttpResponse:
 
         current_day, year_days = calculate_year_progress(result["current_year"])
         result["current_week"] = (current_day // 7) + 1
-        result["result"]["pages_per_day"] = result["result"]["pages"] / current_day
-        result["result"]["predicted_pages"] = (
-            result["result"]["pages_per_day"] * year_days
-        )
+        result["pages_per_day"] = result["report"].page_count / current_day
+        result["predicted_pages"] = result["pages_per_day"] * year_days
 
     elif year not in ("total", "sometime"):
-        result["result"]["pages_per_day"] = result["result"]["pages"] / (
+        result["pages_per_day"] = result["report"].page_count / (
             366 if int(year) % 4 == 0 else 365
         )  # technically incorrect but valid until AD 2100.
 
     result["all_time_average_pages"] = Book.objects.read().page_count / max(
         1, Book.objects.read().exclude(page_count=0).count()
     )
+
+    result["gender_labels"] = {
+        "1": "men",
+        "2": "women",
+        "3": "organisations",
+        "4": "non-binary people",
+    }
 
     return render(
         request,

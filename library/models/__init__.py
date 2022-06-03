@@ -5,6 +5,7 @@ from .book import Book, BookAuthor, BookQuerySet, Tag  # noqa: F401
 from .log_entry import LogEntry, LogEntryQuerySet  # noqa: F401
 from .queue import Queue  # noqa: F401
 from .reading_list import ReadingList, ReadingListEntry  # noqa: F401
+from .statistics_report import StatisticsReport
 
 __all__ = [
     "Author",
@@ -17,6 +18,7 @@ __all__ = [
     "Queue",
     "ReadingList",
     "ReadingListEntry",
+    "StatisticsReport",
     "Tag",
 ]
 
