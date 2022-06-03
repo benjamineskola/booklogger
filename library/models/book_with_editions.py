@@ -4,10 +4,10 @@ from django.db import models
 
 
 class BookWithEditions(models.Model):
+    editions = models.ManyToManyField("self", symmetrical=True, blank=True)
+
     class Meta:
         abstract = True
-
-    editions = models.ManyToManyField("self", symmetrical=True, blank=True)
 
     @property
     def _fields_to_copy(self) -> dict[str, Any]:
