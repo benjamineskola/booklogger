@@ -22,12 +22,7 @@ def stats_index(request: HttpRequest) -> HttpResponse:
     reread = owned.read().filter(want_to_read=True).count()
     unowned_read = books.unowned().read().count()
 
-    years = (
-        LogEntry.objects.exclude(end_date__isnull=True)
-        .exclude(abandoned=True)
-        .distinct("end_date__year")
-        .values_list("end_date__year", flat=True)
-    )
+    years = StatisticsReport.objects.exclude(year=0).values_list("year", flat=True)
 
     return render(
         request,
