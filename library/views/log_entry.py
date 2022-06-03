@@ -45,9 +45,8 @@ class GenericLogView(generic.ListView[LogEntry]):
                 entries = entries.filter(end_date__year=1)
             else:
                 entries = entries.filter(end_date__year=year)
-        elif self.single_year:
-            if (last := entries.last()) and last.end_date:
-                entries = entries.filter(end_date__year=last.end_date.year)
+        elif self.single_year and (last := entries.last()) and last.end_date:
+            entries = entries.filter(end_date__year=last.end_date.year)
 
         return entries.filter_by_request(self.request).distinct()
 
