@@ -9,14 +9,7 @@ from typing import TYPE_CHECKING, Any
 from urllib.parse import quote
 
 from django.contrib.auth.models import User
-from django.contrib.postgres.fields import ArrayField
-from django.contrib.postgres.indexes import GinIndex
-from django.contrib.postgres.search import (
-    SearchQuery,
-    SearchRank,
-    SearchVector,
-    TrigramSimilarity,
-)
+from django.contrib.postgres.search import TrigramSimilarity
 from django.db import models
 from django.db.models import Case, CheckConstraint, F, Q, Sum, Value, When
 from django.db.models.functions import Lower
@@ -63,9 +56,6 @@ class BaseBookManager(models.Manager["Book"]):
                     "edition_subtitle", pattern
                 ),
                 review_similarity=TrigramSimilarity("review", pattern),
-                tags_similarity=SearchRank(
-                    SearchVector("tags_list"), SearchQuery(pattern)
-                ),
                 similarity=(
                     F("first_author_similarity")
                     + Case(
@@ -88,7 +78,6 @@ class BaseBookManager(models.Manager["Book"]):
                     )
                     + F("series_similarity")
                     + F("review_similarity")
-                    + F("tags_similarity") * 10
                 ),
             )
             .order_by("-similarity")
@@ -156,7 +145,7 @@ class BookQuerySet(models.QuerySet["Book"]):
     def tagged(self, *tag_names: str) -> "BookQuerySet":
         qs = self.distinct()
         for tag_name in tag_names:
-            qs &= Tag.objects[tag_name].books
+            qs &= Tag.objects[tag_name].books_recursive.distinct()
         return qs
 
     def fiction(self) -> "BookQuerySet":
@@ -291,7 +280,6 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
     class Meta:
         indexes = [
             Index(fields=["series", "series_order", "title"]),
-            GinIndex(fields=["tags_list"]),
         ]
         ordering = [
             Lower("first_author__surname"),
@@ -409,8 +397,6 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
 
     want_to_read = models.BooleanField(db_index=True, default=True)
 
-    tags_list = ArrayField(models.CharField(max_length=32), default=list, blank=True)
-
     review = models.TextField(blank=True)
     rating = models.DecimalField(
         max_digits=2,
@@ -434,6 +420,8 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
     )
 
     private = models.BooleanField(db_index=True, default=False)
+
+    tags = models.ManyToManyField("Tag", related_name="books")
 
     def __str__(self) -> str:
         result = f"{self.first_author}, {self.display_title}"
@@ -642,17 +630,6 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
         if not self.rating:
             self.rating = 0.0
 
-        self.tags_list = sorted(
-            {
-                tag.lower().replace(",", "").replace("/", "").strip()
-                for tag in self.tags_list
-            }
-        )
-        for tag in self.tags:
-            Tag.objects.get_or_create(name=tag)
-
-        self.tidy_tags()
-
         self.title = smarten(self.title)
         self.subtitle = smarten(self.subtitle)
         self.series = smarten(self.series)
@@ -805,18 +782,9 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
             return self.review.split()[0]
         return ""
 
-    def tidy_tags(self) -> None:
-        keep_tags = ["history", "fiction", "non-fiction"]
-        for tag_name in self.tags:
-            for ptag in Tag.objects[tag_name].parents_recursive:
-                if ptag.name in self.tags and ptag.name not in keep_tags:
-                    self.tags.remove(ptag.name)
-                if ptag.name not in self.tags and ptag.name in keep_tags:
-                    self.tags.append(ptag.name)
-
     @property
-    def tags(self) -> list[str]:
-        return self.tags_list
+    def tags_list(self) -> set[str]:
+        return {tag.name for tag in self.tags.all()}
 
 
 class BookAuthor(TimestampedModel):
@@ -835,7 +803,8 @@ class BookAuthor(TimestampedModel):
 
 class TagManager(models.Manager["Tag"]):
     def __getitem__(self, name: str) -> "Tag":
-        return Tag.objects.get(name=name.lower())
+        tag, _ = Tag.objects.get_or_create(name=name.lower())
+        return tag
 
 
 class Tag(TimestampedModel):
@@ -859,23 +828,16 @@ class Tag(TimestampedModel):
         return self.name
 
     @property
-    def books(self) -> "BookQuerySet":
-        return Book.objects.filter(tags_list__contains=[self.name]).distinct()
-
-    @property
     def books_recursive(self) -> "BookQuerySet":
-        books = self.books
+        books = self.books.distinct()
         for child in self.children.all():
-            books |= child.books_recursive
+            books |= child.books_recursive.distinct()
         return books
 
     @property
     def books_uniquely_tagged(self) -> "BookQuerySet":
-        return Book.objects.filter(
-            Q(tags_list=[self.name])
-            | Q(tags_list=sorted(["fiction", self.name]))
-            | Q(tags_list=sorted(["non-fiction", self.name]))
-        )
+        others = Tag.objects.exclude(name__in=[self.name, "fiction", "non-fiction"])
+        return self.books_recursive.exclude(tags__in=others)
 
     @property
     def parents_recursive(self) -> models.QuerySet["Tag"]:
@@ -897,7 +859,10 @@ class Tag(TimestampedModel):
     def related(self) -> models.QuerySet["Tag"]:
         return reduce(
             operator.or_,
-            [Tag.objects.filter(name__in=book.tags) for book in self.books.all()],
+            [
+                Tag.objects.filter(name__in=[tag.name for tag in book.tags.all()])
+                for book in self.books.all()
+            ],
             Tag.objects.none(),
         )
 
@@ -906,25 +871,6 @@ class Tag(TimestampedModel):
 
     def get_absolute_url(self) -> str:
         return reverse("library:tag_details", args=[self.name])
-
-    def rename(self, new_name: str) -> None:
-        new_tag, created = Tag.objects.get_or_create(name=new_name)
-        new_tag.save()
-        if created:
-            for parent in self.parents.all():
-                new_tag.parents.add(parent)
-            new_tag.save()
-
-        for book in self.books:
-            book.tags.append(new_name)
-            book.save()
-        self.delete()
-
-    def delete(self, *args: Any, **kwargs: Any) -> tuple[int, dict[str, int]]:
-        for book in self.books:
-            book.tags.remove(self.name)
-            book.save()
-        return super().delete(*args, **kwargs)
 
     def save(self, *args: Any, **kwargs: Any) -> None:
         self.name = self.name.lower()

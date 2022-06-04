@@ -39,9 +39,7 @@ class LogEntryQuerySet(models.QuerySet["LogEntry"]):
             )
         if tags := request.GET.get("tags"):
             qs = qs.filter(
-                book__tags_list__contains=[
-                    tag.strip() for tag in tags.lower().split(",")
-                ]
+                book__tags__name=[tag.strip() for tag in tags.lower().split(",")]
             )
         if owned := request.GET.get("owned"):
             try:

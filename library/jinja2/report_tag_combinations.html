@@ -15,7 +15,7 @@
       <small><a href="#navbar">⤴</a></small>
     </h2>
     <ol>
-      {% for tags, tagged_books in books | groupby('tags') %}
+      {% for tags, tagged_books in books | groupby('tags_list') %}
         <li>
           {{ tag }}
           {%- for i in tags | reject('in', excluded_tags) | reject('eq', tag) -%}

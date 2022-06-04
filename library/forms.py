@@ -6,7 +6,6 @@ from django.forms import (
     ModelForm,
     Select,
     SelectDateWidget,
-    SelectMultiple,
     ValidationError,
     inlineformset_factory,
     modelformset_factory,
@@ -63,7 +62,6 @@ class BookForm(ModelForm[Book]):
             ),
             "publisher": Select(choices=[("", "---------")]),
             "series": Select(choices=[("", "---------")]),
-            "tags": SelectMultiple(),
         }
 
     def __init__(self, *args: Any, **kwargs: Any):
@@ -165,7 +163,6 @@ BulkBookFormSet = modelformset_factory(
         "series",
         "series_order",
         "edition_format",
-        "tags_list",
     ],
     extra=0,
 )

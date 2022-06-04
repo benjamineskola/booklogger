@@ -19,7 +19,6 @@ class BookWithEditions(models.Model):
             "first_published",
             "language",
             "want_to_read",
-            "tags_list",
             "review",
             "rating",
             "series",
@@ -47,6 +46,7 @@ class BookWithEditions(models.Model):
         edition.save()
         for author in self.bookauthor_set.all():  # type: ignore[attr-defined]
             edition.add_author(author.author, role=author.role, order=author.order)  # type: ignore[attr-defined]
+        edition.tags.set(self.tags.all())  # type: ignore[attr-defined]
         self.editions.add(edition)
         self.save()
         return edition

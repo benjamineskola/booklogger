@@ -1,18 +1,22 @@
 import pytest
 
+from library.models import Tag
+
 
 @pytest.mark.django_db
 class TestTag:
     def test_tag_cloud(self, book_factory, client, tag_factory):
-        tag_factory(name="fiction")
         base_tag = tag_factory(name="non-fiction")
         base_tag.children.add(tag_factory(name="history"))
         base_tag.children.add(tag_factory(name="politics"))
         base_tag.children.add(tag_factory(name="philosophy"))
 
-        book_factory(tags_list=["history", "politics"])
-        book_factory(tags_list=["history"])
-        book_factory(tags_list=["philosophy"])
+        book1 = book_factory()
+        book1.tags.set((Tag.objects["history"], Tag.objects["politics"]))
+        book2 = book_factory()
+        book2.tags.set((Tag.objects["history"],))
+        book3 = book_factory()
+        book3.tags.set((Tag.objects["philosophy"],))
 
         resp = client.get("/tags/")
         tags = resp.context_data["tags"]

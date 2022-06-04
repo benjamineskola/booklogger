@@ -9,15 +9,14 @@ from library.views.stats import calculate_year_progress
 class TestStats:
     @pytest.fixture(autouse=True)
     def books(self, book_factory):
-        Tag(name="fiction").save()
-        Tag(name="non-fiction").save()
-
         books = [
             book_factory(page_count=50),
             book_factory(page_count=150),
-            book_factory(page_count=75, tags_list=["fiction"]),
-            book_factory(page_count=125, tags_list=["non-fiction"]),
+            book_factory(page_count=75),
+            book_factory(page_count=125),
         ]
+        books[2].tags.add(Tag.objects["fiction"])
+        books[3].tags.add(Tag.objects["non-fiction"])
 
         for book in books:
             book.start_reading()

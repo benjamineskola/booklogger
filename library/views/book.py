@@ -160,7 +160,7 @@ class UnreadIndexView(IndexView):
         books = super().get_queryset()
         books = (
             books.available() | books.filter(edition_format=Book.Format["WEB"])
-        ).exclude(tags_list__contains=["reference"])
+        ).exclude(tags__name="reference")
         return books
 
 
@@ -303,10 +303,11 @@ def add_tags(request: HttpRequest, slug: str) -> HttpResponse:
     tags = request.POST.get("tags", "").split(",")
 
     if tags:
-        start_tags = book.tags.copy()
-        book.tags.extend(tags)
+        start_tags = [tag.name for tag in book.tags.all()]
+        for tag in tags:
+            book.tags.add(Tag.objects[tag])
         book.save()
-        tags = sorted(set(book.tags).difference(start_tags))
+        tags = sorted({tag.name for tag in book.tags.all()}.difference(start_tags))
 
     return HttpResponse(json.dumps({"tags": tags}))
 
@@ -317,7 +318,7 @@ def remove_tags(request: HttpRequest, slug: str) -> HttpResponse:
     book = get_object_or_404(Book, slug=slug)
     tags = request.POST.get("tags", "").split(",")
     for tag in tags:
-        book.tags.remove(tag)
+        book.tags.remove(Tag.objects[tag])
     book.save()
 
     return redirect("library:book_details", slug=slug)
@@ -462,11 +463,11 @@ class BulkEditView(
                 queryset = queryset.unowned()
             elif query == "tag":
                 if query_arg == "untagged":
-                    queryset = queryset.filter(tags_list=[])
+                    queryset = queryset.filter(tags=[])
                 elif query_arg.endswith("!"):
-                    queryset = queryset.filter(tags_list=[query_arg.strip("!")])
+                    queryset = queryset.filter(tags__name=[query_arg.strip("!")])
                 else:
-                    queryset = queryset.filter(tags_list__contains=query_arg.split(","))
+                    queryset = queryset.filter(tags__name=query_arg.split(","))
             elif query == "author":
                 queryset = queryset.filter(
                     Q(first_author__slug=query_arg)

@@ -7,14 +7,17 @@ from library.models import Book, Tag
 def tag_cloud(request: HttpRequest) -> HttpResponse:
     tags = {
         "untagged": {
-            "total": Book.objects.exclude(tags_list__contains=["non-fiction"])
-            .exclude(tags_list__contains=["fiction"])
+            "total": Book.objects.exclude(tags=Tag.objects["non-fiction"])
+            .exclude(tags=Tag.objects["non-fiction"])
             .count()
         },
         "all": {tag.name: tag.books.count() for tag in Tag.objects.all()},
-        "fiction": {tag.name: tag.books.fiction().count() for tag in Tag.objects.all()},
+        "fiction": {
+            tag.name: tag.books_recursive.fiction().count() for tag in Tag.objects.all()
+        },
         "non-fiction": {
-            tag.name: tag.books.nonfiction().count() for tag in Tag.objects.all()
+            tag.name: tag.books_recursive.nonfiction().count()
+            for tag in Tag.objects.all()
         },
     }
 

@@ -28,21 +28,21 @@ class TestTag:
         assert tag1 in tag3.parents_recursive
         assert tag3 in tag1.children_recursive
 
-    def test_books_recursive(self, book_factory, tag_factory):
+    def test_books_recursive(self, book, tag_factory):
         tag1 = tag_factory()
         tag2 = tag_factory()
         tag3 = tag_factory()
         tag1.children.add(tag2)
         tag2.children.add(tag3)
 
-        book = book_factory(tags_list=[tag3.name])
+        book.tags.add(tag3)
         assert book in tag1.books_recursive
 
-    def test_related(self, book_factory, tag_factory):
+    def test_related(self, book, tag_factory):
         tag1 = tag_factory()
         tag2 = tag_factory()
         tag3 = tag_factory()
-        book_factory(tags_list=[tag1.name, tag2.name])
+        book.tags.set((tag1, tag2))
 
         assert tag1 in tag2.related
         assert tag2 in tag1.related
@@ -55,31 +55,22 @@ class TestTag:
 
         assert tag1 < tag2
 
-    def test_rename(self, book_factory, tag_factory):
-        tag1 = tag_factory(name="foo")
-        tag2 = tag_factory()
-        tag1.parents.add(tag2)
-        book = book_factory(tags_list=[tag1.name])
-
-        assert "foo" in book.tags
-        assert "bar" not in book.tags
-        tag1.rename("bar")
-        book.refresh_from_db()
-        assert "foo" not in book.tags
-        assert "bar" in book.tags
-
-        assert tag2.children.first().name == "bar"
-
     def test_books_uniquely_tagged(self, book_factory, tag_factory):
-        book1 = book_factory(tags_list=["foo"])
-        book2 = book_factory(tags_list=["foo", "bar"])
+        tag1 = tag_factory()
+        tag2 = tag_factory()
 
-        tag = Tag.objects["foo"]
-        assert book1 in tag.books_uniquely_tagged
-        assert book2 not in tag.books_uniquely_tagged
+        book1 = book_factory()
+        book1.tags.add(tag1)
+        book2 = book_factory()
+        book2.tags.set((tag1, tag2))
 
-    def test_tags_case_insensitive(self, book_factory, tag_factory):
-        book_factory(tags_list=["foo"])
-        book_factory(tags_list=["Foo"])
+        assert book1 in tag1.books_uniquely_tagged
+        assert book2 not in tag1.books_uniquely_tagged
+
+    def test_tags_case_insensitive(self, book_factory):
+        book1 = book_factory()
+        book1.tags.add(Tag.objects["foo"])
+        book2 = book_factory()
+        book2.tags.add(Tag.objects["Foo"])
 
         assert Tag.objects["foo"] == Tag.objects["Foo"]

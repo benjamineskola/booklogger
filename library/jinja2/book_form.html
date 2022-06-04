@@ -132,7 +132,7 @@
   <script>
     document.bookauthor_formset_template = `{{ inline_formsets[0].empty_form }}`
     document.listentry_formset_template = `{{ inline_formsets[2].empty_form }}`
-    document.formTags = {% if form.instance %}{{ form.instance.tags | json | safe }}{% else %}null{% endif %}
+    document.formTags = {% if form.instance %}{{ form.instance.tags_list | list | json | safe }}{% else %}null{% endif %}
   </script>
   <script src="{{ static("book-form.js") }}?_v={{ VERSION_NUMBER }}"></script>
 {% endblock footer%}

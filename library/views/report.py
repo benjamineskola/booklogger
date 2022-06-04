@@ -195,24 +195,14 @@ class IndexView(LoginRequiredMixin, generic.ListView[Book]):
 
 
 def tags(request: HttpRequest, base_tag: str = "non-fiction") -> HttpResponse:
-    excluded_tags = {
-        base_tag,
-        "anthology",
-        "needs contributors",
-        "updated-from-google",
-    }
+    excluded_tags = {base_tag, "anthology", "needs contributors", "updated-from-google"}
 
     if base_tag not in ["fiction", "non-fiction"]:
         excluded_tags |= {"fiction", "non-fiction"}
 
-    books = Tag.objects[base_tag].books.select_related("first_author")
-    toplevel_tags = (
-        set(flatten(books.values_list("tags_list", flat=True))) - excluded_tags
-    )
+    toplevel_tags = Tag.objects.exclude(books__isnull=True)
 
-    results = {
-        tag: [book for book in books if tag in book.tags] for tag in toplevel_tags
-    }
+    results = {tag.name: tag.books.all() for tag in toplevel_tags}
 
     return TemplateResponse(
         request,
@@ -222,29 +212,25 @@ def tags(request: HttpRequest, base_tag: str = "non-fiction") -> HttpResponse:
 
 
 def related_tags(request: HttpRequest, base_tag: str = "non-fiction") -> HttpResponse:
-    excluded_tags = {
-        base_tag,
-        "anthology",
-        "needs contributors",
-        "updated-from-google",
-    }
+    excluded_tags = {base_tag, "anthology", "needs contributors", "updated-from-google"}
+
     if base_tag not in ["fiction", "non-fiction"]:
         excluded_tags |= {"fiction", "non-fiction"}
 
-    books = Tag.objects[base_tag].books
-    toplevel_tags = (
-        set(flatten(books.values_list("tags_list", flat=True))) - excluded_tags
-    )
+    toplevel_tags = Tag.objects.exclude(books__isnull=True)
 
     results = {}
     for tag in toplevel_tags:
-        tagged_books = [book for book in books if tag in book.tags]
-        related = sorted(flatten([book.tags for book in tagged_books]))
-        results[tag] = {
-            related_tag: len(list(books)) for related_tag, books in groupby(related)
+        tagged_books = tag.books.all()
+        related = sorted(flatten([book.tags.all() for book in tagged_books]))
+        results[tag.name] = {
+            related_tag.name: len(list(books))
+            for related_tag, books in groupby(related)
         }
-        results[tag]["total"] = len(tagged_books)
-        results[tag][tag] = len([book for book in tagged_books if len(book.tags) > 2])
+        results[tag.name]["total"] = tagged_books.count()
+        results[tag.name][tag.name] = len(
+            [book for book in tagged_books if book.tags.count() > 2]
+        )
 
     return TemplateResponse(
         request,

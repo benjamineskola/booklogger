@@ -1,5 +1,6 @@
 import pytest
 
+from library.models import Tag
 from library.views.report import IndexView
 
 
@@ -23,8 +24,8 @@ class TestReportView:
         assert len(resp.context_data["object_list"]) == 1
 
     @pytest.mark.parametrize("page", range(1, len(IndexView().categories)))
-    def test_report_all_pages(self, page, admin_client, book_factory, user):
-        book_factory(owned_by=user, tags_list=["non-fiction", "history"])
+    def test_report_all_pages(self, page, admin_client, book, user):
+        book.tags.set((Tag.objects["non-fiction"], Tag.objects["history"]))
         resp = admin_client.get(f"/report/{page}/")
         assert resp.context_data["page_title"] != "Reports"
 
@@ -42,8 +43,12 @@ class TestReportView:
         base_tag = tag_factory(name="non-fiction")
         base_tag.children.add(tag_factory(name="history"))
         base_tag.children.add(tag_factory(name="politics"))
-        book1 = book_factory(tags_list=["history"])
-        book2 = book_factory(tags_list=["history", "politics"])
+
+        book1 = book_factory()
+        book1.tags.set((Tag.objects["history"],))
+
+        book2 = book_factory()
+        book2.tags.set((Tag.objects["history"], Tag.objects["politics"]))
 
         resp = admin_client.get("/report/tags/")
 
@@ -58,8 +63,10 @@ class TestReportView:
         base_tag.children.add(tag_factory(name="politics"))
         base_tag.children.add(tag_factory(name="philosophy"))
 
-        book_factory(tags_list=["history", "politics"])
-        book_factory(tags_list=["philosophy"])
+        book1 = book_factory()
+        book1.tags.set((Tag.objects["history"], Tag.objects["politics"]))
+        book2 = book_factory()
+        book2.tags.set((Tag.objects["philosophy"],))
 
         resp = admin_client.get("/report/tags/related/")
         results = resp.context_data["results"]
