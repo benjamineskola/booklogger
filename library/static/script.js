@@ -15,7 +15,8 @@ $(document).ready(function () {
  * @param {string} year
  * @param {string} url
  */
-function loadNextPage (year, url) { // eslint-disable-line no-unused-vars
+// eslint-disable-next-line no-unused-vars
+function loadNextPage (year, url) {
   const placeholder = $('.loader')
   $.ajax({
     type: 'GET',
@@ -128,7 +129,10 @@ function rateBook () {
     url: `/book/${book}/rate/`,
     data: { rating: Number(value) },
     beforeSend: function (xhr) {
-      xhr.setRequestHeader('X-CSRFToken', String($('[name=csrfmiddlewaretoken]').val()))
+      xhr.setRequestHeader(
+        'X-CSRFToken',
+        String($('[name=csrfmiddlewaretoken]').val())
+      )
     },
     success: function () {
       ratings.data('rating', value)
@@ -155,7 +159,10 @@ function removeTag () {
     url: `/book/${book}/remove_tag/`,
     data: { tags: tag },
     beforeSend: function (xhr) {
-      xhr.setRequestHeader('X-CSRFToken', String($('[name=csrfmiddlewaretoken]').val()))
+      xhr.setRequestHeader(
+        'X-CSRFToken',
+        String($('[name=csrfmiddlewaretoken]').val())
+      )
       if (!confirm(`Remove tag ${tag}?`)) {
         return false
       }
@@ -195,14 +202,19 @@ function updateProgress (event) {
   })
 }
 
-function updateScrollPosition () { // eslint-disable-line no-unused-vars
+// eslint-disable-next-line no-unused-vars
+function updateScrollPosition () {
   $('h2').each(function () {
     const height = $(window).height()
-    if (typeof height === 'undefined') { return }
+    if (typeof height === 'undefined') {
+      return
+    }
 
     const top = window.pageYOffset
     const offset = $(this).offset()
-    if (typeof offset === 'undefined') { return }
+    if (typeof offset === 'undefined') {
+      return
+    }
 
     const distance = top - offset.top
     const hash = $(this).attr('href')

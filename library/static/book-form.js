@@ -10,7 +10,11 @@ $(document).ready(function () {
     $('#id_tags').trigger('change')
   }
 
-  for (const fieldName of ['acquired_date', 'alienated_date', 'ebook_acquired_date']) {
+  for (const fieldName of [
+    'acquired_date',
+    'alienated_date',
+    'ebook_acquired_date'
+  ]) {
     configureDateFields(fieldName)
   }
 
@@ -49,9 +53,9 @@ function addAuthorField (event) {
   const index = parseInt(String(totalForms.val()))
 
   const inlineForm = $('<div class="form-inline"></div>')
-  const selectField = $(
-    event.data.template.replace(/__prefix__/g, index)
-  ).find('select')
+  const selectField = $(event.data.template.replace(/__prefix__/g, index)).find(
+    'select'
+  )
 
   const authorFormGroup = $('<div class="form-group"></div>')
   authorFormGroup.append(
@@ -97,9 +101,9 @@ function addListEntryField (event) {
   const index = parseInt(String(totalForms.val()))
 
   const inlineForm = $('<div class="form-inline"></div>')
-  const selectField = $(
-    event.data.template.replace(/__prefix__/g, index)
-  ).find('select')
+  const selectField = $(event.data.template.replace(/__prefix__/g, index)).find(
+    'select'
+  )
 
   const authorFormGroup = $('<div class="form-group"></div>')
   authorFormGroup.append(
@@ -151,7 +155,10 @@ function configureSelectFields () {
   $('select').select2({ theme: 'bootstrap' })
   $(
     '#id_first_author, #id_publisher, #id_series, #formset-bookauthor_set select'
-  ).select2({ theme: 'bootstrap', tags: true })
+  ).select2({
+    theme: 'bootstrap',
+    tags: true
+  })
   $('#id_tags').select2({
     theme: 'bootstrap',
     tags: true,
@@ -169,9 +176,7 @@ function configureDateFields (fieldName) {
     width: '6em'
   })
 
-  $(`#id_${fieldName}_month`)
-    .parent()
-    .addClass('form-row')
+  $(`#id_${fieldName}_month`).parent().addClass('form-row')
   $(`#id_${fieldName}_month`)
     .parent()
     .find('span')
