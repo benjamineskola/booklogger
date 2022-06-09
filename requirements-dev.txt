@@ -8,6 +8,7 @@ flake8-comprehensions==3.10.0
 flake8-django @ git+https://github.com/rocioar/flake8-django.git@master
 flake8-docstrings==1.6.0
 flake8-simplify==0.19.2
+flake8_bandit==3.0.0
 freezegun==1.2.1
 mypy
 mypy-extensions==0.4.3

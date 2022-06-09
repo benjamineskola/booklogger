@@ -11,8 +11,8 @@ class TestCreateBook:
         data = {
             "authors": [(faker.name(), "")],
             "title": faker.sentence(),
-            "goodreads_id": str(randrange(1, 999999)),
-            "first_published": str(randrange(1600, 2022)),
+            "goodreads_id": str(randrange(1, 999999)),  # noqa: S311
+            "first_published": str(randrange(1600, 2022)),  # noqa: S311
         }
 
         book, _, _ = create.book(data)
@@ -28,8 +28,8 @@ class TestCreateBook:
         data = {
             "authors": [(faker.name(), "")],
             "title": f"{title} ({series}, #1)",
-            "goodreads_id": str(randrange(1, 999999)),
-            "first_published": str(randrange(1600, 2022)),
+            "goodreads_id": str(randrange(1, 999999)),  # noqa: S311
+            "first_published": str(randrange(1600, 2022)),  # noqa: S311
         }
 
         book, _, _ = create.book(data)
@@ -47,8 +47,8 @@ class TestCreateBook:
         data = {
             "authors": [(faker.name(), "")],
             "title": f"{title} ({series})",
-            "goodreads_id": str(randrange(1, 999999)),
-            "first_published": str(randrange(1600, 2022)),
+            "goodreads_id": str(randrange(1, 999999)),  # noqa: S311
+            "first_published": str(randrange(1600, 2022)),  # noqa: S311
         }
 
         book, _, _ = create.book(data)
@@ -66,8 +66,8 @@ class TestCreateBook:
         data = {
             "authors": [(faker.name(), "")],
             "title": f"{title} ({series}, #what?)",
-            "goodreads_id": str(randrange(1, 999999)),
-            "first_published": str(randrange(1600, 2022)),
+            "goodreads_id": str(randrange(1, 999999)),  # noqa: S311
+            "first_published": str(randrange(1600, 2022)),  # noqa: S311
         }
 
         book, _, _ = create.book(data)
@@ -83,8 +83,8 @@ class TestCreateBook:
         data = {
             "authors": [(faker.name(), ""), (faker.name(), "")],
             "title": faker.sentence(),
-            "goodreads_id": str(randrange(1, 999999)),
-            "first_published": str(randrange(1600, 2022)),
+            "goodreads_id": str(randrange(1, 999999)),  # noqa: S311
+            "first_published": str(randrange(1600, 2022)),  # noqa: S311
         }
 
         book, _, _ = create.book(data)
@@ -97,8 +97,8 @@ class TestCreateBook:
         data = {
             "authors": [(faker.name(), "editor")],
             "title": faker.sentence(),
-            "goodreads_id": str(randrange(1, 999999)),
-            "first_published": str(randrange(1600, 2022)),
+            "goodreads_id": str(randrange(1, 999999)),  # noqa: S311
+            "first_published": str(randrange(1600, 2022)),  # noqa: S311
         }
 
         book, _, _ = create.book(data)
@@ -111,8 +111,8 @@ class TestCreateBook:
         data = {
             "authors": [(faker.name(), "editor"), (faker.name(), "editor")],
             "title": faker.sentence(),
-            "goodreads_id": str(randrange(1, 999999)),
-            "first_published": str(randrange(1600, 2022)),
+            "goodreads_id": str(randrange(1, 999999)),  # noqa: S311
+            "first_published": str(randrange(1600, 2022)),  # noqa: S311
         }
 
         book, _, _ = create.book(data)

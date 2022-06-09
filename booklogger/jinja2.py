@@ -46,7 +46,7 @@ def groupby_date(
 
 
 def environment(**options: Any) -> Environment:
-    env = Environment(**options, trim_blocks=True, lstrip_blocks=True)
+    env = Environment(**options, trim_blocks=True, lstrip_blocks=True)  # noqa: S701
 
     env.globals.update(
         {
