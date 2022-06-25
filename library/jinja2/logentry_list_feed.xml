@@ -30,7 +30,7 @@
           Date acquired: {{ format_date(entry.book.acquired_date, 0) }}<br/>
         {% endif %}
         Date added: {{ format_date(entry.book.created_date, 0) }}<br/>
-        Tags: {{ entry.book.tags_list | oxford_comma }}<br/>
+        Tags: {{ entry.book.tags_list | list | oxford_comma }}<br/>
         Review: {{ entry.book.review | markdown }}
       ]]></content>
     </entry>
