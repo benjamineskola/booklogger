@@ -156,7 +156,7 @@ function removeTag () {
   const book = label.parent().data('book')
   $.ajax({
     type: 'POST',
-    url: `/book/${book}/remove_tag/`,
+    url: `/book/${book}/remove_tags/`,
     data: { tags: tag },
     beforeSend: function (xhr) {
       xhr.setRequestHeader(
