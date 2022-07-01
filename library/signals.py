@@ -31,10 +31,9 @@ def update_report_on_save(  # pylint:disable=too-many-arguments
     update_fields: dict[str, Any],  # pylint:disable=unused-argument
     **_kwargs: Any
 ) -> None:
-    if isinstance(sender, LogEntry) and instance.end_date:
-        report, report_created = StatisticsReport.get_or_create(
-            year=instance.end_date.year
-        )
-        if not report_created:
-            report.generate()
-            report.save()
+    if sender == LogEntry and instance.end_date:
+        for year in [instance.end_date.year, 1, 0]:
+            report, report_created = StatisticsReport.objects.get_or_create(year=year)
+            if not report_created:
+                report.generate()
+                report.save()
