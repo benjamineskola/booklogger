@@ -421,7 +421,7 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
 
     private = models.BooleanField(db_index=True, default=False)
 
-    tags = models.ManyToManyField("Tag", related_name="books")
+    tags = models.ManyToManyField("Tag", related_name="books", blank=True)
 
     def __str__(self) -> str:
         result = f"{self.first_author}, {self.display_title}"
