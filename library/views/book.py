@@ -8,7 +8,7 @@ from django.db.models import F, Q
 from django.forms import Form
 from django.http import HttpRequest, HttpResponse, HttpResponseNotFound
 from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.views import generic
 from django.views.decorators.http import require_POST
@@ -328,6 +328,11 @@ def remove_tags(request: HttpRequest, slug: str) -> HttpResponse:
 @require_POST
 def mark_owned(_request: HttpRequest, slug: str) -> HttpResponse:
     book = get_object_or_404(Book, slug=slug)
+
+    if not book.edition_format:
+        edit_url = reverse("library:book_edit", kwargs={"slug": slug})
+        return redirect(edit_url + "?mark_owned=true")
+
     book.mark_owned()
     return redirect("library:book_details", slug=slug)
 
@@ -377,6 +382,10 @@ class BookEditMixin(
             response = super().form_valid(form)
         else:
             response = super().form_invalid(form)
+
+        if "mark_owned" in self.request.GET:
+            self.object.mark_owned()
+
         return response
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
