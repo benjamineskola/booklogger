@@ -18,7 +18,7 @@ class AuthorAdmin(admin.ModelAdmin[Author]):
     readonly_fields = ("created_date", "modified_date")
 
 
-class BookAuthorInline(admin.TabularInline[BookAuthor]):
+class BookAuthorInline(admin.TabularInline[BookAuthor, Book]):
     autocomplete_fields = ["author", "book"]
     model = BookAuthor
     extra = 1
@@ -40,7 +40,7 @@ class LogEntryAdmin(admin.ModelAdmin[LogEntry]):
     readonly_fields = ("created_date", "modified_date")
 
 
-class LogEntryInline(admin.TabularInline[LogEntry]):
+class LogEntryInline(admin.TabularInline[LogEntry, Book]):
     model = LogEntry
     extra = 0
     readonly_fields = ("created_date", "modified_date")
@@ -62,7 +62,7 @@ class BookAdmin(admin.ModelAdmin[Book]):
     ]
 
 
-class ReadingListEntryInline(admin.TabularInline[ReadingListEntry]):
+class ReadingListEntryInline(admin.TabularInline[ReadingListEntry, Book]):
     model = ReadingListEntry
     autocomplete_fields = ("book",)
     readonly_fields = ("created_date", "modified_date")

@@ -29,7 +29,7 @@ class IndexView(generic.ListView[Author]):
     paginate_by = 100
 
     def get_queryset(self) -> QuerySet[Author]:
-        qs = super().get_queryset()
+        qs: QuerySet[Author] = super().get_queryset()  # type: ignore [assignment]
         if gender := self.request.GET.get("gender"):
             if not gender.isnumeric():
                 gender = str(Author.Gender[gender.upper()])
@@ -65,7 +65,7 @@ class EditView(LoginRequiredMixin, generic.edit.UpdateView[Author, AuthorForm]):
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context["page_title"] = f"Editing {self.object}"  # type: ignore [attr-defined]
+        context["page_title"] = f"Editing {self.object}"
         return context
 
 
@@ -79,7 +79,7 @@ class NewView(LoginRequiredMixin, generic.edit.CreateView[Author, AuthorForm]):
         return context
 
 
-class DeleteView(LoginRequiredMixin, generic.edit.DeleteView):
+class DeleteView(LoginRequiredMixin, generic.edit.DeleteView[Author]):
     model = Author
     success_url = reverse_lazy("library:author_list")
     template_name = "confirm_delete.html"

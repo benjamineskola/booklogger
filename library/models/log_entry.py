@@ -1,3 +1,4 @@
+from collections.abc import Sequence  # noqa: F401
 from typing import Any
 
 from django.db import models

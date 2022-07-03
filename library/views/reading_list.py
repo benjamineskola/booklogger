@@ -42,7 +42,7 @@ class EditView(
     model = ReadingList
 
 
-class DeleteView(LoginRequiredMixin, generic.edit.DeleteView):
+class DeleteView(LoginRequiredMixin, generic.edit.DeleteView[ReadingList]):
     model = ReadingList
     success_url = reverse_lazy("library:list_index")
     template_name = "confirm_delete.html"

@@ -412,19 +412,19 @@ class BookEditMixin(
         return context
 
 
-class NewView(
+class NewView(  # type: ignore [misc]
     LoginRequiredMixin, generic.edit.CreateView[Book, BookForm], BookEditMixin
 ):
     pass
 
 
-class EditView(
+class EditView(  # type: ignore [misc]
     LoginRequiredMixin, generic.edit.UpdateView[Book, BookForm], BookEditMixin
 ):
     pass
 
 
-class DeleteView(LoginRequiredMixin, generic.edit.DeleteView):
+class DeleteView(LoginRequiredMixin, generic.edit.DeleteView[Book]):
     model = Book
     success_url = reverse_lazy("library:books_all")
     template_name = "confirm_delete.html"

@@ -3,6 +3,7 @@
 import operator
 import re
 import time
+from collections.abc import Sequence  # noqa: F401
 from datetime import date
 from functools import reduce
 from typing import TYPE_CHECKING, Any
