@@ -13,7 +13,7 @@ freezegun==1.2.1
 mypy
 mypy-extensions==0.4.3
 pep8-naming==0.13.0
-pre-commit==2.19.0
+pre-commit==2.20.0
 pylint==2.14.1
 pytest==7.1.0
 pytest-cov==3.0.0
