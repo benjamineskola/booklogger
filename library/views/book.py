@@ -202,7 +202,7 @@ class TagIndexView(IndexView):
         tags: list[str] = [tag.strip() for tag in self.kwargs["tag_name"].split(",")]
 
         if tags == ["untagged"]:
-            return books.filter(tags_list__len=0)
+            return books.filter(tags__isnull=True)
         if len(tags) == 1 and tags[0].endswith("!"):
             tag = get_object_or_404(Tag, name=tags[0][0:-1])
             return tag.books_uniquely_tagged
