@@ -19,7 +19,7 @@ a{% if book.get_edition_format_display().lower()[0] in ["a", "e", "i", "o", "u"]
   {%- if book.alienated_date %} disposed of on {{ book.alienated_date.strftime("%d %B, %Y") }}{% endif -%}
 {%- endif -%}
 {%- if book.has_ebook_edition -%}
-  , and an ebook edition{% if book.ebook_acquired_date %} which I acquired {% if book.acquired_date == book.ebook_acquired_date %} at the same time{% else %} on {{ book.ebook_acquired_date.strftime("%d %B, %Y") }}{% endif %}{% endif %}
+  , and an ebook edition{% if book.ebook_acquired_date %} which {% if book.owned_by_sara %}she{% else %}I{% endif %} acquired {% if book.acquired_date == book.ebook_acquired_date %} at the same time{% else %} on {{ book.ebook_acquired_date.strftime("%d %B, %Y") }}{% endif %}{% endif %}
 {%- endif %}.
 {% endmacro %}
 
