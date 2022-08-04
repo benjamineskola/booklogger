@@ -2,7 +2,7 @@ coverage==6.4
 curlylint==0.13.1
 django-stubs==1.12.0
 django-stubs-ext==0.5.0
-flake8==4.0.1
+flake8==5.0.4
 flake8-bugbear==22.7.1
 flake8-comprehensions==3.10.0
 flake8-django @ git+https://github.com/rocioar/flake8-django.git@master
