@@ -53,7 +53,7 @@ class BookAdmin(admin.ModelAdmin[Book]):
     search_fields = [
         "title",
         "series",
-        "tags",
+        "tags__name",
         "edition_title",
         "first_author__surname",
         "first_author__forenames",
