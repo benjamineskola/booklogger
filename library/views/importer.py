@@ -1,14 +1,16 @@
 import csv
 import json
 import re
+from typing import Any
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
 from django.template.response import TemplateResponse
+from django.utils import timezone
 
 from library.models import Book, Queue
-from library.utils import create, goodreads
+from library.utils import create, flatten, goodreads
 
 
 @login_required
@@ -99,6 +101,18 @@ def bulk_import(request: HttpRequest) -> HttpResponse:
                     }
                 )
                 queue_item.save()
+        elif request.POST["input_format"] == "verso":
+            for line in lines:
+                if not line:
+                    continue
+                book = _verso_bulk_import(line)
+                if not book:
+                    continue
+                book["edition_format"] = Book.Format.EBOOK
+                book["publisher"] = "Verso"
+                book["owned"] = True
+                queue_item = Queue(data=book)
+                queue_item.save()
         else:
             for line in lines:
                 title, *author_names = line.strip("\r\n").split(";")
@@ -129,3 +143,57 @@ def bulk_import(request: HttpRequest) -> HttpResponse:
         "bulk_import.html",
         {"page_title": "Import"},
     )
+
+
+def _verso_bulk_import(line: str) -> dict[str, Any] | None:
+    title, _, isbn = line.rsplit(", ", 2)
+    _, title = title.strip().split(" ", 1)
+    title, *author_names = re.split(r" (?:Edited )*?by ", title, 1)
+    if author_names:
+        authors = flatten([author.split(" and ") for author in author_names])
+
+    try:
+        book = Book.objects.get(title__istartswith=title.lower())
+        print(f"found {title} in the database, skipping")
+
+        if not book.owned:
+            book.isbn = isbn
+            book.edition_format = Book.Format.EBOOK
+            book.publisher = "Verso"
+            book.mark_owned()
+            book.save()
+        elif book.edition_format != Book.Format.EBOOK and not book.has_ebook_edition:
+            # looks like a hard copy is already owned
+            book.ebook_isbn = isbn
+            book.has_ebook_edition = True
+            book.ebook_acquired_date = timezone.now()
+            book.save()
+        return None
+    except Book.DoesNotExist:
+        print(f"no book named {title} in the database, continuing")
+
+    goodreads_book = goodreads.find(isbn)
+    if goodreads_book:
+        goodreads_book["isbn"] = isbn
+        found_title, *_ = goodreads_book["title"].split(": ", 1)
+        if found_title.lower() == title.lower():
+            print(f"found {title} on goodreads")
+            return goodreads_book
+
+        print(f"got {found_title} instead of {title}")
+    else:
+        print(f"could not find {title} by isbn")
+        goodreads_book = goodreads.find(f"{title} {' '.join(authors)}")
+        if not goodreads_book:
+            print(f"!!! couldn't find any matches for {title} ({isbn}), aborting")
+            return None
+
+        goodreads_book["isbn"] = isbn
+        found_title, *_ = goodreads_book["title"].split(": ", 1)
+        if found_title.lower() == title.lower():
+            print(f"found {title} on goodreads by name")
+            return goodreads_book
+
+        print(f"got {found_title} instead of {title}")
+        print(f"!!! need to manually import {title} ({isbn})")
+    return None

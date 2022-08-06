@@ -22,7 +22,9 @@ class Command(BaseCommand):
                     data = item.data
                     item.delete()
 
-                    book, created, authors = create.book(item.data)
+                    book, created, authors = create.book(
+                        item.data, owned=item.data.get("owned", False)
+                    )
                     if created:
                         print(f"created {book}")
                     else:

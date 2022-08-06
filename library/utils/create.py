@@ -7,7 +7,9 @@ from library.models import Author, Book
 from library.utils import smarten
 
 
-def book(data: dict[str, Any]) -> tuple[Book, bool, list[tuple[Author, bool]]]:
+def book(
+    data: dict[str, Any], owned: bool = False
+) -> tuple[Book, bool, list[tuple[Author, bool]]]:
     data["title"] = data["title"].strip()
 
     if data["title"].endswith(")"):
@@ -36,6 +38,8 @@ def book(data: dict[str, Any]) -> tuple[Book, bool, list[tuple[Author, bool]]]:
 
     new_book.update(data)
     new_book.slug = ""
+    if owned:
+        new_book.mark_owned()
     new_book.save()
 
     for order, (name, role) in enumerate(data["authors"][1:], start=1):
