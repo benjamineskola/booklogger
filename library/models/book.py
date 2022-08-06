@@ -425,6 +425,9 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
     tags = models.ManyToManyField("Tag", related_name="books", blank=True)
 
     def __str__(self) -> str:
+        if not self.first_author or not self.display_title:
+            return "<unknown>"
+
         result = f"{self.first_author}, {self.display_title}"
 
         if (
