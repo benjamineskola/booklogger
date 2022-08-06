@@ -167,6 +167,16 @@ class IndexView(LoginRequiredMixin, generic.ListView[Book]):
                 .exclude(asin="")
                 .filter(publisher__in=ebook_publishers),
             ),
+            (
+                "Failed import or otherwise invalid",
+                lambda: Book.objects.filter(
+                    Q(title="")
+                    | Q(title__isnull=True)
+                    | Q(slug="")
+                    | Q(slug__isnull=True)
+                    | Q(first_author__isnull=True)
+                ),
+            ),
         ]
 
     def get_queryset(self) -> BookQuerySet:
