@@ -201,15 +201,16 @@ function addSetDateTodayButton (elementId) {
 
 /** @param {string} selector, @this {Element} */
 function isbnFieldPasteFilter (selector) {
-  const elem = $(this)
   $(selector).on('paste', function (ev) {
     ev.preventDefault()
     // @ts-ignore
     const pastedText = ev.originalEvent.clipboardData.getData('text/plain')
+    const elem = $(this)
     elem.val(pastedText.replace(/\D/g, ''))
   })
   $(selector).on('input', function (ev) {
     ev.preventDefault()
+    const elem = $(this)
     elem.val(String(elem.val()).replace(/\D/g, ''))
   })
 }
