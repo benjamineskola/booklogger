@@ -150,7 +150,7 @@ def _verso_bulk_import(line: str) -> dict[str, Any] | None:
     _, title = title.strip().split(" ", 1)
     title, *author_names = re.split(r" (?:Edited )*?by ", title, 1)
     if author_names:
-        authors = flatten([author.split(" and ") for author in author_names])
+        authors = flatten(author.split(" and ") for author in author_names)
 
     try:
         book = Book.objects.get(title__istartswith=title.lower())
@@ -185,8 +185,15 @@ def _verso_bulk_import(line: str) -> dict[str, Any] | None:
         print(f"could not find {title} by isbn")
         goodreads_book = goodreads.find(f"{title} {' '.join(authors)}")
         if not goodreads_book:
-            print(f"!!! couldn't find any matches for {title} ({isbn}), aborting")
-            return None
+            print(
+                f"!!! couldn't find any matches for {title} ({isbn}), creating a new one"
+            )
+            return {
+                "title": title,
+                "isbn": isbn,
+                "authors": [(author, "") for author in authors],
+                "owned": True,
+            }
 
         goodreads_book["isbn"] = isbn
         found_title, *_ = goodreads_book["title"].split(": ", 1)
@@ -195,5 +202,11 @@ def _verso_bulk_import(line: str) -> dict[str, Any] | None:
             return goodreads_book
 
         print(f"got {found_title} instead of {title}")
-        print(f"!!! need to manually import {title} ({isbn})")
+        print(f"!!! creating {title} ({isbn})")
+        return {
+            "title": title,
+            "isbn": isbn,
+            "authors": [(author, "") for author in authors],
+            "owned": True,
+        }
     return None

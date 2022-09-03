@@ -118,7 +118,7 @@ def str2bool(s: str) -> bool:
     raise ValueError(f"Cannot interpret '{s}' as boolean")
 
 
-def flatten(list_of_lists: Iterable[Iterable[Any] | None]) -> Iterable[Any]:
+def flatten(list_of_lists: Iterable[Iterable[Any] | None]) -> list[Any]:
     return [item for sublist in list_of_lists if sublist for item in sublist]
 
 
