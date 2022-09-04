@@ -1,7 +1,11 @@
+from datetime import datetime
 from typing import Any
 
+from django.contrib.syndication.views import Feed
 from django.db.models import F
 from django.db.models.functions import Lower
+from django.http import HttpRequest
+from django.utils.feedgenerator import Atom1Feed
 from django.views import generic
 
 from library.models import LogEntry, LogEntryQuerySet
@@ -78,11 +82,60 @@ class MarkdownReadView(ReadView):
     single_year = False
 
 
-class XmlReadView(ReadView):
-    template_name = "logentry_list_feed.xml"
-    content_type = "application/xml; charset=utf-8"
-    reverse_sort = True
-    single_year = False
+class XmlReadView(Feed[Any, Any]):
+    feed_type = Atom1Feed
+    title = "Ben's Read Books"
+    link = "/books/read/"
+    description_template = "logentry_item.xml"
 
-    def get_queryset(self) -> LogEntryQuerySet:
-        return super().get_queryset()[0:20]
+    def get_object(self, request: HttpRequest) -> LogEntryQuerySet:  # type: ignore [override]
+        return (
+            LogEntry.objects.select_related("book", "book__first_author")
+            .prefetch_related("book__additional_authors", "book__log_entries")
+            .filter(
+                book__private__in=(
+                    [True, False] if is_authenticated(request) else [False]
+                )
+            )
+            .filter(end_date__isnull=False, abandoned=False)
+            .order_by(
+                "-end_date",
+                Lower(F("book__first_author__surname")),
+                Lower(F("book__first_author__forenames")),
+                "book__series",
+                "book__series_order",
+                "book__title",
+            )
+        )
+
+    def items(self, obj: LogEntryQuerySet) -> LogEntryQuerySet:
+        return obj[0:50]
+
+    def item_link(self, item: LogEntry) -> str:
+        return item.book.get_absolute_url()
+
+    def item_guid(self, item: LogEntry) -> str:
+        if not item.end_date:
+            return "???"
+
+        return f"tag:booklogger.eskola.uk,2020-11-27:{ item.end_date.strftime('%Y-%m-%d') }/{ item.book.slug }"
+
+    def item_pubdate(self, item: LogEntry) -> datetime | None:
+        if item.end_date:
+            return item.end_date
+
+        return None
+
+    def item_updateddate(self, item: LogEntry) -> datetime | None:
+        return self.item_pubdate(item)
+
+    def item_title(self, item: LogEntry) -> str:
+        return f"Finished reading { item.book.display_title }"
+
+    def item_enclosure_url(self, item: LogEntry) -> str:
+        return item.book.image_url
+
+    item_enclosure_mime_type = "image/jpeg"
+
+    def item_categories(self, item: LogEntry) -> list[str]:
+        return [str(tag) for tag in item.book.tags.all()]

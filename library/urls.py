@@ -115,7 +115,7 @@ urlpatterns = [
                 ),
                 re_path(
                     r"^read\.xml",
-                    views.log_entry.XmlReadView.as_view(),
+                    views.log_entry.XmlReadView(),
                     name="books_read_xml",
                 ),
                 re_path(

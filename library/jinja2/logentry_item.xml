@@ -1,0 +1,14 @@
+{% from "macros.html" import author_list, format_date %}
+{% if obj.book.image_url %}
+<img src="{{ obj.book.image_url }}" rel="alternate"/><br/><br/>
+{% endif %}
+Author{% if obj.book.authors | length > 1 %}s{% endif %}: {{ author_list(obj.book.all_authors, book=obj.book) }}<br/>
+Published: {{ obj.book.display_date }}<br/>
+Rating: {{ obj.book.rating }}<br/>
+Read at: {{ format_date(obj.end_date, obj.end_precision) }}<br/>
+{% if obj.book.acquired_date %}
+Date acquired: {{ format_date(obj.book.acquired_date, 0) }}<br/>
+{% endif %}
+Date added: {{ format_date(obj.book.created_date, 0) }}<br/>
+Tags: {{ obj.book.tags_list | list | oxford_comma }}<br/>
+Review: {{ obj.book.review | markdown }}
