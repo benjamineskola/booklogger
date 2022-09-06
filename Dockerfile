@@ -8,7 +8,8 @@ RUN apt-get update && apt-get install -y \
     python3-dev \
     python3-setuptools \
     python3-wheel \
-    golang-go
+    golang-go \
+    postgresql-client-13
 
 RUN mkdir -p /app
 WORKDIR /app
@@ -21,7 +22,6 @@ RUN GO111MODULE=on go get -u -f github.com/DarthSim/hivemind
 COPY . .
 
 RUN python manage.py collectstatic --noinput
-
 
 EXPOSE 8080
 

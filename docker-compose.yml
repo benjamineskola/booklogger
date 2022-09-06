@@ -1,0 +1,39 @@
+version: "3.7"
+
+services:
+  postgres:
+    image: postgres:14
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+    expose:
+      - "5432"
+    volumes:
+      - data:/var/lib/postgresql/data
+      - ./docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - .:/app
+
+  app:
+    build: .
+    command:
+      - /bin/sh
+      - -c
+      - |
+        while ! pg_isready; do sleep 1; done
+        python manage.py migrate &&
+        env HIVEMIND_PROCESSES=dev_web,worker /root/go/bin/hivemind
+    environment:
+      DATABASE_URL: "postgres://booklogger:${BOOKLOGGER_PASSWORD}@postgres:5432/booklogger"
+      PGHOST: postgres
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: "${POSTGRES_PASSWORD}"
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+    depends_on:
+      - postgres
+
+volumes:
+  data:
