@@ -55,6 +55,8 @@ jobs:
           npm install .
           echo node_modules/.bin >> $GITHUB_PATH
       - uses: pre-commit/action@v2.0.3
+        env:
+          SKIP: shfmt
 
   deploy:
     name: Deploy app
