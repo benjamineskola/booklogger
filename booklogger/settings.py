@@ -101,10 +101,10 @@ WSGI_APPLICATION = "booklogger.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("USER"),
-        "USER": os.environ.get("USER"),
-        "PASSWORD": "",
-        "HOST": "localhost",
+        "NAME": "booklogger",
+        "USER": "test_user",
+        "PASSWORD": os.environ.get("BOOKLOGGER_PASSWORD", ""),
+        "HOST": "127.0.0.1",
         "PORT": "",
     }
 }
