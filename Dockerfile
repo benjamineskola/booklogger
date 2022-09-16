@@ -6,15 +6,17 @@ RUN echo deb http://deb.debian.org/debian bullseye-backports main > /etc/apt/sou
 RUN apt-get update && apt-get install -y \
     golang-src/bullseye-backports \
     golang-go/bullseye-backports \
-    postgresql-client-13
+    postgresql-client-13 && \
+    go install github.com/DarthSim/hivemind@latest && \
+    apt-get remove golang-go golang-src -y && \
+    apt-get autoclean && \
+    apt-get autoremove -y
 
 RUN mkdir -p /app
 WORKDIR /app
 
 COPY requirements.txt .
 RUN pip install -r requirements.txt
-
-RUN go install github.com/DarthSim/hivemind@latest
 
 COPY . .
 
