@@ -1,24 +1,15 @@
 ARG PYTHON_VERSION=3.10
 
-FROM python:${PYTHON_VERSION}
-
-RUN echo deb http://deb.debian.org/debian bullseye-backports main > /etc/apt/sources.list.d/bullseye-backports.list
-RUN apt-get update && apt-get install -y \
-    golang-src/bullseye-backports \
-    golang-go/bullseye-backports \
-    postgresql-client-13 && \
-    go install github.com/DarthSim/hivemind@latest && \
-    apt-get remove golang-go golang-src -y && \
-    apt-get autoclean && \
-    apt-get autoremove -y
+FROM python:${PYTHON_VERSION}-alpine
 
 RUN mkdir -p /app
 WORKDIR /app
 
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-
 COPY . .
+RUN apk add --no-cache build-base go postgresql-client postgresql-dev && \
+    go install github.com/DarthSim/hivemind@latest && \
+    pip install -r requirements.txt && \
+    apk del build-base go postgresql-dev
 
 RUN python manage.py collectstatic --noinput
 
