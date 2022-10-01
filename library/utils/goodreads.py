@@ -77,6 +77,11 @@ def scrape_image(goodreads_id: str) -> str:
     if meta_tag := data.find(
         "meta", property="og:image", content=lambda x: "nophoto" not in x
     ):
-        return str(meta_tag.get("content"))
+        image_url = str(meta_tag.get("content"))
+        return (
+            image_url
+            if ("nophoto" not in image_url and "goodreads_wide" not in image_url)
+            else ""
+        )
 
     return ""
