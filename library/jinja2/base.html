@@ -159,5 +159,10 @@
 
     {% block footer %}
     {% endblock footer %}
+    <script type="module">
+      import { RateBook } from "/static/rate_book.js";
+      let rateBook = new RateBook();
+      rateBook.init(document);
+    </script>
   </body>
 </html>

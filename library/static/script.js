@@ -4,7 +4,6 @@ $(document).ready(function () {
   $('a.remove-tag').on('click', removeTag);
   $('form.add-tag').on('submit', addTag);
   $('form.update-progress').on('submit', updateProgress);
-  $('span.rating-star').on('click', rateBook);
 
   $('div.stats-for-year').each(function (i, e) {
     return loadStatsForYear(e);
@@ -31,7 +30,10 @@ function loadNextPage (year, url) {
       body.find('a.remove-tag').on('click', removeTag);
       body.find('form.add-tag').on('submit', addTag);
       body.find('form.update-progress').on('submit', updateProgress);
-      body.find('span.rating-star').on('click', rateBook);
+
+      // TODO
+      // const rateBook = new RateBook()
+      // rateBook.init(body)
 
       if (window.location.hash.split('-').pop() === year) {
         const offset = body.offset();
@@ -109,44 +111,6 @@ function addTag (event) {
       inputField.val('');
       // @ts-ignore
       form.collapse('hide');
-    }
-  });
-}
-
-/** @this Element  */
-function rateBook () {
-  let value = $(this).data('rating');
-  const ratings = $(this).parent();
-  const book = ratings.data('book');
-  const oldRating = ratings.data('rating');
-
-  if (oldRating === value) {
-    value = value - 0.5;
-  } else if (oldRating === value - 0.5) {
-    value = 0;
-  }
-
-  $.ajax({
-    type: 'POST',
-    url: `/book/${book}/rate/`,
-    data: { rating: Number(value) },
-    beforeSend: function (xhr) {
-      xhr.setRequestHeader(
-        'X-CSRFToken',
-        String($('[name=csrfmiddlewaretoken]').val())
-      );
-    },
-    success: function () {
-      ratings.data('rating', value);
-      ratings.children().each(function (i, star) {
-        if (value >= i + 1) {
-          $(star).text('★');
-        } else if (value - i === 0.5) {
-          $(star).text('½');
-        } else {
-          $(star).text('☆');
-        }
-      });
     }
   });
 }
