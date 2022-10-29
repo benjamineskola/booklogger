@@ -1,6 +1,6 @@
 function RateBook () {
   /** @this HTMLElement  */
-  function rateBook () {
+  async function rateBook () {
     let value = Number(this.dataset.rating);
     const ratings = this.parentElement;
 
@@ -23,14 +23,16 @@ function RateBook () {
       return;
     }
 
-    fetch(`/book/${book}/rate/`, {
+    const response = await fetch(`/book/${book}/rate/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         'X-CSRFToken': token.value
       },
       body: `rating=${Number(value)}`
-    }).then(response => {
+    });
+
+    if (response.ok) {
       ratings.dataset.rating = String(value);
       Array.from(ratings.children).forEach(function (star, i) {
         if (value >= i + 1) {
@@ -41,7 +43,7 @@ function RateBook () {
           star.textContent = '☆';
         }
       });
-    });
+    }
   }
 
   /** @param {HTMLElement} body */
