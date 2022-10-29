@@ -1,8 +1,6 @@
 /* globals $, confirm, history */
 
 $(document).ready(function () {
-  $('a.remove-tag').on('click', removeTag);
-  $('form.add-tag').on('submit', addTag);
   $('form.update-progress').on('submit', updateProgress);
 
   $('div.stats-for-year').each(function (i, e) {
@@ -27,8 +25,6 @@ function loadNextPage (year, url) {
       body.insertAfter(placeholder.parent());
       placeholder.remove();
 
-      body.find('a.remove-tag').on('click', removeTag);
-      body.find('form.add-tag').on('submit', addTag);
       body.find('form.update-progress').on('submit', updateProgress);
 
       // TODO
@@ -84,57 +80,6 @@ function loadStatsForYear (element) {
         `);
         return loadStatsForYear(element);
       });
-    }
-  });
-}
-
-/** @this Element, @param {Event} event */
-function addTag (event) {
-  event.preventDefault();
-  const form = $(this);
-  const url = form.attr('action');
-
-  $.ajax({
-    type: 'POST',
-    url,
-    data: form.serialize(),
-    dataType: 'json',
-    success: function (data) {
-      const tagsField = $(form.data('tags'));
-      const inputField = form.find('input[name="tags"]');
-      for (const i in data.tags) {
-        const newTag = data.tags[i];
-        tagsField.prepend(
-          `<span class="badge badge-secondary"><a href="/tag/${newTag}">${newTag}</a></span> `
-        );
-      }
-      inputField.val('');
-      // @ts-ignore
-      form.collapse('hide');
-    }
-  });
-}
-
-/** @this Element */
-function removeTag () {
-  const tag = $(this).data('tag');
-  const label = $(this).parent();
-  const book = label.parent().data('book');
-  $.ajax({
-    type: 'POST',
-    url: `/book/${book}/remove_tags/`,
-    data: { tags: tag },
-    beforeSend: function (xhr) {
-      xhr.setRequestHeader(
-        'X-CSRFToken',
-        String($('[name=csrfmiddlewaretoken]').val())
-      );
-      if (!confirm(`Remove tag ${tag}?`)) {
-        return false;
-      }
-    },
-    success: function () {
-      label.remove();
     }
   });
 }
