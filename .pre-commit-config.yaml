@@ -9,11 +9,10 @@ repos:
       - id: requirements-txt-fixer
       - id: trailing-whitespace
   - repo: https://github.com/benjamineskola/pre-commit-hooks.git
-    rev: af21d0fdea02731583f480bb508fc4dac9ccb703
+    rev: 67abb7c26f6c90911800f33bc07bddc25bf5377f
     hooks:
       - id: shellcheck
       - id: shfmt
-      - id: prettier
       - id: standard
   - repo: local
     hooks:
@@ -33,6 +32,11 @@ repos:
         name: typescript
         language: system
         entry: tsc --strict --checkJs --noEmit
+        types: [javascript]
+      - id: prettier
+        name: prettier
+        language: system
+        entry: prettier-standard
         types: [javascript]
   - repo: https://github.com/asottile/pyupgrade
     rev: v2.32.1
@@ -85,7 +89,7 @@ repos:
             types-requests,
           ]
   - repo: https://github.com/benjamineskola/pre-commit-hooks.git
-    rev: af21d0fdea02731583f480bb508fc4dac9ccb703
+    rev: 67abb7c26f6c90911800f33bc07bddc25bf5377f
     hooks:
       - id: pytest
         types: [python]
