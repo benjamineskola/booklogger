@@ -6,11 +6,12 @@ RUN mkdir -p /app
 WORKDIR /app
 
 COPY . .
-RUN apk add --no-cache build-base go postgresql-client postgresql-dev && \
+RUN apk add --no-cache build-base go make npm postgresql-client postgresql-dev && \
     go install github.com/DarthSim/hivemind@latest && \
     pip install -r requirements.txt && \
     apk del build-base go postgresql-dev
 
+RUN npm install && env PATH=node_modules/.bin:$PATH make
 RUN python manage.py collectstatic --noinput
 
 EXPOSE 8080

@@ -1,13 +1,7 @@
 function RateBook () {
-  /** @this HTMLElement  */
-  async function rateBook () {
+  async function rateBook (this: HTMLElement) {
     let value = Number(this.dataset.rating);
-    const ratings = this.parentElement;
-
-    if (!ratings) {
-      return;
-    }
-
+    const ratings = this.parentElement!;
     const book = ratings.dataset.book;
     const oldRating = Number(ratings.dataset.rating);
 
@@ -17,11 +11,9 @@ function RateBook () {
       value = 0;
     }
 
-    /** @type HTMLInputElement | null */
-    const token = document.querySelector('[name=csrfmiddlewaretoken]');
-    if (!token) {
-      return;
-    }
+    const token: HTMLInputElement = document.querySelector(
+      '[name=csrfmiddlewaretoken]'
+    )!;
 
     displayRating(ratings, value);
     const response = await fetch(`/book/${book}/rate/`, {
@@ -30,7 +22,7 @@ function RateBook () {
         'Content-Type': 'application/x-www-form-urlencoded',
         'X-CSRFToken': token.value
       },
-      body: `rating=${Number(value)}`
+      body: `rating=${value}`
     });
 
     if (!response.ok) {
@@ -38,10 +30,7 @@ function RateBook () {
     }
   }
 
-  /** @param {HTMLElement} parent
-   *  @param {Number} value
-   */
-  function displayRating (parent, value) {
+  function displayRating (parent: HTMLElement, value: number) {
     parent.dataset.rating = String(value);
     Array.from(parent.children).forEach(function (star, i) {
       if (value >= i + 1) {
@@ -54,16 +43,13 @@ function RateBook () {
     });
   }
 
-  /** @param {HTMLElement} body */
-  function init (body) {
+  function init (body: HTMLElement) {
     body.querySelectorAll('span.rating-star').forEach(el => {
       el.addEventListener('click', rateBook);
     });
   }
 
-  return {
-    init
-  };
+  return { init };
 }
 
 export default RateBook;

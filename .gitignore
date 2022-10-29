@@ -1,8 +1,10 @@
 *.json
 !package*.json
+!tsconfig.json
 *.sqlite3
 node_modules
 .coverage
 .venv
 .env
 /static/
+library/static/*.js
