@@ -23,6 +23,7 @@ function RateBook () {
       return;
     }
 
+    displayRating(ratings, value);
     const response = await fetch(`/book/${book}/rate/`, {
       method: 'POST',
       headers: {
@@ -32,18 +33,25 @@ function RateBook () {
       body: `rating=${Number(value)}`
     });
 
-    if (response.ok) {
-      ratings.dataset.rating = String(value);
-      Array.from(ratings.children).forEach(function (star, i) {
-        if (value >= i + 1) {
-          star.textContent = '★';
-        } else if (value - i === 0.5) {
-          star.textContent = '½';
-        } else {
-          star.textContent = '☆';
-        }
-      });
+    if (!response.ok) {
+      displayRating(ratings, oldRating);
     }
+  }
+
+  /** @param {HTMLElement} parent
+   *  @param {Number} value
+   */
+  function displayRating (parent, value) {
+    parent.dataset.rating = String(value);
+    Array.from(parent.children).forEach(function (star, i) {
+      if (value >= i + 1) {
+        star.textContent = '★';
+      } else if (value - i === 0.5) {
+        star.textContent = '½';
+      } else {
+        star.textContent = '☆';
+      }
+    });
   }
 
   /** @param {HTMLElement} body */
