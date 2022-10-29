@@ -1,5 +1,5 @@
-function TagBook () {
-  async function addTag (this: HTMLFormElement, event: Event) {
+function TagBook (): any {
+  async function addTag (this: HTMLFormElement, event: Event): Promise<any> {
     event.preventDefault();
     const url = this.getAttribute('action')!;
 
@@ -12,14 +12,14 @@ function TagBook () {
     });
 
     if (response.ok) {
-      const tagsField = $(this.dataset.tags!);
+      const tagsField = this.querySelector(this.dataset.tags!)!;
       const inputField: HTMLInputElement = this.querySelector(
         'input[name="tags"]'
       )!;
       const data = await response.json();
 
       for (const i in data.tags) {
-        const newTag = data.tags[i];
+        const newTag: string = data.tags[i];
         tagsField.prepend(
           `<span class="badge badge-secondary"><a href="/tag/${newTag}">${newTag}</a></span> `
         );
@@ -27,28 +27,32 @@ function TagBook () {
       inputField.value = '';
       this.style.display = 'none';
     }
+
+    return response;
   }
 
-  function init (body: HTMLElement) {
+  function init (body: HTMLElement): void {
     body.querySelectorAll('a.remove-tag').forEach(el => {
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       el.addEventListener('click', removeTag);
     });
 
     body.querySelectorAll('form.add-tag').forEach(el => {
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       el.addEventListener('submit', addTag);
     });
   }
 
-  async function removeTag (this: HTMLElement) {
-    const tag = this.dataset.tag;
+  async function removeTag (this: HTMLElement): Promise<any> {
+    const tag = this.dataset.tag!;
     const label = this.parentElement!;
-    const book = label.parentElement!.dataset['book'];
+    const book = label.parentElement!.dataset.book!;
     const token: HTMLInputElement = document.querySelector(
       '[name=csrfmiddlewaretoken]'
     )!;
 
     if (!confirm(`Remove tag ${tag}?`)) {
-      return false;
+      return;
     }
 
     const response = await fetch(`/book/${book}/remove_tags/`, {
@@ -63,6 +67,8 @@ function TagBook () {
     if (response.ok) {
       label.remove();
     }
+
+    return response;
   }
 
   return { init };

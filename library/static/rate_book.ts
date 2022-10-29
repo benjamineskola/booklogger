@@ -1,8 +1,8 @@
-function RateBook () {
-  async function rateBook (this: HTMLElement) {
+function RateBook (): any {
+  async function rateBook (this: HTMLElement): Promise<Response> {
     let value = Number(this.dataset.rating);
     const ratings = this.parentElement!;
-    const book = ratings.dataset.book;
+    const book = ratings.dataset.book!;
     const oldRating = Number(ratings.dataset.rating);
 
     if (oldRating === value) {
@@ -28,9 +28,11 @@ function RateBook () {
     if (!response.ok) {
       displayRating(ratings, oldRating);
     }
+
+    return response;
   }
 
-  function displayRating (parent: HTMLElement, value: number) {
+  function displayRating (parent: HTMLElement, value: number): void {
     parent.dataset.rating = String(value);
     Array.from(parent.children).forEach(function (star, i) {
       if (value >= i + 1) {
@@ -43,8 +45,9 @@ function RateBook () {
     });
   }
 
-  function init (body: HTMLElement) {
+  function init (body: HTMLElement): any {
     body.querySelectorAll('span.rating-star').forEach(el => {
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       el.addEventListener('click', rateBook);
     });
   }

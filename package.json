@@ -2,8 +2,7 @@
   "devDependencies": {
     "@types/jquery": "^3.5.14",
     "@types/select2": "^4.0.55",
-    "prettier-standard": "^16.4.1",
-    "semistandard": "^16.0.1",
+    "eslint-config-standard-with-typescript": "^23.0.0",
     "typescript": "^4.7.2"
   }
 }

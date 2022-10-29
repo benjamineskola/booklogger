@@ -13,7 +13,6 @@ repos:
     hooks:
       - id: shellcheck
       - id: shfmt
-      - id: standard
   - repo: local
     hooks:
       - id: curlylint
@@ -33,11 +32,11 @@ repos:
         language: system
         entry: tsc --strict --checkJs --noEmit --lib dom,es2019
         types: [javascript]
-      - id: prettier
-        name: prettier
+      - id: eslint
+        name: eslint
         language: system
-        entry: prettier-standard
-        types: [javascript]
+        entry: eslint
+        files: "\\.ts$"
   - repo: https://github.com/asottile/pyupgrade
     rev: v2.32.1
     hooks:
