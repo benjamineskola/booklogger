@@ -1,8 +1,6 @@
 /* globals $, confirm, history */
 
 $(document).ready(function () {
-  $('form.update-progress').on('submit', updateProgress);
-
   $('div.stats-for-year').each(function (i, e) {
     return loadStatsForYear(e);
   });
@@ -24,8 +22,6 @@ function loadNextPage (year, url) {
         .closest('body');
       body.insertAfter(placeholder.parent());
       placeholder.remove();
-
-      body.find('form.update-progress').on('submit', updateProgress);
 
       // TODO
       // const rateBook = new RateBook()
@@ -80,35 +76,6 @@ function loadStatsForYear (element) {
         `);
         return loadStatsForYear(element);
       });
-    }
-  });
-}
-
-/** @this Element, @param {Event} event */
-function updateProgress (event) {
-  event.preventDefault();
-  const form = $(this);
-  const url = form.attr('action');
-  const book = form.data('book');
-
-  $.ajax({
-    type: 'POST',
-    url,
-    data: form.serialize(),
-    dataType: 'json',
-    success: function (data) {
-      const progressBar = $(`#book-${book} .progress-bar`);
-      progressBar.css('width', `${data.percentage}%`);
-
-      let progressText = $(`#book-${book} .card-footer .progress-date`);
-      if (progressText.length === 0) {
-        progressText = $(`#book-${book} .card-footer .read-dates`);
-        progressText.text(`${progressText.text()}; ${data.progress_text}`);
-      } else {
-        progressText.text(data.progress_text);
-      }
-
-      form.find('input[name="value"]').val('');
     }
   });
 }
