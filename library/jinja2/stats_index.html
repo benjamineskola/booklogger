@@ -21,3 +21,11 @@
     </div>
   {% endfor %}
 {% endblock %}
+
+{% block footer %}
+  <script type="module">
+    import { StatsLoader } from "/static/stats_loader.js";
+    let statsLoader = new StatsLoader();
+    statsLoader.init();
+  </script>
+{% endblock footer %}

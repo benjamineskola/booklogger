@@ -1,11 +1,5 @@
 /* globals $, confirm, history */
 
-$(document).ready(function () {
-  $('div.stats-for-year').each(function (i, e) {
-    return loadStatsForYear(e);
-  });
-});
-
 /**
  * @param {string} year
  * @param {string} url
@@ -42,40 +36,6 @@ function loadNextPage (year, url) {
     error: function () {
       placeholder.find('.spinner-grow').addClass('d-none');
       placeholder.find('.alert-danger').removeClass('d-none');
-    }
-  });
-}
-
-/** @param {Element} element */
-function loadStatsForYear (element) {
-  const div = $(element);
-  const year = div.data('year');
-
-  $.ajax({
-    type: 'GET',
-    url: `/stats/${year}`,
-    success: function (data) {
-      $('.spinner-grow').show();
-      div.html(data);
-    },
-    error: function () {
-      div.html(`
-          <div id="error-${year}" class="alert alert-danger">
-            <i class="exclamation circle icon"></i>
-            <div class="content">
-              <div class="header">Failed to load ${year}.</div>
-              <p><span class="btn btn-outline-danger">Retry?</span></p>
-            </div>
-          </div>
-`);
-      $(`#error-${year} .btn`).on('click', function () {
-        div.html(`
-          <div id="loading-stats-${year}" class="spinner-grow mb-4" role="status">
-            <span class="sr-only">Loading...</span>
-          </div>
-        `);
-        return loadStatsForYear(element);
-      });
     }
   });
 }
