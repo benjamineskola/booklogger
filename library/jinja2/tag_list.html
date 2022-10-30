@@ -22,7 +22,7 @@
       </div>
 
       {% if genre == "all" and sorted_tags["untagged"] %}
-        <a class="badge badge-secondary" href="{{ url("library:tag_details", args=["untagged"]) }}">untagged: {{ sorted_tags["untagged"]["total"] }}</a>
+        <a class="badge bg-secondary" href="{{ url("library:tag_details", args=["untagged"]) }}">untagged: {{ sorted_tags["untagged"]["total"] }}</a>
       {% endif %}
       <br>
     {% endfor %}

@@ -1,11 +1,12 @@
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  color: var(--dark);
-  background-color: var(--light);
+  color: var(--bs-dark);
+  background-color: var(--bs-light);
 }
 
 .tags .badge a {
-  color: var(--light);
+  color: var(--bs-light);
+  text-decoration: none;
 }
 
 a.fab,
@@ -16,14 +17,14 @@ a.fas,
 a.fas:active,
 a.fas:hover,
 a.fas:visited {
-  color: var(--dark);
+  color: var(--bs-dark);
   text-decoration: none;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --dark: rgb(26, 26, 26);
-    --gray-dark: rgb(26, 26, 26);
+    --bs-dark: rgb(26, 26, 26);
+    --bs-gray-dark: rgb(26, 26, 26);
   }
 
   body,
@@ -36,32 +37,32 @@ a.fas:visited {
   .dropdown-item,
   .dropdown-item:hover,
   .dropdown-item:focus {
-    background-color: var(--dark);
-    color: var(--light);
+    background-color: var(--bs-dark);
+    color: var(--bs-light);
   }
   .card,
   .page-link {
-    border-color: var(--gray);
+    border-color: var(--bs-gray);
   }
 
   .page-item.disabled .page-link {
-    background-color: var(--dark);
-    color: var(--gray);
-    border-color: var(--gray);
+    background-color: var(--bs-dark);
+    color: var(--bs-gray);
+    border-color: var(--bs-gray);
   }
 
   .page-link:hover {
-    background-color: var(--gray);
-    color: var(--light);
-    border-color: var(--gray);
+    background-color: var(--bs-gray);
+    color: var(--bs-light);
+    border-color: var(--bs-gray);
   }
 
   .dropdown-menu {
-    border: 1px solid var(--gray);
+    border: 1px solid var(--bs-gray);
   }
 
   .bg-light {
-    background-color: var(--dark) !important;
+    background-color: var(--bs-dark) !important;
   }
   .navbar-light .navbar-nav .nav-link,
   .navbar-light .navbar-nav .nav-link:hover,
@@ -69,7 +70,7 @@ a.fas:visited {
   .navbar-light .navbar-brand,
   .navbar-light .navbar-brand:hover,
   .navbar-light .navbar-brand:focus {
-    color: var(--light);
+    color: var(--bs-light);
   }
 
   .navbar-light .navbar-toggler-icon {
@@ -90,15 +91,15 @@ a.fas:visited {
   .select2-container--bootstrap
     .select2-selection--single
     .select2-selection__rendered {
-    background-color: var(--dark);
-    color: var(--light);
+    background-color: var(--bs-dark);
+    color: var(--bs-light);
   }
   .select2-container--bootstrap
     .select2-selection--multiple
     .select2-search--inline
     .select2-search__field {
     background-color: transparent;
-    color: var(--light);
+    color: var(--bs-light);
   }
 
   a.fab,
@@ -109,6 +110,6 @@ a.fas:visited {
   a.fas:active,
   a.fas:hover,
   a.fas:visited {
-    color: var(--light);
+    color: var(--bs-light);
   }
 }

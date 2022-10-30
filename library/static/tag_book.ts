@@ -21,7 +21,7 @@ function TagBook (): any {
       for (const i in data.tags) {
         const newTag: string = data.tags[i];
         tagsField.prepend(
-          `<span class="badge badge-secondary"><a href="/tag/${newTag}">${newTag}</a></span> `
+          `<span class="badge bg-secondary"><a href="/tag/${newTag}">${newTag}</a></span> `
         );
       }
       inputField.value = '';

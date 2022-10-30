@@ -26,10 +26,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
     <title>{% if page_title %}{{ page_title }} — {% endif %}Booklogger</title>
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
     {% block header %}
     {% endblock %}
     <link rel="stylesheet" href="{{ static("style.css") }}?_v={{ VERSION_NUMBER }}">
@@ -39,73 +40,75 @@
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-toggle" aria-controls="navbar-toggle" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbar-toggle">
-        <a class="navbar-brand" href="{{ url("library:index") }}">Booklogger</a>
-        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="books_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Books
-            </a>
-            <div class="dropdown-menu" aria-labelledby="books_dropdown">
-              {% for title, link in book_pages %}
-                {{ nav_link(title, link, "dropdown-item") }}
-              {% endfor %}
-            </div>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="collections_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Collections
-            </a>
-            <div class="dropdown-menu" aria-labelledby="collections_dropdown">
-              {% for title, link in other_pages %}
-                {{ nav_link(title, link, "dropdown-item") }}
-              {% endfor %}
-            </div>
-          </li>
-        </ul>
-        <form class="form-inline my-2 my-lg-0" action="{{ url('library:basic_search') }}">
-          <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="query">
-        </form>
-        <ul class="navbar-nav mt-2 mt-lg-0">
-          {% if user.is_authenticated %}
+      <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-toggle" aria-controls="navbar-toggle" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbar-toggle">
+          <a class="navbar-brand" href="{{ url("library:index") }}">Booklogger</a>
+          <ul class="navbar-nav me-auto mt-2 mt-lg-0">
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="admin_dropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Admin
+              <a class="nav-link dropdown-toggle" href="#" id="books_dropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Books
               </a>
-              <div class="dropdown-menu dropdown-menu-right" aria-labelledby="admin_dropdown">
-                {{ nav_link("Admin", "admin:index", "dropdown-item") }}
-                {{ nav_link("Create Author", "library:author_new", "dropdown-item") }}
-                {{ nav_link("Create Book", "library:book_new", "dropdown-item") }}
-                {{ nav_link("Goodreads Import", "library:book_import", "dropdown-item") }}
-                {{ nav_link("Bulk Import", "library:bulk_import", "dropdown-item") }}
-                {{ nav_link("Reports", "library:report", "dropdown-item") }}
-                {% if request.get_host() == "booklogger.eskola.uk" %}
-                  <a class="dropdown-item" href="http://localhost:8000{{ url(request.resolver_match.view_name, kwargs=request.resolver_match.kwargs) }}">Development</a>
-                {% else %}
-                  <a class="dropdown-item" href="http://booklogger.eskola.uk{{ url(request.resolver_match.view_name, kwargs=request.resolver_match.kwargs) }}">Production</a>
-                {% endif %}
-                <div class="divider"></div>
-                <span class="dropdown-item">Release
-                  {% if VERSION_NUMBER %}
-                    {{ VERSION_NUMBER }}
-                    {% if COMMIT_ID %}
-                      ({{ COMMIT_ID }})
-                    {% endif %}
-                  {% else %}
-                    unknown
-                  {% endif %}
-                </span>
+              <div class="dropdown-menu" aria-labelledby="books_dropdown">
+                {% for title, link in book_pages %}
+                  {{ nav_link(title, link, "dropdown-item") }}
+                {% endfor %}
               </div>
             </li>
-          {% else %}
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url('admin:login') }}?next={{ request.get_full_path () }}">Log In</a>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="collections_dropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Collections
+              </a>
+              <div class="dropdown-menu" aria-labelledby="collections_dropdown">
+                {% for title, link in other_pages %}
+                  {{ nav_link(title, link, "dropdown-item") }}
+                {% endfor %}
+              </div>
             </li>
-          {% endif %}
-        </ul>
+          </ul>
+          <form class="form-inline my-2 my-lg-0" action="{{ url('library:basic_search') }}">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="query">
+          </form>
+          <ul class="navbar-nav mt-2 mt-lg-0">
+            {% if user.is_authenticated %}
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="admin_dropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Admin
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="admin_dropdown">
+                  {{ nav_link("Admin", "admin:index", "dropdown-item") }}
+                  {{ nav_link("Create Author", "library:author_new", "dropdown-item") }}
+                  {{ nav_link("Create Book", "library:book_new", "dropdown-item") }}
+                  {{ nav_link("Goodreads Import", "library:book_import", "dropdown-item") }}
+                  {{ nav_link("Bulk Import", "library:bulk_import", "dropdown-item") }}
+                  {{ nav_link("Reports", "library:report", "dropdown-item") }}
+                  {% if request.get_host() == "booklogger.eskola.uk" %}
+                    <a class="dropdown-item" href="http://localhost:8000{{ url(request.resolver_match.view_name, kwargs=request.resolver_match.kwargs) }}">Development</a>
+                  {% else %}
+                    <a class="dropdown-item" href="http://booklogger.eskola.uk{{ url(request.resolver_match.view_name, kwargs=request.resolver_match.kwargs) }}">Production</a>
+                  {% endif %}
+                  <div class="divider"></div>
+                  <span class="dropdown-item">Release
+                    {% if VERSION_NUMBER %}
+                      {{ VERSION_NUMBER }}
+                      {% if COMMIT_ID %}
+                        ({{ COMMIT_ID }})
+                      {% endif %}
+                    {% else %}
+                      unknown
+                    {% endif %}
+                  </span>
+                </div>
+              </li>
+            {% else %}
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url('admin:login') }}?next={{ request.get_full_path () }}">Log In</a>
+              </li>
+            {% endif %}
+          </ul>
+        </div>
       </div>
     </nav>
 
