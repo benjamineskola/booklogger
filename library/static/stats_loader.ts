@@ -3,22 +3,18 @@ function StatsLoader (): any {
     const year: string = element.dataset.year!;
 
     fetch(`/stats/${year}`)
-      .then(response => {
-        const spinner: HTMLElement = element.querySelector('.spinner-grow')!;
-        spinner.style.display = '';
-
-        if (response.ok) {
-          response
-            .text()
-            .then(html => {
-              element.innerHTML = html;
-            })
-            .catch(err => {
-              console.log(err);
-            });
-        } else {
+      .then(async response => {
+        if (!response.ok) {
           throw new Error();
+        } else {
+          const spinner: HTMLElement = element.querySelector('.spinner-grow')!;
+          spinner.style.display = '';
+
+          return await response.text();
         }
+      })
+      .then(html => {
+        element.innerHTML = html;
       })
       .catch(() => {
         element.innerHTML = `
