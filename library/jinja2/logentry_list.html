@@ -1,11 +1,6 @@
 {% from "macros.html" import filter_list with context %}
 {% from "macros/card.html" import book_list with context %}
 {% extends "base.html" %}
-{% block header %}
-  <script>
-    $(document).scroll(updateScrollPosition)
-  </script>
-{% endblock header %}
 
 {% if entries and entries.first().end_date %}
   {% set display_year = entries.first().end_date.year %}
@@ -80,6 +75,8 @@
       import { InfiniteScroll } from '/static/infinite_scroll.js';
       let infiniteScroll = new InfiniteScroll();
       infiniteScroll.loadNextPage('{{ display_year - 1 }}', '{{ url("library:books_read", kwargs={"year": display_year - 1}) }}?infinite=true' )
+
+      document.addEventListener('scroll', infiniteScroll.updateScrollPosition)
     </script>
   {% endif %}
 {% endblock footer %}
