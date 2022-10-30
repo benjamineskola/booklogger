@@ -7,6 +7,12 @@
   </script>
 {% endblock header %}
 
+{% if entries and entries.first().end_date %}
+  {% set display_year = entries.first().end_date.year %}
+{% else %}
+  {% set display_year = request.resolver_match.kwargs.get('year') | int %}
+{% endif %}
+
 {% block content %}
   {% if entries and entries[0].currently_reading %}
     {{ book_list(entries) }}
@@ -25,12 +31,6 @@
           {{ filter_list('Want to read', 'want_to_read', {'yes': 'true', 'no': 'false'}) }}
         </div>
       </div>
-    {% endif %}
-
-    {% if entries %}
-      {% set display_year = entries.first().end_date.year %}
-    {% else %}
-      {% set display_year = request.resolver_match.kwargs.get('year') | int %}
     {% endif %}
 
     {% if entries.count() %}
@@ -70,31 +70,16 @@
             </div>
           </div>
         </div>
-        <script>
-          {% if next_year == "sometime" %}
-            var delay = 2000
-          {% else %}
-            if (parseInt(window.location.hash.split('-').pop()) <= {{ next_year }}) {
-              var delay = 100
-            } else {
-              var delay = 2000
-            }
-          {% endif %}
-
-          setTimeout(function () {
-          {% set params = request.GET.copy() %}
-          {% if not 'infinite' in params %}
-            {% set _ = params.update({'infinite': 'true'}) %}
-          {% endif %}
-
-            loadNextPage('{{ next_year }}', '{{ url("library:books_read", kwargs={"year": next_year}) }}?{{ params.urlencode() | safe }}')
-          }, delay)
-
-          $('.alert-danger .btn').on('click', function () {
-            loadNextPage('{{ next_year }}', '{{ url("library:books_read", kwargs={"year": next_year}) }}?{{ params.urlencode() | safe }}')
-          })
-        </script>
       {% endif %}
     {% endif %}
   {% endif %}
 {% endblock content %}
+{% block footer %}
+  {% if display_year %}
+    <script type="module">
+      import { InfiniteScroll } from '/static/infinite_scroll.js';
+      let infiniteScroll = new InfiniteScroll();
+      infiniteScroll.loadNextPage('{{ display_year - 1 }}', '{{ url("library:books_read", kwargs={"year": display_year - 1}) }}?infinite=true' )
+    </script>
+  {% endif %}
+{% endblock footer %}
