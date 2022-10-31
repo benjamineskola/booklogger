@@ -33,13 +33,15 @@ function TagBook (): any {
 
   function init (body: HTMLElement): void {
     body.querySelectorAll('a.remove-tag').forEach(el => {
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      el.addEventListener('click', removeTag);
+      el.addEventListener('click', () => {
+        void removeTag.call(el as HTMLElement);
+      });
     });
 
     body.querySelectorAll('form.add-tag').forEach(el => {
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      el.addEventListener('submit', addTag);
+      el.addEventListener('submit', ev => {
+        void addTag.call(el as HTMLFormElement, ev);
+      });
     });
   }
 

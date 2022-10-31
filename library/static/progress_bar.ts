@@ -1,4 +1,3 @@
-/* eslint-disable no-unreachable */
 function ProgressBar (): any {
   async function updateProgress (
     this: HTMLFormElement,
@@ -46,8 +45,9 @@ function ProgressBar (): any {
 
   function init (body: HTMLElement): void {
     body.querySelectorAll('form.update-progress').forEach(el => {
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      el.addEventListener('submit', updateProgress);
+      el.addEventListener('submit', ev => {
+        void updateProgress.call(el as HTMLFormElement, ev);
+      });
     });
   }
 

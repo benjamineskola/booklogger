@@ -47,8 +47,9 @@ function RateBook (): any {
 
   function init (body: HTMLElement): any {
     body.querySelectorAll('span.rating-star').forEach(el => {
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      el.addEventListener('click', rateBook);
+      el.addEventListener('click', () => {
+        void rateBook.call(el as HTMLElement);
+      });
     });
   }
 
