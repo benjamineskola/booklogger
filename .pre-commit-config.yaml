@@ -31,7 +31,7 @@ repos:
         name: typescript
         language: system
         entry: tsc --strict --checkJs --noEmit --lib dom,es2019
-        types: [javascript]
+        files: "\\.[tj]s$"
       - id: eslint
         name: eslint
         language: system
