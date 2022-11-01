@@ -1,3 +1,10 @@
 {
-  "semi": true
+  "arrowParens": "avoid",
+  "generatorStarSpacing": true,
+  "offsetTernaryExpressions": true,
+  "semi": true,
+  "singleQuote": true,
+  "spaceBeforeFunctionParen": true,
+  "trailingComma": "none",
+  "yieldStarSpacing": true
 }

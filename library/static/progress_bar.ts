@@ -31,7 +31,9 @@ function ProgressBar (): any {
         progressText.textContent?.length === 0
       ) {
         progressText = bookCard.querySelector('.card-footer .read-dates')!;
-        progressText.textContent = `${progressText.textContent!}; ${data.progress_text as string}`;
+        progressText.textContent = `${progressText.textContent!}; ${
+          data.progress_text as string
+        }`;
       } else {
         progressText.textContent = data.progress_text;
       }

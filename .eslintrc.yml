@@ -1,9 +1,9 @@
 extends:
-  - "standard-with-typescript"
+  - 'standard-with-typescript'
 parserOptions:
-  project: "./tsconfig.json"
+  project: './tsconfig.json'
 rules:
-  "semi": [error, always]
-  "@typescript-eslint/semi": [error, always]
-  "@typescript-eslint/no-extra-semi": error
-  "@typescript-eslint/no-non-null-assertion": off
+  'semi': [error, always]
+  '@typescript-eslint/semi': [error, always]
+  '@typescript-eslint/no-extra-semi': error
+  '@typescript-eslint/no-non-null-assertion': off

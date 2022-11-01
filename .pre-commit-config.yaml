@@ -13,13 +13,14 @@ repos:
     hooks:
       - id: shellcheck
       - id: shfmt
+      - id: prettier
   - repo: local
     hooks:
       - id: curlylint
         name: curlylint
         language: system
         entry: "curlylint --quiet --rule 'indent: 2'"
-        files: "^library/jinja2/"
+        files: '^library/jinja2/'
         types: [html]
       - id: migrations
         name: migrations
@@ -31,12 +32,7 @@ repos:
         name: typescript
         language: system
         entry: tsc --strict --checkJs --noEmit --lib dom,es2019
-        files: "\\.[tj]s$"
-      - id: eslint
-        name: eslint
-        language: system
-        entry: eslint
-        files: "\\.ts$"
+        types: [ts]
   - repo: https://github.com/asottile/pyupgrade
     rev: v2.32.1
     hooks:
@@ -51,28 +47,28 @@ repos:
     hooks:
       - id: black
   - repo: https://github.com/pycqa/flake8
-    rev: "4.0.1"
+    rev: '4.0.1'
     hooks:
       - id: flake8
         additional_dependencies:
           - flake8-bandit
           - flake8-bugbear
           - flake8-comprehensions
-          - "flake8-django @ git+https://github.com/rocioar/flake8-django.git@master"
+          - 'flake8-django @ git+https://github.com/rocioar/flake8-django.git@master'
           - flake8-simplify
   - repo: https://github.com/PyCQA/pylint
     rev: v2.13.7
     hooks:
       - id: pylint
-        files: "^[^/]+/"
-        exclude: "^library/(migrations|tests)"
+        files: '^[^/]+/'
+        exclude: '^library/(migrations|tests)'
         args: [-d, E0401]
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v0.950
     hooks:
       - id: mypy
-        files: "^[^/]+/"
-        exclude: "^library/(migrations|tests)"
+        files: '^[^/]+/'
+        exclude: '^library/(migrations|tests)'
         additional_dependencies:
           [
             django,
@@ -85,7 +81,7 @@ repos:
             requests,
             xmltodict,
             bs4,
-            types-requests,
+            types-requests
           ]
   - repo: https://github.com/benjamineskola/pre-commit-hooks.git
     rev: 67abb7c26f6c90911800f33bc07bddc25bf5377f
@@ -94,4 +90,4 @@ repos:
         types: [python]
         pass_filenames: false
 
-exclude: "^library/(migrations|fixtures)"
+exclude: '^library/(migrations|fixtures)'
