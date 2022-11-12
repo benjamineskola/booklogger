@@ -39,9 +39,6 @@ $(document).ready(function () {
         .hide(1000);
     });
 
-  for (const elementId of ['acquired', 'alienated', 'ebook_acquired']) {
-    addSetDateTodayButton(elementId);
-  }
 
   isbnFieldPasteFilter('#id_isbn, #id_ebook_isbn');
 });
@@ -140,23 +137,6 @@ function addListEntryField (event) {
   });
 }
 
-/** @param {JQueryEventObject} event */
-function setDateToday (event) {
-  event.preventDefault();
-  const elementId = event.data.elementId;
-
-  const date = new Date();
-
-  $('#id_' + elementId + '_date_month').val(date.getMonth() + 1);
-  $('#id_' + elementId + '_date_month').trigger('change');
-
-  $('#id_' + elementId + '_date_year').val(date.getFullYear());
-  $('#id_' + elementId + '_date_year').trigger('change');
-
-  $('#id_' + elementId + '_date_day').val(date.getDate());
-  $('#id_' + elementId + '_date_day').trigger('change');
-}
-
 function configureSelectFields () {
   $('select').select2({ theme: 'bootstrap' });
   $(
@@ -193,19 +173,6 @@ function configureDateFields (fieldName) {
     });
 }
 
-/** @param {string} elementId */
-function addSetDateTodayButton (elementId) {
-  $(`#div_id_${elementId}_date`).append(
-    `<a href="#" id="${elementId}_date_set_today">Set to today</a>`
-  );
-
-  $(`#${elementId}_date_set_today`).on(
-    'click',
-    null,
-    { elementId },
-    setDateToday
-  );
-}
 
 /** @param {string} selector, @this {Element} */
 function isbnFieldPasteFilter (selector) {
