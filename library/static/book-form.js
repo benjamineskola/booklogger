@@ -1,8 +1,6 @@
 /* globals $ */
 
 $(document).ready(function () {
-  configureSelectFields();
-
   // @ts-ignore
   if (document.formTags !== null) {
     // @ts-ignore
@@ -63,20 +61,5 @@ function addListEntryField(event) {
   selectField.select2({ theme: 'bootstrap' });
   inlineForm.find('.form-check-input').on('click', function () {
     $(this).closest('.form-inline').hide(1000);
-  });
-}
-
-function configureSelectFields() {
-  $('select').select2({ theme: 'bootstrap' });
-  $(
-    '#id_first_author, #id_publisher, #id_series, #formset-bookauthor_set select'
-  ).select2({
-    theme: 'bootstrap',
-    tags: true
-  });
-  $('#id_tags').select2({
-    theme: 'bootstrap',
-    tags: true,
-    tokenSeparators: [',']
   });
 }

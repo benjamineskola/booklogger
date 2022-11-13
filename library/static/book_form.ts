@@ -18,6 +18,8 @@ function BookForm(): object {
       configureDateFields(fieldName);
     }
 
+    configureSelectFields();
+
     isbnFieldPasteFilter('#id_isbn');
     isbnFieldPasteFilter('#id_ebook_isbn');
   }
@@ -104,6 +106,21 @@ function BookForm(): object {
       .each(function () {
         $(this).addClass('mr-2');
       });
+  }
+
+  function configureSelectFields(): void {
+    $('select').select2({ theme: 'bootstrap' });
+    $(
+      '#id_first_author, #id_publisher, #id_series, #formset-bookauthor_set select'
+    ).select2({
+      theme: 'bootstrap',
+      tags: true
+    });
+    $('#id_tags').select2({
+      theme: 'bootstrap',
+      tags: true,
+      tokenSeparators: [',']
+    });
   }
 
   function createElements(html: string): HTMLElement {
