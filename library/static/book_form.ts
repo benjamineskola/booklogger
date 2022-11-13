@@ -3,6 +3,9 @@ function BookForm (): object {
     for (const elementId of ['acquired', 'alienated', 'ebook_acquired']) {
       addSetDateTodayButton(elementId);
     }
+
+    isbnFieldPasteFilter('#id_isbn');
+    isbnFieldPasteFilter('#id_ebook_isbn');
   }
 
   function addSetDateTodayButton (elementId: string): void {
@@ -18,6 +21,20 @@ function BookForm (): object {
       ?.addEventListener('click', ev => {
         setDateToday(ev, elementId);
       });
+  }
+
+  function isbnFieldPasteFilter (selector: string): void {
+    const element: HTMLInputElement = document.querySelector(selector)!;
+    element.addEventListener('paste', function (ev: ClipboardEvent) {
+      ev.preventDefault();
+      const pastedText = ev.clipboardData?.getData('text/plain');
+      this.value = pastedText?.replace(/\D/g, '') ?? '';
+    });
+
+    element.addEventListener('input', function (ev: Event) {
+      ev.preventDefault();
+      this.value = this.value.replace(/\D/g, '');
+    });
   }
 
   function setDateToday (event: Event, elementId: string): void {

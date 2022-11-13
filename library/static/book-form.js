@@ -172,20 +172,3 @@ function configureDateFields (fieldName) {
       $(this).addClass('mr-2');
     });
 }
-
-
-/** @param {string} selector, @this {Element} */
-function isbnFieldPasteFilter (selector) {
-  $(selector).on('paste', function (ev) {
-    ev.preventDefault();
-    // @ts-ignore
-    const pastedText = ev.originalEvent.clipboardData.getData('text/plain');
-    const elem = $(this);
-    elem.val(pastedText.replace(/\D/g, ''));
-  });
-  $(selector).on('input', function (ev) {
-    ev.preventDefault();
-    const elem = $(this);
-    elem.val(String(elem.val()).replace(/\D/g, ''));
-  });
-}
