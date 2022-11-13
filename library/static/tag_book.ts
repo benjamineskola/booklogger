@@ -1,5 +1,5 @@
-function TagBook (): any {
-  async function addTag (this: HTMLFormElement, event: Event): Promise<any> {
+function TagBook(): any {
+  async function addTag(this: HTMLFormElement, event: Event): Promise<any> {
     event.preventDefault();
     const url = this.getAttribute('action')!;
 
@@ -13,9 +13,8 @@ function TagBook (): any {
 
     if (response.ok) {
       const tagsField = this.querySelector(this.dataset.tags!)!;
-      const inputField: HTMLInputElement = this.querySelector(
-        'input[name="tags"]'
-      )!;
+      const inputField: HTMLInputElement =
+        this.querySelector('input[name="tags"]')!;
       const data = await response.json();
 
       for (const i in data.tags) {
@@ -31,21 +30,21 @@ function TagBook (): any {
     return response;
   }
 
-  function init (body: HTMLElement): void {
-    body.querySelectorAll('a.remove-tag').forEach(el => {
+  function init(body: HTMLElement): void {
+    body.querySelectorAll('a.remove-tag').forEach((el) => {
       el.addEventListener('click', () => {
         void removeTag.call(el as HTMLElement);
       });
     });
 
-    body.querySelectorAll('form.add-tag').forEach(el => {
-      el.addEventListener('submit', ev => {
+    body.querySelectorAll('form.add-tag').forEach((el) => {
+      el.addEventListener('submit', (ev) => {
         void addTag.call(el as HTMLFormElement, ev);
       });
     });
   }
 
-  async function removeTag (this: HTMLElement): Promise<any> {
+  async function removeTag(this: HTMLElement): Promise<any> {
     const tag = this.dataset.tag!;
     const label = this.parentElement!;
     const book = label.parentElement!.dataset.book!;

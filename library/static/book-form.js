@@ -20,15 +20,12 @@ $(document).ready(function () {
   $('#card-bookauthor_set, #card-logentry_set, #card-readinglistentry_set')
     .find('.form-check-input')
     .on('click', function (event) {
-      $(this)
-        .closest('.form-inline')
-        .hide(1000);
+      $(this).closest('.form-inline').hide(1000);
     });
-
 });
 
 /** @param {JQueryEventObject} event */
-function addListEntryField (event) {
+function addListEntryField(event) {
   event.preventDefault();
 
   const parent = $('#formset-readinglistentry_set');
@@ -65,13 +62,11 @@ function addListEntryField (event) {
 
   selectField.select2({ theme: 'bootstrap' });
   inlineForm.find('.form-check-input').on('click', function () {
-    $(this)
-      .closest('.form-inline')
-      .hide(1000);
+    $(this).closest('.form-inline').hide(1000);
   });
 }
 
-function configureSelectFields () {
+function configureSelectFields() {
   $('select').select2({ theme: 'bootstrap' });
   $(
     '#id_first_author, #id_publisher, #id_series, #formset-bookauthor_set select'

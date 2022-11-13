@@ -1,5 +1,5 @@
-function StatsLoader (): any {
-  async function loadStatsForYear (element: HTMLElement): Promise<void> {
+function StatsLoader(): any {
+  async function loadStatsForYear(element: HTMLElement): Promise<void> {
     const year: string = element.dataset.year!;
 
     const response = await fetch(`/stats/${year}`);
@@ -29,8 +29,8 @@ function StatsLoader (): any {
     }
   }
 
-  function init (): any {
-    document.querySelectorAll('div.stats-for-year').forEach(el => {
+  function init(): any {
+    document.querySelectorAll('div.stats-for-year').forEach((el) => {
       void loadStatsForYear(el as HTMLElement);
     });
   }

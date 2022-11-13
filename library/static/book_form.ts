@@ -1,8 +1,8 @@
-function BookForm (): object {
-  function init (): void {
+function BookForm(): object {
+  function init(): void {
     document
       ?.querySelector('#card-bookauthor_set .card-footer a')
-      ?.addEventListener('click', ev => {
+      ?.addEventListener('click', (ev) => {
         addAuthorField(ev, (document as any).bookauthor_formset_template);
       });
 
@@ -22,7 +22,7 @@ function BookForm (): object {
     isbnFieldPasteFilter('#id_ebook_isbn');
   }
 
-  function addAuthorField (event: Event, template: string): void {
+  function addAuthorField(event: Event, template: string): void {
     event.preventDefault();
 
     const parent = document.querySelector('#formset-bookauthor_set')!;
@@ -73,7 +73,7 @@ function BookForm (): object {
     });
   }
 
-  function addSetDateTodayButton (elementId: string): void {
+  function addSetDateTodayButton(elementId: string): void {
     const template = document.createElement('template');
     template.innerHTML = `<a href="#" id="${elementId}_date_set_today">Set to today</a>`;
 
@@ -83,12 +83,12 @@ function BookForm (): object {
 
     document
       .querySelector(`#${elementId}_date_set_today`)
-      ?.addEventListener('click', ev => {
+      ?.addEventListener('click', (ev) => {
         setDateToday(ev, elementId);
       });
   }
 
-  function configureDateFields (fieldName: string): void {
+  function configureDateFields(fieldName: string): void {
     $(`#id_${fieldName}_day`).select2({ theme: 'bootstrap', width: '5em' });
     $(`#id_${fieldName}_month`).select2({ theme: 'bootstrap', width: '9em' });
     $(`#id_${fieldName}_year`).select2({
@@ -106,13 +106,13 @@ function BookForm (): object {
       });
   }
 
-  function createElements (html: string): HTMLElement {
+  function createElements(html: string): HTMLElement {
     const template = document.createElement('template');
     template.innerHTML = html.trim();
     return template.content.children[0] as HTMLElement;
   }
 
-  function isbnFieldPasteFilter (selector: string): void {
+  function isbnFieldPasteFilter(selector: string): void {
     const element: HTMLInputElement = document.querySelector(selector)!;
     element.addEventListener('paste', function (ev: ClipboardEvent) {
       ev.preventDefault();
@@ -126,7 +126,7 @@ function BookForm (): object {
     });
   }
 
-  function setDateToday (event: Event, elementId: string): void {
+  function setDateToday(event: Event, elementId: string): void {
     event.preventDefault();
 
     const date = new Date();
@@ -138,13 +138,13 @@ function BookForm (): object {
     monthField.dispatchEvent(new Event('change', { bubbles: true }));
 
     const yearField: HTMLInputElement = document.querySelector(
-      '#id_' + elementId + '_date_year'
+      `#id_${elementId}_date_year`
     )!;
     yearField.value = String(date.getFullYear());
     yearField.dispatchEvent(new Event('change', { bubbles: true }));
 
     const dayField: HTMLInputElement = document.querySelector(
-      '#id_' + elementId + '_date_day'
+      `#id_${elementId}_date_day`
     )!;
     dayField.value = String(date.getDate());
     dayField.dispatchEvent(new Event('change', { bubbles: true }));

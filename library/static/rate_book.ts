@@ -1,5 +1,5 @@
-function RateBook (): any {
-  async function rateBook (this: HTMLElement): Promise<Response> {
+function RateBook(): any {
+  async function rateBook(this: HTMLElement): Promise<Response> {
     let value = Number(this.dataset.rating);
     const ratings = this.parentElement!;
     const book = ratings.dataset.book!;
@@ -32,7 +32,7 @@ function RateBook (): any {
     return response;
   }
 
-  function displayRating (parent: HTMLElement, value: number): void {
+  function displayRating(parent: HTMLElement, value: number): void {
     parent.dataset.rating = String(value);
     Array.from(parent.children).forEach(function (star, i) {
       if (value >= i + 1) {
@@ -45,8 +45,8 @@ function RateBook (): any {
     });
   }
 
-  function init (body: HTMLElement): any {
-    body.querySelectorAll('span.rating-star').forEach(el => {
+  function init(body: HTMLElement): any {
+    body.querySelectorAll('span.rating-star').forEach((el) => {
       el.addEventListener('click', () => {
         void rateBook.call(el as HTMLElement);
       });

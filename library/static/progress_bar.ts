@@ -1,5 +1,5 @@
-function ProgressBar (): any {
-  async function updateProgress (
+function ProgressBar(): any {
+  async function updateProgress(
     this: HTMLFormElement,
     event: Event
   ): Promise<any> {
@@ -45,9 +45,9 @@ function ProgressBar (): any {
     return response;
   }
 
-  function init (body: HTMLElement): void {
-    body.querySelectorAll('form.update-progress').forEach(el => {
-      el.addEventListener('submit', ev => {
+  function init(body: HTMLElement): void {
+    body.querySelectorAll('form.update-progress').forEach((el) => {
+      el.addEventListener('submit', (ev) => {
         void updateProgress.call(el as HTMLFormElement, ev);
       });
     });

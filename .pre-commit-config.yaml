@@ -13,7 +13,6 @@ repos:
     hooks:
       - id: shellcheck
       - id: shfmt
-      - id: prettier
   - repo: local
     hooks:
       - id: curlylint
@@ -28,6 +27,16 @@ repos:
         entry: python ./manage.py makemigrations --check --dry-run
         types: [python]
         pass_filenames: false
+      - id: rome-lint
+        name: rome lint
+        language: system
+        entry: rome check --apply-suggested
+        types_or: [javascript, ts]
+      - id: rome-format
+        name: rome format
+        language: system
+        entry: rome format --write
+        types_or: [javascript, ts]
       - id: typescript
         name: typescript
         language: system

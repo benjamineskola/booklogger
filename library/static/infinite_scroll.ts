@@ -2,8 +2,8 @@ import { ProgressBar } from './progress_bar.js';
 import { RateBook } from './rate_book.js';
 import { TagBook } from './tag_book.js';
 
-function InfiniteScroll (): any {
-  async function loadNextPage (year: string, url: string): Promise<void> {
+function InfiniteScroll(): any {
+  async function loadNextPage(year: string, url: string): Promise<void> {
     const placeholder = document.querySelector('.loader')!;
     const response = await fetch(url);
 
@@ -37,16 +37,16 @@ function InfiniteScroll (): any {
         void loadNextPage(nextYear, nextUrl);
       }
     } else {
-      (placeholder.querySelector(
-        '.spinner-grow'
-      ) as HTMLElement).style.display = 'none';
-      (placeholder.querySelector(
-        '.alert-danger'
-      ) as HTMLElement).style.display = '';
+      (
+        placeholder.querySelector('.spinner-grow') as HTMLElement
+      ).style.display = 'none';
+      (
+        placeholder.querySelector('.alert-danger') as HTMLElement
+      ).style.display = '';
     }
   }
 
-  function updateScrollPosition (this: HTMLElement): void {
+  function updateScrollPosition(this: HTMLElement): void {
     Array.from(document.querySelectorAll('h2')).forEach(function (el) {
       const height = window.innerHeight;
 

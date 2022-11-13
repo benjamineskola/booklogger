@@ -1,5 +1,6 @@
 *.json
 !package*.json
+!rome.json
 !tsconfig.json
 *.sqlite3
 node_modules
