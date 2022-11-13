@@ -6,6 +6,12 @@ function BookForm(): object {
         addAuthorField(ev, (document as any).bookauthor_formset_template);
       });
 
+    document
+      ?.querySelector('#card-readinglistentry_set .card-footer a')
+      ?.addEventListener('click', (ev) => {
+        addListEntryField(ev, (document as any).listentry_formset_template);
+      });
+
     for (const elementId of ['acquired', 'alienated', 'ebook_acquired']) {
       addSetDateTodayButton(elementId);
     }
@@ -68,6 +74,51 @@ function BookForm(): object {
     totalForms.value = String(parseInt(index) + 1);
 
     $(selectField).select2({ theme: 'bootstrap', tags: true });
+    const checkbox = inlineForm.querySelector('.form-check-input')!;
+    checkbox.addEventListener('click', function (event) {
+      const form: HTMLElement = checkbox.closest('.form-inline')!;
+      form.style.display = 'none';
+    });
+  }
+
+  function addListEntryField(event: Event, template: string) {
+    event.preventDefault();
+
+    const parent = document.querySelector('#formset-readinglistentry_set')!;
+    const totalForms: HTMLInputElement = document.querySelector(
+      'input[name="readinglistentry_set-TOTAL_FORMS"]'
+    )!;
+    const index = totalForms.value;
+
+    const inlineForm = createElements('<div class="form-inline"></div>');
+
+    const selectForm = createElements(template.replace(/__prefix__/g, index));
+    const selectField: HTMLSelectElement = selectForm.querySelector('select')!;
+
+    const authorFormGroup = createElements('<div class="form-group"></div>');
+    authorFormGroup.append(
+      `<label for="id_readinglistentry_set-${index}-reading_list}" class="mr-2 requiredField">Reading list*</label>`
+    );
+    const selectDiv = createElements('<div class="mr-2 mt-2"></div>');
+    selectDiv.append(selectField);
+    authorFormGroup.append(selectDiv);
+    inlineForm.append(authorFormGroup);
+
+    inlineForm.append(
+      createElements(
+        `<div class="form-group"><label for="readinglistentry_set-${index}-order" class="mr-2">Order</label><div class="mr-2 mt-2"><input type="number" name="readinglistentry_set-${index}-order" maxlength="255" class="textinput textInput form-control" id="id_readinglistentry_set-${index}-role"></div></div>`
+      )
+    );
+    inlineForm.append(
+      createElements(
+        `<div class="form-group"><div class="mr-2 mt-2"><div class="form-check"><input type="checkbox" name="readinglistentry_set-${index}-DELETE" class="checkboxinput form-check-input" id="id_readinglistentry_set-${index}-DELETE"><label for="id_readinglistentry_set-${index}-DELETE" class="form-check-label">Delete </label></div></div></div>`
+      )
+    );
+
+    parent.append(inlineForm);
+    totalForms.value = index + 1;
+
+    $(selectField).select2({ theme: 'bootstrap' });
     const checkbox = inlineForm.querySelector('.form-check-input')!;
     checkbox.addEventListener('click', function (event) {
       const form: HTMLElement = checkbox.closest('.form-inline')!;
