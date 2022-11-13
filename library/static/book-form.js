@@ -18,12 +18,6 @@ $(document).ready(function () {
     configureDateFields(fieldName);
   }
 
-  $('#card-bookauthor_set .card-footer a').on(
-    'click',
-    // @ts-ignore
-    { template: document.bookauthor_formset_template },
-    addAuthorField
-  );
   $('#card-readinglistentry_set .card-footer a').on(
     'click',
     // @ts-ignore
@@ -39,59 +33,7 @@ $(document).ready(function () {
         .hide(1000);
     });
 
-
-  isbnFieldPasteFilter('#id_isbn, #id_ebook_isbn');
 });
-
-/** @param {JQueryEventObject} event */
-function addAuthorField (event) {
-  event.preventDefault();
-
-  const parent = $('#formset-bookauthor_set');
-  const totalForms = $('input[name="bookauthor_set-TOTAL_FORMS"]');
-  const index = parseInt(String(totalForms.val()));
-
-  const inlineForm = $('<div class="form-inline"></div>');
-  const selectField = $(event.data.template.replace(/__prefix__/g, index)).find(
-    'select'
-  );
-
-  const authorFormGroup = $('<div class="form-group"></div>');
-  authorFormGroup.append(
-    `<label for="id_bookauthor_set-${index}-author" class="mr-2 requiredField">Author*</label>`
-  );
-  const selectDiv = $('<div class="mr-2 mt-2"></div>');
-  selectDiv.append(selectField);
-  authorFormGroup.append(selectDiv);
-  inlineForm.append(authorFormGroup);
-
-  inlineForm.append(
-    $(
-      `<div class="form-group"><label for="bookauthor_set-${index}-role" class="mr-2">Role</label><div class="mr-2 mt-2"><input type="text" name="bookauthor_set-${index}-role" maxlength="255" class="textinput textInput form-control" id="id_bookauthor_set-${index}-role"></div></div>`
-    )
-  );
-  inlineForm.append(
-    $(
-      `<div class="form-group"><label for="bookauthor_set-${index}-order" class="mr-2">Order</label><div class="mr-2 mt-2"><input type="number" name="bookauthor_set-${index}-order" maxlength="255" class="textinput textInput form-control" id="id_bookauthor_set-${index}-role"></div></div>`
-    )
-  );
-  inlineForm.append(
-    $(
-      `<div class="form-group"><div class="mr-2 mt-2"><div class="form-check"><input type="checkbox" name="bookauthor_set-${index}-DELETE" class="checkboxinput form-check-input" id="id_bookauthor_set-${index}-DELETE"><label for="id_bookauthor_set-${index}-DELETE" class="form-check-label">Delete </label></div></div></div>`
-    )
-  );
-
-  parent.append(inlineForm);
-  totalForms.val(index + 1);
-
-  // @ts-ignore
-  selectField.select2({ theme: 'bootstrap', tags: 'true' });
-  inlineForm.find('.form-check-input').on('click', function (event) {
-    $(this)
-      .closest('.form-inline')
-      .hide(1000);
-  });
-}
 
 /** @param {JQueryEventObject} event */
 function addListEntryField (event) {

@@ -1,11 +1,68 @@
 function BookForm (): object {
   function init (): void {
+    document
+      ?.querySelector('#card-bookauthor_set .card-footer a')
+      ?.addEventListener('click', ev => {
+        addAuthorField(ev, (document as any).bookauthor_formset_template);
+      });
+
     for (const elementId of ['acquired', 'alienated', 'ebook_acquired']) {
       addSetDateTodayButton(elementId);
     }
 
     isbnFieldPasteFilter('#id_isbn');
     isbnFieldPasteFilter('#id_ebook_isbn');
+  }
+
+  function addAuthorField (event: Event, template: string): void {
+    event.preventDefault();
+
+    const parent = document.querySelector('#formset-bookauthor_set')!;
+    const totalForms: HTMLInputElement = document.querySelector(
+      'input[name="bookauthor_set-TOTAL_FORMS"]'
+    )!;
+    const index: string = totalForms?.value;
+
+    const inlineForm = createElements('<div class="form-inline"></div>');
+    const selectForm = createElements(template.replace(/__prefix__/g, index));
+    const selectField: HTMLSelectElement = selectForm.querySelector('select')!;
+
+    const authorFormGroup = createElements('<div class="form-group"></div>');
+    authorFormGroup.append(
+      createElements(
+        `<label for="id_bookauthor_set-${index}-author" class="mr-2 requiredField">Author*</label>`
+      )
+    );
+    const selectDiv = createElements('<div class="mr-2 mt-2"></div>');
+    selectDiv.append(selectField);
+    authorFormGroup.append(selectDiv);
+    inlineForm.append(authorFormGroup);
+
+    inlineForm.append(
+      createElements(
+        `<div class="form-group"><label for="bookauthor_set-${index}-role" class="mr-2">Role</label><div class="mr-2 mt-2"><input type="text" name="bookauthor_set-${index}-role" maxlength="255" class="textinput textInput form-control" id="id_bookauthor_set-${index}-role"></div></div>`
+      )
+    );
+    inlineForm.append(
+      createElements(
+        `<div class="form-group"><label for="bookauthor_set-${index}-order" class="mr-2">Order</label><div class="mr-2 mt-2"><input type="number" name="bookauthor_set-${index}-order" maxlength="255" class="textinput textInput form-control" id="id_bookauthor_set-${index}-role"></div></div>`
+      )
+    );
+    inlineForm.append(
+      createElements(
+        `<div class="form-group"><div class="mr-2 mt-2"><div class="form-check"><input type="checkbox" name="bookauthor_set-${index}-DELETE" class="checkboxinput form-check-input" id="id_bookauthor_set-${index}-DELETE"><label for="id_bookauthor_set-${index}-DELETE" class="form-check-label">Delete </label></div></div></div>`
+      )
+    );
+
+    parent.append(inlineForm);
+    totalForms.value = String(parseInt(index) + 1);
+
+    $(selectField).select2({ theme: 'bootstrap', tags: true });
+    const checkbox = inlineForm.querySelector('.form-check-input')!;
+    checkbox.addEventListener('click', function (event) {
+      const form: HTMLElement = checkbox.closest('.form-inline')!;
+      form.style.display = 'none';
+    });
   }
 
   function addSetDateTodayButton (elementId: string): void {
@@ -21,6 +78,12 @@ function BookForm (): object {
       ?.addEventListener('click', ev => {
         setDateToday(ev, elementId);
       });
+  }
+
+  function createElements (html: string): HTMLElement {
+    const template = document.createElement('template');
+    template.innerHTML = html.trim();
+    return template.content.children[0] as HTMLElement;
   }
 
   function isbnFieldPasteFilter (selector: string): void {
