@@ -10,6 +10,14 @@ function BookForm (): object {
       addSetDateTodayButton(elementId);
     }
 
+    for (const fieldName of [
+      'acquired_date',
+      'alienated_date',
+      'ebook_acquired_date'
+    ]) {
+      configureDateFields(fieldName);
+    }
+
     isbnFieldPasteFilter('#id_isbn');
     isbnFieldPasteFilter('#id_ebook_isbn');
   }
@@ -77,6 +85,24 @@ function BookForm (): object {
       .querySelector(`#${elementId}_date_set_today`)
       ?.addEventListener('click', ev => {
         setDateToday(ev, elementId);
+      });
+  }
+
+  function configureDateFields (fieldName: string): void {
+    $(`#id_${fieldName}_day`).select2({ theme: 'bootstrap', width: '5em' });
+    $(`#id_${fieldName}_month`).select2({ theme: 'bootstrap', width: '9em' });
+    $(`#id_${fieldName}_year`).select2({
+      theme: 'bootstrap',
+      tags: true,
+      width: '6em'
+    });
+
+    $(`#id_${fieldName}_month`).parent().addClass('form-row');
+    $(`#id_${fieldName}_month`)
+      .parent()
+      .find('span')
+      .each(function () {
+        $(this).addClass('mr-2');
       });
   }
 

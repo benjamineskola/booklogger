@@ -10,14 +10,6 @@ $(document).ready(function () {
     $('#id_tags').trigger('change');
   }
 
-  for (const fieldName of [
-    'acquired_date',
-    'alienated_date',
-    'ebook_acquired_date'
-  ]) {
-    configureDateFields(fieldName);
-  }
-
   $('#card-readinglistentry_set .card-footer a').on(
     'click',
     // @ts-ignore
@@ -92,25 +84,4 @@ function configureSelectFields () {
     tags: true,
     tokenSeparators: [',']
   });
-}
-
-/** @param {string} fieldName */
-function configureDateFields (fieldName) {
-  $(`#id_${fieldName}_day`).select2({ theme: 'bootstrap', width: '5em' });
-  $(`#id_${fieldName}_month`).select2({ theme: 'bootstrap', width: '9em' });
-  $(`#id_${fieldName}_year`).select2({
-    theme: 'bootstrap',
-    tags: true,
-    width: '6em'
-  });
-
-  $(`#id_${fieldName}_month`)
-    .parent()
-    .addClass('form-row');
-  $(`#id_${fieldName}_month`)
-    .parent()
-    .find('span')
-    .each(function () {
-      $(this).addClass('mr-2');
-    });
 }
