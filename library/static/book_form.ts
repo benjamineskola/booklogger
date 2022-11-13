@@ -28,6 +28,21 @@ function BookForm(): object {
 
     isbnFieldPasteFilter('#id_isbn');
     isbnFieldPasteFilter('#id_ebook_isbn');
+
+    for (const selector of ['bookauthor', 'logentry', 'readinglistentry']) {
+      const input = document.querySelector(
+        `#card-${selector}_set .form-check-input`
+      )!;
+      input.addEventListener('click', function (event: Event) {
+        (input.closest('.form-inline') as HTMLElement).style.display = 'none';
+      });
+    }
+
+    if ((document as any).formTags !== null) {
+      const el: HTMLInputElement = document.querySelector('#id_tags')!;
+      el.value = (document as any).formTags;
+      el.dispatchEvent(new Event('change', { bubbles: true }));
+    }
   }
 
   function addAuthorField(event: Event, template: string): void {
