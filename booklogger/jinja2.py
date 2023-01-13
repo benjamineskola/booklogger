@@ -1,8 +1,9 @@
 import json
 import urllib.parse
+from collections.abc import Iterable
 from datetime import date, datetime
 from itertools import groupby
-from typing import Any, Iterable, TypeVar
+from typing import Any, TypeVar
 
 import commonmark
 from crispy_forms.templatetags.crispy_forms_filters import as_crispy_field

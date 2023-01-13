@@ -1,5 +1,6 @@
+from collections.abc import Callable
 from itertools import groupby
-from typing import Any, Callable
+from typing import Any
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import F, Q
