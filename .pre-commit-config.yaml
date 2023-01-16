@@ -46,23 +46,11 @@ repos:
     rev: 22.12.0
     hooks:
       - id: black
-  - repo: https://github.com/pycqa/flake8
-    rev: '4.0.1'
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: 'v0.0.223'
     hooks:
-      - id: flake8
-        additional_dependencies:
-          - flake8-bandit
-          - flake8-bugbear
-          - flake8-comprehensions
-          - 'flake8-django @ git+https://github.com/rocioar/flake8-django.git@master'
-          - flake8-simplify
-  - repo: https://github.com/PyCQA/pylint
-    rev: v2.13.7
-    hooks:
-      - id: pylint
-        files: '^[^/]+/'
-        exclude: '^library/(migrations|tests)'
-        args: [-d, E0401]
+      - id: ruff
+        args: ['--force-exclude']
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v0.950
     hooks:

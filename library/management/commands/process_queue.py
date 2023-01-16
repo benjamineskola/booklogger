@@ -13,7 +13,6 @@ class Command(BaseCommand):
             while Queue.objects.count():
                 if errors == Queue.objects.count():
                     break
-                print(f"===== {Queue.objects.count()} =====")
                 data = {}
                 try:
                     item = Queue.objects.first()
