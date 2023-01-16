@@ -443,7 +443,6 @@ class BulkEditView(
 
     def form_valid(self, form: Form) -> HttpResponse:
         context = self.get_context_data()
-        # self.object = form.save()
 
         response: HttpResponse
         formset = context["formset"]

@@ -13,9 +13,9 @@ from library.models.abc import TimestampedModel
 def update_timestamp_on_save(
     sender: type[TimestampedModel],
     instance: TimestampedModel,
-    raw: bool,  # pylint:disable=unused-argument
-    using: str,  # pylint:disable=unused-argument
-    update_fields: dict[str, Any],  # pylint:disable=unused-argument
+    raw: bool,  # noqa: ARG001
+    using: str,  # noqa: ARG001
+    update_fields: dict[str, Any],  # noqa: ARG001
     **_kwargs: Any
 ) -> None:
     if issubclass(sender, TimestampedModel):
@@ -23,13 +23,13 @@ def update_timestamp_on_save(
 
 
 @receiver(post_save)
-def update_report_on_save(  # pylint:disable=too-many-arguments
-    sender: type[Model],  # pylint:disable=unused-argument
+def update_report_on_save(
+    sender: type[Model],  # noqa: ARG001
     instance: Model,
-    created: bool,  # pylint:disable=unused-argument
-    raw: bool,  # pylint:disable=unused-argument
-    using: str,  # pylint:disable=unused-argument
-    update_fields: dict[str, Any],  # pylint:disable=unused-argument
+    created: bool,  # noqa: ARG001
+    raw: bool,  # noqa: ARG001
+    using: str,  # noqa: ARG001
+    update_fields: dict[str, Any],  # noqa: ARG001
     **_kwargs: Any
 ) -> None:
 
