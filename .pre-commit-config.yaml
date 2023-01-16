@@ -14,6 +14,7 @@ repos:
       - id: shellcheck
       - id: shfmt
       - id: rome
+      - id: prettier
   - repo: local
     hooks:
       - id: curlylint
@@ -69,7 +70,7 @@ repos:
             requests,
             xmltodict,
             bs4,
-            types-requests
+            types-requests,
           ]
   - repo: https://github.com/benjamineskola/pre-commit-hooks.git
     rev: 8898e97256c2e5248fe3feff59c5d30c816b3f6b
