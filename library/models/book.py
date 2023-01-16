@@ -227,10 +227,7 @@ class BookQuerySet(models.QuerySet["Book"]):
             qs = qs.tagged(*[tag.strip() for tag in tags.lower().split(",")])
         if owned := request.GET.get("owned"):
             try:
-                if str2bool(owned):
-                    qs = qs.owned()
-                else:
-                    qs = qs.unowned()
+                qs = qs.owned() if str2bool(owned) else qs.unowned()
             except ValueError:
                 if owned == "borrowed":
                     qs = qs.borrowed()
@@ -241,10 +238,7 @@ class BookQuerySet(models.QuerySet["Book"]):
         if want_to_read := request.GET.get("want_to_read"):
             qs = qs.filter(want_to_read=str2bool(want_to_read))
         if read := request.GET.get("read"):
-            if str2bool(read):
-                qs = qs.read()
-            else:
-                qs = qs.unread()
+            qs = qs.read() if str2bool(read) else qs.unread()
 
         return qs
 

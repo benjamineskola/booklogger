@@ -99,10 +99,7 @@ def round_trunc(number: float, digits: int = 2) -> str:
     if not isinstance(number, float) and not isinstance(number, int):
         return "?" * digits
 
-    if number:
-        num_digits = max(1, int(floor(log(abs(number), 10) + 1)))
-    else:
-        num_digits = 1 + digits
+    num_digits = max(1, int(floor(log(abs(number), 10) + 1))) if number else 1 + digits
 
     return f"{{:.{num_digits + digits}g}}".format(number)
 

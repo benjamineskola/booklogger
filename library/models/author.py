@@ -119,10 +119,7 @@ class Author(TimestampedModel, SluggableModel):
 
     def attribution_for(self, book: "Book", initials: bool = False) -> str:
         role = self.display_role_for_book(book)
-        if initials:
-            name = self.name_with_initials
-        else:
-            name = str(self)
+        name = self.name_with_initials if initials else str(self)
         return name + (f" ({role})" if role else "")
 
     def is_editor_of(self, book: "Book") -> bool:

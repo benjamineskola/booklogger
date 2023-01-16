@@ -73,7 +73,5 @@ ignore = [
         "RUF001", # TODO String contains ambiguous unicode character
         "RUF100", # TODO Unused `noqa` directive
         "S113", # TODO Probable use of requests call without timeout
-        "SIM105", # TODO Use `contextlib.suppress(Book.DoesNotExist)` instead of try-except-pass
-        "SIM108", # TODO Use ternary operator instead of if-else-block
         "T201", # TODO `print` found
 ]
