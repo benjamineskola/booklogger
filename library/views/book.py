@@ -170,8 +170,7 @@ class SeriesIndexView(IndexView):
     def get_queryset(self) -> BookQuerySet:
         books = super().get_queryset()
         self.series = self.kwargs["series"].replace("%2f", "/")
-        books = books.filter(series=self.series)
-        return books
+        return books.filter(series=self.series)
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -185,8 +184,7 @@ class PublisherIndexView(IndexView):
     def get_queryset(self) -> BookQuerySet:
         books = super().get_queryset()
         self.publisher = self.kwargs["publisher"].replace("%2f", "/")
-        books = books.filter(publisher=self.publisher)
-        return books
+        return books.filter(publisher=self.publisher)
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -290,10 +288,9 @@ def update_progress(request: HttpRequest, slug: str) -> HttpResponse:
         progress_text = f"{percentage:.4g}% done"
     progress_text += f" on {timezone.now().strftime('%d %B, %Y')}"
 
-    response = HttpResponse(
+    return HttpResponse(
         json.dumps({"percentage": percentage, "progress_text": progress_text})
     )
-    return response
 
 
 @login_required
@@ -444,14 +441,11 @@ class BulkEditView(
     def form_valid(self, form: Form) -> HttpResponse:
         context = self.get_context_data()
 
-        response: HttpResponse
         formset = context["formset"]
         if formset.is_valid():
             formset.save()
-            response = super().form_valid(form)
-        else:
-            response = super().form_invalid(form)
-        return response
+            return super().form_valid(form)
+        return super().form_invalid(form)
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)

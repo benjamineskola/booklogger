@@ -150,7 +150,7 @@ class Author(TimestampedModel, SluggableModel):
 
     @property
     def authored_books(self) -> "BookQuerySet":
-        books = (
+        return (
             self.books.filter(
                 id__in=[
                     ba.book.id
@@ -161,17 +161,15 @@ class Author(TimestampedModel, SluggableModel):
                 Q(first_author_role="") | Q(first_author_role="author")
             ).distinct()
         )
-        return books
 
     @property
     def edited_books(self) -> "BookQuerySet":
-        books = (
+        return (
             self.books.filter(
                 id__in=[ba.book.id for ba in self.bookauthor_set.filter(role="editor")]
             )
             | self.first_authored_books.filter(first_author_role="editor").distinct()
         )
-        return books
 
     @property
     def identities(self) -> models.QuerySet["Author"]:

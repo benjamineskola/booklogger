@@ -68,7 +68,7 @@ def find_all(query: str) -> list[dict[str, str]]:
         if result.best_book.author.find("name").text
         not in ["SparkNotes", "BookRags", "BookHabits", "Bright Summaries"]
     ]
-    return results
+    return results  # noqa: RET504
 
 
 def scrape_image(goodreads_id: str) -> str:

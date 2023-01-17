@@ -66,7 +66,6 @@ ignore = [
         "FBT002", # TODO Boolean default value in function definition
         "PGH003", # TODO Use specific rule codes when ignoring type issues
         "PLR2004", # TODO Magic value used in comparison
-        "RET504", # TODO Unnecessary variable assignment before `return` statement
         "RUF001", # TODO String contains ambiguous unicode character
         "S113", # TODO Probable use of requests call without timeout
         "T201", # TODO `print` found

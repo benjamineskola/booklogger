@@ -245,19 +245,16 @@ class BookQuerySet(models.QuerySet["Book"]):
     def filter_by_format(self, edition_format: str) -> "BookQuerySet":
         edition_format = edition_format.strip("s").upper()
         if edition_format == "PHYSICAL":
-            books = self.filter(
+            return self.filter(
                 Q(edition_format=Book.Format["PAPERBACK"])
                 | Q(edition_format=Book.Format["HARDBACK"])
             )
-        elif edition_format == "EBOOK":
-            books = self.filter(
+        if edition_format == "EBOOK":
+            return self.filter(
                 Q(edition_format=Book.Format[edition_format])
                 | Q(has_ebook_edition=True)
             )
-        else:
-            books = self.filter(edition_format=Book.Format[edition_format])
-
-        return books
+        return self.filter(edition_format=Book.Format[edition_format])
 
     @property
     def page_count(self) -> int:
