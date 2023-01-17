@@ -409,13 +409,13 @@ class BookEditMixin(
         return context
 
 
-class NewView(  # type: ignore [misc]
+class NewView(  # type: ignore[misc]
     LoginRequiredMixin, generic.edit.CreateView[Book, BookForm], BookEditMixin
 ):
     pass
 
 
-class EditView(  # type: ignore [misc]
+class EditView(  # type: ignore[misc]
     LoginRequiredMixin, generic.edit.UpdateView[Book, BookForm], BookEditMixin
 ):
     pass

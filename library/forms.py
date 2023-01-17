@@ -35,7 +35,7 @@ class AuthorField(ModelChoiceField):
         if not value:
             return None
         if value.isnumeric():
-            return super().to_python(value)  # type: ignore [return-value]
+            return super().to_python(value)  # type: ignore[return-value]
 
         try:
             author, _ = Author.objects.get_or_create_by_single_name(value)
@@ -90,8 +90,8 @@ class BookForm(ModelForm[Book]):
             qs = instance.first_author.books.exclude(pk=instance.id)
 
         if instance and qs.count() > 0:
-            self.fields["editions"].queryset = qs  # type: ignore [attr-defined]
-            self.fields["parent_edition"].queryset = qs  # type: ignore [attr-defined]
+            self.fields["editions"].queryset = qs  # type: ignore[attr-defined]
+            self.fields["parent_edition"].queryset = qs  # type: ignore[attr-defined]
         else:
             del self.fields["editions"]
             del self.fields["parent_edition"]

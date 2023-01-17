@@ -23,7 +23,7 @@ class DetailView(generic.DetailView[ReadingList]):
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context.update({"page_title": self.object.title})  # type: ignore [attr-defined]
+        context.update({"page_title": self.object.title})  # type: ignore[attr-defined]
 
         return context
 

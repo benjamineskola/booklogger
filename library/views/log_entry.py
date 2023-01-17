@@ -88,7 +88,7 @@ class XmlReadView(Feed[Any, Any]):
     link = "/books/read/"
     description_template = "logentry_item.xml"
 
-    def get_object(self, request: HttpRequest) -> LogEntryQuerySet:  # type: ignore [override]
+    def get_object(self, request: HttpRequest) -> LogEntryQuerySet:  # type: ignore[override]
         return (
             LogEntry.objects.select_related("book", "book__first_author")
             .prefetch_related("book__additional_authors", "book__log_entries")

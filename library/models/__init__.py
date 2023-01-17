@@ -25,10 +25,10 @@ __all__ = [
 
 # from https://docs.djangoproject.com/en/3.1/howto/custom-lookups/
 # pylint: disable-next=abstract-method
-class NotEqual(Lookup):  # type: ignore [type-arg]
+class NotEqual(Lookup):  # type: ignore[type-arg]
     lookup_name = "ne"
 
-    def as_sql(self, compiler, connection):  # type: ignore [no-untyped-def]
+    def as_sql(self, compiler, connection):  # type: ignore[no-untyped-def]
         lhs, lhs_params = self.process_lhs(compiler, connection)
         rhs, rhs_params = self.process_rhs(compiler, connection)
         params = lhs_params + rhs_params

@@ -42,7 +42,7 @@ if TYPE_CHECKING:
 class BaseBookManager(models.Manager["Book"]):
     def search(self, pattern: str) -> "BookQuerySet":
         qs: BookQuerySet = (
-            self.annotate(  # type: ignore [assignment]
+            self.annotate(  # type: ignore[assignment]
                 first_author_similarity=TrigramSimilarity(
                     "first_author__surname", pattern
                 ),

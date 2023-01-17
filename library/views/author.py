@@ -29,7 +29,7 @@ class IndexView(generic.ListView[Author]):
     paginate_by = 100
 
     def get_queryset(self) -> QuerySet[Author]:
-        qs: QuerySet[Author] = super().get_queryset()  # type: ignore [assignment]
+        qs: QuerySet[Author] = super().get_queryset()  # type: ignore[assignment]
         if gender := self.request.GET.get("gender"):
             if not gender.isnumeric():
                 gender = str(Author.Gender[gender.upper()])

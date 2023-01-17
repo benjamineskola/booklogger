@@ -7,7 +7,7 @@ from library.models import Author, Book, Tag
 fake = faker.Faker()
 
 
-class AuthorFactory(factory.django.DjangoModelFactory):  # type: ignore
+class AuthorFactory(factory.django.DjangoModelFactory):  # type: ignore[misc]
     class Meta:
         model = Author
 
@@ -15,7 +15,7 @@ class AuthorFactory(factory.django.DjangoModelFactory):  # type: ignore
     forenames = factory.Faker("first_name")
 
 
-class BookFactory(factory.django.DjangoModelFactory):  # type: ignore
+class BookFactory(factory.django.DjangoModelFactory):  # type: ignore[misc]
     class Meta:
         model = Book
 
@@ -25,14 +25,14 @@ class BookFactory(factory.django.DjangoModelFactory):  # type: ignore
     isbn = factory.Faker("isbn13", separator="")
 
 
-class TagFactory(factory.django.DjangoModelFactory):  # type: ignore
+class TagFactory(factory.django.DjangoModelFactory):  # type: ignore[misc]
     class Meta:
         model = Tag
 
     name = factory.LazyAttribute(lambda _: fake.unique.word())
 
 
-class UserFactory(factory.django.DjangoModelFactory):  # type: ignore
+class UserFactory(factory.django.DjangoModelFactory):  # type: ignore[misc]
     class Meta:
         model = User
 
