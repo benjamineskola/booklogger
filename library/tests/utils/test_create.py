@@ -5,15 +5,15 @@ import pytest
 from library.utils import create
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 class TestCreateBook:
-    @pytest.fixture
+    @pytest.fixture()
     def data(self, faker):
         return {
             "authors": [(faker.name(), "")],
             "title": faker.sentence(),
-            "goodreads_id": str(randrange(1, 999999)),  # noqa: S311
-            "first_published": str(randrange(1600, 2022)),  # noqa: S311
+            "goodreads_id": str(randrange(1, 999999)),
+            "first_published": str(randrange(1600, 2022)),
         }
 
     def test_create(self, data):

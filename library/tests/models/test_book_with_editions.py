@@ -1,7 +1,7 @@
 import pytest
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 class TestBookWithEditions:
     def test_create_new_edition(self, book_factory):
         book = book_factory(

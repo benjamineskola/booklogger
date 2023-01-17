@@ -1,19 +1,21 @@
 from datetime import datetime
 
 import pytest
+from django.utils import timezone
 
 from booklogger import jinja2
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 class TestJinja:
-    @pytest.fixture
+    @pytest.fixture()
     def books(self, book_factory, user):
-        yield [
-            book_factory(acquired_date=datetime(1970, 1, 1), owned_by=user),
-            book_factory(acquired_date=datetime(2000, 1, 1), owned_by=user),
-            book_factory(acquired_date=datetime(1970, 1, 1), owned_by=user),
-            book_factory(acquired_date=datetime(1, 1, 1), owned_by=user),
+        tz = timezone.get_default_timezone()
+        return [
+            book_factory(acquired_date=datetime(1970, 1, 1, tzinfo=tz), owned_by=user),
+            book_factory(acquired_date=datetime(2000, 1, 1, tzinfo=tz), owned_by=user),
+            book_factory(acquired_date=datetime(1970, 1, 1, tzinfo=tz), owned_by=user),
+            book_factory(acquired_date=datetime(1, 1, 1, tzinfo=tz), owned_by=user),
             book_factory(),
         ]
 

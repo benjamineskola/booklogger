@@ -1,7 +1,7 @@
 import pytest
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 class TestAuthor:
     def test_author_list(self, author_factory, client):
         resp = client.get("/authors/")

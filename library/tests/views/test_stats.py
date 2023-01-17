@@ -5,7 +5,7 @@ from library.models.book import Tag
 from library.views.stats import calculate_year_progress
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 class TestStats:
     @pytest.fixture(autouse=True)
     def books(self, book_factory):
@@ -21,7 +21,7 @@ class TestStats:
         for book in books:
             book.start_reading()
             book.finish_reading()
-        yield books
+        return books
 
     @freeze_time("2022-01-01")
     def test_calculate_year_progress_nyd(self):

@@ -4,14 +4,14 @@ from django.utils import timezone
 from library.models import StatisticsReport, Tag
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 class TestStatisticsReport:
     @pytest.fixture(autouse=True)
-    def tags(self):
+    def _tags(self):
         Tag.objects.get_or_create(name="fiction")
         Tag.objects.get_or_create(name="non-fiction")
 
-    @pytest.fixture
+    @pytest.fixture()
     def report(self):
         r, _ = StatisticsReport.objects.get_or_create(year=timezone.now().year)
         return r
@@ -30,7 +30,7 @@ class TestStatisticsReport:
 
         assert report.page_count == 200
 
-    def test_counts_empty(self, read_book_factory):
+    def test_counts_empty(self, read_book_factory):  # noqa: ARG002
         report, _ = StatisticsReport.objects.get_or_create(year=timezone.now().year)
         assert not report.count
         assert not report.page_count
@@ -43,7 +43,7 @@ class TestStatisticsReport:
         assert report.longest == book2
         assert report.shortest == book1
 
-    def test_longest_shortest_empty(self, read_book_factory):
+    def test_longest_shortest_empty(self, read_book_factory):  # noqa: ARG002
         report, _ = StatisticsReport.objects.get_or_create(year=timezone.now().year)
         assert not report.longest
         assert not report.shortest

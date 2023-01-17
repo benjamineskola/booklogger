@@ -1,24 +1,22 @@
 import pytest
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 class TestBookAuthor:
-    @pytest.fixture
+    @pytest.fixture()
     def book(self, book_factory):
         return book_factory(first_author=None, title="Autobiography")
 
-    @pytest.fixture
+    @pytest.fixture()
     def author(self, authors):
         return authors[0]
 
-    @pytest.fixture
+    @pytest.fixture()
     def authors(self, author_factory):
-        authors = [
+        return [
             author_factory(surname="Smithee", forenames="Alan"),
             author_factory(surname="Smithee", forenames="Boris"),
         ]
-
-        return authors
 
     def test_str(self, book, authors):
         book.add_author(authors[0])

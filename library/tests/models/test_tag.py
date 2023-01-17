@@ -3,7 +3,7 @@ import pytest
 from library.models import Tag
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 class TestTag:
     def test_str(self, tag_factory):
         assert str(tag_factory(name="foo")) == "foo"

@@ -1,7 +1,7 @@
 import pytest
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 class TestLogEntry:
     def test_read_sometime(self, book_factory, client):
         book1 = book_factory()

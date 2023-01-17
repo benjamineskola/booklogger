@@ -7,7 +7,7 @@ from library import utils
 
 class TestUtils:
     @pytest.mark.parametrize(
-        "isbn10,isbn13",
+        ("isbn10", "isbn13"),
         [
             ("0140135154", "9780140135152"),
             ("014103579X", "9780141035796"),
@@ -49,7 +49,7 @@ class TestUtils:
         assert utils.isbn_to_isbn10("9780140135152") == "0140135154"
 
     @pytest.mark.parametrize(
-        "test_input,expected",
+        ("test_input", "expected"),
         [
             ((pi,), "3.14"),
             ((pi, 2), "3.14"),
@@ -63,7 +63,7 @@ class TestUtils:
         assert utils.round_trunc(*test_input) == expected
 
     @pytest.mark.parametrize(
-        "test_input,expected",
+        ("test_input", "expected"),
         [
             ("0", False),
             ("0", False),
@@ -95,11 +95,11 @@ class TestUtils:
         assert utils.str2bool(test_input) is expected
 
     def test_str2bool_invalid_input(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError):  # noqa: PT011
             utils.str2bool("any other string")
 
     @pytest.mark.parametrize(
-        "test_input,expected",
+        ("test_input", "expected"),
         [
             ([], []),
             ([[]], []),

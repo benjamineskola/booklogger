@@ -3,7 +3,7 @@ import pytest
 from library.models import Book, Tag
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 class TestBook:
     def test_currently_reading(self, client, book):
         resp = client.get("/")
@@ -62,17 +62,17 @@ class TestBook:
         resp = client.get("/books/owned/")
         assert len(resp.context_data["object_list"]) == 1
 
-    @pytest.mark.parametrize("format", ["EBOOK", "PAPERBACK", "HARDBACK", "WEB"])
+    @pytest.mark.parametrize("book_format", ["EBOOK", "PAPERBACK", "HARDBACK", "WEB"])
     @pytest.mark.parametrize(
         "view_format", ["EBOOK", "PAPERBACK", "HARDBACK", "WEB", "PHYSICAL"]
     )
-    def test_format_filters(self, client, book_factory, format, view_format):
-        book = book_factory(edition_format=Book.Format[format])
+    def test_format_filters(self, client, book_factory, book_format, view_format):
+        book = book_factory(edition_format=Book.Format[book_format])
 
         resp = client.get(f"/books/{view_format.lower()}/")
 
-        if view_format == format or (
-            format in ["PAPERBACK", "HARDBACK"] and view_format == "PHYSICAL"
+        if view_format == book_format or (
+            book_format in ["PAPERBACK", "HARDBACK"] and view_format == "PHYSICAL"
         ):
             assert book in resp.context_data["object_list"]
         else:
@@ -151,7 +151,7 @@ class TestBook:
         book.refresh_from_db()
         assert Tag.objects["foo"] not in book.tags.all()
 
-    def test_mark_owned(self, admin_client, book, user):
+    def test_mark_owned(self, admin_client, book, user):  # noqa: ARG002
         admin_client.post(f"{book.get_absolute_url()}mark_owned/")
         book.refresh_from_db()
         assert book.owned
@@ -161,7 +161,7 @@ class TestBook:
         book.refresh_from_db()
         assert book.read
 
-    def test_rate(self, admin_client, book, user):
+    def test_rate(self, admin_client, book, user):  # noqa: ARG002
         admin_client.post(f"{book.get_absolute_url()}rate/", {"rating": 5})
         book.refresh_from_db()
         assert book.rating == 5

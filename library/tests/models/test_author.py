@@ -3,9 +3,9 @@ import pytest
 from library.models import Author
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 class TestAuthor:
-    @pytest.fixture
+    @pytest.fixture()
     def author(self, author_factory):
         return author_factory(surname="Smithee")
 

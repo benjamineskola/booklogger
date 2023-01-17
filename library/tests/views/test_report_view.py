@@ -4,7 +4,7 @@ from library.models import Tag
 from library.views.report import IndexView
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 class TestReportView:
     def test_report_admin_only(self, client):
         assert client.get("/report/").status_code == 302
@@ -24,7 +24,7 @@ class TestReportView:
         assert len(resp.context_data["object_list"]) == 1
 
     @pytest.mark.parametrize("page", range(1, len(IndexView().categories)))
-    def test_report_all_pages(self, page, admin_client, book, user):
+    def test_report_all_pages(self, page, admin_client, book, user):  # noqa: ARG002
         book.tags.set((Tag.objects["non-fiction"], Tag.objects["history"]))
         resp = admin_client.get(f"/report/{page}/")
         assert resp.context_data["page_title"] != "Reports"

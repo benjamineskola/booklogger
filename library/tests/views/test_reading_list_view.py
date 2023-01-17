@@ -3,9 +3,9 @@ import pytest
 from library.models import ReadingList
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 class TestReadingList:
-    def test_index(self, book_factory, client):
+    def test_index(self, book_factory, client):  # noqa: ARG002
         reading_list = ReadingList()
         reading_list.save()
 

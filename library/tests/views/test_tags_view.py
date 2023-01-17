@@ -3,7 +3,7 @@ import pytest
 from library.models import Tag
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 class TestTag:
     def test_tag_cloud(self, book_factory, client, tag_factory):
         base_tag = tag_factory(name="non-fiction")

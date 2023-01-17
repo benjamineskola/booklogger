@@ -1,7 +1,7 @@
 import pytest
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 class TestSearch:
     def test_search_form(self, client):
         resp = client.get("/search/")

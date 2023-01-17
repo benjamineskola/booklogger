@@ -1,7 +1,7 @@
 import pytest
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 class TestPublisher:
     def test_publisher_list(self, book_factory, client):
         book_factory(series="Foo")

@@ -4,7 +4,7 @@ import pytest
 from django.utils import timezone
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 class TestTimestampedModel:
     def test_created_date(self, book_factory):
         test_start = timezone.now()

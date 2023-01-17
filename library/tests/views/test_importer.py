@@ -5,18 +5,18 @@ import pytest
 from library.models import Book
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 class TestImporter:
     @pytest.fixture(scope="session")
-    def django_db_setup(self, django_db_setup, django_db_blocker):
+    def django_db_setup(self, django_db_setup, django_db_blocker):  # noqa: ARG002,PT004
         """Test session DB setup."""
         from django.db import connection
 
         with django_db_blocker.unblock(), connection.cursor() as cursor:
             cursor.execute("CREATE EXTENSION IF NOT EXISTS pg_trgm;")
 
-    @pytest.fixture
-    def goodreads_mock(self, requests_mock, goodreads_key):
+    @pytest.fixture()
+    def _goodreads_mock(self, requests_mock, _goodreads_key):
         with open("library/fixtures/wuthering_heights.xml") as file:
             text = file.read()
             requests_mock.get(
@@ -46,14 +46,15 @@ class TestImporter:
         assert not resp.context_data["goodreads_results"]
         assert not resp.context_data["matches"]
 
-    def test_import_get_with_query(self, admin_client, goodreads_mock):
+    @pytest.mark.usefixtures("_goodreads_mock")
+    def test_import_get_with_query(self, admin_client):
         resp = admin_client.get("/book/import/", {"query": "Wuthering Heights"})
         assert b"This might be the following books on Goodreads" in resp.content
         assert b"Wuthering Heights" in resp.content
         assert resp.context_data["goodreads_results"][0]["title"] == "Wuthering Heights"
 
     @pytest.mark.parametrize(
-        "query_string,expected",
+        ("query_string", "expected"),
         [
             ("Wuthering Heights", {"isbn": "", "asin": "", "edition_format": 0}),
             (
@@ -70,7 +71,8 @@ class TestImporter:
             ),
         ],
     )
-    def test_import_post(self, admin_client, goodreads_mock, query_string, expected):
+    @pytest.mark.usefixtures("_goodreads_mock")
+    def test_import_post(self, admin_client, query_string, expected):
         query = admin_client.get("/book/import/", {"query": query_string})
         resp = admin_client.post(
             "/book/import/",

@@ -3,7 +3,7 @@ import pytest
 from library.utils import verso
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 class TestVerso:
     def test_not_verso(self, book_factory):
         book = book_factory(publisher="Penguin")

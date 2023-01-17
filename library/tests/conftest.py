@@ -1,16 +1,11 @@
 import os
-import subprocess  # noqa: S404
+import subprocess
 
 import pytest
 from pytest_factoryboy import register
 
 from booklogger import settings
-from library.factories import (  # noqa: F401
-    AuthorFactory,
-    BookFactory,
-    TagFactory,
-    UserFactory,
-)
+from library.factories import AuthorFactory, BookFactory, TagFactory, UserFactory
 
 register(AuthorFactory)
 register(BookFactory)
@@ -19,56 +14,54 @@ register(UserFactory)
 
 
 @pytest.fixture(autouse=True)
-def unset_goodreads_key(settings):
+def _unset_goodreads_key(settings):
     settings.GOODREADS_KEY = None
 
 
-@pytest.fixture
-def goodreads_key(settings):
+@pytest.fixture()
+def _goodreads_key(settings):
     settings.GOODREADS_KEY = "TEST_FAKE"
 
 
-@pytest.fixture
-def read_book(book, transactional_db):
+@pytest.fixture()
+def read_book(book, transactional_db):  # noqa: ARG001
     book.start_reading()
     book.finish_reading()
 
     return book
 
 
-@pytest.fixture
-def read_book_factory(book_factory, *args, **kwargs):
+@pytest.fixture()
+def read_book_factory(book_factory, *args, **kwargs):  # noqa: ARG001
     def _book_factory(*args, **kwargs):
         book = book_factory(*args, **kwargs)
         book.start_reading()
         book.finish_reading()
         return book
 
-    yield _book_factory
+    return _book_factory
 
 
 @pytest.fixture(scope="session")
-def django_db_modify_db_settings(request, worker_id, django_db_modify_db_settings):
+def django_db_modify_db_settings(  # noqa: PT004
+    request, worker_id, django_db_modify_db_settings  # noqa: ARG001
+):
     if "DYNO" in os.environ:
         return
 
     docker_was_running = False
 
     if "booklogger-postgres" in str(
-        subprocess.run(  # noqa: S603, S607
-            ["docker-compose", "ps"], capture_output=True
-        ).stdout
+        subprocess.run(["docker-compose", "ps"], capture_output=True).stdout
     ):
         docker_was_running = True
     else:
         if worker_id in ["master", "gw0"]:
-            subprocess.run(  # noqa: S603, S607
-                ["docker-compose", "up", "-d", "postgres"]
-            )
+            subprocess.run(["docker-compose", "up", "-d", "postgres"])
 
         subprocess.run(
             f"while ! pg_isready -h {settings.DATABASES['default']['HOST']}; do sleep 1; done",
-            shell=True,  # noqa: S602
+            shell=True,
             capture_output=True,
         )
 
@@ -76,15 +69,15 @@ def django_db_modify_db_settings(request, worker_id, django_db_modify_db_setting
         if not docker_was_running and (
             len(
                 str(
-                    subprocess.run(  # noqa: S607
+                    subprocess.run(
                         ["ps | grep 'pytest-xdist running'"],
                         capture_output=True,
-                        shell=True,  # noqa: S602
+                        shell=True,
                     ).stdout
                 ).splitlines()
             )
             < 1
         ):
-            subprocess.run(["docker-compose", "down"])  # noqa: S603, S607
+            subprocess.run(["docker-compose", "down"])
 
-    request.addfinalizer(teardown_database)
+    request.addfinalizer(teardown_database)  # noqa: PT021

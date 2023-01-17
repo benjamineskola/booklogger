@@ -4,7 +4,7 @@ from django.utils import timezone
 from library.models import LogEntry
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 class TestLogEntry:
     def test_no_log_entries(self, book):
         assert book.log_entries.count() == 0
