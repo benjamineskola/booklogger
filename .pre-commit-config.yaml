@@ -34,6 +34,11 @@ repos:
         language: system
         entry: tsc --strict --checkJs --noEmit --lib dom,es2019
         types: [ts]
+      - id: taplo
+        name: taplo
+        entry: taplo fmt
+        language: system
+        types: [toml]
   - repo: https://github.com/asottile/pyupgrade
     rev: v3.3.1
     hooks:
