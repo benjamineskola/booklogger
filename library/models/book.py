@@ -1,5 +1,3 @@
-# pylint: disable=too-many-lines
-
 import operator
 import re
 import time
@@ -200,7 +198,7 @@ class BookQuerySet(models.QuerySet["Book"]):
             parent_edition__parent_edition__owned_by__isnull=True,
         )
 
-    def poc(self, is_poc: bool = True) -> "BookQuerySet":
+    def poc(self, is_poc: bool = True) -> "BookQuerySet":  # noqa: FBT
         return self.filter(
             Q(first_author__poc=is_poc, first_author_role__in=["", "author", "editor"])
             | Q(
@@ -739,7 +737,7 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
             not self.edition_published
         ) or self.edition_published == self.first_published
 
-    def update(self, data: dict[str, str], force: bool = False) -> "Book":
+    def update(self, data: dict[str, str], force: bool = False) -> "Book":  # noqa: FBT
         needs_save = False
 
         for key, value in data.items():

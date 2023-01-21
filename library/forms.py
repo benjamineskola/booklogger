@@ -40,7 +40,7 @@ class AuthorField(ModelChoiceField):
         try:
             author, _ = Author.objects.get_or_create_by_single_name(value)
             return author
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001
             raise ValidationError(str(e)) from e
 
 

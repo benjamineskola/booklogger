@@ -48,15 +48,17 @@ class TestBookAuthor:
     def test_author_role_none(self, book, author):
         book.add_author(author)
         assert author.role_for_book(book) == ""
-        assert author.attribution_for(book, True) == "Smithee, A."
+        assert author.attribution_for(book, initials=True) == "Smithee, A."
 
     def test_author_role_simple(self, book, author):
         book.add_author(author, role="introduction")
         assert author.role_for_book(book) == "introduction"
-        assert author.attribution_for(book, True) == "Smithee, A. (introduction)"
+        assert (
+            author.attribution_for(book, initials=True) == "Smithee, A. (introduction)"
+        )
 
     def test_author_role_editor_abbr(self, book, author):
         book.add_author(author, role="editor")
         assert author.role_for_book(book) == "editor"
         assert author.display_role_for_book(book) == "ed."
-        assert author.attribution_for(book, True) == "Smithee, A. (ed.)"
+        assert author.attribution_for(book, initials=True) == "Smithee, A. (ed.)"

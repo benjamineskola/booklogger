@@ -27,7 +27,7 @@ def fetch(google_id: str = "", isbn: str = "") -> dict[str, str] | None:
         return {}
 
     try:
-        data = requests.get(search_url).json()
+        data = requests.get(search_url, timeout=10).json()
     except requests.exceptions.ConnectionError:
         return None
 

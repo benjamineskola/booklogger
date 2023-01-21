@@ -13,7 +13,7 @@ from library.models.abc import TimestampedModel
 def update_timestamp_on_save(
     sender: type[TimestampedModel],
     instance: TimestampedModel,
-    raw: bool,  # noqa: ARG001
+    raw: bool,  # noqa: ARG001, FBT001
     using: str,  # noqa: ARG001
     update_fields: dict[str, Any],  # noqa: ARG001
     **_kwargs: Any
@@ -26,8 +26,8 @@ def update_timestamp_on_save(
 def update_report_on_save(
     sender: type[Model],  # noqa: ARG001
     instance: Model,
-    created: bool,  # noqa: ARG001
-    raw: bool,  # noqa: ARG001
+    created: bool,  # noqa: ARG001, FBT001
+    raw: bool,  # noqa: ARG001, FBT001
     using: str,  # noqa: ARG001
     update_fields: dict[str, Any],  # noqa: ARG001
     **_kwargs: Any

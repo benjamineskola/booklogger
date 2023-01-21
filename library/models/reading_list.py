@@ -14,7 +14,7 @@ class ReadingList(TimestampedModel):
         blank=True,
     )
 
-    def __str__(self) -> str:  # pylint:disable=invalid-str-returned
+    def __str__(self) -> str:
         return self.title
 
     def get_absolute_url(self) -> str:

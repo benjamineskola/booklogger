@@ -21,6 +21,7 @@ V = TypeVar("V")
 def groupby_date(
     value: Iterable[V],
     attribute: str,
+    *_: Any,
     fmt: str = "%d %B, %Y",
     default: str = "None",
     rev: bool = False,

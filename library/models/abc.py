@@ -8,7 +8,7 @@ from text_unidecode import unidecode
 
 class SluggableModel(models.Model):
     slug = models.SlugField(blank=True, default="")
-    id: Any
+    id: Any  # noqa: A003
 
     class Meta:
         abstract = True

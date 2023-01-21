@@ -51,20 +51,14 @@ select = ["ALL"]
 ignore = [
   "E501",
   "D",
-  "ANN",  # annotations: let mypy do it
-  "COM",  # seems to conflict with black
+  "ANN",    # annotations: let mypy do it
+  "COM812", # seems to conflict with black
 
-  "A003",    # TODO Class attribute `id` is shadowing a python builtin
-  "BLE001",  # TODO Do not catch blind exception: `Exception`
   "C901",    # TODO function is too complex
   "EM101",   # TODO Exception must not use a string literal, assign to variable first
   "EM102",   # TODO Exception must not use an f-string literal, assign to variable first
-  "FBT001",  # TODO Boolean positional arg in function definition
-  "FBT002",  # TODO Boolean default value in function definition
-  "FBT003",  # TODO Boolean positional value in function call
   "PLR2004", # TODO Magic value used in comparison
   "RUF001",  # TODO String contains ambiguous unicode character
-  "S113",    # TODO Probable use of requests call without timeout
   "T201",    # TODO `print` found
 ]
 

@@ -8,7 +8,7 @@ from library.utils import smarten
 
 
 def book(
-    data: dict[str, Any], owned: bool = False
+    data: dict[str, Any], *_: Any, owned: bool = False
 ) -> tuple[Book, bool, list[tuple[Author, bool]]]:
     data["title"] = data["title"].strip()
 

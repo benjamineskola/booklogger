@@ -24,7 +24,6 @@ __all__ = [
 
 
 # from https://docs.djangoproject.com/en/3.1/howto/custom-lookups/
-# pylint: disable-next=abstract-method
 class NotEqual(Lookup):  # type: ignore[type-arg]
     lookup_name = "ne"
 

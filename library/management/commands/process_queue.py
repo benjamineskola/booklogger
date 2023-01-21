@@ -34,7 +34,7 @@ class Command(BaseCommand):
                             print(f"created {author}")
                         else:
                             print(f"updated {author}")
-                except Exception as e:  # pylint: disable=broad-except
+                except Exception as e:  # noqa: BLE001
                     errors += 1
                     print(f"===== error: {e} =====")
                     item = Queue(data=data)

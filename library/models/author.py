@@ -117,7 +117,7 @@ class Author(TimestampedModel, SluggableModel):
     def get_absolute_url(self) -> str:
         return reverse("library:author_details", args=[str(self.slug)])
 
-    def attribution_for(self, book: "Book", initials: bool = False) -> str:
+    def attribution_for(self, book: "Book", *_: Any, initials: bool = False) -> str:
         role = self.display_role_for_book(book)
         name = self.name_with_initials if initials else str(self)
         return name + (f" ({role})" if role else "")
