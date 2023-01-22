@@ -1,7 +1,9 @@
+import math
 from typing import Any
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import QuerySet
+from django.http import HttpRequest, JsonResponse
 from django.urls import reverse_lazy
 from django.views import generic
 
@@ -83,3 +85,20 @@ class DeleteView(LoginRequiredMixin, generic.edit.DeleteView[Author]):
     model = Author
     success_url = reverse_lazy("library:author_list")
     template_name = "confirm_delete.html"
+
+
+def export_authors(request: HttpRequest) -> JsonResponse:
+    page = int(request.GET.get("page", 1))
+    count = 100
+    start = (page - 1) * 100
+    authors = Author.objects.all()[start : start + count]
+    result = {
+        "page": page,
+        "per_page": count,
+        "total": Author.objects.count(),
+        "total_pages": math.ceil(Author.objects.count() / count),
+        "this_page": authors.count(),
+        "authors": [author.to_json() for author in authors],
+    }
+
+    return JsonResponse(result)

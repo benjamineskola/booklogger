@@ -92,6 +92,20 @@ class Author(TimestampedModel, SluggableModel):
             return self.surname + " " + (self.preferred_forenames or self.forenames)
         return (self.preferred_forenames or self.forenames) + " " + self.surname
 
+    def to_json(self) -> dict[str, Any]:
+        return {
+            "id": self.id,
+            "surname": self.surname,
+            "forenames": self.forenames,
+            "preferred_forenames": self.preferred_forenames,
+            "surname_first": self.surname_first,
+            "gender": self.gender,
+            "poc": self.poc,
+            "primary_language": self.primary_language,
+            "primary_identity": self.primary_identity_id,
+            "books_count": self.books.count(),
+        }
+
     @property
     def full_name(self) -> str:
         if not self.forenames:

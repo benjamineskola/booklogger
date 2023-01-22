@@ -210,4 +210,6 @@ urlpatterns = [
         r"^report(?:/(?P<page>\d+))?/", views.report.IndexView.as_view(), name="report"
     ),
     path("bulkimport/", views.importer.bulk_import, name="bulk_import"),
+    # exporters
+    path("export/authors/", views.author.export_authors, name="export_authors"),
 ]
