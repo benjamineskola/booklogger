@@ -1,4 +1,3 @@
-from collections.abc import Sequence  # noqa: F401
 from typing import Any
 
 from django.db import models
@@ -91,6 +90,25 @@ class LogEntry(TimestampedModel):
         else:
             text += ", unfinished"
         return text
+
+    def to_json(self) -> dict[str, Any]:
+        return dict(
+            {
+                k: v
+                for k in [
+                    "start_date",
+                    "end_date",
+                    "start_precision",
+                    "end_precision",
+                    "progress_percentage",
+                    "progress_page",
+                    "progress_date",
+                    "exclude_from_stats",  # type: ignore[name-defined]
+                    "abandoned",
+                ]
+                if (v := getattr(self, k))
+            }
+        )
 
     @property
     def currently_reading(self) -> bool:

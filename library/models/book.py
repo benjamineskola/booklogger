@@ -428,6 +428,82 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
             result += f" ({self.get_edition_disambiguator()} edition)"
         return result
 
+    def to_json(self) -> dict[str, Any]:
+        fields = [
+            "title",
+            "subtitle",
+            "first_author",
+            "first_author_role",
+            "edition_title",
+            "edition_subtitle",
+            "first_published",
+            "language",
+            "edition_published",
+            "edition_language",
+            "publisher",
+            "edition_format",
+            "edition_number",
+            "page_count",
+            "series",
+            "series_order",
+            "goodreads_id",
+            "isbn",
+            "asin",
+            "acquired_date",
+            "alienated_date",
+            "was_borrowed",
+            "borrowed_from",
+            "image_url",
+            "publisher_url",
+            "want_to_read",
+            "owned_by",
+            "review",
+            "rating",
+            "has_ebook_edition",
+            "ebook_isbn",
+            "ebook_asin",
+            "ebook_acquired_date",
+            "private",
+            "parent_edition",
+        ]
+        result = {
+            "id": self.id,
+        }
+        for field in fields:
+            value = getattr(self, field, None)
+            if value_id := getattr(self, field + "_id", None):
+                result[field] = value_id
+            elif value or (field == "want_to_read" and value is False):
+                result[field] = value
+        if self.tags:
+            result["tags"] = [tag.name for tag in self.tags.all()]
+        if self.additional_authors.count():
+            result["additional_authors"] = [
+                (author.id, author.role_for_book(self) or None)
+                for author in self.additional_authors.all()
+            ]
+        if self.log_entries.count():
+            result["log_entries"] = [log.to_json() for log in self.log_entries.all()]
+
+        if self.editions.count():
+            primary_edition = self.editions.first()
+            if primary_edition and primary_edition != self:
+                result["primary_edition"] = primary_edition.id
+
+        if self.reading_lists.count():
+            result["reading_lists"] = [
+                (
+                    reading_list.title,
+                    reading_list.readinglistentry_set.get(book=self).order
+                    or list(
+                        reading_list.readinglistentry_set.values_list("book", flat=True)
+                    ).index(self.id),
+                )
+                for reading_list in self.reading_lists.all()
+            ]
+
+        return result
+
     @property
     def display_details(self) -> str:
         result = ""

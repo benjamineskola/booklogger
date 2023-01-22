@@ -1,4 +1,5 @@
 import json
+import math
 import re
 from typing import Any
 
@@ -6,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import F, Q
 from django.forms import Form
-from django.http import HttpRequest, HttpResponse, HttpResponseNotFound
+from django.http import HttpRequest, HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
@@ -482,3 +483,20 @@ class BulkEditView(
         context["page_title"] = f"Editing {self.kwargs.get('query')} books"
 
         return context
+
+
+def export_books(request: HttpRequest) -> JsonResponse:
+    page = int(request.GET.get("page", 1))
+    count = 100
+    start = (page - 1) * 100
+    books = Book.objects.all()[start : start + count]
+    result = {
+        "page": page,
+        "per_page": count,
+        "total": Book.objects.count(),
+        "total_pages": math.ceil(Book.objects.count() / count),
+        "this_page": books.count(),
+        "books": [book.to_json() for book in books],
+    }
+
+    return JsonResponse(result)

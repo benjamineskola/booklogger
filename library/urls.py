@@ -212,4 +212,5 @@ urlpatterns = [
     path("bulkimport/", views.importer.bulk_import, name="bulk_import"),
     # exporters
     path("export/authors/", views.author.export_authors, name="export_authors"),
+    path("export/books/", views.book.export_books, name="export_books"),
 ]
