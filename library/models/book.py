@@ -487,7 +487,11 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
 
         if self.editions.count():
             primary_edition = self.editions.first()
-            if primary_edition and primary_edition != self:
+            if (
+                primary_edition
+                and primary_edition != self
+                and self.id < primary_edition.id
+            ):
                 result["primary_edition"] = primary_edition.id
 
         if self.reading_lists.count():
