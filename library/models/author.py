@@ -103,7 +103,6 @@ class Author(TimestampedModel, SluggableModel):
             "poc": self.poc,
             "primary_language": self.primary_language,
             "primary_identity": self.primary_identity_id,
-            "books_count": self.books.count(),
         }
 
     @property

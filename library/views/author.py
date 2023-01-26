@@ -98,7 +98,7 @@ def export_authors(request: HttpRequest) -> JsonResponse:
         "total": Author.objects.count(),
         "total_pages": math.ceil(Author.objects.count() / count),
         "this_page": authors.count(),
-        "authors": [author.to_json() for author in authors],
+        "authors": [author.to_json() for author in authors if author.books.count()],
     }
 
     return JsonResponse(result)
