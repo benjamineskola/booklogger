@@ -21,6 +21,7 @@ from library.models.book_with_editions import BookWithEditions
 from library.utils import (
     LANGUAGES,
     clean_publisher,
+    flatten,
     goodreads,
     google,
     isbn_to_isbn10,
@@ -476,7 +477,9 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
             elif value or (field == "want_to_read" and value is False):
                 result[field] = value
         if self.tags:
-            result["tags"] = [tag.name for tag in self.tags.all()]
+            tags = flatten(((tag,), tag.parents_recursive) for tag in self.tags.all())
+
+            result["tags"] = [tag.name for tag in flatten(tags)]
         if self.additional_authors.count():
             result["additional_authors"] = [
                 (author.id, author.role_for_book(self) or None)
