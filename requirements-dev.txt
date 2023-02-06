@@ -1,4 +1,4 @@
-coverage==7.0.5
+coverage==7.1.0
 curlylint==0.13.1
 django-stubs==1.14.0
 django-stubs-ext==0.7.0
