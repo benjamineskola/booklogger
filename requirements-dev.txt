@@ -5,7 +5,7 @@ django-stubs-ext==0.7.0
 freezegun==1.2.1
 mypy
 mypy-extensions==0.4.3
-pre-commit==2.21.0
+pre-commit==3.0.4
 pytest==7.2.1
 pytest-cov==4.0.0
 pytest-django==4.5.2
