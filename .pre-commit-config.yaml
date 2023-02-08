@@ -9,7 +9,7 @@ repos:
       - id: requirements-txt-fixer
       - id: trailing-whitespace
   - repo: https://github.com/benjamineskola/pre-commit-hooks.git
-    rev: 4694d5d2d983956a41650cb2765755106eba23e9
+    rev: 2284f1b82f3b384d13aa985c1b2f5302463d43db
     hooks:
       - id: shellcheck
       - id: shfmt
@@ -53,11 +53,11 @@ repos:
     hooks:
       - id: black
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: 'v0.0.243'
+    rev: 'v0.0.259'
     hooks:
       - id: ruff
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.0.0
+    rev: v1.1.1
     hooks:
       - id: mypy
         files: '^[^/]+/'
@@ -77,7 +77,7 @@ repos:
             types-requests,
           ]
   - repo: https://github.com/benjamineskola/pre-commit-hooks.git
-    rev: 4694d5d2d983956a41650cb2765755106eba23e9
+    rev: 2284f1b82f3b384d13aa985c1b2f5302463d43db
     hooks:
       - id: pytest
         types: [python]

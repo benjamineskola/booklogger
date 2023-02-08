@@ -189,7 +189,7 @@ class IndexView(LoginRequiredMixin, generic.ListView[Book]):
             if order_by := self.request.GET.get("order_by"):
                 results = results.order_by(order_by)
 
-        return results  # noqa: RET504
+        return results
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)

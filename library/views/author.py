@@ -42,7 +42,7 @@ class IndexView(generic.ListView[Author]):
             elif poc.lower() in ["0", "false"]:
                 qs = qs.filter(poc=False)
 
-        return qs  # noqa: RET504
+        return qs
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)

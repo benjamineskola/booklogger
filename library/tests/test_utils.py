@@ -30,8 +30,8 @@ class TestUtils:
         ],
     )
     def test_invalid_isbn(self, isbn):
-        assert utils.isbn_to_isbn10(isbn) == ""
-        assert utils.isbn10_to_isbn(isbn) == ""
+        assert not utils.isbn_to_isbn10(isbn)
+        assert not utils.isbn10_to_isbn(isbn)
 
     def test_isbn13_treated_as_isbn10(self):
         assert utils.isbn10_to_isbn("9780141035796") == "9780141035796"

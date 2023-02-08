@@ -47,7 +47,7 @@ class TestBookAuthor:
 
     def test_author_role_none(self, book, author):
         book.add_author(author)
-        assert author.role_for_book(book) == ""
+        assert not author.role_for_book(book)
         assert author.attribution_for(book, initials=True) == "Smithee, A."
 
     def test_author_role_simple(self, book, author):
