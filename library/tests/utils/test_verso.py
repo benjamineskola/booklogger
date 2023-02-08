@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 
 from library.utils import verso
@@ -24,7 +26,7 @@ class TestVerso:
         assert book.image_url == dummy_url
 
     def test_update_from_publisher_url(self, book_factory, requests_mock):
-        with open("library/fixtures/losurdo.html") as file:
+        with Path("library/fixtures/losurdo.html").open() as file:
             requests_mock.get(
                 "https://www.versobooks.com/books/960-liberalism",
                 text=file.read(),

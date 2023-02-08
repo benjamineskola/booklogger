@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+from pathlib import Path
 
 import dj_database_url
 import django_stubs_ext
@@ -18,7 +19,7 @@ import django_stubs_ext
 django_stubs_ext.monkeypatch()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+BASE_DIR = Path(__file__).parent.parent
 
 
 # Quick-start development settings - unsuitable for production
@@ -151,8 +152,8 @@ if os.environ.get("DYNO"):
 
     django_heroku.settings(locals())
 else:
-    BASE_DIR = "/app"
-    STATIC_ROOT = os.path.join(BASE_DIR, "static")
+    BASE_DIR = Path("/app")
+    STATIC_ROOT = BASE_DIR / "static"
 
 if "HEROKU_RELEASE_VERSION" in os.environ:
     os.environ["VERSION_NUMBER"] = os.environ["HEROKU_RELEASE_VERSION"]

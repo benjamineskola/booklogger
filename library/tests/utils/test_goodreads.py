@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 
 from library.utils import goodreads
@@ -8,13 +10,13 @@ class TestGoodreads:
 
     @pytest.fixture()
     def _mock_goodreads(self, requests_mock, _goodreads_key):
-        with open("library/fixtures/marx.xml") as fixture:
+        with Path("library/fixtures/marx.xml").open() as fixture:
             requests_mock.get(
                 f"https://www.goodreads.com/search/index.xml?key=TEST_FAKE&q={self.query}",
                 text=fixture.read(),
             )
 
-        with open("library/fixtures/marx_scrape.xml") as fixture:
+        with Path("library/fixtures/marx_scrape.xml").open() as fixture:
             requests_mock.get(
                 f"https://www.goodreads.com/search/index.xml?key=TEST_FAKE&q={self.query}_scrape",
                 text=fixture.read(),

@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 import pytest
 
@@ -17,7 +18,7 @@ class TestImporter:
 
     @pytest.fixture()
     def _goodreads_mock(self, requests_mock, _goodreads_key):
-        with open("library/fixtures/wuthering_heights.xml") as file:
+        with Path("library/fixtures/wuthering_heights.xml").open() as file:
             text = file.read()
             requests_mock.get(
                 "https://www.goodreads.com/search/index.xml?key=TEST_FAKE&q=Wuthering%20Heights",

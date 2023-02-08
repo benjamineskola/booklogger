@@ -23,7 +23,7 @@ class DetailView(generic.DetailView[ReadingList]):
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        context.update({"page_title": self.object.title})  # type: ignore[attr-defined]
+        context.update({"page_title": self.object.title})
 
         return context
 
@@ -42,7 +42,10 @@ class EditView(
     model = ReadingList
 
 
-class DeleteView(LoginRequiredMixin, generic.edit.DeleteView[ReadingList]):
+class DeleteView(
+    LoginRequiredMixin, generic.edit.DeleteView[ReadingList, ReadingListForm]
+):
     model = ReadingList
+    object: ReadingList  # noqa: A003
     success_url = reverse_lazy("library:list_index")
     template_name = "confirm_delete.html"

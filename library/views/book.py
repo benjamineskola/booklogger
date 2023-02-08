@@ -63,7 +63,7 @@ class IndexView(generic.ListView[Book]):
             self.sort_by = self.kwargs["sort_by"]
 
         if self.sort_by:
-            field_names = [f.name for f in Book._meta.get_fields()]
+            field_names = [f.name for f in Book._meta.get_fields()]  # noqa: SLF001
             field_names.append("read_date")
 
             if self.sort_by.startswith("-"):
@@ -81,7 +81,9 @@ class IndexView(generic.ListView[Book]):
                 if self.sort_by == "read_date":
                     self.sort_by = "log_entries__end_date"
 
-                ordering = Book._meta.ordering if Book._meta.ordering else []
+                ordering = (
+                    Book._meta.ordering if Book._meta.ordering else []  # noqa: SLF001
+                )
 
                 if self.reverse_sort:
                     books = books.order_by(
@@ -418,8 +420,9 @@ class EditView(  # type: ignore[misc]
     pass
 
 
-class DeleteView(LoginRequiredMixin, generic.edit.DeleteView[Book]):
+class DeleteView(LoginRequiredMixin, generic.edit.DeleteView[Book, BookForm]):
     model = Book
+    object: Book  # noqa: A003
     success_url = reverse_lazy("library:books_all")
     template_name = "confirm_delete.html"
 

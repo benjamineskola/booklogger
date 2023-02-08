@@ -9,7 +9,7 @@ repos:
       - id: requirements-txt-fixer
       - id: trailing-whitespace
   - repo: https://github.com/benjamineskola/pre-commit-hooks.git
-    rev: 8898e97256c2e5248fe3feff59c5d30c816b3f6b
+    rev: 4694d5d2d983956a41650cb2765755106eba23e9
     hooks:
       - id: shellcheck
       - id: shfmt
@@ -45,20 +45,19 @@ repos:
       - id: pyupgrade
         args: [--py310-plus]
   - repo: https://github.com/PyCQA/isort
-    rev: 5.11.4
+    rev: 5.12.0
     hooks:
       - id: isort
   - repo: https://github.com/psf/black
-    rev: 22.12.0
+    rev: 23.1.0
     hooks:
       - id: black
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: 'v0.0.223'
+    rev: 'v0.0.243'
     hooks:
       - id: ruff
-        args: ['--force-exclude']
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v0.950
+    rev: v1.0.0
     hooks:
       - id: mypy
         files: '^[^/]+/'
@@ -78,7 +77,7 @@ repos:
             types-requests,
           ]
   - repo: https://github.com/benjamineskola/pre-commit-hooks.git
-    rev: 8898e97256c2e5248fe3feff59c5d30c816b3f6b
+    rev: 4694d5d2d983956a41650cb2765755106eba23e9
     hooks:
       - id: pytest
         types: [python]

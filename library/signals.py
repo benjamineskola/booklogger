@@ -23,7 +23,7 @@ def update_timestamp_on_save(
 
 
 @receiver(post_save)
-def update_report_on_save(
+def update_report_on_save(  # noqa: PLR0913  # not my function signature
     sender: type[Model],  # noqa: ARG001
     instance: Model,
     created: bool,  # noqa: ARG001, FBT001
@@ -32,7 +32,6 @@ def update_report_on_save(
     update_fields: dict[str, Any],  # noqa: ARG001
     **_kwargs: Any
 ) -> None:
-
     years = []
     if isinstance(instance, LogEntry) and instance.end_date:
         years = [instance.end_date.year]
@@ -50,7 +49,7 @@ def update_report_on_save(
     if not years:
         return
 
-    for year in years + [1, 0]:
+    for year in [*years, 1, 0]:
         report, report_created = StatisticsReport.objects.get_or_create(year=year)
         if not report_created:
             report.generate()

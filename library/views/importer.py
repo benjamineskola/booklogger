@@ -168,7 +168,7 @@ def _verso_bulk_import(line: str) -> dict[str, Any] | None:
             book.has_ebook_edition = True
             book.ebook_acquired_date = timezone.now()
             book.save()
-        return None
+        return None  # noqa: TRY300
     except Book.DoesNotExist:
         print(f"no book named {title} in the database, continuing")
 

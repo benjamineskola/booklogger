@@ -562,14 +562,14 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
             ).order_by("bookauthor__order")
         )
         if self.first_author:
-            return [self.first_author] + additional_authors
+            return [self.first_author, *additional_authors]
         return additional_authors
 
     @property
     def all_authors(self) -> list[Author]:
         additional_authors = list(self.additional_authors.order_by("bookauthor__order"))
         if self.first_author:
-            return [self.first_author] + additional_authors
+            return [self.first_author, *additional_authors]
         return additional_authors
 
     @property
@@ -847,7 +847,7 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
     @property
     def ancestor_editions(self) -> list["Book"]:
         return (
-            [self.parent_edition] + self.parent_edition.ancestor_editions
+            [self.parent_edition, *self.parent_edition.ancestor_editions]
             if self.parent_edition
             else []
         )

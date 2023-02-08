@@ -103,7 +103,7 @@ class LogEntry(TimestampedModel):
                     "progress_percentage",
                     "progress_page",
                     "progress_date",
-                    "exclude_from_stats",  # type: ignore[name-defined]
+                    "exclude_from_stats",
                     "abandoned",
                 ]
                 if (v := getattr(self, k))

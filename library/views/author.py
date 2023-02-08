@@ -81,8 +81,9 @@ class NewView(LoginRequiredMixin, generic.edit.CreateView[Author, AuthorForm]):
         return context
 
 
-class DeleteView(LoginRequiredMixin, generic.edit.DeleteView[Author]):
+class DeleteView(LoginRequiredMixin, generic.edit.DeleteView[Author, AuthorForm]):
     model = Author
+    object: Author  # noqa: A003
     success_url = reverse_lazy("library:author_list")
     template_name = "confirm_delete.html"
 
