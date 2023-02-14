@@ -70,6 +70,7 @@ repos:
             psycopg2,
             django-extensions,
             django-crispy-forms,
+            crispy-bootstrap5,
             text-unidecode,
             requests,
             xmltodict,
