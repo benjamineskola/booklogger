@@ -659,7 +659,9 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
 
     def mark_read_sometime(self) -> None:
         self.log_entries.create(
-            start_date=None, end_date=timezone.datetime(1, 1, 1), end_precision=2
+            start_date=None,
+            end_date=timezone.datetime(1, 1, 1),  # type: ignore[attr-defined]
+            end_precision=2,
         )
 
     def mark_owned(self) -> None:

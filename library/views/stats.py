@@ -43,10 +43,10 @@ def stats_index(request: HttpRequest) -> HttpResponse:
 
 
 def calculate_year_progress(year: int) -> tuple[int, int]:
-    first_day = timezone.datetime(year, 1, 1)
-    last_day = timezone.datetime(year, 12, 31)
+    first_day = timezone.datetime(year, 1, 1)  # type: ignore[attr-defined]
+    last_day = timezone.datetime(year, 12, 31)  # type: ignore[attr-defined]
     year_days = (last_day - first_day).days + 1
-    current_day = (timezone.datetime.now() - first_day).days + 1
+    current_day = (timezone.datetime.now() - first_day).days + 1  # type: ignore[attr-defined]
 
     return current_day, year_days
 
