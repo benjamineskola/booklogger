@@ -447,6 +447,7 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
             "page_count",
             "series",
             "series_order",
+            "google_books_id",
             "goodreads_id",
             "isbn",
             "asin",
