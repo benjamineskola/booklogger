@@ -1,6 +1,6 @@
 coverage==7.2.2
 curlylint==0.13.1
-django-stubs==1.14.0
+django-stubs==1.16.0
 django-stubs-ext==0.8.0
 freezegun==1.2.1
 mypy
