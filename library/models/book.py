@@ -173,21 +173,18 @@ class BookQuerySet(models.QuerySet["Book"]):
         return self.owned_by("ben")
 
     def owned_by(self, user: str) -> "BookQuerySet":
-        return self.filter(owned_by__username=user)
+        return self.filter(
+            Q(owned_by__username=user)
+            | Q(parent_edition__owned_by__username=user)
+            # I can't make this recurse but three levels is the most I can foresee needing
+            | Q(parent_edition__parent_edition__owned_by__username=user)
+        )
 
     def owned_by_any(self) -> "BookQuerySet":
         return self.filter(owned_by__isnull=False)
 
     def available(self) -> "BookQuerySet":
-        return (
-            self.filter(
-                Q(owned_by__username="ben")
-                | Q(parent_edition__owned_by__username="ben")
-                # I can't make this recurse but three levels is the most I can fpresee needing
-                | Q(parent_edition__parent_edition__owned_by__username="ben")
-            )
-            | self.borrowed()
-        )
+        return self.owned_by("ben") | self.owned_by("sara") | self.borrowed()
 
     def borrowed(self) -> "BookQuerySet":
         return self.exclude(owned_by=None).unowned() | self.filter(was_borrowed=True)

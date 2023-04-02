@@ -147,7 +147,7 @@ class BorrowedIndexView(IndexView):
 
     def get_queryset(self) -> BookQuerySet:
         books = super().get_queryset()
-        return books.borrowed()
+        return books.borrowed() | books.owned_by("sara")
 
 
 class UnreadIndexView(IndexView):
