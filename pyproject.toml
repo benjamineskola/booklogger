@@ -55,8 +55,6 @@ ignore = [
   "ANN401", # allow Any in kwargs
   "COM812", # seems to conflict with black
 
-  "C901",    # TODO function is too complex
-  "PLR0912", # TODO Too many branches
   "PLR2004", # TODO Magic value used in comparison
   "RUF001",  # TODO String contains ambiguous unicode character
   "TCH",     # TODO Move import into a type-checking block

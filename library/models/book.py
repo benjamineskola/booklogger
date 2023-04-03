@@ -210,28 +210,29 @@ class BookQuerySet(models.QuerySet["Book"]):
 
     def filter_by_request(self, request: Any) -> "BookQuerySet":
         qs = self
-        if gender := request.GET.get("gender"):
-            if gender.lower() == "multiple":
+        match request.GET.get("gender", "").lower():
+            case "multiple":
                 qs = qs.by_multiple_genders()
-            elif gender.lower() == "nonmale":
+            case "nonmale":
                 qs = qs.by_gender(0, 2, 4)
-            else:
+            case gender if gender:
                 if not gender.isdigit():
                     gender = Author.Gender[gender.upper()]
                 qs = qs.by_gender(gender)
+
         if poc := request.GET.get("poc"):
             qs = qs.poc(str2bool(poc))
         if tags := request.GET.get("tags"):
             qs = qs.tagged(*[tag.strip() for tag in tags.lower().split(",")])
         if owned := request.GET.get("owned"):
-            try:
-                qs = qs.owned() if str2bool(owned) else qs.unowned()
-            except ValueError:
-                if owned == "borrowed":
+            match owned.lower():
+                case "borrowed":
                     qs = qs.borrowed()
-                elif owned == "available":
+                case "available":
                     qs = qs.available()
-                else:
+                case ["yes" | "no" | "true" | "false" | "t" | "f" | "1" | "0"]:
+                    qs = qs.owned() if str2bool(owned) else qs.unowned()
+                case _:
                     qs = qs.owned_by(owned)
         if want_to_read := request.GET.get("want_to_read"):
             qs = qs.filter(want_to_read=str2bool(want_to_read))

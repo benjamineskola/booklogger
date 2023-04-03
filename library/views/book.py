@@ -63,34 +63,40 @@ class IndexView(generic.ListView[Book]):
             self.sort_by = self.kwargs["sort_by"]
 
         if self.sort_by:
-            field_names = [f.name for f in Book._meta.get_fields()]  # noqa: SLF001
-            field_names.append("read_date")
-
-            if self.sort_by.startswith("-"):
-                self.sort_by = self.sort_by[1:]
-                self.reverse_sort = True
-
-            if (
-                self.sort_by in ["edition_format", "rating", "page_count"]
-                or "date" in self.sort_by
-                or "published" in self.sort_by
-            ):
-                self.reverse_sort = not self.reverse_sort
-
-            if self.sort_by in field_names:
-                if self.sort_by == "read_date":
-                    self.sort_by = "log_entries__end_date"
-
-                ordering = Book._meta.ordering or []  # noqa: SLF001
-
-                if self.reverse_sort:
-                    books = books.order_by(
-                        F(self.sort_by).desc(nulls_last=True), *ordering
-                    )
-                else:
-                    books = books.order_by(self.sort_by, *ordering)
+            books = self._sort_by_request(books)
 
         return books.filter_by_request(self.request).distinct()
+
+    def _sort_by_request(self, books: BookQuerySet) -> BookQuerySet:
+        field_names = [f.name for f in Book._meta.get_fields()]  # noqa: SLF001
+        field_names.append("read_date")
+
+        if self.sort_by.startswith("-"):
+            self.sort_by = self.sort_by[1:]
+            self.reverse_sort = True
+
+        if (
+            self.sort_by in ["edition_format", "rating", "page_count"]
+            or "date" in self.sort_by
+            or "published" in self.sort_by
+        ):
+            self.reverse_sort = not self.reverse_sort
+
+        if self.sort_by in field_names:
+            if self.sort_by == "read_date":
+                self.sort_by = "log_entries__end_date"
+
+            ordering = Book._meta.ordering or []  # noqa: SLF001
+
+            sort_func = (
+                F(self.sort_by).desc(nulls_last=True)
+                if self.reverse_sort
+                else self.sort_by
+            )
+
+            return books.order_by(sort_func, *ordering)
+
+        return books
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -448,28 +454,21 @@ class BulkEditView(
         queryset = Book.objects.all()
         if query := self.kwargs.get("query"):
             query, query_arg = query.split("/", 1)
-            if query == "read":
-                queryset = queryset.read()
-            elif query == "unread":
-                queryset = queryset.unread()
-            elif query == "owned":
-                queryset = queryset.owned()
-            elif query == "borrowed":
-                queryset = queryset.borrowed()
-            elif query == "unowned":
-                queryset = queryset.unowned()
-            elif query == "tag":
-                if query_arg == "untagged":
-                    queryset = queryset.filter(tags=[])
-                elif query_arg.endswith("!"):
-                    queryset = queryset.filter(tags__name=[query_arg.strip("!")])
-                else:
-                    queryset = queryset.filter(tags__name=query_arg.split(","))
-            elif query == "author":
-                queryset = queryset.filter(
-                    Q(first_author__slug=query_arg)
-                    | Q(additional_authors__slug=query_arg)
-                )
+            match query:
+                case ["read" | "unread" | "owned" | "borrowed" | "unowned"]:
+                    queryset = getattr(queryset, query)()
+                case "tag":
+                    if query_arg == "untagged":
+                        queryset = queryset.filter(tags=[])
+                    else:
+                        queryset = queryset.filter(
+                            tags__name=query_arg.strip("!").split(",")
+                        )
+                case "author":
+                    queryset = queryset.filter(
+                        Q(first_author__slug=query_arg)
+                        | Q(additional_authors__slug=query_arg)
+                    )
 
         queryset = queryset.filter_by_request(self.request).distinct()
 
