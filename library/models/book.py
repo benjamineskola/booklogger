@@ -1,3 +1,4 @@
+import logging
 import operator
 import re
 import time
@@ -36,6 +37,8 @@ from .author import Author
 
 if TYPE_CHECKING:
     from .log_entry import LogEntry  # pragma: no cover
+
+logger = logging.getLogger(__name__)
 
 
 class BaseBookManager(models.Manager["Book"]):
@@ -104,7 +107,7 @@ class BaseBookManager(models.Manager["Book"]):
             )
             .values_list("id", flat=True)
         )
-        print(f"updating {len(candidate_ids)} books")
+        logger.warning("updating %s books", len(candidate_ids))
 
         sleep_time = 1
         while candidate_ids:
@@ -112,12 +115,11 @@ class BaseBookManager(models.Manager["Book"]):
             candidate = Book.objects.get(pk=candidate_id)
             if google.update(candidate):
                 sleep_time = 1
-                print(".", end="", flush=True)
                 if (count := len(candidate_ids)) % 20 == 0:
-                    print(f"{count} remaining")
+                    logger.warning("%s remaining", count)
             else:
                 candidate_ids.append(candidate_id)
-                print(f"sleeping {sleep_time}")
+                logger.warning("sleeping %s", sleep_time)
                 time.sleep(sleep_time)
                 sleep_time *= 2
 

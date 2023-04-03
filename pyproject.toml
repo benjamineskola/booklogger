@@ -61,7 +61,6 @@ ignore = [
   "PLR0912", # TODO Too many branches
   "PLR2004", # TODO Magic value used in comparison
   "RUF001",  # TODO String contains ambiguous unicode character
-  "T201",    # TODO `print` found
   "TCH",     # TODO Move import into a type-checking block
   "TRY003",  # TODO Avoid specifying long messages outside the exception class
 ]

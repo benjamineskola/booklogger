@@ -164,3 +164,9 @@ if "HEROKU_RELEASE_VERSION" in os.environ:
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 GOODREADS_KEY = os.environ.get("GOODREADS_KEY")
+
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+}

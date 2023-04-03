@@ -1,5 +1,6 @@
 import csv
 import json
+import logging
 import re
 from typing import Any
 
@@ -11,6 +12,8 @@ from django.utils import timezone
 
 from library.models import Book, Queue
 from library.utils import create, flatten, goodreads
+
+logger = logging.getLogger(__name__)
 
 
 @login_required
@@ -154,7 +157,7 @@ def _verso_bulk_import(line: str) -> dict[str, Any] | None:
 
     try:
         book = Book.objects.get(title__istartswith=title.lower())
-        print(f"found {title} in the database, skipping")
+        logger.warning("found %s in the database, skipping", title)
 
         if not book.owned:
             book.isbn = isbn
@@ -170,23 +173,24 @@ def _verso_bulk_import(line: str) -> dict[str, Any] | None:
             book.save()
         return None  # noqa: TRY300
     except Book.DoesNotExist:
-        print(f"no book named {title} in the database, continuing")
+        logger.warning("no book named %s in the database, continuing", title)
 
     goodreads_book = goodreads.find(isbn)
     if goodreads_book:
         goodreads_book["isbn"] = isbn
         found_title, *_ = goodreads_book["title"].split(": ", 1)
         if found_title.lower() == title.lower():
-            print(f"found {title} on goodreads")
+            logger.info("found %s on goodreads", title)
             return goodreads_book
 
-        print(f"got {found_title} instead of {title}")
+        logger.warning("got {found_title} instead of %s", title)
     else:
-        print(f"could not find {title} by isbn")
+        logger.warning("could not find %s by isbn", title)
         goodreads_book = goodreads.find(f"{title} {' '.join(authors)}")
         if not goodreads_book:
-            print(
-                f"!!! couldn't find any matches for {title} ({isbn}), creating a new one"
+            logger.warning(
+                "!!! couldn't find any matches for {title} (%s), creating a new one",
+                isbn,
             )
             return {
                 "title": title,
@@ -198,11 +202,11 @@ def _verso_bulk_import(line: str) -> dict[str, Any] | None:
         goodreads_book["isbn"] = isbn
         found_title, *_ = goodreads_book["title"].split(": ", 1)
         if found_title.lower() == title.lower():
-            print(f"found {title} on goodreads by name")
+            logger.info("found %s on goodreads by name", title)
             return goodreads_book
 
-        print(f"got {found_title} instead of {title}")
-        print(f"!!! creating {title} ({isbn})")
+        logger.warning("got {found_title} instead of %s", title)
+        logger.warning("!!! creating {title} (%s)", isbn)
         return {
             "title": title,
             "isbn": isbn,

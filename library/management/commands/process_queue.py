@@ -1,9 +1,12 @@
+import logging
 from time import sleep
 
 from django.core.management.base import BaseCommand
 
 from library.models import Queue
 from library.utils import create
+
+logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
@@ -26,17 +29,17 @@ class Command(BaseCommand):
                         del item.data["owned"]
                     book, created, authors = create.book(item.data, owned=owned)
                     if created:
-                        print(f"created {book}")
+                        logger.info("created %s", book)
                     else:
-                        print(f"updated {book}")
+                        logger.info("updated %s", book)
                     for author, created in authors:
                         if created:
-                            print(f"created {author}")
+                            logger.info("created %s", author)
                         else:
-                            print(f"updated {author}")
+                            logger.info("updated %s", author)
                 except Exception as e:  # noqa: BLE001
                     errors += 1
-                    print(f"===== error: {e} =====")
+                    logger.warning("===== error: %s =====", e)
                     item = Queue(data=data)
                     item.save()
             sleep(60)

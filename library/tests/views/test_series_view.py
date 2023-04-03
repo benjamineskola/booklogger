@@ -7,5 +7,4 @@ class TestPublisher:
         book_factory(series="Foo")
 
         resp = client.get("/series/")
-        print(resp.context_data)
         assert "Foo" in resp.context_data["all_series"]

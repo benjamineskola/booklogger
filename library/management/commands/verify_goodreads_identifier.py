@@ -1,7 +1,11 @@
+import logging
+
 from django.core.management.base import BaseCommand, CommandParser
 
 from library.models import Book
 from library.utils import goodreads
+
+logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):
@@ -11,7 +15,7 @@ class Command(BaseCommand):
 
     def handle(self, *_args: str, **options: str) -> None:
         if not options["isbn"] and not options["asin"]:
-            print("no identifier chosen")
+            logger.warning("no identifier chosen")
             return
 
         if options["isbn"]:
@@ -35,12 +39,12 @@ class Command(BaseCommand):
             gr_data = goodreads.find(query)
             if not gr_data:
                 missing_count += 1
-                print(f"\nCouldn't find goodreads data for {book}")
+                logger.warning("\nCouldn't find goodreads data for %s", book)
                 continue
 
             gr_id = gr_data["goodreads_id"]
             if gr_id != book.goodreads_id:
-                print(f"\nMISMATCH for {book}")
+                logger.warning("\nMISMATCH for %s", book)
                 mismatch_count += 1
                 if (
                     input(
@@ -51,10 +55,8 @@ class Command(BaseCommand):
                     book.goodreads_id = gr_id
                     book.save()
                 else:
-                    print("Ignoring it")
-            else:
-                print(".", end="", flush=True)
+                    logger.warning("Ignoring it")
 
-        print()
-        print(f"{missing_count} missing")
-        print(f"{mismatch_count} mismatches")
+        logger.warning("")
+        logger.warning("%s missing", missing_count)
+        logger.warning("%s mismatches", mismatch_count)
