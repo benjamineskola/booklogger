@@ -67,7 +67,7 @@ repos:
             django,
             django-stubs,
             dj_database_url,
-            psycopg2,
+            'psycopg[binary]',
             django-extensions,
             django-crispy-forms,
             crispy-bootstrap5,
