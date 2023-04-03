@@ -149,13 +149,8 @@ LOGIN_URL = "/admin/login/"
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
-if os.environ.get("DYNO"):
-    import django_heroku
-
-    django_heroku.settings(locals())
-else:
-    BASE_DIR = Path("/app")
-    STATIC_ROOT = BASE_DIR / "static"
+BASE_DIR = Path("/app")
+STATIC_ROOT = BASE_DIR / "static"
 
 if "HEROKU_RELEASE_VERSION" in os.environ:
     os.environ["VERSION_NUMBER"] = os.environ["HEROKU_RELEASE_VERSION"]
