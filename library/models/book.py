@@ -642,9 +642,11 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
     ) -> float:
         if not percentage:
             if not page:
-                raise ValueError("Must specify percentage or page")
+                msg = "Must specify percentage or page"
+                raise ValueError(msg)
             if not self.page_count:
-                raise ValueError("Must specify percentage when page count is unset")
+                msg = "Must specify percentage when page count is unset"
+                raise ValueError(msg)
             percentage = page / self.page_count * 100
 
         entry = self.log_entries.get(end_date=None)

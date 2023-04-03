@@ -109,7 +109,8 @@ def str2bool(s: str) -> bool:
     if s.lower() in ["no", "false", "n", "f"]:
         return False
 
-    raise ValueError(f"Cannot interpret '{s}' as boolean")
+    msg = f"Cannot interpret '{s}' as boolean"
+    raise ValueError(msg)
 
 
 def flatten(list_of_lists: Iterable[Iterable[Any] | None]) -> list[Any]:

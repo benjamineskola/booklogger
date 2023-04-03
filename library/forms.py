@@ -107,7 +107,8 @@ class BookForm(ModelForm[Book]):
             ):
                 return matches[1]
 
-            raise ValidationError("Not a valid ASIN or Amazon URL")
+            msg = "Not a valid ASIN or Amazon URL"
+            raise ValidationError(msg)
         return asin
 
     def clean_asin(self) -> str:
@@ -122,7 +123,8 @@ class BookForm(ModelForm[Book]):
             return ""
         isbn = isbn10_to_isbn(isbn)
         if not isbn:
-            raise ValidationError("Not a valid ISBN-13, ISBN-10, or SBN")
+            msg = "Not a valid ISBN-13, ISBN-10, or SBN"
+            raise ValidationError(msg)
         return isbn
 
 
