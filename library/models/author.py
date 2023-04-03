@@ -88,9 +88,12 @@ class Author(TimestampedModel, SluggableModel):
     def __str__(self) -> str:
         if not self.forenames:
             return self.surname
-        if self.surname_first:
-            return self.surname + " " + (self.preferred_forenames or self.forenames)
-        return (self.preferred_forenames or self.forenames) + " " + self.surname
+
+        return (
+            self.surname + " " + (self.preferred_forenames or self.forenames)
+            if self.surname_first
+            else (self.preferred_forenames or self.forenames) + " " + self.surname
+        )
 
     def to_json(self) -> dict[str, Any]:
         return {
@@ -115,17 +118,15 @@ class Author(TimestampedModel, SluggableModel):
 
     @property
     def name_with_initials(self) -> str:
-        if self.forenames:
-            return self.surname + ", " + self.initials
-        return self.surname
+        return self.surname + ", " + self.initials if self.forenames else self.surname
 
     @property
     def name_sortable(self) -> str:
         if not self.forenames:
             return self.surname
-        if self.surname_first:
-            return self.surname + " " + (self.preferred_forenames or self.forenames)
-        return self.surname + ", " + (self.preferred_forenames or self.forenames)
+
+        joiner = " " if self.surname_first else ", "
+        return self.surname + joiner + (self.preferred_forenames or self.forenames)
 
     def get_absolute_url(self) -> str:
         return reverse("library:author_details", args=[str(self.slug)])
@@ -141,9 +142,7 @@ class Author(TimestampedModel, SluggableModel):
     def role_for_book(self, book: "Book") -> str:
         if book.first_author == self:
             return str(book.first_author_role)
-        if rel := self.bookauthor_set.get(book=book.pk):
-            return rel.role
-        return ""
+        return rel.role if (rel := self.bookauthor_set.get(book=book.pk)) else ""
 
     def display_role_for_book(self, book: "Book") -> str:
         return "ed." if (role := self.role_for_book(book)) == "editor" else role

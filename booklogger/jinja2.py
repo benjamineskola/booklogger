@@ -34,10 +34,7 @@ def groupby_date(
     def attrgetter_fmt(item: Any) -> str:
         if result := getattr(item, attribute):
             if isinstance(result, date | datetime):
-                if result.year == 1:
-                    return default
-
-                return result.strftime(fmt)
+                return default if result.year == 1 else result.strftime(fmt)
             return str(result)
         return default
 

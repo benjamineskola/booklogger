@@ -81,9 +81,7 @@ class IndexView(generic.ListView[Book]):
                 if self.sort_by == "read_date":
                     self.sort_by = "log_entries__end_date"
 
-                ordering = (
-                    Book._meta.ordering if Book._meta.ordering else []  # noqa: SLF001
-                )
+                ordering = Book._meta.ordering or []  # noqa: SLF001
 
                 if self.reverse_sort:
                     books = books.order_by(
@@ -400,10 +398,7 @@ class BookEditMixin(
                 ReadingListEntryFormSet(instance=self.object),
             ]
 
-        if self.object:
-            context["page_title"] = f"Editing {self.object}"
-        else:
-            context["page_title"] = "New book"
+        context["page_title"] = f"Editing {self.object}" if self.object else "New book"
 
         return context
 

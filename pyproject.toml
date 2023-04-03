@@ -46,12 +46,13 @@ django_settings_module = "booklogger.settings"
 profile = "black"
 
 [tool.ruff]
-extend-exclude = ["library/migrations/*"]
+extend-exclude = ["library/migrations/*", "manage.py"]
 select = ["ALL"]
 ignore = [
   "E501",
   "D",
-  "ANN",    # annotations: let mypy do it
+  "ANN101", # type annotations on self seem useless
+  "ANN401", # allow Any in kwargs
   "COM812", # seems to conflict with black
 
   "C901",    # TODO function is too complex
@@ -70,6 +71,7 @@ ignore = [
   'INP001', # not a real namespace
 ]
 "library/tests/*" = [
-  'INP001', # not a real namespace
+  "ANN",    # ignore annotations in tests: plays badly with pytest fixtures
   "S101",   # assert is needed in tests
+  "INP001", # not a real namespace
 ]

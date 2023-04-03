@@ -1,3 +1,5 @@
+from typing import Any
+
 from django.db.models import Field, Lookup
 
 from .author import Author, AuthorManager
@@ -27,7 +29,7 @@ __all__ = [
 class NotEqual(Lookup):  # type: ignore[type-arg]
     lookup_name = "ne"
 
-    def as_sql(self, compiler, connection):  # type: ignore[no-untyped-def]
+    def as_sql(self, compiler: Any, connection: Any) -> tuple[str, Any]:
         lhs, lhs_params = self.process_lhs(compiler, connection)
         rhs, rhs_params = self.process_rhs(compiler, connection)
         params = lhs_params + rhs_params

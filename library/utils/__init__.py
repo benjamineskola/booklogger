@@ -60,10 +60,7 @@ def isbn10_to_isbn(isbn: str) -> str:
     if len(isbn) not in [9, 10, 13]:
         return ""
     if len(isbn) == 13:
-        if not isbn.isnumeric():
-            return ""
-        return isbn
-
+        return isbn if isbn.isnumeric() else ""
     if not isbn[0:-1].isnumeric():
         return ""
     if not (isbn[-1].isnumeric() or isbn[-1].upper() == "X"):
@@ -71,9 +68,9 @@ def isbn10_to_isbn(isbn: str) -> str:
 
     if len(isbn) == 9:
         # let's assume it's a pre-ISBN SBN
-        isbn = "0" + isbn
+        isbn = f"0{isbn}"
 
-    isbn = "978" + isbn
+    isbn = f"978{isbn}"
     ints = [int(c) for c in isbn[0:-1]]
 
     checksum = 0

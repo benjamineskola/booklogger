@@ -545,7 +545,7 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
             result += f", {self.get_edition_disambiguator()} edn."
 
         if self.publisher or self.edition_published or self.first_published:
-            result += f" ({self.publisher + ', ' if self.publisher else ''}{self.edition_published if self.edition_published else self.first_published})"
+            result += f" ({self.publisher + ', ' if self.publisher else ''}{self.edition_published or self.first_published})"
 
         return result
 
@@ -584,7 +584,7 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
     def display_title(self) -> str:
         if self.edition_title:
             return self.edition_title + (
-                ": " + self.edition_subtitle if self.edition_subtitle else ""
+                f": {self.edition_subtitle}" if self.edition_subtitle else ""
             )
         return self.title + (": " + self.subtitle if self.subtitle else "")
 
@@ -598,9 +598,7 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
             return f"[{self.first_published}] {self.edition_published}"
         if self.edition_published:
             return str(self.edition_published)
-        if self.first_published:
-            return str(self.first_published)
-        return "n.d."
+        return str(self.first_published) if self.first_published else "n.d."
 
     @property
     def note_title(self) -> str:
@@ -672,9 +670,7 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
     @property
     def currently_reading(self) -> bool:
         entries = self.log_entries.filter(end_date=None).order_by("-start_date")
-        if not entries:
-            return False
-        return bool(entries[0].currently_reading)
+        return bool(entries[0].currently_reading) if entries else False
 
     @property
     def display_series(self) -> str:

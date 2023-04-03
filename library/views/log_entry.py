@@ -121,10 +121,7 @@ class XmlReadView(Feed[Any, Any]):
         return f"tag:booklogger.eskola.uk,2020-11-27:{ item.end_date.strftime('%Y-%m-%d') }/{ item.book.slug }"
 
     def item_pubdate(self, item: LogEntry) -> datetime | None:
-        if item.end_date:
-            return item.end_date
-
-        return None
+        return item.end_date or None
 
     def item_updateddate(self, item: LogEntry) -> datetime | None:
         return self.item_pubdate(item)
