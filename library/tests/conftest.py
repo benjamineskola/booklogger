@@ -66,17 +66,15 @@ def django_db_modify_db_settings(  # noqa: PT004
         )
 
     def teardown_database():
-        if not docker_was_running and (
-            len(
-                str(
-                    subprocess.run(
-                        ["ps | grep 'pytest-xdist running'"],
-                        capture_output=True,
-                        shell=True,
-                    ).stdout
-                ).splitlines()
-            )
-            < 1
+        if (
+            not docker_was_running
+            and not str(
+                subprocess.run(
+                    ["ps | grep 'pytest-xdist running'"],
+                    capture_output=True,
+                    shell=True,
+                ).stdout
+            ).splitlines()
         ):
             subprocess.run(["docker-compose", "down"])
 

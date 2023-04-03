@@ -10,9 +10,7 @@ class Command(BaseCommand):
     def handle(self, *_args: str, **_options: str) -> None:
         while True:
             errors = 0
-            while Queue.objects.count():
-                if errors == Queue.objects.count():
-                    break
+            while Queue.objects.count() and errors != Queue.objects.count():
                 data = {}
                 try:
                     item = Queue.objects.first()

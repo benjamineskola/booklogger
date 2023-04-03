@@ -120,10 +120,10 @@ class BookForm(ModelForm[Book]):
         isbn: str = self.cleaned_data["isbn"]
         if not isbn:
             return ""
-        isbn = isbn10_to_isbn(isbn)
-        if not isbn:
+        if isbn := isbn10_to_isbn(isbn):
+            return isbn
+        else:
             raise ValidationError("Not a valid ISBN-13, ISBN-10, or SBN")
-        return isbn
 
 
 class BookAuthorForm(ModelForm[BookAuthor]):

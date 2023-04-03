@@ -109,22 +109,20 @@ class XmlReadView(Feed[Any, Any]):
         )
 
     def items(self, obj: LogEntryQuerySet) -> LogEntryQuerySet:
-        return obj[0:50]
+        return obj[:50]
 
     def item_link(self, item: LogEntry) -> str:
         return item.book.get_absolute_url()
 
     def item_guid(self, item: LogEntry) -> str:
-        if not item.end_date:
-            return "???"
-
-        return f"tag:booklogger.eskola.uk,2020-11-27:{ item.end_date.strftime('%Y-%m-%d') }/{ item.book.slug }"
+        return (
+            f"tag:booklogger.eskola.uk,2020-11-27:{item.end_date.strftime('%Y-%m-%d')}/{item.book.slug}"
+            if item.end_date
+            else "???"
+        )
 
     def item_pubdate(self, item: LogEntry) -> datetime | None:
-        if item.end_date:
-            return item.end_date
-
-        return None
+        return item.end_date or None
 
     def item_updateddate(self, item: LogEntry) -> datetime | None:
         return self.item_pubdate(item)

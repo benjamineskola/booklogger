@@ -27,8 +27,8 @@ def robots_txt(_request: HttpRequest) -> HttpResponse:
 
 
 def add_slash(request: HttpRequest) -> HttpResponse:
-    url = request.path + "/"
+    url = f"{request.path}/"
     if request.GET:
-        url += "?" + request.GET.urlencode()
+        url += f"?{request.GET.urlencode()}"
 
     return redirect(url, permanent=True)

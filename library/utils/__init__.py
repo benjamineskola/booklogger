@@ -60,28 +60,20 @@ def isbn10_to_isbn(isbn: str) -> str:
     if len(isbn) not in [9, 10, 13]:
         return ""
     if len(isbn) == 13:
-        if not isbn.isnumeric():
-            return ""
-        return isbn
-
-    if not isbn[0:-1].isnumeric():
+        return isbn if isbn.isnumeric() else ""
+    if not isbn[:-1].isnumeric():
         return ""
-    if not (isbn[-1].isnumeric() or isbn[-1].upper() == "X"):
+    if not isbn[-1].isnumeric() and isbn[-1].upper() != "X":
         return ""
 
     if len(isbn) == 9:
         # let's assume it's a pre-ISBN SBN
-        isbn = "0" + isbn
+        isbn = f"0{isbn}"
 
-    isbn = "978" + isbn
-    ints = [int(c) for c in isbn[0:-1]]
+    isbn = f"978{isbn}"
+    ints = [int(c) for c in isbn[:-1]]
 
-    checksum = 0
-    for i, j in enumerate(ints):
-        if i % 2 == 0:
-            checksum += j
-        else:
-            checksum += j * 3
+    checksum = sum(j if i % 2 == 0 else j * 3 for i, j in enumerate(ints))
     checksum = 10 - checksum % 10
 
     return "".join([str(c) for c in ints] + [str(checksum)])
@@ -89,7 +81,7 @@ def isbn10_to_isbn(isbn: str) -> str:
 
 def oxford_comma(items: Sequence[str]) -> str:
     return (
-        ", ".join(items[0:-1]) + ", and " + items[-1]
+        ", ".join(items[:-1]) + ", and " + items[-1]
         if len(items) > 2
         else " and ".join(items)
     )
@@ -107,9 +99,9 @@ def round_trunc(number: float, digits: int = 2) -> str:
 def str2bool(s: str) -> bool:
     if s.isnumeric():
         return bool(int(s))
-    if s.lower() in ["yes", "true", "y", "t"]:
+    if s.lower() in {"yes", "true", "y", "t"}:
         return True
-    if s.lower() in ["no", "false", "n", "f"]:
+    if s.lower() in {"no", "false", "n", "f"}:
         return False
 
     raise ValueError(f"Cannot interpret '{s}' as boolean")

@@ -8,8 +8,7 @@ from django.db import migrations, models
 def move_book_author_to_first_author(apps, schema_editor):
     Book = apps.get_model("library", "Book")
     for book in Book.objects.all():
-        first_author = book.bookauthor_set.first()
-        if first_author:
+        if first_author := book.bookauthor_set.first():
             book.first_author_id = first_author.author.id
             book.first_author_role = first_author.role
             book.save()

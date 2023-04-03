@@ -25,7 +25,7 @@ def basic_search(request: HttpRequest) -> HttpResponse:
         request,
         "search.html",
         {
-            "page_title": f"Search{': ' + query if query else ''}",
+            "page_title": f"Search{f': {query}' if query else ''}",
             "authors": authors,
             "books": books,
             "query": query,

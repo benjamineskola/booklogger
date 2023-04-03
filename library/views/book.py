@@ -81,9 +81,7 @@ class IndexView(generic.ListView[Book]):
                 if self.sort_by == "read_date":
                     self.sort_by = "log_entries__end_date"
 
-                ordering = (
-                    Book._meta.ordering if Book._meta.ordering else []  # noqa: SLF001
-                )
+                ordering = Book._meta.ordering or []
 
                 if self.reverse_sort:
                     books = books.order_by(
@@ -115,7 +113,7 @@ class IndexView(generic.ListView[Book]):
 
         if "page_title" in self.kwargs:
             self.page_title = self.kwargs["page_title"]
-        context["page_title"] = self.page_title + f" ({context['stats']['total']})"
+        context["page_title"] = f"{self.page_title} ({context['stats']['total']})"
         if self.sort_by:
             context["page_title"] += f" by {re.sub(r'_', ' ', self.sort_by.title())}"
 
@@ -201,7 +199,7 @@ class TagIndexView(IndexView):
         if tags == ["untagged"]:
             return books.filter(tags__isnull=True)
         if len(tags) == 1 and tags[0].endswith("!"):
-            tag = get_object_or_404(Tag, name=tags[0][0:-1])
+            tag = get_object_or_404(Tag, name=tags[0][:-1])
             return tag.books_uniquely_tagged
         for tag_name in tags:
             books &= Tag.objects[tag_name].books_recursive
@@ -240,7 +238,7 @@ class DetailView(generic.DetailView[Book]):
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         book = self.get_object()
-        context["page_title"] = book.display_title + " by " + str(book.first_author)
+        context["page_title"] = f"{book.display_title} by {str(book.first_author)}"
         return context
 
     def dispatch(self, *args: Any, **kwargs: Any) -> Any:
@@ -327,7 +325,7 @@ def mark_owned(_request: HttpRequest, slug: str) -> HttpResponse:
 
     if not book.edition_format:
         edit_url = reverse("library:book_edit", kwargs={"slug": slug})
-        return redirect(edit_url + "?mark_owned=true")
+        return redirect(f"{edit_url}?mark_owned=true")
 
     book.mark_owned()
     return redirect("library:book_details", slug=slug)
@@ -370,7 +368,7 @@ class BookEditMixin(
 
                 for subform in formset:
                     if (
-                        formset.data.get(subform.prefix + "-DELETE") == "on"
+                        formset.data.get(f"{subform.prefix}-DELETE") == "on"
                         and subform.instance.id
                     ):
                         subform.instance.delete()
@@ -400,11 +398,7 @@ class BookEditMixin(
                 ReadingListEntryFormSet(instance=self.object),
             ]
 
-        if self.object:
-            context["page_title"] = f"Editing {self.object}"
-        else:
-            context["page_title"] = "New book"
-
+        context["page_title"] = f"Editing {self.object}" if self.object else "New book"
         return context
 
 

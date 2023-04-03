@@ -46,7 +46,7 @@ class TestGoodreads:
 
     @pytest.mark.usefixtures("_mock_goodreads")
     def test_find_and_scrape(self):
-        result = goodreads.find(self.query + "_scrape")
+        result = goodreads.find(f"{self.query}_scrape")
         assert result["authors"] == [("Karl Marx", "")]
         assert "gr-assets" in result["image_url"]
 
@@ -56,7 +56,7 @@ class TestGoodreads:
             "https://www.goodreads.com/book/show/13403951",
             text="",
         )
-        result = goodreads.find(self.query + "_scrape")
+        result = goodreads.find(f"{self.query}_scrape")
         assert result["authors"] == [("Karl Marx", "")]
         assert not result["image_url"]
 
