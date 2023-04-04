@@ -123,8 +123,9 @@ class BookForm(ModelForm[Book]):
             return ""
         if isbn := isbn10_to_isbn(isbn):
             return isbn
-        else:
-            raise ValidationError("Not a valid ISBN-13, ISBN-10, or SBN")
+
+        msg = "Not a valid ISBN-13, ISBN-10, or SBN"
+        raise ValidationError(msg)
 
 
 class BookAuthorForm(ModelForm[BookAuthor]):
