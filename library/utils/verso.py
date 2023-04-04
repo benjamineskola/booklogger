@@ -18,10 +18,9 @@ def update(book: "Book") -> "Book":
     title = re.sub(r"[^A-Za-z0-9 -]+", " ", book.edition_title or book.title)
     title, *_ = title.split(": ", 1)
 
-    url = book.publisher_url or find_page(
+    if url := book.publisher_url or find_page(
         [book.search_query, title, str(book.first_author)]
-    )
-    if url:
+    ):
         book.update({"publisher_url": url, "image_url": scrape_image(url)})
     return book
 
@@ -41,8 +40,7 @@ def find_page(queries: list[str]) -> str:
 
 def scrape_image(url: str) -> str:
     page = BeautifulSoup(requests.get(url, timeout=10).text, features="html.parser")
-    images = page.find_all(class_="edition-single--cover-image")
-    if images:
+    if images := page.find_all(class_="edition-single--cover-image"):
         return str(images[-1].img["src"])
 
     return ""

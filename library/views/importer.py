@@ -175,8 +175,7 @@ def _verso_bulk_import(line: str) -> dict[str, Any] | None:
     except Book.DoesNotExist:
         logger.warning("no book named %s in the database, continuing", title)
 
-    goodreads_book = goodreads.find(isbn)
-    if goodreads_book:
+    if goodreads_book := goodreads.find(isbn):
         goodreads_book["isbn"] = isbn
         found_title, *_ = goodreads_book["title"].split(": ", 1)
         if found_title.lower() == title.lower():
