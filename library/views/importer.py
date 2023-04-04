@@ -59,92 +59,91 @@ def import_book(request: HttpRequest, query: str | None = None) -> HttpResponse:
 
 @login_required
 def bulk_import(request: HttpRequest) -> HttpResponse:
-    if request.POST:
-        data = str(request.POST["data"])
-        lines = [line.strip() for line in data.split("\n")]
-
-        if request.POST["input_format"] == "csv":
-            reader = csv.DictReader(
-                lines[1:], fieldnames=[n.lower() for n in lines[0].split(",")]
-            )
-            for entry in reader:
-                queue_item = Queue(
-                    data={
-                        "title": entry["title"].strip().split(":")[0],
-                        "authors": [(entry["author"], "")]
-                        + (
-                            [
-                                (author, "")
-                                for author in entry["additional authors"].split(", ")
-                            ]
-                            if "additional authors" in entry
-                            and entry["additional authors"]
-                            else []
-                        ),
-                        # goodreads
-                        "first_published": entry["original publication year"]
-                        if "original publication year" in entry
-                        and entry["original publication year"].isnumeric()
-                        else 0,
-                        "isbn": entry["isbn13"].strip('="')
-                        if "isbn13" in entry
-                        else "",
-                        "page_count": entry["number of pages"]
-                        if "number of pages" in entry
-                        and entry["number of pages"].isnumeric()
-                        else 0,
-                        "want_to_read": entry["exclusive shelf"] != "read"
-                        if "exclusive shelf" in entry
-                        else True,
-                        "goodreads_id": entry["book id"] if "book id" in entry else "",
-                        # ereaderiq
-                        "asin": entry["asin"] if "asin" in entry else "",
-                        "image_url": entry["image url"] if "image url" in entry else "",
-                        "publisher": entry["publisher"] if "publisher" in entry else "",
-                    }
-                )
-                queue_item.save()
-        elif request.POST["input_format"] == "verso":
-            for line in lines:
-                if not line:
-                    continue
-                book = _verso_bulk_import(line)
-                if not book:
-                    continue
-                book["edition_format"] = Book.Format.EBOOK
-                book["publisher"] = "Verso"
-                book["owned"] = True
-                queue_item = Queue(data=book)
-                queue_item.save()
-        else:
-            for line in lines:
-                title, *author_names = line.strip("\r\n").split(";")
-
-                authors = [
-                    (j[0].strip(), j[1].strip() if len(j) > 1 else "")
-                    for i in author_names
-                    if (j := i.strip().split(":"))
-                ]
-
-                if not title.strip():
-                    continue
-
-                queue_item = Queue(data={"title": title.strip, "authors": authors})
-                queue_item.save()
-
+    if not request.POST:
         return TemplateResponse(
             request,
             "bulk_import.html",
-            {
-                "page_title": "Import",
-                "data": data,
-            },
+            {"page_title": "Import"},
         )
+    data = str(request.POST["data"])
+    lines = [line.strip() for line in data.split("\n")]
+
+    if request.POST["input_format"] == "csv":
+        reader = csv.DictReader(
+            lines[1:], fieldnames=[n.lower() for n in lines[0].split(",")]
+        )
+        for entry in reader:
+            queue_item = Queue(
+                data={
+                    "title": entry["title"].strip().split(":")[0],
+                    "authors": [(entry["author"], "")]
+                    + (
+                        [
+                            (author, "")
+                            for author in entry["additional authors"].split(", ")
+                        ]
+                        if "additional authors" in entry
+                        and entry["additional authors"]
+                        else []
+                    ),
+                    # goodreads
+                    "first_published": entry["original publication year"]
+                    if "original publication year" in entry
+                    and entry["original publication year"].isnumeric()
+                    else 0,
+                    "isbn": entry["isbn13"].strip('="')
+                    if "isbn13" in entry
+                    else "",
+                    "page_count": entry["number of pages"]
+                    if "number of pages" in entry
+                    and entry["number of pages"].isnumeric()
+                    else 0,
+                    "want_to_read": entry["exclusive shelf"] != "read"
+                    if "exclusive shelf" in entry
+                    else True,
+                    "goodreads_id": entry["book id"] if "book id" in entry else "",
+                    # ereaderiq
+                    "asin": entry["asin"] if "asin" in entry else "",
+                    "image_url": entry["image url"] if "image url" in entry else "",
+                    "publisher": entry["publisher"] if "publisher" in entry else "",
+                }
+            )
+            queue_item.save()
+    elif request.POST["input_format"] == "verso":
+        for line in lines:
+            if not line:
+                continue
+            book = _verso_bulk_import(line)
+            if not book:
+                continue
+            book["edition_format"] = Book.Format.EBOOK
+            book["publisher"] = "Verso"
+            book["owned"] = True
+            queue_item = Queue(data=book)
+            queue_item.save()
+    else:
+        for line in lines:
+            title, *author_names = line.strip("\r\n").split(";")
+
+            authors = [
+                (j[0].strip(), j[1].strip() if len(j) > 1 else "")
+                for i in author_names
+                if (j := i.strip().split(":"))
+            ]
+
+            if not title.strip():
+                continue
+
+            queue_item = Queue(data={"title": title.strip, "authors": authors})
+            queue_item.save()
 
     return TemplateResponse(
         request,
         "bulk_import.html",
-        {"page_title": "Import"},
+        {
+            "page_title": "Import",
+            "data": data,
+        },
     )
 
 
@@ -175,8 +174,7 @@ def _verso_bulk_import(line: str) -> dict[str, Any] | None:
     except Book.DoesNotExist:
         logger.warning("no book named %s in the database, continuing", title)
 
-    goodreads_book = goodreads.find(isbn)
-    if goodreads_book:
+    if goodreads_book := goodreads.find(isbn):
         goodreads_book["isbn"] = isbn
         found_title, *_ = goodreads_book["title"].split(": ", 1)
         if found_title.lower() == title.lower():

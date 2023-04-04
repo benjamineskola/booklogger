@@ -473,7 +473,7 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
         }
         for field in fields:
             value = getattr(self, field, None)
-            if value_id := getattr(self, field + "_id", None):
+            if value_id := getattr(self, f"{field}_id", None):
                 result[field] = value_id
             elif value or (field == "want_to_read" and value is False):
                 result[field] = value
@@ -518,7 +518,7 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
 
         if self.first_author_role != "editor":
             if len(self.authors) > 3:
-                result = str(self.first_author) + " and others"
+                result = f"{str(self.first_author)} and others"
             else:
                 result = oxford_comma([str(author) for author in self.authors])
 
@@ -535,7 +535,7 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
             ]
 
             if len(editors) > 3:
-                result += str(editors[0]) + " and others"
+                result += f"{str(editors[0])} and others"
             else:
                 result += oxford_comma(editors)
 
@@ -548,7 +548,7 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
             result += f", {self.get_edition_disambiguator()} edn."
 
         if self.publisher or self.edition_published or self.first_published:
-            result += f" ({self.publisher + ', ' if self.publisher else ''}{self.edition_published or self.first_published})"
+            result += f" ({f'{self.publisher}, ' if self.publisher else ''}{self.edition_published or self.first_published})"
 
         return result
 
@@ -589,17 +589,16 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
             return self.edition_title + (
                 f": {self.edition_subtitle}" if self.edition_subtitle else ""
             )
-        return self.title + (": " + self.subtitle if self.subtitle else "")
+        return self.title + (f": {self.subtitle}" if self.subtitle else "")
 
     @property
     def display_date(self) -> str:
-        if (
-            self.edition_published
-            and self.first_published
-            and self.edition_published != self.first_published
-        ):
-            return f"[{self.first_published}] {self.edition_published}"
         if self.edition_published:
+            if (
+                self.first_published
+                and self.edition_published != self.first_published
+            ):
+                return f"[{self.first_published}] {self.edition_published}"
             return str(self.edition_published)
         return str(self.first_published) if self.first_published else "n.d."
 
@@ -901,7 +900,7 @@ class Tag(TimestampedModel):
     @property
     def fullname(self) -> str:
         if parent := self.parents.first():
-            return parent.fullname + " :: " + self.name
+            return f"{parent.fullname} :: {self.name}"
         return self.name
 
     @property

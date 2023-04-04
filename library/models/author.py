@@ -90,7 +90,7 @@ class Author(TimestampedModel, SluggableModel):
             return self.surname
 
         return (
-            self.surname + " " + (self.preferred_forenames or self.forenames)
+            f"{self.surname} " + (self.preferred_forenames or self.forenames)
             if self.surname_first
             else (self.preferred_forenames or self.forenames) + " " + self.surname
         )
@@ -113,12 +113,12 @@ class Author(TimestampedModel, SluggableModel):
         if not self.forenames:
             return self.surname
         if self.surname_first:
-            return self.surname + " " + self.forenames
-        return self.forenames + " " + self.surname
+            return f"{self.surname} {self.forenames}"
+        return f"{self.forenames} {self.surname}"
 
     @property
     def name_with_initials(self) -> str:
-        return self.surname + ", " + self.initials if self.forenames else self.surname
+        return f"{self.surname}, {self.initials}" if self.forenames else self.surname
 
     @property
     def name_sortable(self) -> str:
@@ -205,7 +205,7 @@ class Author(TimestampedModel, SluggableModel):
             "le",
             "de",
         ]:
-            surname = words.pop() + " " + surname
+            surname = f"{words.pop()} {surname}"
 
         forenames = " ".join(words)
         forenames = re.sub(r"\. +", ".", forenames)

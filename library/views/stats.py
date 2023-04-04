@@ -54,13 +54,13 @@ def calculate_year_progress(year: int) -> tuple[int, int]:
 def make_prediction(
     year: int, log_entries: LogEntryQuerySet
 ) -> tuple[dict[str, float], dict[int, float]]:
-    prediction = {}
     target_counts = {}
 
     current_day, year_days = calculate_year_progress(year)
     current_year_count = log_entries.count()
-    prediction["predicted_count"] = current_year_count / max(1, current_day) * year_days
-
+    prediction = {
+        "predicted_count": current_year_count / max(1, current_day) * year_days
+    }
     remaining_days = year_days - current_day
     for target in [26, 39, 52, 78, 104, 208]:
         if target > current_year_count:
