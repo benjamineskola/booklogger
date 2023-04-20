@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from .models import (
+    ApiKey,
     Author,
     Book,
     BookAuthor,
@@ -12,6 +13,11 @@ from .models import (
 )
 
 # Register your models here.
+
+
+class ApiKeyAdmin(admin.ModelAdmin[ApiKey]):
+    search_fields = ["user", "key"]
+    readonly_fields = ("created_date", "modified_date")
 
 
 class AuthorAdmin(admin.ModelAdmin[Author]):
@@ -74,6 +80,7 @@ class ReadingListAdmin(admin.ModelAdmin[ReadingList]):
     inlines = (ReadingListEntryInline,)
 
 
+admin.site.register(ApiKey, ApiKeyAdmin)
 admin.site.register(Author, AuthorAdmin)
 admin.site.register(Book, BookAdmin)
 admin.site.register(BookAuthor)
