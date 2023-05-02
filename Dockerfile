@@ -24,13 +24,15 @@ RUN mkdir -p /go/bin
 COPY --from=go-builder /go/bin/hivemind /go/bin
 COPY --from=python-builder /opt/venv /opt/venv
 
-RUN apk add --no-cache make npm
-
 ENV PATH="/opt/venv/bin:$PATH"
 
 COPY . .
 
-RUN npm install && env PATH=node_modules/.bin:$PATH make && rm -rf node_modules
+RUN apk add --no-cache --virtual .build-deps make npm && \
+  npm install && env PATH=node_modules/.bin:$PATH make && \
+  rm -rf node_modules &&\
+  apk del .build-deps
+
 RUN python manage.py collectstatic --noinput
 
 EXPOSE 8080
