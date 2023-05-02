@@ -1,0 +1,12 @@
+Dockerfile
+docker-compose.yml
+*.json
+!package.json
+!tsconfig.json
+*.sql
+node_modules
+static
+.venv
+.git
+**/__pycache__
+.*_cache
