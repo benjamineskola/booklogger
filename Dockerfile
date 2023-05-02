@@ -17,7 +17,7 @@ COPY . .
 RUN apk add --no-cache make npm
 RUN pip install -r requirements.txt
 
-RUN npm install && env PATH=node_modules/.bin:$PATH make
+RUN npm install && env PATH=node_modules/.bin:$PATH make && rm -rf node_modules
 RUN python manage.py collectstatic --noinput
 
 EXPOSE 8080
