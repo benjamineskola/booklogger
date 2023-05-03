@@ -30,11 +30,11 @@ COPY . .
 
 FROM python-base AS static-builder
 
-RUN apk add make npm
+RUN apk add npm
 RUN npm install
 
 ENV PATH="node_modules/.bin:$PATH"
-RUN make
+RUN tsc
 
 RUN python manage.py collectstatic --noinput
 
