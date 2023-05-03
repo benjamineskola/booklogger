@@ -14,7 +14,7 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 RUN pip install -r requirements.txt
 
-FROM python:${PYTHON_VERSION}-alpine AS main
+FROM python:${PYTHON_VERSION}-alpine AS python-base
 
 RUN mkdir -p /app
 WORKDIR /app
@@ -28,12 +28,19 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 COPY . .
 
-RUN apk add --no-cache --virtual .build-deps make npm && \
-  npm install && env PATH=node_modules/.bin:$PATH make && \
-  rm -rf node_modules &&\
-  apk del .build-deps
+FROM python-base AS static-builder
+
+RUN apk add make npm
+RUN npm install
+
+ENV PATH="node_modules/.bin:$PATH"
+RUN make
 
 RUN python manage.py collectstatic --noinput
+
+FROM python-base AS main
+
+COPY --from=static-builder /app/static /app/static
 
 EXPOSE 8080
 
