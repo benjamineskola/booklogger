@@ -1,23 +1,26 @@
 {% from "macros.html" import link_amazon, link_goodreads, link_google with context %}
 {% from "macros/card.html" import book_card with context %}
 {% extends "base.html" %}
+
 {% block header %}
-  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css"
+        rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
-  <link rel="stylesheet" href="https://angel-vladov.github.io/select2-theme-bootstrap4/css/select2-bootstrap.css" />
-  <style>.container{ max-width: 100%;  }</style>
-{% endblock %}
+  <link rel="stylesheet"
+        href="https://angel-vladov.github.io/select2-theme-bootstrap4/css/select2-bootstrap.css" />
+  <style>
+    .container {
+      max-width: 100%;
+    }
+  </style>
+{% endblock header %}
 
 {% block content %}
   <form method="post">
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
     {% if formset.errors %}
       {% for error in formset.errors %}
-        {% if error %}
-          <div class="alert alert-danger">
-            {{ error }}
-          </div>
-        {% endif %}
+        {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
       {% endfor %}
     {% endif %}
     {{ formset.management_form }}
@@ -28,21 +31,22 @@
           {% if field.name not in ["id", "book"] %}
             {{ field | crispy(field_class="mr-2 mt-2", label_class="mr-2") }}
             {% for error in field.errors %}
-              <label for="{{ field.id_for_label }}" class="alert alert-warning">
-                {{ error|escape }}
-              </label>
+              <label for="{{ field.id_for_label }}" class="alert alert-warning">{{ error|escape }}</label>
             {% endfor %}
           {% endif %}
         {% endfor %}
-        <a href="{{ form.instance.get_absolute_url() }}" class="btn btn-secondary" role="button">View</a>
-        <a href="{{ url("library:book_edit", args=[form.instance.slug]) }}" class="btn btn-danger" role="button">Edit</a>
+        <a href="{{ form.instance.get_absolute_url() }}"
+           class="btn btn-secondary"
+           role="button">View</a>
+        <a href="{{ url("library:book_edit", args=[form.instance.slug]) }}"
+           class="btn btn-danger"
+           role="button">Edit</a>
       </div>
       <hr>
     {% endfor %}
-
     <input type="submit" value="Submit" class="btn btn-primary">
   </form>
-{% endblock %}
+{% endblock content %}
 
 {% block footer %}
   <script>
@@ -68,4 +72,4 @@
         }
     });
   </script>
-{% endblock %}
+{% endblock footer %}

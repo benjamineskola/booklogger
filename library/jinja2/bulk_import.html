@@ -1,10 +1,35 @@
 {% extends "base.html" %}
+
 {% block content %}
-  <form action="{{ url('library:bulk_import') }}" method="POST">
+  <form action="{{ url("library:bulk_import") }}" method="post">
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-    <div class="form-check"><input checked class="form-check-input" type="radio" name="input_format" value="default" id="input_format_default"><label class="form-check-label" for="input_format_default">Default format: <code>title;author[:role][;author[:role]…]</code></label></div>
-    <div class="form-check"><input class="form-check-input" type="radio" name="input_format" value="csv" id="input_format_csv"><label class="form-check-label" for="input_format_csv">CSV</label></div>
-    <div class="form-check"><input class="form-check-input" type="radio" name="input_format" value="verso" id="input_format_verso"><label class="form-check-label" for="input_format_verso">Verso</label></div>
+    <div class="form-check">
+      <input checked
+             class="form-check-input"
+             type="radio"
+             name="input_format"
+             value="default"
+             id="input_format_default">
+      <label class="form-check-label" for="input_format_default">
+        Default format: <code>title;author[:role][;author[:role]…]</code>
+      </label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input"
+             type="radio"
+             name="input_format"
+             value="csv"
+             id="input_format_csv">
+      <label class="form-check-label" for="input_format_csv">CSV</label>
+    </div>
+    <div class="form-check">
+      <input class="form-check-input"
+             type="radio"
+             name="input_format"
+             value="verso"
+             id="input_format_verso">
+      <label class="form-check-label" for="input_format_verso">Verso</label>
+    </div>
     <textarea class="form-control mb-4" name="data" rows="25" cols="80"></textarea>
     <button class="btn btn-primary" type="submit">Import</button>
   </form>

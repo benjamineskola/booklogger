@@ -1,40 +1,44 @@
 {% from "macros.html" import author_list, book_link, book_label with context %}
 {% extends "base.html" %}
+
 {% block content %}
-  {% set to_read_count = object.books.filter(want_to_read=True).count()%}
-  {% set to_read_owned_count = object.books.owned().filter(want_to_read=True).count()%}
+  {% set to_read_count = object.books.filter(want_to_read=True).count() %}
+  {% set to_read_owned_count = object.books.owned().filter(want_to_read=True).count() %}
   <p>
     {{ object.books.count() }} books,
-    {{ object.books.read().count() }} read,
+    {{ object.books.read() .count() }} read,
     {{ to_read_count }} to read.
-
     (I own {{ to_read_owned_count if to_read_count != to_read_owned_count else "all" }} of the to-read items.)
   </p>
   <ol>
     {% for item in object.readinglistentry_set.all() %}
-      <li{% if item.order %} value="{{ item.order }}"{% endif %}>
+      <li {% if item.order %}value="{{ item.order }}"{% endif %}>
         {{ author_list(item.book.authors, book=item.book) }},
         <em>{{ book_link(item.book) }}</em>
         ({{ item.book.display_date }})
         <span class="tags">
-        {% if item.book.read %}{{ book_label("read", url("library:books_read"), highlight="success") }}{% endif %}
-        {% if item.book.currently_reading %}{{ book_label("currently reading", url("library:books_currently_reading"), highlight=True) }}{% endif %}
-        {% if item.book.want_to_read %}
-          {{ book_label("to read", url("library:books_to_read"), highlight="danger") }}
-          {% if to_read_count != to_read_owned_count %}
-            {% if item.book.owned %}
-              {{ book_label("owned", url("library:books_owned")) }}
-            {% else %}
-              {{ book_label("wishlist", url("library:books_unowned")) }}
+          {% if item.book.read %}{{ book_label("read", url("library:books_read") , highlight="success") }}{% endif %}
+          {% if item.book.currently_reading %}
+            {{ book_label("currently reading", url("library:books_currently_reading") , highlight=True) }}
+          {% endif %}
+          {% if item.book.want_to_read %}
+            {{ book_label("to read", url("library:books_to_read") , highlight="danger") }}
+            {% if to_read_count != to_read_owned_count %}
+              {% if item.book.owned %}
+                {{ book_label("owned", url("library:books_owned") ) }}
+              {% else %}
+                {{ book_label("wishlist", url("library:books_unowned") ) }}
+              {% endif %}
             {% endif %}
           {% endif %}
-        {% endif %}
         </span>
       </li>
     {% endfor %}
   </ol>
-
   {% if user.is_authenticated %}
-    <p><a class="card-link" href="{{ url('library:list_edit', args=[object.id]) }}">edit</a></p>
+    <p>
+      <a class="card-link"
+         href="{{ url('library:list_edit', args=[object.id]) }}">edit</a>
+    </p>
   {% endif %}
-{% endblock %}
+{% endblock content %}

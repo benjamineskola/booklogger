@@ -1,179 +1,188 @@
 {% from "macros.html" import author_list, book_label, book_link, format_date, format_date_range with context %}
-
 {% macro book_list(items) %}
-<div class="row row-cols-1 row-cols-md-2">
-  {% for item in items %}
-    <div class="col">
-      {% if item.book %}
-        {{ book_card(item.book, entry=item) }}
-      {% else %}
-        {{ book_card(item) }}
-      {% endif %}
-    </div>
-  {% endfor %}
-</div>
-{% endmacro %}
-
-{% macro book_card(book, entry=None) %}
-{% if not entry and book.log_entries and book.log_entries.count() > 0 %}
-  {% set entry = book.log_entries.exclude(abandoned=True).order_by('end_date').last() %}
-{% endif %}
-
-<div class="book card mb-4" id="book-{{ book.id }}" data-book="{{ book.slug }}">
-  <div class="row no-gutters">
-    {% if book.image_url %}
-      <div class="col-4">
-        <a href="{{ book.get_absolute_url() }}">
-          <img class="img-fluid rounded" src="{{ book.image_url }}" />
-        </a>
-      </div>
-    {% endif%}
-
-    <div class="col-{% if book.image_url %}8{% else %}12{% endif %}">
-      <div class="card-header">
-        <h5 class="card-title">
-          <i>{{ book_link(book) }}</i>
-          {% if book.display_series %}
-            <a href="{{ url("library:series_details", args=[book.series.replace("/", "%2f")]) }}" class="text-muted small">({{ book.display_series }})</a>
-          {% endif %}
-          {% if book.private %}<span class="fas fa-lock"></span>{% endif %}
-        </h5>
-        <h6 class="card-subtitle">
-          by {{ author_list(book.authors, book=book) }}
-        </h6>
-      </div>
-      <div class="card-body">
-        <p class="card-text mb-0">
-          ({{ book.display_date }})
-          {% if book.edition_number and book.edition_number > 1 %}
-            {{ book.edition_number | ordinal }} edn.
-          {%endif %}
-          {% if book.publisher %}
-            {{ book.publisher }}.
-          {% endif %}
-          {% if book.page_count and book.page_count > 0 %}
-            {{ book.page_count }} pages.
-          {% endif %}
-
-          <span class="rating" style="display: inline-block" data-rating="{{ book.rating }}" data-max-rating="5" data-book="{{ book.slug }}">
-            {%- for i in range(5) -%}
-              <span data-rating="{{ i + 1 }}" class="rating-star">
-                {%- if i+1 <= book.rating -%} ★ {%- elif book.rating - i == 0.5 -%} ½ {%- else -%} ☆ {%- endif -%}
-              </span>
-            {%- endfor -%}
-          </span>
-          {% if user.is_authenticated %}
-            <a href="{{ url('library:book_edit', args=[book.slug]) }}" class="fas fa-edit"></a>
-          {% endif %}
-        </p>
-
-        <span class="tags" id="tags-{{ book.id }}" data-book="{{ book.slug }}">
-          {% for tag in book.tags_list | sort %}
-            {{ book_label(tag, url("library:tag_details", args=[tag]), removable=True) }}
-          {% else %}
-            {{ book_label("untagged", url("library:tag_details", args=["untagged"])) }}
-          {% endfor %}
-          {% for reading_list in book.reading_lists.all() %}
-            {{ book_label(reading_list.title, url("library:list_details", kwargs={"pk": reading_list.id})) }}
-          {% endfor %}
-
-          {% if book.owned %}
-            {{ book_label("owned", url("library:books_owned"), True) }}
-          {% elif book.owned_by_sara %}
-            {{ book_label("shared", url("library:books_borrowed"), True) }}
-          {% elif book.was_borrowed and book.borrowed_from == 'public domain' %}
-            {{ book_label("public domain", url("library:books_borrowed"), True) }}
-          {% elif book.was_borrowed %}
-            {{ book_label("borrowed", url("library:books_borrowed"), True) }}
-          {% endif %}
-
-          {% if book.edition_format and (book.owned_by or book.was_borrowed or book.currently_reading) %}
-            {{ book_label(book.get_edition_format_display().lower(), url("library:books_owned", kwargs={"format": book.get_edition_format_display().lower()}), True) }}
-            {% if book.get_edition_format_display().lower() != "ebook" and book.has_ebook_edition %}
-              {{ book_label("ebook", url("library:books_owned", kwargs={"format": "ebook"}), True) }}
-            {% endif %}
-          {% endif %}
-
-          {% if book.currently_reading %}
-            {{ book_label("reading", url("library:books_currently_reading"), True) }}
-          {% elif book.want_to_read and (book.owned_by or book.was_borrowed) %}
-            {{ book_label("to read", url("library:books_to_read"), True) }}
-          {% elif book.want_to_read and not (book.owned or book.was_borrowed) %}
-            {{ book_label("wishlist", url("library:books_unowned"), True) }}
-          {% endif %}
-          {% if book.read %}
-            {{ book_label("read", url("library:books_read"), True) }}
-          {% endif %}
-
-          {% if user.is_authenticated %}
-            <a class="badge bg-secondary" data-bs-toggle="collapse" data-bs-target="#collapse-addtag-{{ book.id }}" role="button">+</a>
-            <form class="add-tag collapse" id="collapse-addtag-{{ book.id }}" data-tags="#tags-{{ book.id }}" action="{{url('library:book_add_tags', args=[book.slug]) }}?next={{ request.get_full_path() }}#{{ book.slug }}" method="post">
-              <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-              <input class="form-control-sm m-1" name="tags">
-            </form>
-          {% endif %}
-        </span>
-        <br>
-        <span>
-          {% if book.goodreads_id %}
-            <a href="https://www.goodreads.com/book/show/{{ book.goodreads_id }}" class="fab fa-goodreads-g"></a>
-          {% elif book.asin %}
-            <a href="https://www.goodreads.com/search/{{ book.asin }}" class="fab fa-goodreads-g"></a>
-          {% elif book.isbn %}
-            <a href="https://www.goodreads.com/search/{{ book.isbn }}" class="fab fa-goodreads-g"></a>
-          {% else %}
-            <a href="https://www.goodreads.com/search/{{ book.search_query }}" class="fab fa-goodreads-g"></a>
-          {% endif %}
-          {% if book.asin %}
-            <a href="https://www.amazon.co.uk/dp/{{ book.asin }}" class="fab fa-amazon"></a>
-          {% elif book.isbn %}
-            <a href="https://www.amazon.co.uk/s?k={{ book.isbn }}&i=stripbooks" class="fab fa-amazon"></a>
-          {% else %}
-            <a href="https://www.amazon.co.uk/s?k={{ book.search_query }}&i=stripbooks" class="fab fa-amazon"></a>
-          {% endif %}
-          {% if book.google_books_id %}
-            <a href="https://www.googleapis.com/books/v1/volumes/{{ book.google_books_id }}" class="fab fa-google"></a>
-          {% elif book.isbn %}
-            <a href="https://www.googleapis.com/books/v1/volumes?q=isbn:{{ book.isbn }}&i=stripbooks" class="fab fa-google"></a>
-          {% else %}
-            <a href="https://www.googleapis.com/books/v1/volumes?q={{ book.search_query }}&i=stripbooks" class="fab fa-google"></a>
-          {% endif %}
-          {% if book.publisher_url %}
-            <a href="{{ book.publisher_url }}" class="fas fa-book"></a>
-          {% endif %}
-        </span>
-      </div>
-    </div>
-  </div>
-  <div class="card-footer bg-transparent">
-    {% if entry %}
-      <span class="read-dates">
-        {{- format_date_range(entry.start_date, entry.start_precision, entry.end_date, entry.end_precision) -}}
-      </span>
-      {%- if entry.currently_reading -%}
-        {%- if entry.progress_percentage -%}
-          ; <span class="progress-date">
-          {%- if entry.progress_page and book.page_count -%}
-            on page {{ entry.progress_page }} of {{ book.page_count }} ({{  entry.progress_percentage | round_trunc(2) }}% done)
-          {%- else -%}
-            {{ entry.progress_percentage | round_trunc(2) }}% done
-          {%- endif %}
-          on {{ format_date(entry.progress_date, 0) }}</span>
+  <div class="row row-cols-1 row-cols-md-2">
+    {% for item in items %}
+      <div class="col">
+        {% if item.book %}
+          {{ book_card(item.book, entry=item) }}
+        {% else %}
+          {{ book_card(item) }}
         {% endif %}
-
-        <div class="progress" style="height: 5px">
-          <div class="progress-bar" role="progressbar" style="width: {{entry.progress_percentage}}%" aria-valuenow="{{ entry.progress }}" aria-valuemin="0" aria-valuemax="100"></div>
+      </div>
+    {% endfor %}
+  </div>
+{% endmacro %}
+{% macro book_card(book, entry=None) %}
+  {% if not entry and book.log_entries and book.log_entries.count() > 0 %}
+    {% set entry = book.log_entries.exclude(abandoned=True).order_by('end_date').last() %}
+  {% endif %}
+  <div class="book card mb-4"
+       id="book-{{ book.id }}"
+       data-book="{{ book.slug }}">
+    <div class="row no-gutters">
+      {% if book.image_url %}
+        <div class="col-4">
+          <a href="{{ book.get_absolute_url() }}">
+            <img class="img-fluid rounded" src="{{ book.image_url }}" />
+          </a>
         </div>
       {% endif %}
-    {% endif %}
-
-    {% if user.is_authenticated %}
-      <a href="bear://x-callback-url/open-note?exclude_trashed=yes&title={{ book.note_title | quote }}&x-error=bear://x-callback-url/create%3ftitle%3d{{ book.note_title | quote | quote }}%26text%3dAuthor:%2520{% set joiner = joiner(", ")%}{% for author in book.authors %}{{ joiner() }}[[{{ author.full_name | quote | quote }}]]{% endfor %}%26tags%3dreading/reading%2520notes{% for author in book.authors %},zk/people/{{ author.surname.lower() | replace(' ', '') | quote | quote }}{% endfor %}">📝</a>
-      <a class="small dropdown-toggle" data-bs-toggle="collapse" data-bs-target="#collapse-logupdate-{{ book.id}}{% if entry and entry.start_date %}-{{ entry.start_date.date() }}{% endif %}" role="button">Update</a>
-      <div class="collapse" id="collapse-logupdate-{{book.id}}{% if entry and entry.start_date %}-{{ entry.start_date.date() }}{% endif %}">
-        {% include "books/update_form_snippet.html" %}
+      <div class="col-{% if book.image_url %}8{% else %}12{% endif %}">
+        <div class="card-header">
+          <h5 class="card-title">
+            <i>{{ book_link(book) }}</i>
+            {% if book.display_series %}
+              <a href="{{ url("library:series_details", args=[book.series.replace("/", "%2f") ]) }}" class="text-muted small">({{ book.display_series }})</a>
+            {% endif %}
+            {% if book.private %}<span class="fas fa-lock"></span>{% endif %}
+          </h5>
+          <h6 class="card-subtitle">by {{ author_list(book.authors, book=book) }}</h6>
+        </div>
+        <div class="card-body">
+          <p class="card-text mb-0">
+            ({{ book.display_date }})
+            {% if book.edition_number and book.edition_number > 1 %}{{ book.edition_number | ordinal }} edn.{% endif %}
+            {% if book.publisher %}{{ book.publisher }}.{% endif %}
+            {% if book.page_count and book.page_count > 0 %}{{ book.page_count }} pages.{% endif %}
+            <span class="rating"
+                  style="display: inline-block"
+                  data-rating="{{ book.rating }}"
+                  data-max-rating="5"
+                  data-book="{{ book.slug }}">
+              {%- for i in range(5) -%}
+                <span data-rating="{{ i + 1 }}" class="rating-star">
+                  {%- if i+1 <= book.rating -%} ★ {%- elif book.rating - i == 0.5 -%} ½ {%- else -%} ☆ {%- endif -%}
+                  </span>
+                {%- endfor -%}
+              </span>
+              {% if user.is_authenticated %}
+                <a href="{{ url('library:book_edit', args=[book.slug]) }}"
+                   class="fas fa-edit"></a>
+              {% endif %}
+            </p>
+            <span class="tags" id="tags-{{ book.id }}" data-book="{{ book.slug }}">
+              {% for tag in book.tags_list | sort %}
+                {{ book_label(tag, url("library:tag_details", args=[tag]) , removable=True) }}
+              {% else %}
+                {{ book_label("untagged", url("library:tag_details", args=["untagged"]) ) }}
+              {% endfor %}
+              {% for reading_list in book.reading_lists.all() %}
+                {{ book_label(reading_list.title, url("library:list_details", kwargs={"pk": reading_list.id}) ) }}
+              {% endfor %}
+              {% if book.owned %}
+                {{ book_label("owned", url("library:books_owned") , True) }}
+              {% elif book.owned_by_sara %}
+                {{ book_label("shared", url("library:books_borrowed") , True) }}
+              {% elif book.was_borrowed and book.borrowed_from == 'public domain' %}
+                {{ book_label("public domain", url("library:books_borrowed") , True) }}
+              {% elif book.was_borrowed %}
+                {{ book_label("borrowed", url("library:books_borrowed") , True) }}
+              {% endif %}
+              {% if book.edition_format and (book.owned_by or book.was_borrowed or book.currently_reading) %}
+                {{ book_label(book.get_edition_format_display() .lower(), url("library:books_owned", kwargs={"format": book.get_edition_format_display().lower()}), True) }}
+                {% if book.get_edition_format_display().lower() != "ebook" and book.has_ebook_edition %}
+                  {{ book_label("ebook", url("library:books_owned", kwargs={"format": "ebook"}) , True) }}
+                {% endif %}
+              {% endif %}
+              {% if book.currently_reading %}
+                {{ book_label("reading", url("library:books_currently_reading") , True) }}
+              {% elif book.want_to_read and (book.owned_by or book.was_borrowed) %}
+                {{ book_label("to read", url("library:books_to_read") , True) }}
+              {% elif book.want_to_read and not (book.owned or book.was_borrowed) %}
+                {{ book_label("wishlist", url("library:books_unowned") , True) }}
+              {% endif %}
+              {% if book.read %}{{ book_label("read", url("library:books_read") , True) }}{% endif %}
+              {% if user.is_authenticated %}
+                <a class="badge bg-secondary"
+                   data-bs-toggle="collapse"
+                   data-bs-target="#collapse-addtag-{{ book.id }}"
+                   role="button">+</a>
+                <form class="add-tag collapse"
+                      id="collapse-addtag-{{ book.id }}"
+                      data-tags="#tags-{{ book.id }}"
+                      action="{{ url('library:book_add_tags', args=[book.slug]) }}?next={{ request.get_full_path() }}#{{ book.slug }}"
+                      method="post">
+                  <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                  <input class="form-control-sm m-1" name="tags">
+                </form>
+              {% endif %}
+            </span>
+            <br>
+            <span>
+              {% if book.goodreads_id %}
+                <a href="https://www.goodreads.com/book/show/{{ book.goodreads_id }}"
+                   class="fab fa-goodreads-g"></a>
+              {% elif book.asin %}
+                <a href="https://www.goodreads.com/search/{{ book.asin }}"
+                   class="fab fa-goodreads-g"></a>
+              {% elif book.isbn %}
+                <a href="https://www.goodreads.com/search/{{ book.isbn }}"
+                   class="fab fa-goodreads-g"></a>
+              {% else %}
+                <a href="https://www.goodreads.com/search/{{ book.search_query }}"
+                   class="fab fa-goodreads-g"></a>
+              {% endif %}
+              {% if book.asin %}
+                <a href="https://www.amazon.co.uk/dp/{{ book.asin }}"
+                   class="fab fa-amazon"></a>
+              {% elif book.isbn %}
+                <a href="https://www.amazon.co.uk/s?k={{ book.isbn }}&i=stripbooks"
+                   class="fab fa-amazon"></a>
+              {% else %}
+                <a href="https://www.amazon.co.uk/s?k={{ book.search_query }}&i=stripbooks"
+                   class="fab fa-amazon"></a>
+              {% endif %}
+              {% if book.google_books_id %}
+                <a href="https://www.googleapis.com/books/v1/volumes/{{ book.google_books_id }}"
+                   class="fab fa-google"></a>
+              {% elif book.isbn %}
+                <a href="https://www.googleapis.com/books/v1/volumes?q=isbn:{{ book.isbn }}&i=stripbooks"
+                   class="fab fa-google"></a>
+              {% else %}
+                <a href="https://www.googleapis.com/books/v1/volumes?q={{ book.search_query }}&i=stripbooks"
+                   class="fab fa-google"></a>
+              {% endif %}
+              {% if book.publisher_url %}<a href="{{ book.publisher_url }}" class="fas fa-book"></a>{% endif %}
+            </span>
+          </div>
+        </div>
       </div>
-    {% endif %}
+      <div class="card-footer bg-transparent">
+        {% if entry %}
+          <span class="read-dates">
+            {{- format_date_range(entry.start_date, entry.start_precision, entry.end_date, entry.end_precision) -}}
+          </span>
+          {%- if entry.currently_reading -%}
+            {%- if entry.progress_percentage -%}
+              ; <span class="progress-date">
+              {%- if entry.progress_page and book.page_count -%}
+                on page {{ entry.progress_page }} of {{ book.page_count }} ({{ entry.progress_percentage | round_trunc(2) }}% done)
+              {%- else -%}
+                {{ entry.progress_percentage | round_trunc(2) }}% done
+              {%- endif %}
+            on {{ format_date(entry.progress_date, 0) }}</span>
+          {% endif %}
+          <div class="progress">
+            <div class="progress-bar"
+                 role="progressbar"
+                 style="width: {{ entry.progress_percentage }}%"
+                 aria-valuenow="{{ entry.progress }}"
+                 aria-valuemin="0"
+                 aria-valuemax="100"></div>
+          </div>
+        {% endif %}
+      {% endif %}
+      {% if user.is_authenticated %}
+        <a href="bear://x-callback-url/open-note?exclude_trashed=yes&title={{ book.note_title | quote }}&x-error=bear://x-callback-url/create%3ftitle%3d{{ book.note_title | quote | quote }}%26text%3dAuthor:%2520{% set joiner = joiner(", ") %}{% for author in book.authors %}{{ joiner() }}[[{{ author.full_name | quote | quote }}]]{% endfor %}%26tags%3dreading/reading%2520notes{% for author in book.authors %},zk/people/{{ author.surname.lower() | replace(' ', '') | quote | quote }}{% endfor %}">📝</a>
+        <a class="small dropdown-toggle"
+           data-bs-toggle="collapse"
+           data-bs-target="#collapse-logupdate-{{ book.id }}{%- if entry and entry.start_date -%}-{{- entry.start_date.date() -}}{%- endif -%}"
+           role="button">Update</a>
+        <div class="collapse"
+             id="collapse-logupdate-{{ book.id }}{%- if entry and entry.start_date -%}-{{- entry.start_date.date() -}}{%- endif -%}">
+          {% include "books/update_form_snippet.html" %}
+        </div>
+      {% endif %}
+    </div>
   </div>
-</div>
 {% endmacro %}

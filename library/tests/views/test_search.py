@@ -9,7 +9,11 @@ class TestSearch:
         assert not resp.context_data["authors"]
         assert not resp.context_data["books"]
         assert (
-            b'<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="query">'
+            b"""<input class="form-control mr-sm-2"
+                   type="search"
+                   placeholder="Search"
+                   aria-label="Search"
+                   name="query">"""
             in resp.content
         )
 

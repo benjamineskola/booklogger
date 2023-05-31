@@ -1,7 +1,6 @@
 {% from "macros.html" import filter_list with context %}
 {% from "macros/card.html" import book_list with context %}
 {% extends "base.html" %}
-
 {% if entries and entries.first().end_date %}
   {% set display_year = entries.first().end_date.year %}
 {% else %}
@@ -27,7 +26,6 @@
         </div>
       </div>
     {% endif %}
-
     {% if entries.count() %}
       {% if display_year == 1 %}
         <h2 href="#read-sometime">Read sometime</h2>
@@ -35,9 +33,7 @@
         <h2 href="#read-{{ display_year }}">Read in {{ display_year }}</h2>
       {% endif %}
     {% endif %}
-
     {{ book_list(entries) }}
-
     {% if not year or request.GET.get('infinite') == 'true' %}
       {% if display_year > 2010 %}
         {% set next_year = display_year - 1 %}
@@ -48,20 +44,20 @@
       {% else %}
         {% set next_year = "sometime" %}
       {% endif %}
-
       {% if display_year > 1 %}
-        <div class="loader" style="margin-top: 2rem;">
+        <div class="loader">
           <div class="d-flex justify-content-center" id="loading-{{ next_year }}">
             <div id="loading-stats" class="spinner-grow mb-4" role="status">
               <span class="sr-only">Loading...</span>
             </div>
           </div>
-
           <div id="error-{{ next_year }}" class="alert alert-danger d-none">
             <i class="exclamation circle icon"></i>
             <div class="content">
               <div class="header">Failed to load {{ next_year }}.</div>
-              <p><span class="btn btn-outline-danger">Retry?</span></p>
+              <p>
+                <span class="btn btn-outline-danger">Retry?</span>
+              </p>
             </div>
           </div>
         </div>
@@ -69,6 +65,7 @@
     {% endif %}
   {% endif %}
 {% endblock content %}
+
 {% block footer %}
   {% if display_year %}
     <script type="module">

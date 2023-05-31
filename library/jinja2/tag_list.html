@@ -1,5 +1,6 @@
 {% from "macros.html" import book_label with context %}
 {% extends "base.html" %}
+
 {% block content %}
   {% for genre in ["all", "fiction", "non-fiction"] %}
     <h2>{{ genre.title() }}</h2>
@@ -15,14 +16,13 @@
             {% else %}
               {% set tag_link = tag %}
             {% endif %}
-
-            {{ book_label(tag + ": " + count | string, url("library:tag_details", args=[tag_link]), tag == genre) }}
+            {{ book_label(tag + ": " + count | string, url("library:tag_details", args=[tag_link]) , tag == genre) }}
           {% endif %}
         {% endfor %}
       </div>
-
       {% if genre == "all" and sorted_tags["untagged"] %}
-        <a class="badge bg-secondary" href="{{ url("library:tag_details", args=["untagged"]) }}">untagged: {{ sorted_tags["untagged"]["total"] }}</a>
+        <a class="badge bg-secondary"
+           href="{{ url("library:tag_details", args=["untagged"]) }}">untagged: {{ sorted_tags["untagged"]["total"] }}</a>
       {% endif %}
       <br>
     {% endfor %}

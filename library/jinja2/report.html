@@ -1,5 +1,6 @@
 {% from "macros.html" import link_amazon, link_goodreads with context %}
 {% extends "base.html" %}
+
 {% block content %}
   {% if object_list %}
     {% if page %}
@@ -15,31 +16,35 @@
               (<a href="{{ url('library:book_edit', args=[item.slug]) }}">edit</a>
               &middot; goodreads {{ link_goodreads(item) }}
               &middot; amazon {{ link_amazon(item) }}
-              {%- if item.publisher_url %} &middot; <a href="{{ item.publisher_url }}">Publisher</a>{% endif -%}
-              )
-            {% elif item.surname %}
-              (<a href="{{ url('library:author_edit', args=[item.slug]) }}">edit</a>)
-            {% endif %}
-          </small>
-        </li>
-      {% endfor %}
-    </ul>
-
-    <h3>Reports</h3>
-  {% endif %}
-
-  <ul>
-    {% for i in categories %}
-      <li><a href="/report/{{ loop.index }}/">{{ i[0] }}</a></li>
+              {%- if item.publisher_url %} &middot; <a href="{{ item.publisher_url }}">Publisher</a>
+            {% endif -%}
+            )
+          {% elif
+            item.surname %}
+            (<a href="{{ url('library:author_edit', args=[item.slug]) }}">edit</a>)
+          {% endif %}
+        </small>
+      </li>
     {% endfor %}
-    <li>
-      <a href="/report/tags/">Tag combinations</a>
-      <a href="/report/tags/fiction/">(fiction)</a>
-    </li>
-    <li>
-      <a href="/report/tags/related/">Related tags</a>
-      <a href="/report/tags/related/fiction/">(fiction)</a>
-    </li>
-    <li><a href="/report/authors/">Authors without books</a></li>
   </ul>
-{% endblock %}
+  <h3>Reports</h3>
+{% endif %}
+<ul>
+  {% for i in categories %}
+    <li>
+      <a href="/report/{{ loop.index }}/">{{ i[0] }}</a>
+    </li>
+  {% endfor %}
+  <li>
+    <a href="/report/tags/">Tag combinations</a>
+    <a href="/report/tags/fiction/">(fiction)</a>
+  </li>
+  <li>
+    <a href="/report/tags/related/">Related tags</a>
+    <a href="/report/tags/related/fiction/">(fiction)</a>
+  </li>
+  <li>
+    <a href="/report/authors/">Authors without books</a>
+  </li>
+</ul>
+{% endblock content %}

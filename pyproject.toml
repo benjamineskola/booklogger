@@ -42,6 +42,20 @@ no_incremental = true
 [tool.django-stubs]
 django_settings_module = "booklogger.settings"
 
+[tool.djlint]
+blank_line_after_tag = "endblock"
+blank_line_before_tag = "block"
+close_void_tags = false
+ignore = "H006,H013,H023,H030,H031,J018"
+indent = 2
+profile = "jinja"
+
+[tool.djlint.css]
+indent_size = 2
+
+[tool.djlint.js]
+indent_size = 2
+
 [tool.isort]
 profile = "black"
 

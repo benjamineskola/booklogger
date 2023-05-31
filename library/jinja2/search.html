@@ -1,10 +1,11 @@
 {% from "macros/card.html" import book_list with context %}
 {% extends "base.html" %}
+
 {% block content %}
   {% if authors %}
-    <div class="card mb-4">
+    <div class="card mb-4 author-search">
       <div class="card-body">
-        <ul style="max-height: 10em; overflow: scroll">
+        <ul>
           {% for author in authors %}
             {% include "authors/list_item.html" %}
           {% endfor %}
@@ -15,14 +16,19 @@
   {% if books %}
     {{ book_list(books) }}
   {% else %}
-    <form class="form-inline" action="{{ url('library:basic_search') }}">
-      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="query">
+    <form class="form-inline" action="{{ url("library:basic_search") }}">
+      <input class="form-control mr-sm-2"
+             type="search"
+             placeholder="Search"
+             aria-label="Search"
+             name="query">
       <button class="btn btn-primary" type="submit">Search</button>
     </form>
   {% endif %}
-
   {% if user.is_authenticated and query %}
     <br>
-    <p>Or try <a href="{{ url("library:book_import", args=[query]) }}">importing it</a>.</p>
+    <p>
+      Or try <a href="{{ url("library:book_import", args=[query]) }}">importing it</a>.
+    </p>
   {% endif %}
 {% endblock content %}
