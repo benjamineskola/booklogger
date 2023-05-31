@@ -1,159 +1,158 @@
 {% macro author_link(author, book=None) -%}
-<a style="margin: 0" href="{{ author.get_absolute_url() }}">{{ author.attribution_for(book) if book else author -}}</a>
+  <a style="margin: 0" href="{{ author.get_absolute_url() }}">{{ author.attribution_for(book) if book else author -}}</a>
 {%- endmacro %}
-
 {% macro author_list(authors, full=False, book=None) %}
-{% if full or authors|count < 4 %}
-  {% set comma = joiner(', ') %}
-  {% for author in authors %}
-    {%- if authors|count > 2 -%}{{ comma() }}{% endif %}
-    {%- if authors|count > 1 and loop.last %} and {% endif -%}
-    {{- author_link(author, book if (book and not book.all_authors_editors) else None) -}}
-  {%- endfor %}
-  {%- if book.all_authors_editors %} (eds.){% endif %}
-{%- else -%}
-  {{ author_link(authors|first, book) }} and others
-{%- endif %}
-{%- endmacro %}
-
-{% macro book_children(book) %}
-<ul>
-  {% for child in book.subeditions.all() %}
-    <li>
-      {{ book_link(child) }}
-      {% if child.subeditions.count() %}
-        {{ book_children(child) }}
-      {% endif %}
-    </li>
-  {% endfor %}
-</ul>
-{% endmacro %}
-
-{% macro book_label(label, link, highlight=False, removable=False) %}
-<span class="badge {% if highlight is true %}bg-info{% elif highlight %}bg-{{ highlight }}{% else %}bg-secondary{% endif %}">
-  <a href="{{ link }}">{{ label }}</a>
-  {% if removable %}
-    <a class="remove-tag" data-tag="{{ label }}">✖</a>
-  {% endif %}
-</span>
-{% endmacro %}
-
-{% macro book_link(book) -%}
-<a href="{{ book.get_absolute_url() }}">{{ book.display_title }}</a>
-{%- endmacro %}
-
-{% macro book_link_with_authors(book) -%}
-{{- author_list(book.authors, book=book) -}}, <em><a href="{{ book.get_absolute_url() }}">{{ book.display_title }}</a></em>
-{%- endmacro %}
-
-{% macro filter_list(title, parameter_name, parameter_options) %}
-{% set params = request.GET.copy() %}
-{% set current_url = url(request.resolver_match.view_name, kwargs=request.resolver_match.kwargs) %}
-
-{% if parameter_name in params %}
-  {% set _ = params.pop(parameter_name) %}
-{% endif %}
-
-{{ title }}:
-{% if not parameter_name in request.GET -%}
-  <span>{% if title == "Sort" %}default{% else %}any{% endif%}</span>
-{%- else -%}
-  <a href="{{ current_url }}{% if params %}?{{ params.urlencode() }}{% endif %}">{% if title == "Sort" %}default{% else %}any{% endif%}</a>
-{%- endif -%}
-
-{%- for option_title, option_value in parameter_options.items() -%}
-  {%- if parameter_name in params -%}
-    {%- set _ = params.pop(parameter_name) -%}
-  {%- endif -%}
-
-  {%- set _ = params.update({ parameter_name: option_value }) -%}
-
-  {%- if  request.GET[parameter_name] == option_value -%}
-    , <span>{{ option_title }}</span>
+  {% if full or authors|count < 4 %}
+    {% set comma = joiner(', ') %}
+    {% for author in authors %}
+      {%- if authors|count > 2 -%}{{ comma() }}{% endif %}
+      {%- if authors|count > 1 and loop.last %} and
+      {% endif -%}
+      {{- author_link(author, book if (book and not book.all_authors_editors) else None) -}}
+    {%- endfor %}
+    {%- if book.all_authors_editors %}(eds.){% endif %}
   {%- else -%}
-    , <a href="{{ current_url }}?{{ params.urlencode() }}">{{ option_title }}</a>
-  {%- endif -%}
-
-  {% if title == "Sort" %}
-    {%- set _ = params.pop(parameter_name) -%}
-    {%- set _ = params.update({ parameter_name: "-" + option_value }) -%}
-
-    {%- if  request.GET[parameter_name] == "-" + option_value %}
-      <small>(reversed)</small>
-    {%- else %}
-      <small><a href="{{ current_url }}?{{ params.urlencode() }}">(reversed)</a></small>
-    {%- endif -%}
+    {{ author_link(authors|first, book) }} and others
+  {%- endif %}
+{%- endmacro %}
+{% macro book_children(book) %}
+  <ul>
+    {% for child in book.subeditions.all() %}
+      <li>
+        {{ book_link(child) }}
+        {% if child.subeditions.count() %}{{ book_children(child) }}{% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+{% endmacro %}
+{% macro book_label(label, link, highlight=False, removable=False) %}
+  <span class="badge {% if highlight is true %}bg-info{% elif highlight %}bg-{{ highlight }}{% else %}bg-secondary{% endif %}">
+    <a href="{{ link }}">{{ label }}</a>
+    {% if removable %}<a class="remove-tag" data-tag="{{ label }}">✖</a>{% endif %}
+  </span>
+{% endmacro %}
+{% macro book_link(book) -%}
+  <a href="{{ book.get_absolute_url() }}">{{ book.display_title }}</a>
+{%- endmacro %}
+{% macro book_link_with_authors(book) -%}
+  {{- author_list(book.authors, book=book) -}}, <em><a href="{{ book.get_absolute_url() }}">{{ book.display_title }}</a></em>
+{%- endmacro %}
+{% macro filter_list(title, parameter_name, parameter_options) %}
+  {% set params = request.GET.copy() %}
+  {% set current_url = url(request.resolver_match.view_name, kwargs=request.resolver_match.kwargs) %}
+  {% if parameter_name in params %}
+    {% set _ = params.pop(parameter_name) %}
   {% endif %}
-{%- endfor %}
+  {{ title }}:
+  {% if not parameter_name in request.GET -%}
+    <span>
+      {% if title == "Sort" %}
+        default
+      {% else %}
+        any
+      {% endif %}
+    </span>
+  {%- else -%}
+    <a href="{{- current_url -}}{%- if params -%}?{{ params.urlencode() -}}{%- endif -%}">
+      {% if title == "Sort" %}
+        default
+      {% else %}
+        any
+      {% endif %}
+    </a>
+  {%- endif -%}
+  {%- for option_title, option_value in parameter_options.items() -%}
+    {%- if parameter_name in params -%}
+      {%- set _ = params.pop(parameter_name) -%}
+    {%- endif -%}
+    {%- set _ = params.update({ parameter_name: option_value }) -%}
+    {%- if request.GET[parameter_name] == option_value -%}
+      , <span>{{ option_title }}</span>
+    {%- else -%}
+      , <a href="{{ current_url }}?{{ params.urlencode() }}">{{ option_title }}</a>
+    {%- endif -%}
+    {% if title == "Sort" %}
+      {%- set _ = params.pop(parameter_name) -%}
+      {%- set _ = params.update({ parameter_name: "-" + option_value }) -%}
+      {%- if request.GET[parameter_name] == "-" + option_value %}
+        <small>(reversed)</small>
+      {%- else %}
+        <small><a href="{{ current_url }}?{{ params.urlencode() }}">(reversed)</a></small>
+      {%- endif -%}
+    {% endif %}
+  {%- endfor %}
 {% endmacro %}
-
 {% macro format_date(date, precision) %}
-{%- if precision == 2 -%}
-  {{ date.strftime("%Y") }}
-{%- elif precision == 1 -%}
-  {{ date.strftime("%B %Y") }}
-{%- else -%}
-  {{ date.strftime("%d %B, %Y") }}
-{%- endif -%}
+  {%- if precision == 2 -%}
+    {{ date.strftime("%Y") }}
+  {%- elif precision == 1 -%}
+    {{ date.strftime("%B %Y") }}
+  {%- else -%}
+    {{ date.strftime("%d %B, %Y") }}
+  {%- endif -%}
 {% endmacro %}
-
 {% macro format_date_range(start_date=None, start_precision=None, end_date=None, end_precision=None) %}
-{% if end_date and end_date.year == 1 %}
-  Read sometime
-{%- elif not start_date or (start_precision == 2 and start_date.year == end_date.year) -%}
-  Finished
-  {% if end_precision > 0 %} in {% else %} on {% endif %}
-  <time datetime="{{ end_date }}"> {{ format_date(end_date, end_precision) }}</time>
-{%- elif start_date == end_date -%}
-  Read
-  {% if start_precision > 0 %} in {% else %} on {% endif %}
-  <time datetime="{{ start_date }}">{{ format_date(start_date, start_precision) }}</time>
-{%- elif not end_date -%}
-  Reading since <time datetime="{{ start_date }}">{{ format_date(start_date, start_precision) }}</time>
-{%- else -%}
-  Read
-  <time datetime="{{ start_date }}"> {{ format_date(start_date, start_precision) }}</time>
-  &ndash;
-  <time datetime="{{ end_date }}"> {{ format_date(end_date, end_precision) }}</time>
-{%- endif -%}
+  {% if end_date and end_date.year == 1 %}
+    Read sometime
+  {%- elif not start_date or (start_precision == 2 and start_date.year == end_date.year) -%}
+    Finished
+    {% if end_precision > 0 %}
+      in
+    {% else %}
+      on
+    {% endif %}
+    <time datetime="{{ end_date }}"> {{ format_date(end_date, end_precision) }}</time>
+  {%- elif start_date == end_date -%}
+    Read
+    {% if start_precision > 0 %}
+      in
+    {% else %}
+      on
+    {% endif %}
+    <time datetime="{{ start_date }}">{{ format_date(start_date, start_precision) }}</time>
+  {%- elif not end_date -%}
+    Reading since <time datetime="{{ start_date }}">{{ format_date(start_date, start_precision) }}</time>
+  {%- else -%}
+    Read
+    <time datetime="{{ start_date }}"> {{ format_date(start_date, start_precision) }}</time>
+    &ndash;
+    <time datetime="{{ end_date }}"> {{ format_date(end_date, end_precision) }}</time>
+  {%- endif -%}
 {% endmacro %}
-
 {% macro link_amazon(book) %}
-{% if book.asin %}
-  <a href="https://amazon.co.uk/dp/{{ book.asin }}">{{ book.asin }}</a>
-  or
-{% elif book.isbn %}
-  <a href="https://amazon.co.uk/dp/{{ book.isbn10 }}">{{ book.isbn10 }}</a>
-  or
-{% endif %}
-<a href="https://www.amazon.co.uk/s?k={{ book.search_query }}&i=stripbooks">search</a>
+  {% if book.asin %}
+    <a href="https://amazon.co.uk/dp/{{ book.asin }}">{{ book.asin }}</a>
+    or
+  {% elif book.isbn %}
+    <a href="https://amazon.co.uk/dp/{{ book.isbn10 }}">{{ book.isbn10 }}</a>
+    or
+  {% endif %}
+  <a href="https://www.amazon.co.uk/s?k={{ book.search_query }}&i=stripbooks">search</a>
 {%- endmacro %}
-
 {% macro link_google(book) %}
-{% if book.google_id %}
-  <a href="https://books.google.co.uk/books?id={{ book.google_books_id }}">{{ book.google_books_id }}</a>
-  or
-  <a href="https://www.googleapis.com/books/v1/volumes/{{ book.google_books_id }}">json</a>
-  or
-{% elif book.isbn %}
-  <a href="https://www.googleapis.com/books/v1/volumes?q=isbn:{{ book.isbn }}">search ISBN</a>
-  or
-{% endif %}
-<a href="https://www.googleapis.com/books/v1/volumes?q={{ book.search_query }}">search</a>
+  {% if book.google_id %}
+    <a href="https://books.google.co.uk/books?id={{ book.google_books_id }}">{{ book.google_books_id }}</a>
+    or
+    <a href="https://www.googleapis.com/books/v1/volumes/{{ book.google_books_id }}">json</a>
+    or
+  {% elif book.isbn %}
+    <a href="https://www.googleapis.com/books/v1/volumes?q=isbn:{{ book.isbn }}">search ISBN</a>
+    or
+  {% endif %}
+  <a href="https://www.googleapis.com/books/v1/volumes?q={{ book.search_query }}">search</a>
 {%- endmacro %}
-
 {% macro link_goodreads(book) %}
-{% if book.goodreads_id %}
-  <a href="https://www.goodreads.com/book/show/{{ book.goodreads_id }}">{{ book.goodreads_id }}</a>
-  or
-{% endif %}
-{% if book.isbn %}
-  <a href="https://www.goodreads.com/search?q={{ book.isbn }}">search ISBN</a>
-  or
-{% endif %}
-<a href="https://www.goodreads.com/search?q={{ book.search_query }}">search</a>
+  {% if book.goodreads_id %}
+    <a href="https://www.goodreads.com/book/show/{{ book.goodreads_id }}">{{ book.goodreads_id }}</a>
+    or
+  {% endif %}
+  {% if book.isbn %}
+    <a href="https://www.goodreads.com/search?q={{ book.isbn }}">search ISBN</a>
+    or
+  {% endif %}
+  <a href="https://www.goodreads.com/search?q={{ book.search_query }}">search</a>
 {%- endmacro %}
-
 {% macro nav_link(title, link, class="nav-item") %}
-<a class="{% if link == request.resolver_match.view_name %}active {% endif %}{{ class }}" href="{{ url(link) }}">{{ title }}</a>
+  <a class="{% if link == request.resolver_match.view_name %}active {% endif %}{{ class }}"
+     href="{{ url(link) }}">{{ title }}</a>
 {% endmacro %}

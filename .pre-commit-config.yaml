@@ -17,10 +17,10 @@ repos:
       - id: prettier
   - repo: local
     hooks:
-      - id: curlylint
-        name: curlylint
+      - id: djlint
+        name: djlint
         language: system
-        entry: "curlylint --quiet --rule 'indent: 2'"
+        entry: djlint --reformat --lint --quiet
         files: '^library/jinja2/'
         types: [html]
       - id: migrations

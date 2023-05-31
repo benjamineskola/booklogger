@@ -1,44 +1,74 @@
 {% if user.is_authenticated %}
   {% if book.currently_reading %}
     <div class="row">
-      <form class="inline-form update-progress col-8" data-page-count="{{ book.page_count }}" data-book="{{ book.id }}" action="{{ url('library:book_update_progress', args=[book.slug]) }}" method="post">
+      <form class="inline-form update-progress col-8"
+            data-page-count="{{ book.page_count }}"
+            data-book="{{ book.id }}"
+            action="{{ url('library:book_update_progress', args=[book.slug]) }}"
+            method="post">
         <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-        <input style="max-width: 4em; display: inline-block" class="form-control mr-sm-2" type="text" name="value" placeholder="#"/>
-
+        <input style="max-width: 4em;
+                      display: inline-block"
+               class="form-control mr-sm-2"
+               type="text"
+               name="value"
+               placeholder="#" />
         <div class="form-check form-check-inline">
-          <input class="form-check-input" type="radio" name="progress_type" value="pages"{% if book.page_count %} checked="checked"{% else %} disabled{% endif %}>
+          <input class="form-check-input"
+                 type="radio"
+                 name="progress_type"
+                 value="pages"
+                 {% if book.page_count %} checked="checked"{% else %} disabled{% endif %}>
           <label class="form-check-label">pages</label>
         </div>
         <div class="form-check form-check-inline">
-          <input class="form-check-input" type="radio" name="progress_type" value="percentage"{% if (not book.page_count) or (book.log_entries.last().progress_percentage and not book.log_entries.last().progress_page) %} checked="checked"{% endif %}>
+          <input class="form-check-input"
+                 type="radio"
+                 name="progress_type"
+                 value="percentage"
+                 {% if (not book.page_count) or (book.log_entries.last().progress_percentage and not book.log_entries.last().progress_page) %} checked="checked"{% endif %}>
           <label class="form-check-label">%</label>
         </div>
         <button class="btn btn-primary" type="submit">Update</button>
       </form>
-      <hr/>
-      <form class="inline-form col-4" action="{{ url('library:book_finish_reading', args=[book.slug]) }}" method="post">
+      <hr />
+      <form class="inline-form col-4"
+            action="{{ url('library:book_finish_reading', args=[book.slug]) }}"
+            method="post">
         <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
         <button class="btn btn-primary" type="submit">Finish</button>
       </form>
     </div>
   {% else %}
-    <form style="display: inline-block" class="mb-2" action="{{ url('library:book_start_reading', args=[book.slug]) }}" method="post">
+    <form style="display: inline-block"
+          class="mb-2"
+          action="{{ url('library:book_start_reading', args=[book.slug]) }}"
+          method="post">
       <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
       <button class="btn btn-primary" type="submit">Start</button>
     </form>
   {% endif %}
   {% if not book.owned and not book.owned_by_sara %}
-    <form style="display: inline-block" class="mb-2" action="{{ url('library:book_mark_owned', args=[book.slug]) }}" method="post">
+    <form style="display: inline-block"
+          class="mb-2"
+          action="{{ url('library:book_mark_owned', args=[book.slug]) }}"
+          method="post">
       <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
       <button class="btn btn-primary" type="submit">Mark Owned</button>
     </form>
   {% endif %}
   {% if not book.read and not book.currently_reading %}
-    <form style="display: inline-block" class="mb-2" action="{{ url('library:book_mark_read_sometime', args=[book.slug]) }}" method="post">
+    <form style="display: inline-block"
+          class="mb-2"
+          action="{{ url('library:book_mark_read_sometime', args=[book.slug]) }}"
+          method="post">
       <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
       <button class="btn btn-primary" type="submit">Mark Read Sometime</button>
     </form>
   {% endif %}
-  <hr/>
-  <div class="item"><a class="card-link" href="{{ url('library:book_edit', args=[book.slug]) }}">edit</a></div>
+  <hr />
+  <div class="item">
+    <a class="card-link"
+       href="{{ url('library:book_edit', args=[book.slug]) }}">edit</a>
+  </div>
 {% endif %}

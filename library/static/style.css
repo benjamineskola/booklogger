@@ -113,3 +113,16 @@ a.fas:visited {
     color: var(--bs-light);
   }
 }
+
+.progress {
+  height: 5px;
+}
+
+.author-search .card-body ul {
+  max-height: 10em;
+  overflow: scroll;
+}
+
+.loader {
+  margin-top: 2rem;
+}
