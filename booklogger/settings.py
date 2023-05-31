@@ -112,7 +112,7 @@ DATABASES = {
 }
 
 if "DATABASE_URL" in os.environ:
-    DATABASES["default"] = dj_database_url.config()
+    DATABASES["default"] = dj_database_url.config()  # type: ignore[assignment]
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
