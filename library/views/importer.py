@@ -129,7 +129,7 @@ def bulk_import(request: HttpRequest) -> HttpResponse:
                 if not title.strip():
                     continue
 
-                queue_item = Queue(data={"title": title.strip, "authors": authors})
+                queue_item = Queue(data={"title": title.strip(), "authors": authors})
                 queue_item.save()
 
         return TemplateResponse(
