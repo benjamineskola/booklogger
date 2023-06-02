@@ -14,8 +14,11 @@
       owned
     {% endif %}
   {% endif %}
-  a
-  {% if book.get_edition_format_display().lower()[0] in ["a", "e", "i", "o", "u"] %}n{% endif %}
+  {% if book.get_edition_format_display().lower()[0] in ["a", "e", "i", "o", "u"] %}
+    an
+  {% else %}
+    a
+  {% endif %}
   {{ book.get_edition_format_display() .lower() }} edition
   {%- if book.was_borrowed %} from {{ book.borrowed_from }}
   {% endif -%}
