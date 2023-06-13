@@ -1,7 +1,7 @@
 coverage==7.2.2
 django-stubs==4.2.0
 django-stubs-ext==4.2.0
-djlint==1.30.0
+djlint==1.31.0
 freezegun==1.2.1
 mypy
 mypy-extensions==1.0.0
