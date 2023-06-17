@@ -5,14 +5,6 @@ from library.models import Book, LogEntry, Tag
 
 @pytest.mark.django_db()
 class TestBook:
-    @pytest.fixture(scope="session")
-    def django_db_setup(self, django_db_setup, django_db_blocker):  # noqa: PT004,ARG002
-        """Test session DB setup."""
-        from django.db import connection
-
-        with django_db_blocker.unblock(), connection.cursor() as cursor:
-            cursor.execute("CREATE EXTENSION IF NOT EXISTS pg_trgm;")
-
     @pytest.fixture()
     def mock_authors(self, author_factory):
         return author_factory.create_batch(4)

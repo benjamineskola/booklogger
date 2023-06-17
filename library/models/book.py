@@ -9,9 +9,8 @@ from typing import TYPE_CHECKING, Any
 from urllib.parse import quote
 
 from django.contrib.auth.models import User
-from django.contrib.postgres.search import TrigramSimilarity
 from django.db import models
-from django.db.models import Case, CheckConstraint, F, Q, Sum, Value, When
+from django.db.models import CheckConstraint, F, Q, Sum
 from django.db.models.functions import Lower
 from django.db.models.indexes import Index
 from django.urls import reverse
@@ -42,52 +41,8 @@ logger = logging.getLogger(__name__)
 
 
 class BaseBookManager(models.Manager["Book"]):
-    def search(self, pattern: str) -> "BookQuerySet":
-        qs: BookQuerySet = (
-            self.annotate(  # type: ignore[assignment]
-                first_author_similarity=TrigramSimilarity(
-                    "first_author__surname", pattern
-                ),
-                other_author_similarity=TrigramSimilarity(
-                    "additional_authors__surname", pattern
-                ),
-                title_similarity=TrigramSimilarity("title", pattern),
-                subtitle_similarity=TrigramSimilarity("subtitle", pattern),
-                series_similarity=TrigramSimilarity("series", pattern),
-                edition_title_similarity=TrigramSimilarity("edition_title", pattern),
-                edition_subtitle_similarity=TrigramSimilarity(
-                    "edition_subtitle", pattern
-                ),
-                review_similarity=TrigramSimilarity("review", pattern),
-                similarity=(
-                    F("first_author_similarity")
-                    + Case(
-                        When(Q(other_author_similarity__isnull=True), then=Value(0.0)),
-                        default=F("other_author_similarity"),
-                    )
-                    + Case(
-                        When(
-                            Q(edition_title=""),
-                            then=(
-                                F("title_similarity") * 2 + F("subtitle_similarity") * 2
-                            ),
-                        ),
-                        default=(
-                            F("title_similarity")
-                            + F("subtitle_similarity")
-                            + F("edition_title_similarity")
-                            + F("edition_subtitle_similarity")
-                        ),
-                    )
-                    + F("series_similarity")
-                    + F("review_similarity")
-                ),
-            )
-            .order_by("-similarity")
-            .filter(similarity__gt=0.2)
-            .distinct()
-        )
-        return qs
+    def search(self, _pattern: str) -> "BookQuerySet":
+        return Book.objects.all()
 
     def regenerate_all_slugs(self) -> None:
         qs = self.get_queryset()

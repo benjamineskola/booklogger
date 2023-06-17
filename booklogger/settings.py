@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 from pathlib import Path
 
-import dj_database_url
 import django_stubs_ext
 
 django_stubs_ext.monkeypatch()
@@ -102,17 +101,15 @@ WSGI_APPLICATION = "booklogger.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "booklogger",
-        "USER": "test_user",
-        "PASSWORD": os.environ.get("BOOKLOGGER_PASSWORD", ""),
-        "HOST": "127.0.0.1",
-        "PORT": "",
-    }
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    },
+    "test": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "test.sqlite3",
+    },
 }
 
-if "DATABASE_URL" in os.environ:
-    DATABASES["default"] = dj_database_url.config()  # type: ignore[assignment]
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators

@@ -5,15 +5,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('library', '0023_book_tags_20200207_1725'),
+        ("library", "0023_book_tags_20200207_1725"),
     ]
 
     operations = [
-        migrations.AlterField(
-            model_name='book',
-            name='tags',
-            field=django.contrib.postgres.fields.ArrayField(base_field=models.CharField(max_length=32), blank=True, default=list, size=None),
-        ),
+        # migrations.AlterField(
+        # model_name='book',
+        # name='tags',
+        # field=django.contrib.postgres.fields.ArrayField(base_field=models.CharField(max_length=32), blank=True, default=list, size=None),
+        # ),
     ]

@@ -7,24 +7,23 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("library", "0022_auto_20200205_1156"),
     ]
 
     operations = [
-        BtreeGinExtension(),
-        migrations.AddField(
-            model_name="book",
-            name="tags",
-            field=django.contrib.postgres.fields.ArrayField(
-                base_field=models.CharField(max_length=32), null=True, size=None
-            ),
-        ),
-        migrations.AddIndex(
-            model_name="book",
-            index=django.contrib.postgres.indexes.GinIndex(
-                fields=["tags"], name="library_boo_tags_a978d9_gin"
-            ),
-        ),
+        # BtreeGinExtension(),
+        # migrations.AddField(
+        #     model_name="book",
+        #     name="tags",
+        #     field=django.contrib.postgres.fields.ArrayField(
+        #         base_field=models.CharField(max_length=32), null=True, size=None
+        #     ),
+        # ),
+        # migrations.AddIndex(
+        #     model_name="book",
+        #     index=django.contrib.postgres.indexes.GinIndex(
+        #         fields=["tags"], name="library_boo_tags_a978d9_gin"
+        #     ),
+        # ),
     ]

@@ -1,6 +1,3 @@
-import os
-import subprocess
-
 import pytest
 from pytest_factoryboy import register
 
@@ -46,38 +43,4 @@ def read_book_factory(book_factory, *args, **kwargs):  # noqa: ARG001
 def django_db_modify_db_settings(  # noqa: PT004
     request, worker_id, django_db_modify_db_settings  # noqa: ARG001
 ):
-    if "DYNO" in os.environ:
-        return
-
-    docker_was_running = False
-
-    if "booklogger-postgres" in str(
-        subprocess.run(["docker-compose", "ps"], capture_output=True).stdout
-    ):
-        docker_was_running = True
-    else:
-        if worker_id in ["master", "gw0"]:
-            subprocess.run(["docker-compose", "up", "-d", "postgres"])
-
-        subprocess.run(
-            f"while ! pg_isready -h {settings.DATABASES['default']['HOST']}; do sleep 1; done",
-            shell=True,
-            capture_output=True,
-        )
-
-    def teardown_database():
-        if not docker_was_running and (
-            len(
-                str(
-                    subprocess.run(
-                        ["ps | grep 'pytest-xdist running'"],
-                        capture_output=True,
-                        shell=True,
-                    ).stdout
-                ).splitlines()
-            )
-            < 1
-        ):
-            subprocess.run(["docker-compose", "down"])
-
-    request.addfinalizer(teardown_database)  # noqa: PT021
+    settings.DATABASES["default"] = settings.DATABASES["test"]
