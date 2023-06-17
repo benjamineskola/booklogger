@@ -8,14 +8,6 @@ from library.models import Book
 
 @pytest.mark.django_db()
 class TestImporter:
-    @pytest.fixture(scope="session")
-    def django_db_setup(self, django_db_setup, django_db_blocker):  # noqa: ARG002,PT004
-        """Test session DB setup."""
-        from django.db import connection
-
-        with django_db_blocker.unblock(), connection.cursor() as cursor:
-            cursor.execute("CREATE EXTENSION IF NOT EXISTS pg_trgm;")
-
     @pytest.fixture()
     def _goodreads_mock(self, requests_mock, _goodreads_key):
         with Path("library/fixtures/wuthering_heights.xml").open() as file:

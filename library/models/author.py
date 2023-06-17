@@ -1,9 +1,8 @@
 import re
 from typing import TYPE_CHECKING, Any
 
-from django.contrib.postgres.search import TrigramSimilarity
 from django.db import models
-from django.db.models import F, Q
+from django.db.models import Q
 from django.db.models.functions import Lower
 from django.db.models.indexes import Index
 from django.urls import reverse
@@ -16,16 +15,8 @@ if TYPE_CHECKING:
 
 
 class AuthorManager(models.Manager["Author"]):
-    def search(self, pattern: str) -> "models.QuerySet[Author]":
-        return (
-            Author.objects.annotate(
-                sn_similarity=TrigramSimilarity("surname", pattern),
-                fn_similarity=TrigramSimilarity("forenames", pattern),
-                similarity=(F("sn_similarity") + F("fn_similarity")),
-            )
-            .order_by("-similarity")
-            .filter(similarity__gt=0.25)
-        )
+    def search(self, _pattern: str) -> "models.QuerySet[Author]":
+        return Author.objects.all()
 
     def get_by_single_name(self, name: str) -> "Author":
         names = Author.normalise_name(name)

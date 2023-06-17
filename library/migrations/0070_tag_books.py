@@ -23,7 +23,6 @@ def unset_tags(apps, *schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("library", "0069_remove_book_library_boo_tags_a978d9_gin_and_more"),
     ]
@@ -35,12 +34,12 @@ class Migration(migrations.Migration):
             field=models.ManyToManyField(related_name="books", to="library.tag"),
         ),
         migrations.RunPython(set_tags, unset_tags),
-        migrations.RemoveIndex(
-            model_name="book",
-            name="library_boo_tags_li_254e32_gin",
-        ),
-        migrations.RemoveField(
-            model_name="book",
-            name="tags_list",
-        ),
+        # migrations.RemoveIndex(
+        # model_name="book",
+        # name="library_boo_tags_li_254e32_gin",
+        # ),
+        # migrations.RemoveField(
+        # model_name="book",
+        # name="tags_list",
+        # ),
     ]
