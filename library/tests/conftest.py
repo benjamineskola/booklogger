@@ -1,7 +1,6 @@
 import pytest
 from pytest_factoryboy import register
 
-from booklogger import settings
 from library.factories import AuthorFactory, BookFactory, TagFactory, UserFactory
 
 register(AuthorFactory)
@@ -37,10 +36,3 @@ def read_book_factory(book_factory, *args, **kwargs):  # noqa: ARG001
         return book
 
     return _book_factory
-
-
-@pytest.fixture(scope="session")
-def django_db_modify_db_settings(  # noqa: PT004
-    request, worker_id, django_db_modify_db_settings  # noqa: ARG001
-):
-    settings.DATABASES["default"] = settings.DATABASES["test"]
