@@ -72,7 +72,7 @@ class BookForm(ModelForm[Book]):
             for publisher in Book.objects.exclude(publisher="")
             .order_by("publisher")
             .values_list("publisher", flat=True)
-            .distinct("publisher")
+            .distinct()
             if publisher
         ]
         self.fields["series"].widget.choices += [
@@ -80,7 +80,7 @@ class BookForm(ModelForm[Book]):
             for series in Book.objects.exclude(series="")
             .order_by("series")
             .values_list("series", flat=True)
-            .distinct("series")
+            .distinct()
             if series
         ]
         self.fields["tags"].widget.choices = Tag.objects.values_list("name", "name")
