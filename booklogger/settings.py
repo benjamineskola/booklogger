@@ -101,11 +101,11 @@ WSGI_APPLICATION = "booklogger.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": BASE_DIR / "db/db.sqlite3",
     },
     "test": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "test.sqlite3",
+        "NAME": BASE_DIR / "db/test.sqlite3",
     },
 }
 
