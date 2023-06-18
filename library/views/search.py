@@ -19,7 +19,7 @@ def basic_search(request: HttpRequest) -> HttpResponse:
         books = Book.objects.search(query).filter(
             private__in=([True, False] if request.user.is_authenticated else [False])
         )
-        authors = Author.objects.search(query).filter(similarity__gt=0.25)
+        authors = Author.objects.search(query)
 
     return TemplateResponse(
         request,

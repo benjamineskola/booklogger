@@ -15,8 +15,14 @@ if TYPE_CHECKING:
 
 
 class AuthorManager(models.Manager["Author"]):
-    def search(self, _pattern: str) -> "models.QuerySet[Author]":
-        return Author.objects.all()
+    def search(self, pattern: str) -> "models.QuerySet[Author]":
+        result = Author.objects.none()
+        for word in pattern.split():
+            result |= Author.objects.filter(surname__icontains=word.strip('"').strip())
+            result |= Author.objects.filter(
+                forenames__icontains=word.strip('"').strip()
+            )
+        return result
 
     def get_by_single_name(self, name: str) -> "Author":
         names = Author.normalise_name(name)

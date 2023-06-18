@@ -38,4 +38,16 @@ class NotEqual(Lookup):  # type: ignore[type-arg]
         return f"{lhs} <> {rhs}", params
 
 
+# from https://stackoverflow.com/a/59972954
+class Like(Lookup):  # type: ignore[type-arg]
+    lookup_name = "like"
+
+    def as_sql(self, compiler: Any, connection: Any) -> tuple[str, Any]:
+        lhs, lhs_params = self.process_lhs(compiler, connection)
+        rhs, rhs_params = self.process_rhs(compiler, connection)
+        params = lhs_params + rhs_params
+        return f"{lhs} LIKE {rhs}", params
+
+
 Field.register_lookup(NotEqual)
+Field.register_lookup(Like)

@@ -10,8 +10,8 @@ from urllib.parse import quote
 
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models import CheckConstraint, F, Q, Sum
-from django.db.models.functions import Lower
+from django.db.models import CheckConstraint, F, Q, Sum, Value
+from django.db.models.functions import Concat, Lower
 from django.db.models.indexes import Index
 from django.urls import reverse
 from django.utils import timezone
@@ -41,8 +41,26 @@ logger = logging.getLogger(__name__)
 
 
 class BaseBookManager(models.Manager["Book"]):
-    def search(self, _pattern: str) -> "BookQuerySet":
-        return Book.objects.all()
+    def search(self, pattern: str) -> "BookQuerySet":
+        words = pattern.lower().split()
+        sql_pattern = "%" + "%".join(words) + "%"
+        query = (
+            Q(full_title__like=sql_pattern)
+            | Q(edition_full_title__like=sql_pattern)
+            | Q(
+                author_name__like=sql_pattern,
+            )
+        )
+
+        # in order to query both title and subtitle together
+        books = Book.objects.annotate(
+            full_title=Lower(Concat("title", Value(": "), "subtitle")),
+            edition_full_title=Lower(
+                Concat("edition_title", Value(": "), "edition_subtitle")
+            ),
+            author_name=Lower(F("first_author__surname")),
+        )
+        return books.filter(query)
 
     def regenerate_all_slugs(self) -> None:
         qs = self.get_queryset()
