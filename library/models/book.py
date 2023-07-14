@@ -394,10 +394,10 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
         result = f"{self.first_author}, {self.display_title}"
 
         if (
-            self.editions.count()
+            self.alternate_editions.count()
             and self.edition_format
             and self.edition_title
-            in self.editions.all().values_list("edition_title", flat=True)
+            in self.alternate_editions.all().values_list("edition_title", flat=True)
         ):
             result += f" ({self.get_edition_disambiguator()} edition)"
         return result
@@ -462,8 +462,8 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
         if self.log_entries.count():
             result["log_entries"] = [log.to_json() for log in self.log_entries.all()]
 
-        if self.editions.count():
-            primary_edition = self.editions.first()
+        if self.alternate_editions.count():
+            primary_edition = self.alternate_editions.first()
             if (
                 primary_edition
                 and primary_edition != self
@@ -513,10 +513,10 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
                 result += oxford_comma(editors)
 
         if (
-            self.editions.count()
+            self.alternate_editions.count()
             and self.edition_format
             and self.edition_title
-            in self.editions.all().values_list("edition_title", flat=True)
+            in self.alternate_editions.all().values_list("edition_title", flat=True)
         ):
             result += f", {self.get_edition_disambiguator()} edn."
 
@@ -727,7 +727,7 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
     @property
     def all_log_entries(self) -> "models.QuerySet[LogEntry]":
         entries = self.log_entries.all()
-        for edition in self.editions.all():
+        for edition in self.alternate_editions.all():
             entries |= edition.log_entries.all()
         return entries
 

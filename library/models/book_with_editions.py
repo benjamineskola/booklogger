@@ -4,7 +4,7 @@ from django.db import models
 
 
 class BookWithEditions(models.Model):
-    editions = models.ManyToManyField("self", symmetrical=True, blank=True)
+    alternate_editions = models.ManyToManyField("self", symmetrical=True, blank=True)
 
     class Meta:
         abstract = True
@@ -30,7 +30,7 @@ class BookWithEditions(models.Model):
 
     def get_edition_disambiguator(self) -> str:
         edition_language = getattr(self, "edition_language", "")
-        if self.editions.exclude(edition_language=edition_language).count():  # type: ignore[misc]
+        if self.alternate_editions.exclude(edition_language=edition_language).count():  # type: ignore[misc]
             if edition_language:
                 return self.get_edition_language_display()  # type: ignore[attr-defined,no-any-return]
             return self.get_language_display()  # type: ignore[attr-defined,no-any-return]
@@ -47,9 +47,9 @@ class BookWithEditions(models.Model):
         for author in self.bookauthor_set.all():  # type: ignore[attr-defined]
             edition.add_author(author.author, role=author.role, order=author.order)  # type: ignore[attr-defined]
         edition.tags.set(self.tags.all())  # type: ignore[attr-defined]
-        self.editions.add(edition)
+        self.alternate_editions.add(edition)
         self.save()
         return edition
 
     def save_other_editions(self) -> None:
-        self.editions.all().update(**self._fields_to_copy)
+        self.alternate_editions.all().update(**self._fields_to_copy)

@@ -203,7 +203,7 @@
       <div class="card-body">{% include "books/update_form_snippet.html" %}</div>
     </div>
   </div>
-  {% if book.editions.all() | count > 0 %}
+  {% if book.alternate_editions.all() | count > 0 %}
     <div class="col">
       <div class="card">
         <div class="card-body">

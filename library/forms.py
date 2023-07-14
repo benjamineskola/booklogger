@@ -90,10 +90,10 @@ class BookForm(ModelForm[Book]):
             qs = instance.first_author.books.exclude(pk=instance.id)
 
         if instance and qs.count() > 0:
-            self.fields["editions"].queryset = qs  # type: ignore[attr-defined]
+            self.fields["alternate_editions"].queryset = qs  # type: ignore[attr-defined]
             self.fields["parent_edition"].queryset = qs  # type: ignore[attr-defined]
         else:
-            del self.fields["editions"]
+            del self.fields["alternate_editions"]
             del self.fields["parent_edition"]
 
     def _clean_asin(self, asin: str) -> str:

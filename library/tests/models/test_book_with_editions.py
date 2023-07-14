@@ -13,7 +13,7 @@ class TestBookWithEditions:
         assert edition.first_author == book.first_author
         assert edition.edition_format != book.edition_format
         assert edition.edition_published != book.edition_published
-        assert edition in book.editions.all()
+        assert edition in book.alternate_editions.all()
 
     def test_save_other_editions(self, book_factory, author):
         book1 = book_factory(edition_format=1)
