@@ -41,8 +41,8 @@
         <div class="card-body">
           <p class="card-text mb-0">
             ({{ book.display_date }})
-            {% if book.edition_number and book.edition_number > 1 %}{{ book.edition_number | ordinal }} edn.{% endif %}
-            {% if book.publisher %}{{ book.publisher }}.{% endif %}
+            {% if book.edition_number and book.edition_number > 1 %}{{ book.edition_number | ordinal }} edn.&#x20;{% endif %}
+            {% if book.publisher %}{{ book.publisher }}.&#x20;{% endif %}
             {% if book.page_count and book.page_count > 0 %}{{ book.page_count }} pages.{% endif %}
             <span class="rating"
                   style="display: inline-block"

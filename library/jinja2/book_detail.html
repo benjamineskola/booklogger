@@ -45,8 +45,8 @@
         at the same time
       {% else %}
         on {{ book.ebook_acquired_date.strftime("%d %B, %Y") }}
-      {% endif %}
-    {% endif %}
+      {%- endif -%}
+    {% endif -%}
   {%- endif %}.
 {% endmacro %}
 
@@ -73,17 +73,15 @@
               as
               <em>
                 {{ book.title }}
-                {%- if book.subtitle -%}
-                  : {{ book.subtitle }}
-                {%- endif -%}
+                {% if book.subtitle %}: {{ book.subtitle }}{% endif %}
               </em>
             {%- endif %}
             {%- if book.first_published %}in {{ book.first_published }}{%- endif %}.
               {% if (not book.is_first_edition) or book.publisher or book.publisher_url or (not book.has_original_title) %}
                 This
-                {% if book.edition_format %}{{ book.get_edition_format_display() .lower() }}{% endif %}
-                {% if book.edition_number %}{{ book.edition_number | ordinal }}{% endif %}
-                {% if book.is_translated %}{{ book.get_edition_language_display() }}{% endif %}
+                {% if book.edition_format %}{{ book.get_edition_format_display() .lower() }}&#x20;{% endif %}
+                {% if book.edition_number %}{{ book.edition_number | ordinal }}&#x20;{% endif %}
+                {% if book.is_translated %}{{ book.get_edition_language_display() }}&#x20;{% endif %}
                 edition published
                 {%- if (not book.has_original_title) %} as
                   <em>
@@ -238,7 +236,8 @@
                   {% for reading_list in book.readinglistentry_set.order_by('reading_list__title') %}
                     <li>
                       <a href="{{ reading_list.reading_list.get_absolute_url() }}">{{ reading_list.reading_list.title }}</a>
-                      {%- if reading_list.order %} ({{ reading_list.order }})
+                      {%- if reading_list.order %}
+                        ({{ reading_list.order }})
                       {% endif -%}
                     </li>
                   {% endfor %}
