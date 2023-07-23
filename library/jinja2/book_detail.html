@@ -70,182 +70,183 @@
             {% endif %}
             {% if (not book.has_original_title) or book.is_translated %}
               {% if book.is_translated %}in {{ book.get_language_display() }}{% endif %}
-              as <em>{{ book.title }}
-              {%- if book.subtitle -%}
-                : {{ book.subtitle }}
-              {%- endif -%}
-            </em>
-          {%- endif %}
-          {%- if book.first_published %}in {{ book.first_published }}{%- endif %}.
-            {% if (not book.is_first_edition) or book.publisher or book.publisher_url or (not book.has_original_title) %}
-              This
-              {% if book.edition_format %}{{ book.get_edition_format_display() .lower() }}{% endif %}
-              {% if book.edition_number %}{{ book.edition_number | ordinal }}{% endif %}
-              {% if book.is_translated %}{{ book.get_edition_language_display() }}{% endif %}
-              edition published
-              {%- if (not book.has_original_title) %}
-                as <em>{{ book.edition_title }}
-                {% if book.edition_subtitle %}
-                  : {{ book.edition_subtitle }}
-                {% endif -%}
+              as
+              <em>
+                {{ book.title }}
+                {%- if book.subtitle -%}
+                  : {{ book.subtitle }}
+                {%- endif -%}
               </em>
-            {%- endif -%}
-            {% if (not book.is_first_edition) %}
-              in {{ book.edition_published }}
-            {%- endif -%}
-            {% if book.publisher or book.publisher_url %}
-              by
-              {% if book.publisher_url %}
-                <a href="{{ book.publisher_url }}">{{ book.publisher or book.publisher_url }}</a>
-              {%- else -%}
-                {{ book.publisher }}
+            {%- endif %}
+            {%- if book.first_published %}in {{ book.first_published }}{%- endif %}.
+              {% if (not book.is_first_edition) or book.publisher or book.publisher_url or (not book.has_original_title) %}
+                This
+                {% if book.edition_format %}{{ book.get_edition_format_display() .lower() }}{% endif %}
+                {% if book.edition_number %}{{ book.edition_number | ordinal }}{% endif %}
+                {% if book.is_translated %}{{ book.get_edition_language_display() }}{% endif %}
+                edition published
+                {%- if (not book.has_original_title) %} as
+                  <em>
+                    {{ book.edition_title }}
+                    {%- if book.edition_subtitle %}: {{ book.edition_subtitle }}{% endif %}
+                  </em>
+                {%- endif -%}
+                {% if (not book.is_first_edition) %}
+                  in {{ book.edition_published }}
+                {%- endif -%}
+                {% if book.publisher or book.publisher_url %}
+                  by
+                  {% if book.publisher_url %}
+                    <a href="{{ book.publisher_url }}">{{ book.publisher or book.publisher_url }}</a>
+                  {%- else -%}
+                    {{ book.publisher }}
+                  {%- endif -%}
+                {%- endif -%}.
               {%- endif -%}
-            {%- endif -%}.
-          {%- endif -%}
-          &nbsp;
-          {%- if book.page_count -%}{{ book.page_count | int }}pp.{% endif %}
-        </p>
-        {% if book.owned_by or book.was_borrowed or book.alienated_date or book.parent_owned %}
-          <p id="ownership-details">
-            {% if book.owned_by or book.was_borrowed or book.alienated_date %}{{ edition_details(book) }}{% endif %}
-            {% for edition in book.ancestor_editions %}
-              This is part of {{ book_link(edition) }}; {{ edition_details(edition) }}
-            {% endfor %}
-          </p>
-        {% endif %}
+              &nbsp;
+              {%- if book.page_count -%}{{ book.page_count | int }}pp.{% endif %}
+            </p>
+            {% if book.owned_by or book.was_borrowed or book.alienated_date or book.parent_owned %}
+              <p id="ownership-details">
+                {% if book.owned_by or book.was_borrowed or book.alienated_date %}{{ edition_details(book) }}{% endif %}
+                {% for edition in book.ancestor_editions %}
+                  This is part of {{ book_link(edition) }}; {{ edition_details(edition) }}
+                {% endfor %}
+              </p>
+            {% endif %}
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-  <div class="col">
-    <div class="card">
-      <div class="card-body">
-        <dl>
-          <dt>Amazon</dt>
-          <dd>
-            {{ link_amazon(book) }}
-          </dd>
-          <dt>Goodreads</dt>
-          <dd>
-            {{ link_goodreads(book) }}
-          </dd>
-          <dt>Google</dt>
-          <dd>
-            {{ link_google(book) }}
-          </dd>
-          <dt>ISBN</dt>
-          <dd>
-            {{ book.isbn }}
-          </dd>
-          {% if book.has_ebook_edition %}
-            <dt>Ebook Acquired</dt>
-            <dd>
-              {{ book.ebook_acquired_date or "Unknown" }}
-            </dd>
-            {% if book.ebook_asin %}
+      <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <dl>
               <dt>Amazon</dt>
               <dd>
-                <a href="{{ book.ebook_url }}">{{ book.ebook_asin }}</a>
+                {{ link_amazon(book) }}
               </dd>
-            {% endif %}
-            {% if book.ebook_isbn %}
-              <dt>Ebook ISBN</dt>
+              <dt>Goodreads</dt>
               <dd>
-                {{ book.ebook_isbn }}
+                {{ link_goodreads(book) }}
               </dd>
-            {% endif %}
-          {% endif %}
-        </dl>
-        {% if book.asin and not book.owned %}
-          <iframe src="https://uk.ereaderiq.com/extensions/injector/?url=https%3A%2F%2Fwww.amazon.co.uk%2Fdp%2F{{ book.asin }}&amp;type=ebook"
-                  frameborder="0"
-                  seamless="seamless"
-                  scrolling="no"
-                  style="visibility: visible;
-                         width: 100%;
-                         height: 408px;
-                         border: none"></iframe>
-        {% endif %}
-      </div>
-    </div>
-  </div>
-  {% if book.review %}
-    <div class="col">
-      <div class="card">
-        <div class="card-body">
-          <h3>Review</h3>
-          {{ book.review | markdown }}
-        </div>
-      </div>
-    </div>
-  {% endif %}
-  <div class="col">
-    <div class="card">
-      <div class="card-body">
-        <h3 class="header">Reading History</h3>
-        <ul class="list-unstyled">
-          {% for entry in book.all_log_entries %}
-            <li>
-              {{ format_date_range(entry.start_date, entry.start_precision, entry.end_date, entry.end_precision) }}
-              {% if entry not in book.log_entries.all() %}
-                (<a href="{{ entry.book.get_absolute_url() }}">{{ entry.book.get_edition_disambiguator() }} edition</a>)
+              <dt>Google</dt>
+              <dd>
+                {{ link_google(book) }}
+              </dd>
+              <dt>ISBN</dt>
+              <dd>
+                {{ book.isbn }}
+              </dd>
+              {% if book.has_ebook_edition %}
+                <dt>Ebook Acquired</dt>
+                <dd>
+                  {{ book.ebook_acquired_date or "Unknown" }}
+                </dd>
+                {% if book.ebook_asin %}
+                  <dt>Amazon</dt>
+                  <dd>
+                    <a href="{{ book.ebook_url }}">{{ book.ebook_asin }}</a>
+                  </dd>
+                {% endif %}
+                {% if book.ebook_isbn %}
+                  <dt>Ebook ISBN</dt>
+                  <dd>
+                    {{ book.ebook_isbn }}
+                  </dd>
+                {% endif %}
               {% endif %}
-              {% if entry.abandoned %}(abandoned){% endif %}
-            </li>
-          {% else %}
-            <li>No reading history</li>
-          {% endfor %}
-        </ul>
-      </div>
-    </div>
-  </div>
-  <div class="col">
-    <div class="card mt-4">
-      <div class="card-body">{% include "books/update_form_snippet.html" %}</div>
-    </div>
-  </div>
-  {% if book.alternate_editions.all() | count > 0 %}
-    <div class="col">
-      <div class="card">
-        <div class="card-body">
-          <h3>Other Editions</h3>
-          <ul>
-            {% for edition in book.alternate_editions.all() %}
-              <li>{{ book_link(edition) }} ({{ edition.get_edition_disambiguator() }} edition)</li>
-            {% endfor %}
-          </ul>
+            </dl>
+            {% if book.asin and not book.owned %}
+              <iframe src="https://uk.ereaderiq.com/extensions/injector/?url=https%3A%2F%2Fwww.amazon.co.uk%2Fdp%2F{{ book.asin }}&amp;type=ebook"
+                      frameborder="0"
+                      seamless="seamless"
+                      scrolling="no"
+                      style="visibility: visible;
+                             width: 100%;
+                             height: 408px;
+                             border: none"></iframe>
+            {% endif %}
+          </div>
         </div>
       </div>
-    </div>
-  {% endif %}
-  {% if book.parent_edition or book.subeditions.count() or book.reading_lists.count() %}
-    <div class="col">
-      <div class="card">
-        <div class="card-body">
-          {% if book.parent_edition %}
-            This book is part of {{ book_link(book.parent_edition) }}
-            {%- for ancestor in book.ancestor_editions[1:] -%}
-              , which is part of {{ book_link(ancestor) }}
-            {%- endfor -%}.
-          {% endif %}
-          {% if book.subeditions.count() %}
-            This book is made up of the following books:
-            {{ book_children(book) }}
-          {% endif %}
-          {% if book.reading_lists.count() %}
-            This book is on the following reading lists:
-            <ul>
-              {% for reading_list in book.readinglistentry_set.order_by('reading_list__title') %}
+      {% if book.review %}
+        <div class="col">
+          <div class="card">
+            <div class="card-body">
+              <h3>Review</h3>
+              {{ book.review | markdown }}
+            </div>
+          </div>
+        </div>
+      {% endif %}
+      <div class="col">
+        <div class="card">
+          <div class="card-body">
+            <h3 class="header">Reading History</h3>
+            <ul class="list-unstyled">
+              {% for entry in book.all_log_entries %}
                 <li>
-                  <a href="{{ reading_list.reading_list.get_absolute_url() }}">{{ reading_list.reading_list.title }}</a>
-                  {%- if reading_list.order %} ({{ reading_list.order }})
-                  {% endif -%}
+                  {{ format_date_range(entry.start_date, entry.start_precision, entry.end_date, entry.end_precision) }}
+                  {% if entry not in book.log_entries.all() %}
+                    (<a href="{{ entry.book.get_absolute_url() }}">{{ entry.book.get_edition_disambiguator() }} edition</a>)
+                  {% endif %}
+                  {% if entry.abandoned %}(abandoned){% endif %}
                 </li>
+              {% else %}
+                <li>No reading history</li>
               {% endfor %}
             </ul>
-          {% endif %}
+          </div>
         </div>
       </div>
+      <div class="col">
+        <div class="card mt-4">
+          <div class="card-body">{% include "books/update_form_snippet.html" %}</div>
+        </div>
+      </div>
+      {% if book.alternate_editions.all() | count > 0 %}
+        <div class="col">
+          <div class="card">
+            <div class="card-body">
+              <h3>Other Editions</h3>
+              <ul>
+                {% for edition in book.alternate_editions.all() %}
+                  <li>{{ book_link(edition) }} ({{ edition.get_edition_disambiguator() }} edition)</li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+      {% if book.parent_edition or book.subeditions.count() or book.reading_lists.count() %}
+        <div class="col">
+          <div class="card">
+            <div class="card-body">
+              {% if book.parent_edition %}
+                This book is part of {{ book_link(book.parent_edition) }}
+                {%- for ancestor in book.ancestor_editions[1:] -%}
+                  , which is part of {{ book_link(ancestor) }}
+                {%- endfor -%}.
+              {% endif %}
+              {% if book.subeditions.count() %}
+                This book is made up of the following books:
+                {{ book_children(book) }}
+              {% endif %}
+              {% if book.reading_lists.count() %}
+                This book is on the following reading lists:
+                <ul>
+                  {% for reading_list in book.readinglistentry_set.order_by('reading_list__title') %}
+                    <li>
+                      <a href="{{ reading_list.reading_list.get_absolute_url() }}">{{ reading_list.reading_list.title }}</a>
+                      {%- if reading_list.order %} ({{ reading_list.order }})
+                      {% endif -%}
+                    </li>
+                  {% endfor %}
+                </ul>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endif %}
     </div>
-  {% endif %}
-</div>
-{% endblock content %}
+  {% endblock content %}
