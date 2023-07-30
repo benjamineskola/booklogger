@@ -12,16 +12,15 @@ function TagBook(): any {
     });
 
     if (response.ok) {
-      const tagsField = this.querySelector(this.dataset.tags!)!;
+      const tagsField = this.closest('.tags')!;
       const inputField: HTMLInputElement =
         this.querySelector('input[name="tags"]')!;
       const data = await response.json();
 
-      for (const i in data.tags) {
-        const newTag: string = data.tags[i];
-        tagsField.prepend(
-          `<span class="badge bg-secondary"><a href="/tag/${newTag}">${newTag}</a></span> `
-        );
+      for (const [_, tag] of Object.entries(data.tags)) {
+        const template = document.createElement('template');
+        template.innerHTML = `<span class="badge bg-secondary"><a href="/tag/${tag}">${tag}</a></span> `;
+        tagsField.prepend(template.content);
       }
       inputField.value = '';
       this.style.display = 'none';

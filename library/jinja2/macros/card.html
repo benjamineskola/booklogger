@@ -99,7 +99,6 @@
                    role="button">+</a>
                 <form class="add-tag collapse"
                       id="collapse-addtag-{{ book.id }}"
-                      data-tags="#tags-{{ book.id }}"
                       action="{{ url('library:book_add_tags', args=[book.slug]) }}?next={{ request.get_full_path() }}#{{ book.slug }}"
                       method="post">
                   <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
