@@ -1,4 +1,4 @@
-{% from "macros.html" import author_list with context %}
+{% from "macros.html" import author_list, filter_list with context %}
 {% from "macros/card.html" import book_list with context %}
 {% extends "base.html" %}
 
@@ -14,5 +14,35 @@
     </div>
   </div>
   <h2>Books</h2>
+  <div class="card mb-2">
+    <div class="card-body">
+      {% set q = dict(request.GET) %}
+      {% for k in q.keys() %}
+        {% set v = q[k] %}
+        {% if v is iterable %}
+          {% set _ = q.__setitem__(k, v[-1]) %}
+        {% endif %}
+      {% endfor %}
+      {% if q.format %}
+        {% set _ = q.__delitem__('format') %}
+      {% endif %}
+      {% set qs = '?' + q|urlencode %}
+      Formats: <a href="{{ url(request.resolver_match.view_name, args=[author.slug]) }}{{ qs }}">all</a>
+      {% for f in ['ebook', 'paperback', 'hardback', 'web', 'physical'] %}
+        {% set _ = q.__setitem__('format', f) %}
+        {% set qs = '?' + q|urlencode %}
+        , <a href="{{ url(request.resolver_match.view_name, args=[author.slug]) }}{{ qs }}">{{ f | lower }}</a>
+      {% endfor %}
+      <br>
+      {{ filter_list('Subject', 'tags', {'fiction': 'fiction', 'non-fiction': 'non-fiction'}) }}
+      <br>
+      {{ filter_list('Owned', 'owned', {'yes': 'true', 'borrowed': 'borrowed', 'available': 'available', 'no': 'false'}) }}
+      <br>
+      {{ filter_list('Read', 'read', {'yes': 'true', 'no': 'false'}) }}
+      <br>
+      {{ filter_list('Want to read', 'want_to_read', {'yes': 'true', 'no': 'false'}) }}
+      <br>
+    </div>
+  </div>
   {{ book_list(books) }}
 {% endblock content %}
