@@ -455,7 +455,7 @@ class BulkEditView(
         if query := self.kwargs.get("query"):
             query, query_arg = query.split("/", 1)
             match query:
-                case ["read" | "unread" | "owned" | "borrowed" | "unowned"]:
+                case "read" | "unread" | "owned" | "borrowed" | "unowned":
                     queryset = getattr(queryset, query)()
                 case "tag":
                     if query_arg == "untagged":

@@ -203,7 +203,7 @@ class BookQuerySet(models.QuerySet["Book"]):
                     qs = qs.borrowed()
                 case "available":
                     qs = qs.available()
-                case ["yes" | "no" | "true" | "false" | "t" | "f" | "1" | "0"]:
+                case "yes" | "no" | "true" | "false" | "t" | "f" | "1" | "0":
                     qs = qs.owned() if str2bool(owned) else qs.unowned()
                 case _:
                     qs = qs.owned_by(owned)
