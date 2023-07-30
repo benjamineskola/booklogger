@@ -44,21 +44,21 @@
     {% set _ = params.pop(parameter_name) %}
   {% endif %}
   {{ title }}:
-  {% if not parameter_name in request.GET -%}
+  {% if not parameter_name in request.GET %}
     <span>
-      {% if title == "Sort" %}
+      {%- if title == "Sort" -%}
         default
-      {% else %}
+      {%- else -%}
         any
-      {% endif %}
+      {%- endif -%}
     </span>
-  {%- else -%}
+  {%- else %}
     <a href="{{- current_url -}}{%- if params -%}?{{ params.urlencode() -}}{%- endif -%}">
-      {% if title == "Sort" %}
+      {%- if title == "Sort" -%}
         default
-      {% else %}
+      {%- else %}
         any
-      {% endif %}
+      {%- endif -%}
     </a>
   {%- endif -%}
   {%- for option_title, option_value in parameter_options.items() -%}

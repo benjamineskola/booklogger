@@ -28,11 +28,11 @@
       {% endif %}
       {% set qs = '?' + q|urlencode %}
       Formats: <a href="{{ url(request.resolver_match.view_name, args=[author.slug]) }}{{ qs }}">all</a>
-      {% for f in ['ebook', 'paperback', 'hardback', 'web', 'physical'] %}
+      {%- for f in ['ebook', 'paperback', 'hardback', 'web', 'physical'] %}
         {% set _ = q.__setitem__('format', f) %}
-        {% set qs = '?' + q|urlencode %}
+        {% set qs = '?' + q|urlencode -%}
         , <a href="{{ url(request.resolver_match.view_name, args=[author.slug]) }}{{ qs }}">{{ f | lower }}</a>
-      {% endfor %}
+      {%- endfor %}
       <br>
       {{ filter_list('Subject', 'tags', {'fiction': 'fiction', 'non-fiction': 'non-fiction'}) }}
       <br>
