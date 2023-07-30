@@ -910,7 +910,9 @@ class Tag(TimestampedModel):
         return reduce(
             operator.or_,
             [
-                Tag.objects.filter(name__in=[tag.name for tag in book.tags.all()])
+                Tag.objects.filter(
+                    name__in=[tag.name for tag in book.tags.all() if tag != self]
+                )
                 for book in self.books.all()
             ],
             Tag.objects.none(),
