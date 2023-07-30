@@ -32,6 +32,13 @@ function TagBook(): Record<string, Function> {
           template.innerHTML = `<span class="badge bg-secondary"><a href="/tag/${tag}">${tag}</a></span> `;
           tagsField.prepend(template.content);
         }
+
+        for (const [_, tag] of Object.entries(tagsField.children)) {
+          if (tag.textContent && tag.textContent.trim() === 'untagged') {
+            tag.remove();
+            break;
+          }
+        }
       }
       if (inputField !== null) {
         inputField.value = '';
