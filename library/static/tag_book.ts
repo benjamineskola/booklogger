@@ -43,7 +43,7 @@ function TagBook(): Record<string, Function> {
       if (inputField !== null) {
         inputField.value = '';
       }
-      this.style.display = 'none';
+      this.classList.remove('show');
     }
 
     return response;
