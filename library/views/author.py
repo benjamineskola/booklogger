@@ -22,6 +22,10 @@ class DetailView(generic.DetailView[Author]):
                 [True, False] if self.request.user.is_authenticated else [False]
             )
         )
+        context["books"] = context["books"].filter_by_request(self.request)
+
+        if edition_format := self.request.GET.get("format"):
+            context["books"] = context["books"].filter_by_format(edition_format)
 
         return context
 
