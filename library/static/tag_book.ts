@@ -1,28 +1,41 @@
-function TagBook(): any {
-  async function addTag(this: HTMLFormElement, event: Event): Promise<any> {
+function TagBook(): Record<string, Function> {
+  async function addTag(
+    this: HTMLFormElement,
+    event: Event
+  ): Promise<Response | null> {
     event.preventDefault();
-    const url = this.getAttribute('action')!;
+    const url = this.getAttribute('action');
+
+    if (url === null) {
+      return null;
+    }
 
     const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
-      body: new URLSearchParams(new FormData(this) as any).toString()
+      body: new URLSearchParams(
+        new FormData(this) as unknown as URLSearchParams
+      ).toString()
     });
 
     if (response.ok) {
-      const tagsField = this.closest('.tags')!;
-      const inputField: HTMLInputElement =
-        this.querySelector('input[name="tags"]')!;
+      const tagsField = this.closest('.tags');
+      const inputField: HTMLInputElement | null =
+        this.querySelector('input[name="tags"]');
       const data = await response.json();
 
-      for (const [_, tag] of Object.entries(data.tags)) {
-        const template = document.createElement('template');
-        template.innerHTML = `<span class="badge bg-secondary"><a href="/tag/${tag}">${tag}</a></span> `;
-        tagsField.prepend(template.content);
+      if (tagsField !== null) {
+        for (const [_, tag] of Object.entries(data.tags)) {
+          const template = document.createElement('template');
+          template.innerHTML = `<span class="badge bg-secondary"><a href="/tag/${tag}">${tag}</a></span> `;
+          tagsField.prepend(template.content);
+        }
       }
-      inputField.value = '';
+      if (inputField !== null) {
+        inputField.value = '';
+      }
       this.style.display = 'none';
     }
 
@@ -43,16 +56,25 @@ function TagBook(): any {
     });
   }
 
-  async function removeTag(this: HTMLElement): Promise<any> {
-    const tag = this.dataset.tag!;
-    const label = this.parentElement!;
-    const book = label.parentElement!.dataset.book!;
-    const token: HTMLInputElement = document.querySelector(
+  async function removeTag(this: HTMLElement): Promise<Response | null> {
+    const tag = this.dataset.tag;
+    const label = this.parentElement;
+
+    if (tag === null || label === null || label.parentElement === null) {
+      return null;
+    }
+
+    const book = label.parentElement.dataset.book;
+    const token: HTMLInputElement | null = document.querySelector(
       '[name=csrfmiddlewaretoken]'
-    )!;
+    );
+
+    if (book === undefined || token === null) {
+      return null;
+    }
 
     if (!confirm(`Remove tag ${tag}?`)) {
-      return;
+      return null;
     }
 
     const response = await fetch(`/book/${book}/remove_tags/`, {
