@@ -18,7 +18,7 @@ class LogEntryQuerySet(models.QuerySet["LogEntry"]):
             | Q(book__additional_authors__gender__in=genders)
         )
 
-    def filter_by_request(self, request: Any) -> "LogEntryQuerySet":
+    def filter_by_request(self, request: Any) -> "LogEntryQuerySet":  # noqa: C901
         qs = self
         if gender := request.GET.get("gender"):
             if gender.lower() == "multiple":
@@ -37,10 +37,11 @@ class LogEntryQuerySet(models.QuerySet["LogEntry"]):
             qs = qs.filter(
                 Q(book__first_author__poc=val) | Q(book__additional_authors__poc=val)
             )
-        if tags := request.GET.get("tags"):
-            qs = qs.filter(
-                book__tags__name=[tag.strip() for tag in tags.lower().split(",")]
-            )
+        if tags := request.GET.get("tags", "").lower().split(","):
+            tags = [stripped for tag in tags if (stripped := tag.strip())]
+            for tag in tags:
+                qs = qs.filter(book__tags__name__in=[tag])
+
         if owned := request.GET.get("owned"):
             try:
                 val = not str2bool(owned)
