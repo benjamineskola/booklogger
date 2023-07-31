@@ -1,10 +1,10 @@
-function StatsLoader(): any {
-  async function loadStatsForYear(element: HTMLElement): Promise<void> {
-    const year: string = element.dataset.year!;
+function StatsLoader() {
+  async function loadStatsForYear(element) {
+    const year = element.dataset.year;
 
     const response = await fetch(`/stats/${year}`);
     if (response.ok) {
-      const spinner: HTMLElement = element.querySelector('.spinner-grow')!;
+      const spinner = element.querySelector('.spinner-grow');
       spinner.style.display = '';
       element.innerHTML = await response.text();
     } else {
@@ -29,9 +29,9 @@ function StatsLoader(): any {
     }
   }
 
-  function init(): any {
+  function init() {
     document.querySelectorAll('div.stats-for-year').forEach((el) => {
-      void loadStatsForYear(el as HTMLElement);
+      void loadStatsForYear(el);
     });
   }
 

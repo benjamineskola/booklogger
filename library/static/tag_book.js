@@ -1,8 +1,5 @@
-function TagBook(): Record<string, Function> {
-  async function addTag(
-    this: HTMLFormElement,
-    event: Event
-  ): Promise<Response | null> {
+function TagBook() {
+  async function addTag(event) {
     event.preventDefault();
     const url = this.getAttribute('action');
 
@@ -15,15 +12,12 @@ function TagBook(): Record<string, Function> {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       },
-      body: new URLSearchParams(
-        new FormData(this) as unknown as URLSearchParams
-      ).toString()
+      body: new URLSearchParams(new FormData(this)).toString()
     });
 
     if (response.ok) {
       const tagsField = this.closest('.tags');
-      const inputField: HTMLInputElement | null =
-        this.querySelector('input[name="tags"]');
+      const inputField = this.querySelector('input[name="tags"]');
       const data = await response.json();
 
       if (tagsField !== null) {
@@ -49,21 +43,21 @@ function TagBook(): Record<string, Function> {
     return response;
   }
 
-  function init(body: HTMLElement): void {
+  function init(body) {
     body.querySelectorAll('a.remove-tag').forEach((el) => {
       el.addEventListener('click', () => {
-        void removeTag.call(el as HTMLElement);
+        void removeTag.call(el);
       });
     });
 
     body.querySelectorAll('form.add-tag').forEach((el) => {
       el.addEventListener('submit', (ev) => {
-        void addTag.call(el as HTMLFormElement, ev);
+        void addTag.call(el, ev);
       });
     });
   }
 
-  async function removeTag(this: HTMLElement): Promise<Response | null> {
+  async function removeTag() {
     const tag = this.dataset.tag;
     const label = this.parentElement;
 
@@ -72,9 +66,7 @@ function TagBook(): Record<string, Function> {
     }
 
     const book = label.parentElement.dataset.book;
-    const token: HTMLInputElement | null = document.querySelector(
-      '[name=csrfmiddlewaretoken]'
-    );
+    const token = document.querySelector('[name=csrfmiddlewaretoken]');
 
     if (book === undefined || token === null) {
       return null;

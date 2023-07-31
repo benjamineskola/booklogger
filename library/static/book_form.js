@@ -1,15 +1,15 @@
-function BookForm(): object {
-  function init(): void {
+function BookForm() {
+  function init() {
     document
       ?.querySelector('#card-bookauthor_set .card-footer a')
       ?.addEventListener('click', (ev) => {
-        addAuthorField(ev, (document as any).bookauthor_formset_template);
+        addAuthorField(ev, document.bookauthor_formset_template);
       });
 
     document
       ?.querySelector('#card-readinglistentry_set .card-footer a')
       ?.addEventListener('click', (ev) => {
-        addListEntryField(ev, (document as any).listentry_formset_template);
+        addListEntryField(ev, document.listentry_formset_template);
       });
 
     for (const elementId of ['acquired', 'alienated', 'ebook_acquired']) {
@@ -32,31 +32,31 @@ function BookForm(): object {
     for (const selector of ['bookauthor', 'logentry', 'readinglistentry']) {
       const input = document.querySelector(
         `#card-${selector}_set .form-check-input`
-      )!;
-      input.addEventListener('click', function (event: Event) {
-        (input.closest('.form-inline') as HTMLElement).style.display = 'none';
+      );
+      input.addEventListener('click', function (event) {
+        input.closest('.form-inline').style.display = 'none';
       });
     }
 
-    if ((document as any).formTags !== null) {
-      const el: HTMLInputElement = document.querySelector('#id_tags')!;
-      el.value = (document as any).formTags;
+    if (document.formTags !== null) {
+      const el = document.querySelector('#id_tags');
+      el.value = document.formTags;
       el.dispatchEvent(new Event('change', { bubbles: true }));
     }
   }
 
-  function addAuthorField(event: Event, template: string): void {
+  function addAuthorField(event, template) {
     event.preventDefault();
 
-    const parent = document.querySelector('#formset-bookauthor_set')!;
-    const totalForms: HTMLInputElement = document.querySelector(
+    const parent = document.querySelector('#formset-bookauthor_set');
+    const totalForms = document.querySelector(
       'input[name="bookauthor_set-TOTAL_FORMS"]'
-    )!;
-    const index: string = totalForms?.value;
+    );
+    const index = totalForms?.value;
 
     const inlineForm = createElements('<div class="form-inline"></div>');
     const selectForm = createElements(template.replace(/__prefix__/g, index));
-    const selectField: HTMLSelectElement = selectForm.querySelector('select')!;
+    const selectField = selectForm.querySelector('select');
 
     const authorFormGroup = createElements('<div class="form-group"></div>');
     authorFormGroup.append(
@@ -89,26 +89,26 @@ function BookForm(): object {
     totalForms.value = String(parseInt(index) + 1);
 
     $(selectField).select2({ theme: 'bootstrap', tags: true });
-    const checkbox = inlineForm.querySelector('.form-check-input')!;
+    const checkbox = inlineForm.querySelector('.form-check-input');
     checkbox.addEventListener('click', function (event) {
-      const form: HTMLElement = checkbox.closest('.form-inline')!;
+      const form = checkbox.closest('.form-inline');
       form.style.display = 'none';
     });
   }
 
-  function addListEntryField(event: Event, template: string) {
+  function addListEntryField(event, template) {
     event.preventDefault();
 
-    const parent = document.querySelector('#formset-readinglistentry_set')!;
-    const totalForms: HTMLInputElement = document.querySelector(
+    const parent = document.querySelector('#formset-readinglistentry_set');
+    const totalForms = document.querySelector(
       'input[name="readinglistentry_set-TOTAL_FORMS"]'
-    )!;
+    );
     const index = totalForms.value;
 
     const inlineForm = createElements('<div class="form-inline"></div>');
 
     const selectForm = createElements(template.replace(/__prefix__/g, index));
-    const selectField: HTMLSelectElement = selectForm.querySelector('select')!;
+    const selectField = selectForm.querySelector('select');
 
     const authorFormGroup = createElements('<div class="form-group"></div>');
     authorFormGroup.append(
@@ -134,14 +134,14 @@ function BookForm(): object {
     totalForms.value = index + 1;
 
     $(selectField).select2({ theme: 'bootstrap' });
-    const checkbox = inlineForm.querySelector('.form-check-input')!;
+    const checkbox = inlineForm.querySelector('.form-check-input');
     checkbox.addEventListener('click', function (event) {
-      const form: HTMLElement = checkbox.closest('.form-inline')!;
+      const form = checkbox.closest('.form-inline');
       form.style.display = 'none';
     });
   }
 
-  function addSetDateTodayButton(elementId: string): void {
+  function addSetDateTodayButton(elementId) {
     const template = document.createElement('template');
     template.innerHTML = `<a href="#" id="${elementId}_date_set_today">Set to today</a>`;
 
@@ -156,7 +156,7 @@ function BookForm(): object {
       });
   }
 
-  function configureDateFields(fieldName: string): void {
+  function configureDateFields(fieldName) {
     $(`#id_${fieldName}_day`).select2({ theme: 'bootstrap', width: '5em' });
     $(`#id_${fieldName}_month`).select2({ theme: 'bootstrap', width: '9em' });
     $(`#id_${fieldName}_year`).select2({
@@ -174,7 +174,7 @@ function BookForm(): object {
       });
   }
 
-  function configureSelectFields(): void {
+  function configureSelectFields() {
     $('select').select2({ theme: 'bootstrap' });
     $(
       '#id_first_author, #id_publisher, #id_series, #formset-bookauthor_set select'
@@ -189,46 +189,40 @@ function BookForm(): object {
     });
   }
 
-  function createElements(html: string): HTMLElement {
+  function createElements(html) {
     const template = document.createElement('template');
     template.innerHTML = html.trim();
-    return template.content.children[0] as HTMLElement;
+    return template.content.children[0];
   }
 
-  function isbnFieldPasteFilter(selector: string): void {
-    const element: HTMLInputElement = document.querySelector(selector)!;
-    element.addEventListener('paste', function (ev: ClipboardEvent) {
+  function isbnFieldPasteFilter(selector) {
+    const element = document.querySelector(selector);
+    element.addEventListener('paste', function (ev) {
       ev.preventDefault();
       const pastedText = ev.clipboardData?.getData('text/plain');
       this.value = pastedText?.replace(/\D/g, '') ?? '';
     });
 
-    element.addEventListener('input', function (ev: Event) {
+    element.addEventListener('input', function (ev) {
       ev.preventDefault();
       this.value = this.value.replace(/\D/g, '');
     });
   }
 
-  function setDateToday(event: Event, elementId: string): void {
+  function setDateToday(event, elementId) {
     event.preventDefault();
 
     const date = new Date();
 
-    const monthField: HTMLInputElement = document.querySelector(
-      `#id_${elementId}_date_month`
-    )!;
+    const monthField = document.querySelector(`#id_${elementId}_date_month`);
     monthField.value = String(date.getMonth() + 1);
     monthField.dispatchEvent(new Event('change', { bubbles: true }));
 
-    const yearField: HTMLInputElement = document.querySelector(
-      `#id_${elementId}_date_year`
-    )!;
+    const yearField = document.querySelector(`#id_${elementId}_date_year`);
     yearField.value = String(date.getFullYear());
     yearField.dispatchEvent(new Event('change', { bubbles: true }));
 
-    const dayField: HTMLInputElement = document.querySelector(
-      `#id_${elementId}_date_day`
-    )!;
+    const dayField = document.querySelector(`#id_${elementId}_date_day`);
     dayField.value = String(date.getDate());
     dayField.dispatchEvent(new Event('change', { bubbles: true }));
   }
