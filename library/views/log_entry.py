@@ -5,6 +5,7 @@ from django.contrib.syndication.views import Feed
 from django.db.models import F
 from django.db.models.functions import Lower
 from django.http import HttpRequest
+from django.utils import timezone
 from django.utils.feedgenerator import Atom1Feed
 from django.views import generic
 
@@ -59,6 +60,7 @@ class GenericLogView(generic.ListView[LogEntry]):
         context["page_title"] = self.page_title
         context["year"] = self.kwargs.get("year")
         context["verbose"] = "verbose" in self.request.GET
+        context["current_year"] = timezone.now().year
         return context
 
 

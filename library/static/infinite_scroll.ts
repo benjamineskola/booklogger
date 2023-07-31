@@ -35,6 +35,12 @@ function InfiniteScroll(): any {
         }
         const nextUrl = url.replace(year, String(nextYear));
         void loadNextPage(nextYear, nextUrl);
+      } else {
+        // any left-behind loaders
+        const ps = document.querySelectorAll('.loader');
+        for (const [_, p] of Object.entries(ps)) {
+          p.remove();
+        }
       }
     } else {
       (
