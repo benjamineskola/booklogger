@@ -51,6 +51,8 @@ class BaseBookManager(models.Manager["Book"]):
                 author_name__like=sql_pattern,
             )
         )
+        for word in words:
+            query |= Q(tags__name__in=[word])
 
         # in order to query both title and subtitle together
         books = Book.objects.annotate(
