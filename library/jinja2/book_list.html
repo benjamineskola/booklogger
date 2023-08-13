@@ -44,7 +44,9 @@
         {% for tag in tags %}
           {% set scope.parents = scope.parents.union(tag.parents_recursive) %}
           {% set scope.children = scope.children.union(tag.children_recursive) %}
-          {% set scope.related = scope.related.union(tag.related) %}
+          {% if tag.name not in ['fiction', 'non-fiction'] %}
+            {% set scope.related = scope.related.union(tag.related) %}
+          {% endif %}
         {% endfor %}
         {% if scope.parents %}
           Parent tags:
