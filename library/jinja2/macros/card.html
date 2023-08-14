@@ -44,8 +44,7 @@
             {% if book.edition_number and book.edition_number > 1 %}{{ book.edition_number | ordinal }} edn.&#x20;{% endif %}
             {% if book.publisher %}{{ book.publisher }}.&#x20;{% endif %}
             {% if book.page_count and book.page_count > 0 %}{{ book.page_count }} pages.{% endif %}
-            <span class="rating"
-                  style="display: inline-block"
+            <span class="rating inline-block"
                   data-rating="{{ book.rating }}"
                   data-max-rating="5"
                   data-book="{{ book.slug }}">
@@ -163,11 +162,11 @@
           {% endif %}
           <div class="progress">
             <div class="progress-bar"
-                 role="progressbar"
-                 style="width: {{ entry.progress_percentage }}%"
-                 aria-valuenow="{{ entry.progress }}"
-                 aria-valuemin="0"
-                 aria-valuemax="100"></div>
+              role="progressbar"
+              {# djlint:off #} style="width: {{ entry.progress_percentage }}%" {# djlint:on #}
+              aria-valuenow="{{ entry.progress }}"
+              aria-valuemin="0"
+              aria-valuemax="100"></div>
           </div>
         {% endif %}
       {% endif %}
