@@ -7,9 +7,7 @@
             action="{{ url('library:book_update_progress', args=[book.slug]) }}"
             method="post">
         <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-        <input style="max-width: 4em;
-                      display: inline-block"
-               class="form-control mr-sm-2"
+        <input class="form-control mr-sm-2 4chars inline-block"
                type="text"
                name="value"
                placeholder="#" />
@@ -40,8 +38,7 @@
       </form>
     </div>
   {% else %}
-    <form style="display: inline-block"
-          class="mb-2"
+    <form class="mb-2 inline-block"
           action="{{ url('library:book_start_reading', args=[book.slug]) }}"
           method="post">
       <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
@@ -49,8 +46,7 @@
     </form>
   {% endif %}
   {% if not book.owned and not book.owned_by_sara %}
-    <form style="display: inline-block"
-          class="mb-2"
+    <form class="mb-2 inline-block"
           action="{{ url('library:book_mark_owned', args=[book.slug]) }}"
           method="post">
       <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
@@ -58,8 +54,7 @@
     </form>
   {% endif %}
   {% if not book.read and not book.currently_reading %}
-    <form style="display: inline-block"
-          class="mb-2"
+    <form class="mb-2 inline-block"
           action="{{ url('library:book_mark_read_sometime', args=[book.slug]) }}"
           method="post">
       <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">

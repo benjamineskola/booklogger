@@ -126,3 +126,11 @@ a.fas:visited {
 .loader {
   margin-top: 2rem;
 }
+
+input.4chars {
+  max-width: 4em;
+}
+
+.inline-block {
+  display: inline-block;
+}
