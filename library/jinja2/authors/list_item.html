@@ -3,11 +3,11 @@
   <span class="header">{{ author_link(author) }}</span>
   <span class="meta">
     {%- if author.authored_books.count() > 0 -%}
-      Author of {{ author.authored_books.first() .display_title }}
+      Author of {{ author.authored_books.first().display_title }}
     {%- elif author.edited_books.count() > 0 -%}
-      Editor of {{ author.edited_books.first() .display_title }}
+      Editor of {{ author.edited_books.first().display_title }}
     {%- else -%}
-      Contributor to {{ author.books.first() .display_title }}
+      Contributor to {{ author.books.first().display_title }}
     {%- endif %}
     {%- if author.books.count() > 1 %}
       and {{ author.books.count() -1 }} other

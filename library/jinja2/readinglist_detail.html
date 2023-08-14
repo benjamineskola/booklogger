@@ -6,7 +6,7 @@
   {% set to_read_owned_count = object.books.owned().filter(want_to_read=True).count() %}
   <p>
     {{ object.books.count() }} books,
-    {{ object.books.read() .count() }} read,
+    {{ object.books.read().count() }} read,
     {{ to_read_count }} to read.
     (I own {{ to_read_owned_count if to_read_count != to_read_owned_count else "all" }} of the to-read items.)
   </p>

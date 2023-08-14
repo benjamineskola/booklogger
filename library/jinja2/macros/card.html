@@ -79,7 +79,7 @@
                 {{ book_label("borrowed", url("library:books_borrowed") , True) }}
               {% endif %}
               {% if book.edition_format and (book.owned_by or book.was_borrowed or book.currently_reading) %}
-                {{ book_label(book.get_edition_format_display() .lower(), url("library:books_owned", kwargs={"format": book.get_edition_format_display().lower()}), True) }}
+                {{ book_label(book.get_edition_format_display().lower(), url("library:books_owned", kwargs={"format": book.get_edition_format_display().lower()}), True) }}
                 {% if book.get_edition_format_display().lower() != "ebook" and book.has_ebook_edition %}
                   {{ book_label("ebook", url("library:books_owned", kwargs={"format": "ebook"}) , True) }}
                 {% endif %}
