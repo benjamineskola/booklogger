@@ -19,7 +19,7 @@
   {% else %}
     a
   {% endif %}
-  {{ book.get_edition_format_display() .lower() }} edition
+  {{ book.get_edition_format_display().lower() }} edition
   {%- if book.was_borrowed %} from {{ book.borrowed_from }}
   {% endif -%}
   {%- if book.acquired_date or book.alienated_date %} which I
@@ -79,7 +79,7 @@
             {%- if book.first_published %}in {{ book.first_published }}{%- endif %}.
               {% if (not book.is_first_edition) or book.publisher or book.publisher_url or (not book.has_original_title) %}
                 This
-                {% if book.edition_format %}{{ book.get_edition_format_display() .lower() }}&#x20;{% endif %}
+                {% if book.edition_format %}{{ book.get_edition_format_display().lower() }}&#x20;{% endif %}
                 {% if book.edition_number %}{{ book.edition_number | ordinal }}&#x20;{% endif %}
                 {% if book.is_translated %}{{ book.get_edition_language_display() }}&#x20;{% endif %}
                 edition published

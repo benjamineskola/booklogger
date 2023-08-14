@@ -6,8 +6,8 @@
       <li>
         <a href="{{ item.get_absolute_url() }}">{{ item.title }}</a>
         ({{ item.books.count() }} books,
-        {{ item.books.read() .count() }} read,
-        {{ item.books.filter(want_to_read=True) .count() }} to read)
+        {{ item.books.read().count() }} read,
+        {{ item.books.filter(want_to_read=True).count() }} to read)
       </li>
     {% endfor %}
   </ul>
