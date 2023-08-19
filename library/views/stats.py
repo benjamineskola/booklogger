@@ -22,7 +22,30 @@ def stats_index(request: HttpRequest) -> HttpResponse:
     reread = owned.read().filter(want_to_read=True).count()
     unowned_read = books.unowned().read().count()
 
-    years = StatisticsReport.objects.exclude(year=0).values_list("year", flat=True)
+    current_year = timezone.now().year
+    current_day, year_days = calculate_year_progress(current_year)
+    current_week = (current_day // 7) + 1
+
+    all_time_average_pages = read_books.page_count / max(
+        1, read_books.exclude(page_count=0).count()
+    )
+    gender_labels = {
+        "1": "men",
+        "2": "women",
+        "3": "organisations",
+        "4": "non-binary people",
+    }
+
+    years = [
+        0,
+        *list(
+            StatisticsReport.objects.exclude(year=0)
+            .order_by("year")
+            .reverse()
+            .values_list("year", flat=True)
+        ),
+    ]
+    reports = [_get_stats_object(year, current_year) for year in years]
 
     return render(
         request,
@@ -37,7 +60,11 @@ def stats_index(request: HttpRequest) -> HttpResponse:
             "want_to_read_pct": want_to_read_count / owned_count * 100,
             "reread": reread,
             "reread_pct": reread / read_books.count() * 100,
-            "years": years,
+            "reports": reports,
+            "all_time_average_pages": all_time_average_pages,
+            "current_year": current_year,
+            "current_week": current_week,
+            "gender_labels": gender_labels,
         },
     )
 
@@ -73,57 +100,32 @@ def make_prediction(
     return prediction, target_counts
 
 
-def stats_for_year(request: HttpRequest, year: str) -> HttpResponse:
-    result: dict[str, Any] = {
-        "page_title": "Library Stats",
-        "year": 1 if year == "sometime" else 0 if year == "total" else int(year),
-        "current_week": 52,  # potentially overridden later
-        "current_year": timezone.now().year,
-        "result": {},
-    }
+def _get_stats_object(year: int, current_year: int) -> dict[str, Any]:
+    result: dict[str, Any] = list(StatisticsReport.objects.filter(year=year).values())[  # type: ignore[assignment]
+        0
+    ]
+    current_year = timezone.now().year
 
     log_entries = LogEntry.objects.filter(exclude_from_stats=False, abandoned=False)
-    if year != "total":
-        log_entries = log_entries.filter(end_date__year=result["year"])
-        result["result"]["acquired"] = Book.objects.filter(
-            acquired_date__year=year
-        ).count()
 
-    read_books = Book.objects.filter(id__in=log_entries.values_list("book", flat=True))
+    if year > 0:
+        result["acquired"] = Book.objects.filter(acquired_date__year=year).count()
+        log_entries = log_entries.filter(end_date__year=year)
 
-    if not is_authenticated(request):
-        read_books = read_books.filter(private=False)
+    result["longest"] = Book.objects.get(id=result["longest_id"])
+    result["shortest"] = Book.objects.get(id=result["shortest_id"])
 
-    result["report"], _ = StatisticsReport.objects.get_or_create(year=result["year"])
-
-    if year == str(result["current_year"]):
+    if year == current_year:
         result["prediction"], result["target_counts"] = make_prediction(
-            result["current_year"], log_entries
+            current_year, log_entries
         )
 
-        current_day, year_days = calculate_year_progress(result["current_year"])
-        result["current_week"] = (current_day // 7) + 1
-        result["pages_per_day"] = result["report"].page_count / current_day
+        current_day, year_days = calculate_year_progress(current_year)
+        result["pages_per_day"] = result["page_count"] / current_day
         result["predicted_pages"] = result["pages_per_day"] * year_days
-
-    elif year not in ("total", "sometime"):
-        result["pages_per_day"] = result["report"].page_count / (
+    elif year > 1:
+        result["pages_per_day"] = result["page_count"] / (
             366 if int(year) % 4 == 0 else 365
         )  # technically incorrect but valid until AD 2100.
 
-    result["all_time_average_pages"] = Book.objects.read().page_count / max(
-        1, Book.objects.read().exclude(page_count=0).count()
-    )
-
-    result["gender_labels"] = {
-        "1": "men",
-        "2": "women",
-        "3": "organisations",
-        "4": "non-binary people",
-    }
-
-    return render(
-        request,
-        "stats_for_year.html",
-        result,
-    )
+    return result

@@ -185,7 +185,6 @@ urlpatterns = [
         name="publisher_details",
     ),
     path("stats/", views.stats.stats_index, name="stats"),
-    path("stats/<str:year>/", views.stats.stats_for_year, name="stats_for_year"),
     re_path(
         r"^(?P<query>tag/.+)/edit/?$",
         views.book.BulkEditView.as_view(),
