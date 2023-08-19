@@ -60,7 +60,7 @@ class BaseBookManager(models.Manager["Book"]):
             ),
             author_name=Lower(F("first_author__surname")),
         )
-        return books.filter(query)
+        return books.filter(query).distinct()
 
 
 class BookQuerySet(models.QuerySet["Book"]):
