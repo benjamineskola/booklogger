@@ -25,7 +25,9 @@ class TestReportView:
 
     @pytest.mark.parametrize("page", range(1, len(IndexView().categories)))
     def test_report_all_pages(self, page, admin_client, book, user):  # noqa: ARG002
-        book.tags.set((Tag.objects["non-fiction"], Tag.objects["history"]))
+        book.tags.set(
+            (Tag.objects.get(name="non-fiction"), Tag.objects.get(name="history"))
+        )
         resp = admin_client.get(f"/report/{page}/")
         assert resp.context_data["page_title"] != "Reports"
 
@@ -45,10 +47,12 @@ class TestReportView:
         base_tag.children.add(tag_factory(name="politics"))
 
         book1 = book_factory()
-        book1.tags.set((Tag.objects["history"],))
+        book1.tags.set((Tag.objects.get(name="history"),))
 
         book2 = book_factory()
-        book2.tags.set((Tag.objects["history"], Tag.objects["politics"]))
+        book2.tags.set(
+            (Tag.objects.get(name="history"), Tag.objects.get(name="politics"))
+        )
 
         resp = admin_client.get("/report/tags/")
 
@@ -64,9 +68,11 @@ class TestReportView:
         base_tag.children.add(tag_factory(name="philosophy"))
 
         book1 = book_factory()
-        book1.tags.set((Tag.objects["history"], Tag.objects["politics"]))
+        book1.tags.set(
+            (Tag.objects.get(name="history"), Tag.objects.get(name="politics"))
+        )
         book2 = book_factory()
-        book2.tags.set((Tag.objects["philosophy"],))
+        book2.tags.set((Tag.objects.get(name="philosophy"),))
 
         resp = admin_client.get("/report/tags/related/")
         results = resp.context_data["results"]

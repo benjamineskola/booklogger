@@ -15,8 +15,8 @@ class TestStats:
             book_factory(page_count=75),
             book_factory(page_count=125),
         ]
-        books[2].tags.add(Tag.objects["fiction"])
-        books[3].tags.add(Tag.objects["non-fiction"])
+        books[2].tags.add(Tag.objects.get(name="fiction"))
+        books[3].tags.add(Tag.objects.get(name="non-fiction"))
 
         for book in books:
             book.start_reading()

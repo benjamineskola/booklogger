@@ -114,7 +114,9 @@ class IndexView(generic.ListView[Book]):
 
         if tags := self.request.GET.get("tags"):
             context["tags"] = [
-                Tag.objects[tag] for tag in tags.split(",") if tag != "untagged"
+                Tag.objects.get(name=tag)
+                for tag in tags.split(",")
+                if tag != "untagged"
             ]
 
         if "page_title" in self.kwargs:
@@ -208,13 +210,13 @@ class TagIndexView(IndexView):
             tag = get_object_or_404(Tag, name=tags[0][0:-1])
             return tag.books_uniquely_tagged
         for tag_name in tags:
-            books &= Tag.objects[tag_name].books_recursive
+            books &= Tag.objects.get(name=tag_name).books_recursive
         return books
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["tags"] = [
-            Tag.objects[tag.strip("!")]
+            Tag.objects.get(name=tag.strip("!"))
             for tag in self.kwargs["tag_name"].split(",")
             if tag != "untagged"
         ]
@@ -305,7 +307,7 @@ def add_tags(request: HttpRequest, slug: str) -> HttpResponse:
     if tags:
         start_tags = [tag.name for tag in book.tags.all()]
         for tag in tags:
-            book.tags.add(Tag.objects[tag])
+            book.tags.add(Tag.objects.get(name=tag))
         book.save()
         tags = sorted({tag.name for tag in book.tags.all()}.difference(start_tags))
 
@@ -318,7 +320,7 @@ def remove_tags(request: HttpRequest, slug: str) -> HttpResponse:
     book = get_object_or_404(Book, slug=slug)
     tags = request.POST.get("tags", "").split(",")
     for tag in tags:
-        book.tags.remove(Tag.objects[tag])
+        book.tags.remove(Tag.objects.get(name=tag))
     book.save()
 
     return redirect("library:book_details", slug=slug)

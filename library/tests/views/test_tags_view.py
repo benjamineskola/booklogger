@@ -12,11 +12,13 @@ class TestTag:
         base_tag.children.add(tag_factory(name="philosophy"))
 
         book1 = book_factory()
-        book1.tags.set((Tag.objects["history"], Tag.objects["politics"]))
+        book1.tags.set(
+            (Tag.objects.get(name="history"), Tag.objects.get(name="politics"))
+        )
         book2 = book_factory()
-        book2.tags.set((Tag.objects["history"],))
+        book2.tags.set((Tag.objects.get(name="history"),))
         book3 = book_factory()
-        book3.tags.set((Tag.objects["philosophy"],))
+        book3.tags.set((Tag.objects.get(name="philosophy"),))
 
         resp = client.get("/tags/")
         tags = resp.context_data["tags"]

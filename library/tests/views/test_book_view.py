@@ -81,7 +81,7 @@ class TestBook:
     @pytest.mark.parametrize("tag", ["fiction", "non-fiction"])
     @pytest.mark.parametrize("view_tag", ["fiction", "non-fiction"])
     def test_tag_filters(self, client, book, tag, view_tag):
-        book.tags.add(Tag.objects[tag])
+        book.tags.add(Tag.objects.get(name=tag))
 
         resp = client.get("/books/", {"tags": view_tag})
         if tag == view_tag:
@@ -132,8 +132,8 @@ class TestBook:
         admin_client.post(f"{book.get_absolute_url()}add_tags/", {"tags": "foo,bar"})
         book.refresh_from_db()
 
-        assert Tag.objects["foo"] in book.tags.all()
-        assert Tag.objects["bar"] in book.tags.all()
+        assert Tag.objects.get(name="foo") in book.tags.all()
+        assert Tag.objects.get(name="bar") in book.tags.all()
         assert book.tags.count() == 2
 
     def test_add_tags_noop(self, admin_client, book, tag_factory):
@@ -149,7 +149,7 @@ class TestBook:
         book.tags.set((tag_factory(name="foo"), tag_factory(name="bar")))
         admin_client.post(f"{book.get_absolute_url()}remove_tags/", {"tags": "foo"})
         book.refresh_from_db()
-        assert Tag.objects["foo"] not in book.tags.all()
+        assert Tag.objects.get(name="foo") not in book.tags.all()
 
     def test_mark_owned(self, admin_client, book, user):  # noqa: ARG002
         admin_client.post(f"{book.get_absolute_url()}mark_owned/")

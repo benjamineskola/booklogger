@@ -150,7 +150,7 @@ class IndexView(LoginRequiredMixin, generic.ListView[Book]):
             ),
             (
                 "History without sufficient tags",
-                lambda: Tag.objects["history"].books_uniquely_tagged,
+                lambda: Tag.objects.get(name="history").books_uniquely_tagged,
             ),
             (
                 "ASIN set for non-ebook",

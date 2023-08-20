@@ -87,7 +87,7 @@ class BookQuerySet(models.QuerySet["Book"]):
     def tagged(self, *tag_names: str) -> "BookQuerySet":
         qs = self.distinct()
         for tag_name in tag_names:
-            qs &= Tag.objects[tag_name].books_recursive.distinct()
+            qs &= Tag.objects.get(name=tag_name).books_recursive.distinct()
         return qs
 
     def fiction(self) -> "BookQuerySet":
@@ -815,7 +815,7 @@ class BookAuthor(TimestampedModel):
 
 
 class TagManager(models.Manager["Tag"]):
-    def __getitem__(self, name: str) -> "Tag":
+    def get(self, name: str) -> "Tag":
         tag, _ = Tag.objects.get_or_create(name=name.lower())
         return tag
 

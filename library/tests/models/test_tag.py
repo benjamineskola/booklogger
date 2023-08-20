@@ -69,8 +69,8 @@ class TestTag:
 
     def test_tags_case_insensitive(self, book_factory):
         book1 = book_factory()
-        book1.tags.add(Tag.objects["foo"])
+        book1.tags.add(Tag.objects.get(name="foo"))
         book2 = book_factory()
-        book2.tags.add(Tag.objects["Foo"])
+        book2.tags.add(Tag.objects.get(name="Foo"))
 
-        assert Tag.objects["foo"] == Tag.objects["Foo"]
+        assert Tag.objects.get(name="foo") == Tag.objects.get(name="Foo")
