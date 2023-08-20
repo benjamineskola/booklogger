@@ -93,23 +93,21 @@ class LogEntry(TimestampedModel):
         return text
 
     def to_json(self) -> dict[str, Any]:
-        return dict(
-            {
-                k: v
-                for k in [
-                    "start_date",
-                    "end_date",
-                    "start_precision",
-                    "end_precision",
-                    "progress_percentage",
-                    "progress_page",
-                    "progress_date",
-                    "exclude_from_stats",
-                    "abandoned",
-                ]
-                if (v := getattr(self, k))
-            }
-        )
+        return {
+            k: v
+            for k in [
+                "start_date",
+                "end_date",
+                "start_precision",
+                "end_precision",
+                "progress_percentage",
+                "progress_page",
+                "progress_date",
+                "exclude_from_stats",
+                "abandoned",
+            ]
+            if (v := getattr(self, k))
+        }
 
     @property
     def currently_reading(self) -> bool:

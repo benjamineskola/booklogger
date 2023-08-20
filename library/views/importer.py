@@ -151,7 +151,7 @@ def bulk_import(request: HttpRequest) -> HttpResponse:
 def _verso_bulk_import(line: str) -> dict[str, Any] | None:
     title, _, isbn = line.rsplit(", ", 2)
     _, title = title.strip().split(" ", 1)
-    title, *author_names = re.split(r" (?:Edited )*?by ", title, 1)
+    title, *author_names = re.split(r" (?:Edited )*?by ", title, maxsplit=1)
     if author_names:
         authors = flatten(author.split(" and ") for author in author_names)
 

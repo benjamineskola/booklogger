@@ -101,9 +101,9 @@ def make_prediction(
 
 
 def _get_stats_object(year: int, current_year: int) -> dict[str, Any]:
-    result: dict[str, Any] = list(StatisticsReport.objects.filter(year=year).values())[  # type: ignore[assignment]
-        0
-    ]
+    result: dict[str, Any] = next(
+        iter(StatisticsReport.objects.filter(year=year).values())  # type: ignore[arg-type]
+    )
     current_year = timezone.now().year
 
     log_entries = LogEntry.objects.filter(exclude_from_stats=False, abandoned=False)

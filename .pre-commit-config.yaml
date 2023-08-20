@@ -9,7 +9,7 @@ repos:
       - id: requirements-txt-fixer
       - id: trailing-whitespace
   - repo: https://github.com/benjamineskola/pre-commit-hooks.git
-    rev: 2284f1b82f3b384d13aa985c1b2f5302463d43db
+    rev: af9758ce9c3d144b9fb589f8f35c1a52a3580efc
     hooks:
       - id: shellcheck
       - id: shfmt
@@ -40,7 +40,7 @@ repos:
         language: system
         types: [toml]
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.3.1
+    rev: v3.10.1
     hooks:
       - id: pyupgrade
         args: [--py311-plus]
@@ -49,11 +49,11 @@ repos:
     hooks:
       - id: isort
   - repo: https://github.com/psf/black
-    rev: 23.1.0
+    rev: 23.7.0
     hooks:
       - id: black
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: 'v0.0.259'
+    rev: 'v0.0.285'
     hooks:
       - id: ruff
   - repo: https://github.com/pre-commit/mirrors-mypy
@@ -78,7 +78,7 @@ repos:
             types-requests,
           ]
   - repo: https://github.com/benjamineskola/pre-commit-hooks.git
-    rev: 2284f1b82f3b384d13aa985c1b2f5302463d43db
+    rev: af9758ce9c3d144b9fb589f8f35c1a52a3580efc
     hooks:
       - id: pytest
         types: [python]

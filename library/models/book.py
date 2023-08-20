@@ -138,7 +138,7 @@ class BookQuerySet(models.QuerySet["Book"]):
             parent_edition__parent_edition__owned_by__isnull=True,
         )
 
-    def poc(self, is_poc: bool = True) -> "BookQuerySet":  # noqa: FBT
+    def poc(self, is_poc: bool = True) -> "BookQuerySet":  # noqa: FBT001, FBT002
         return self.filter(
             Q(first_author__poc=is_poc, first_author_role__in=["", "author", "editor"])
             | Q(
@@ -757,7 +757,9 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
             not self.edition_published
         ) or self.edition_published == self.first_published
 
-    def update(self, data: dict[str, str], force: bool = False) -> "Book":  # noqa: FBT
+    def update(
+        self, data: dict[str, str], force: bool = False  # noqa: FBT001, FBT002
+    ) -> "Book":
         needs_save = False
 
         for key, value in data.items():

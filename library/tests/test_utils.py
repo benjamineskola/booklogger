@@ -66,7 +66,6 @@ class TestUtils:
         ("test_input", "expected"),
         [
             ("0", False),
-            ("0", False),
             ("1", True),
             ("2", True),
             ("yes", True),

@@ -69,9 +69,12 @@ ignore = [
   "ANN401", # allow Any in kwargs
   "COM812", # seems to conflict with black
 
+  "FA102", # futures seem unnecessary for this
+
   "PLR2004", # TODO Magic value used in comparison
   "RUF001",  # TODO String contains ambiguous unicode character
   "TCH",     # TODO Move import into a type-checking block
+  "RUF012",  # TODO Mutable class attributes should be annotated with `typing.ClassVar`
 ]
 
 [tool.ruff.per-file-ignores]
