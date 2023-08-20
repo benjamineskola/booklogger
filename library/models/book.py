@@ -578,10 +578,6 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
             return str(self.edition_published)
         return str(self.first_published) if self.first_published else "n.d."
 
-    @property
-    def note_title(self) -> str:
-        return self.display_details.replace(":", ",")
-
     def add_author(
         self, author: "Author", role: str = "", order: int | None = None
     ) -> None:
