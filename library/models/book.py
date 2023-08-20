@@ -1,7 +1,6 @@
 import logging
 import operator
 import re
-from collections.abc import Sequence  # noqa: F401
 from functools import reduce
 from typing import TYPE_CHECKING, Any
 from urllib.parse import quote
