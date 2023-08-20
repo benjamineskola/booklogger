@@ -2,7 +2,6 @@ import logging
 import operator
 import re
 from collections.abc import Sequence  # noqa: F401
-from datetime import date
 from functools import reduce
 from typing import TYPE_CHECKING, Any
 from urllib.parse import quote
@@ -397,11 +396,6 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
         )
 
     @property
-    def created_date_date(self) -> date:
-        # for group-by
-        return self.created_date.date()
-
-    @property
     def currently_reading(self) -> bool:
         entries = self.log_entries.filter(end_date=None).order_by("-start_date")
         return bool(entries[0].currently_reading) if entries else False
@@ -512,11 +506,6 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
     @property
     def isbn10(self) -> str:
         return isbn_to_isbn10(self.isbn)
-
-    @property
-    def modified_date_date(self) -> date:
-        # for group-by
-        return self.modified_date.date()
 
     @property
     def owned(self) -> bool:
