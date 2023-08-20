@@ -1,7 +1,6 @@
 import logging
 import operator
 import re
-import time
 from collections.abc import Sequence  # noqa: F401
 from datetime import date
 from functools import reduce
@@ -63,40 +62,6 @@ class BaseBookManager(models.Manager["Book"]):
             author_name=Lower(F("first_author__surname")),
         )
         return books.filter(query)
-
-    def regenerate_all_slugs(self) -> None:
-        qs = self.get_queryset()
-        qs.update(slug="")
-        for book in qs:
-            book.regenerate_slug()
-
-    def update_all_from_google(self) -> None:
-        candidate_ids = list(
-            self.get_queryset()
-            .exclude(isbn="", google_books_id="")
-            .filter(
-                Q(publisher="")
-                | Q(page_count=0)
-                | Q(google_books_id="")
-                | Q(first_published=0)
-            )
-            .values_list("id", flat=True)
-        )
-        logger.warning("updating %s books", len(candidate_ids))
-
-        sleep_time = 1
-        while candidate_ids:
-            candidate_id = candidate_ids.pop(0)
-            candidate = Book.objects.get(pk=candidate_id)
-            if google.update(candidate):
-                sleep_time = 1
-                if (count := len(candidate_ids)) % 20 == 0:
-                    logger.warning("%s remaining", count)
-            else:
-                candidate_ids.append(candidate_id)
-                logger.warning("sleeping %s", sleep_time)
-                time.sleep(sleep_time)
-                sleep_time *= 2
 
 
 class BookQuerySet(models.QuerySet["Book"]):

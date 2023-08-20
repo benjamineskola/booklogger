@@ -38,12 +38,6 @@ class AuthorManager(models.Manager["Author"]):
         except self.model.DoesNotExist:
             return Author.objects.get_or_create(**Author.normalise_name(name))
 
-    def regenerate_all_slugs(self) -> None:
-        qs = self.get_queryset()
-        qs.update(slug="")
-        for author in qs:
-            author.regenerate_slug()
-
 
 class Author(TimestampedModel, SluggableModel):
     objects = AuthorManager()
