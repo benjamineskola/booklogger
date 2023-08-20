@@ -354,6 +354,213 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
 
     tags = models.ManyToManyField("Tag", related_name="books", blank=True)
 
+    # derived properties
+
+    @property
+    def authors(self) -> list[Author]:
+        additional_authors = list(
+            self.additional_authors.filter(
+                bookauthor__role=self.first_author_role
+            ).order_by("bookauthor__order")
+        )
+        if self.first_author:
+            return [self.first_author, *additional_authors]
+        return additional_authors
+
+    @property
+    def all_authors(self) -> list[Author]:
+        additional_authors = list(self.additional_authors.order_by("bookauthor__order"))
+        if self.first_author:
+            return [self.first_author, *additional_authors]
+        return additional_authors
+
+    @property
+    def all_authors_editors(self) -> bool:
+        return len(self.authors) > 1 and all(
+            author.is_editor_of(self) for author in self.all_authors
+        )
+
+    @property
+    def all_log_entries(self) -> "models.QuerySet[LogEntry]":
+        entries = self.log_entries.all()
+        for edition in self.alternate_editions.all():
+            entries |= edition.log_entries.all()
+        return entries
+
+    @property
+    def ancestor_editions(self) -> list["Book"]:
+        return (
+            [self.parent_edition, *self.parent_edition.ancestor_editions]
+            if self.parent_edition
+            else []
+        )
+
+    @property
+    def created_date_date(self) -> date:
+        # for group-by
+        return self.created_date.date()
+
+    @property
+    def currently_reading(self) -> bool:
+        entries = self.log_entries.filter(end_date=None).order_by("-start_date")
+        return bool(entries[0].currently_reading) if entries else False
+
+    @property
+    def display_date(self) -> str:
+        if (
+            self.edition_published
+            and self.first_published
+            and self.edition_published != self.first_published
+        ):
+            return f"[{self.first_published}] {self.edition_published}"
+        if self.edition_published:
+            return str(self.edition_published)
+        return str(self.first_published) if self.first_published else "n.d."
+
+    @property
+    def display_details(self) -> str:
+        result = ""
+
+        if self.first_author_role != "editor":
+            if len(self.authors) > 3:
+                result = str(self.first_author) + " and others"
+            else:
+                result = oxford_comma([str(author) for author in self.authors])
+
+            result += ", "
+
+        result += (
+            "_" + self.display_title.replace("_ ", r"\_ ").replace("*", r"\*") + "_"
+        )
+
+        if any(author.is_editor_of(self) for author in self.all_authors):
+            result += ", ed. by "
+            editors = [
+                str(author) for author in self.all_authors if author.is_editor_of(self)
+            ]
+
+            if len(editors) > 3:
+                result += str(editors[0]) + " and others"
+            else:
+                result += oxford_comma(editors)
+
+        if (
+            self.alternate_editions.count()
+            and self.edition_format
+            and self.edition_title
+            in self.alternate_editions.all().values_list("edition_title", flat=True)
+        ):
+            result += f", {self.get_edition_disambiguator()} edn."
+
+        if self.publisher or self.edition_published or self.first_published:
+            result += f" ({self.publisher + ', ' if self.publisher else ''}{self.edition_published or self.first_published})"
+
+        return result
+
+    @property
+    def display_series(self) -> str:
+        if not self.series:
+            return ""
+        if self.subeditions.count() > 1 and all(
+            book.series == self.series for book in self.subeditions.all()
+        ):
+            series_orders = sorted(book.series_order for book in self.subeditions.all())
+            return f"{self.series}, #{str(min(series_orders)).replace('.0', '')}–{str(max(series_orders)).replace('.0', '')}"
+
+        if self.series_order:
+            return f"{self.series}, #{str(self.series_order).replace('.0', '')}"
+        return self.series
+
+    @property
+    def display_title(self) -> str:
+        if self.edition_title:
+            return self.edition_title + (
+                f": {self.edition_subtitle}" if self.edition_subtitle else ""
+            )
+        return self.title + (": " + self.subtitle if self.subtitle else "")
+
+    @property
+    def ebook_url(self) -> str:
+        return f"https://amazon.co.uk/dp/{self.ebook_asin}" if self.ebook_asin else ""
+
+    @property
+    def has_full_authors(self) -> bool:
+        return len(self.authors) > 3 or self.authors != self.all_authors
+
+    @property
+    def has_original_title(self) -> bool:
+        return (not self.edition_title) or self.title == self.edition_title
+
+    @property
+    def is_first_edition(self) -> bool:
+        return (
+            not self.edition_published
+        ) or self.edition_published == self.first_published
+
+    @property
+    def is_translated(self) -> bool:
+        return (
+            self.edition_language is not None and self.edition_language != self.language
+        )
+
+    @property
+    def isbn10(self) -> str:
+        return isbn_to_isbn10(self.isbn)
+
+    @property
+    def modified_date_date(self) -> date:
+        # for group-by
+        return self.modified_date.date()
+
+    @property
+    def owned(self) -> bool:
+        return (
+            self.owned_by.username == "ben"
+            if self.owned_by is not None
+            else any(ancestor.owned for ancestor in self.ancestor_editions)
+        )
+
+    @property
+    def owned_by_sara(self) -> bool:
+        return (
+            self.owned_by.username == "sara"
+            if self.owned_by is not None
+            else any(ancestor.owned_by_sara for ancestor in self.ancestor_editions)
+        )
+
+    @property
+    def parent_owned(self) -> bool:
+        return (not self.owned_by) and any(
+            ancestor.owned for ancestor in self.ancestor_editions
+        )
+
+    @property
+    def read(self) -> bool:
+        if self.parent_edition and self.parent_edition.read:
+            return True
+
+        return (
+            self.log_entries.filter(end_date__isnull=False, abandoned=False).count() > 0
+        )
+
+    @property
+    def review_url(self) -> str:
+        if self.review.startswith("http://") or self.review.startswith("https://"):
+            return self.review.split()[0]
+        return ""
+
+    @property
+    def search_query(self) -> str:
+        return quote(
+            f"{self.edition_title or self.title} {self.first_author and self.first_author.surname}"
+        )
+
+    @property
+    def tags_list(self) -> set[str]:
+        return {tag.name for tag in self.tags.all()}
+
+    # methods
+
     def __str__(self) -> str:
         if not self.first_author or not self.display_title:
             return "<unknown>"
@@ -368,6 +575,116 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
         ):
             result += f" ({self.get_edition_disambiguator()} edition)"
         return result
+
+    def add_author(
+        self, author: "Author", role: str = "", order: int | None = None
+    ) -> None:
+        if author.id is not self.first_author_id and author not in self.authors:
+            if not self.first_author:
+                self.first_author = author
+                self.first_author_role = role
+                self.save()
+            else:
+                authorship = BookAuthor(
+                    book=self, author=author, role=role, order=order
+                )
+                authorship.save()
+
+    def finish_reading(self) -> None:
+        entry = self.log_entries.get(end_date=None)
+        self.update_progress(percentage=100, page=self.page_count)
+        entry.end_date = timezone.now()
+        entry.save()
+
+        if self.parent_edition:
+            sibling_editions = self.parent_edition.subeditions
+            if sibling_editions.count() == sibling_editions.read().count():
+                self.parent_edition.finish_reading()
+
+    def get_absolute_url(self) -> str:
+        return reverse("library:book_details", args=[self.slug])
+
+    def mark_owned(self) -> None:
+        self.owned_by = User.objects.get(username="ben")
+        self.acquired_date = timezone.now()
+        self.was_borrowed = False
+        self.borrowed_from = ""
+        self.save()
+
+    def mark_read_sometime(self) -> None:
+        self.log_entries.create(
+            start_date=None,
+            end_date=timezone.datetime(1, 1, 1),  # type: ignore[attr-defined]
+            end_precision=2,
+        )
+
+    def save(self, *args: Any, **kwargs: Any) -> None:
+        if "goodreads" in self.image_url or "amazon" in self.image_url:
+            self.image_url = re.sub(r"\._.+_\.jpg$", ".jpg", self.image_url)
+
+        if not self.rating:
+            self.rating = 0.0
+
+        self.title = smarten(self.title)
+        self.subtitle = smarten(self.subtitle)
+        self.series = smarten(self.series)
+        self.edition_title = smarten(self.edition_title)
+        self.edition_subtitle = smarten(self.edition_subtitle)
+
+        self.publisher = clean_publisher(self.publisher)
+
+        if self.acquired_date and not self.alienated_date and not self.owned_by:
+            self.owned_by = User.objects.get(username="ben")
+
+        orig_goodreads_id = self.goodreads_id
+        if self.id and (self.isbn or self.asin):
+            old = Book.objects.get(pk=self.id)
+            if self.isbn != old.isbn or self.asin != old.asin:
+                self.goodreads_id = ""
+
+        super().save(*args, **kwargs)
+
+        verso.update(self)
+        if any([self.asin, self.isbn, (self.title and self.first_author)]) and (
+            not all([self.first_published, self.goodreads_id, self.image_url])
+        ):
+            goodreads.update(self)
+            if orig_goodreads_id and not self.goodreads_id:
+                self.goodreads_id = orig_goodreads_id
+                super().save(*args, **kwargs)
+
+        if any([self.isbn, self.google_books_id]) and (
+            not all(
+                [
+                    self.google_books_id,
+                    self.publisher,
+                    self.page_count,
+                    self.first_published,
+                ]
+            )
+        ):
+            google.update(self)
+            verso.update(self)
+
+        self.save_other_editions()
+        self.subeditions.all().update(want_to_read=self.want_to_read)
+
+    def _slug_fields(self) -> list[str]:
+        fields = []
+        if self.first_author:
+            fields.append(self.first_author.surname)
+        title = self.display_title.split(":")[0]
+
+        title = remove_stopwords(title)
+
+        fields.append(title)
+        return fields
+
+    def start_reading(self) -> None:
+        if not self.log_entries.filter(end_date=None):
+            self.log_entries.create()
+            self.want_to_read = False
+            self.save()
 
     def to_json(self) -> dict[str, Any]:
         fields = [
@@ -452,127 +769,23 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
 
         return result
 
-    @property
-    def display_details(self) -> str:
-        result = ""
+    def update(
+        self, data: dict[str, str], force: bool = False  # noqa: FBT001, FBT002
+    ) -> "Book":
+        needs_save = False
 
-        if self.first_author_role != "editor":
-            if len(self.authors) > 3:
-                result = str(self.first_author) + " and others"
-            else:
-                result = oxford_comma([str(author) for author in self.authors])
+        for key, value in data.items():
+            if key == "id":
+                continue
 
-            result += ", "
+            if hasattr(self, key) and (force or not getattr(self, key)):
+                if value != getattr(self, key):
+                    needs_save = True
+                setattr(self, key, value)
 
-        result += (
-            "_" + self.display_title.replace("_ ", r"\_ ").replace("*", r"\*") + "_"
-        )
-
-        if any(author.is_editor_of(self) for author in self.all_authors):
-            result += ", ed. by "
-            editors = [
-                str(author) for author in self.all_authors if author.is_editor_of(self)
-            ]
-
-            if len(editors) > 3:
-                result += str(editors[0]) + " and others"
-            else:
-                result += oxford_comma(editors)
-
-        if (
-            self.alternate_editions.count()
-            and self.edition_format
-            and self.edition_title
-            in self.alternate_editions.all().values_list("edition_title", flat=True)
-        ):
-            result += f", {self.get_edition_disambiguator()} edn."
-
-        if self.publisher or self.edition_published or self.first_published:
-            result += f" ({self.publisher + ', ' if self.publisher else ''}{self.edition_published or self.first_published})"
-
-        return result
-
-    def get_absolute_url(self) -> str:
-        return reverse("library:book_details", args=[self.slug])
-
-    @property
-    def authors(self) -> list[Author]:
-        additional_authors = list(
-            self.additional_authors.filter(
-                bookauthor__role=self.first_author_role
-            ).order_by("bookauthor__order")
-        )
-        if self.first_author:
-            return [self.first_author, *additional_authors]
-        return additional_authors
-
-    @property
-    def all_authors(self) -> list[Author]:
-        additional_authors = list(self.additional_authors.order_by("bookauthor__order"))
-        if self.first_author:
-            return [self.first_author, *additional_authors]
-        return additional_authors
-
-    @property
-    def all_authors_editors(self) -> bool:
-        return len(self.authors) > 1 and all(
-            author.is_editor_of(self) for author in self.all_authors
-        )
-
-    @property
-    def has_full_authors(self) -> bool:
-        return len(self.authors) > 3 or self.authors != self.all_authors
-
-    @property
-    def display_title(self) -> str:
-        if self.edition_title:
-            return self.edition_title + (
-                f": {self.edition_subtitle}" if self.edition_subtitle else ""
-            )
-        return self.title + (": " + self.subtitle if self.subtitle else "")
-
-    @property
-    def display_date(self) -> str:
-        if (
-            self.edition_published
-            and self.first_published
-            and self.edition_published != self.first_published
-        ):
-            return f"[{self.first_published}] {self.edition_published}"
-        if self.edition_published:
-            return str(self.edition_published)
-        return str(self.first_published) if self.first_published else "n.d."
-
-    def add_author(
-        self, author: "Author", role: str = "", order: int | None = None
-    ) -> None:
-        if author.id is not self.first_author_id and author not in self.authors:
-            if not self.first_author:
-                self.first_author = author
-                self.first_author_role = role
-                self.save()
-            else:
-                authorship = BookAuthor(
-                    book=self, author=author, role=role, order=order
-                )
-                authorship.save()
-
-    def start_reading(self) -> None:
-        if not self.log_entries.filter(end_date=None):
-            self.log_entries.create()
-            self.want_to_read = False
+        if needs_save:
             self.save()
-
-    def finish_reading(self) -> None:
-        entry = self.log_entries.get(end_date=None)
-        self.update_progress(percentage=100, page=self.page_count)
-        entry.end_date = timezone.now()
-        entry.save()
-
-        if self.parent_edition:
-            sibling_editions = self.parent_edition.subeditions
-            if sibling_editions.count() == sibling_editions.read().count():
-                self.parent_edition.finish_reading()
+        return self
 
     def update_progress(
         self, percentage: float | None = None, page: int | None = None
@@ -593,213 +806,6 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
         entry.progress_percentage = percentage
         entry.save()
         return percentage
-
-    def mark_read_sometime(self) -> None:
-        self.log_entries.create(
-            start_date=None,
-            end_date=timezone.datetime(1, 1, 1),  # type: ignore[attr-defined]
-            end_precision=2,
-        )
-
-    def mark_owned(self) -> None:
-        self.owned_by = User.objects.get(username="ben")
-        self.acquired_date = timezone.now()
-        self.was_borrowed = False
-        self.borrowed_from = ""
-        self.save()
-
-    @property
-    def currently_reading(self) -> bool:
-        entries = self.log_entries.filter(end_date=None).order_by("-start_date")
-        return bool(entries[0].currently_reading) if entries else False
-
-    @property
-    def display_series(self) -> str:
-        if not self.series:
-            return ""
-        if self.subeditions.count() > 1 and all(
-            book.series == self.series for book in self.subeditions.all()
-        ):
-            series_orders = sorted(book.series_order for book in self.subeditions.all())
-            return f"{self.series}, #{str(min(series_orders)).replace('.0', '')}–{str(max(series_orders)).replace('.0', '')}"
-
-        if self.series_order:
-            return f"{self.series}, #{str(self.series_order).replace('.0', '')}"
-        return self.series
-
-    @property
-    def read(self) -> bool:
-        if self.parent_edition and self.parent_edition.read:
-            return True
-
-        return (
-            self.log_entries.filter(end_date__isnull=False, abandoned=False).count() > 0
-        )
-
-    def save(self, *args: Any, **kwargs: Any) -> None:
-        if "goodreads" in self.image_url or "amazon" in self.image_url:
-            self.image_url = re.sub(r"\._.+_\.jpg$", ".jpg", self.image_url)
-
-        if not self.rating:
-            self.rating = 0.0
-
-        self.title = smarten(self.title)
-        self.subtitle = smarten(self.subtitle)
-        self.series = smarten(self.series)
-        self.edition_title = smarten(self.edition_title)
-        self.edition_subtitle = smarten(self.edition_subtitle)
-
-        self.publisher = clean_publisher(self.publisher)
-
-        if self.acquired_date and not self.alienated_date and not self.owned_by:
-            self.owned_by = User.objects.get(username="ben")
-
-        orig_goodreads_id = self.goodreads_id
-        if self.id and (self.isbn or self.asin):
-            old = Book.objects.get(pk=self.id)
-            if self.isbn != old.isbn or self.asin != old.asin:
-                self.goodreads_id = ""
-
-        super().save(*args, **kwargs)
-
-        verso.update(self)
-        if any([self.asin, self.isbn, (self.title and self.first_author)]) and (
-            not all([self.first_published, self.goodreads_id, self.image_url])
-        ):
-            goodreads.update(self)
-            if orig_goodreads_id and not self.goodreads_id:
-                self.goodreads_id = orig_goodreads_id
-                super().save(*args, **kwargs)
-
-        if any([self.isbn, self.google_books_id]) and (
-            not all(
-                [
-                    self.google_books_id,
-                    self.publisher,
-                    self.page_count,
-                    self.first_published,
-                ]
-            )
-        ):
-            google.update(self)
-            verso.update(self)
-
-        self.save_other_editions()
-        self.subeditions.all().update(want_to_read=self.want_to_read)
-
-    @property
-    def all_log_entries(self) -> "models.QuerySet[LogEntry]":
-        entries = self.log_entries.all()
-        for edition in self.alternate_editions.all():
-            entries |= edition.log_entries.all()
-        return entries
-
-    def _slug_fields(self) -> list[str]:
-        fields = []
-        if self.first_author:
-            fields.append(self.first_author.surname)
-        title = self.display_title.split(":")[0]
-
-        title = remove_stopwords(title)
-
-        fields.append(title)
-        return fields
-
-    @property
-    def isbn10(self) -> str:
-        return isbn_to_isbn10(self.isbn)
-
-    @property
-    def owned(self) -> bool:
-        return (
-            self.owned_by.username == "ben"
-            if self.owned_by is not None
-            else any(ancestor.owned for ancestor in self.ancestor_editions)
-        )
-
-    @property
-    def owned_by_sara(self) -> bool:
-        return (
-            self.owned_by.username == "sara"
-            if self.owned_by is not None
-            else any(ancestor.owned_by_sara for ancestor in self.ancestor_editions)
-        )
-
-    @property
-    def parent_owned(self) -> bool:
-        return (not self.owned_by) and any(
-            ancestor.owned for ancestor in self.ancestor_editions
-        )
-
-    @property
-    def search_query(self) -> str:
-        return quote(
-            f"{self.edition_title or self.title} {self.first_author and self.first_author.surname}"
-        )
-
-    @property
-    def ebook_url(self) -> str:
-        return f"https://amazon.co.uk/dp/{self.ebook_asin}" if self.ebook_asin else ""
-
-    @property
-    def is_translated(self) -> bool:
-        return (
-            self.edition_language is not None and self.edition_language != self.language
-        )
-
-    @property
-    def has_original_title(self) -> bool:
-        return (not self.edition_title) or self.title == self.edition_title
-
-    @property
-    def is_first_edition(self) -> bool:
-        return (
-            not self.edition_published
-        ) or self.edition_published == self.first_published
-
-    def update(
-        self, data: dict[str, str], force: bool = False  # noqa: FBT001, FBT002
-    ) -> "Book":
-        needs_save = False
-
-        for key, value in data.items():
-            if key == "id":
-                continue
-
-            if hasattr(self, key) and (force or not getattr(self, key)):
-                if value != getattr(self, key):
-                    needs_save = True
-                setattr(self, key, value)
-
-        if needs_save:
-            self.save()
-        return self
-
-    @property
-    def created_date_date(self) -> date:
-        return self.created_date.date()
-
-    @property
-    def modified_date_date(self) -> date:
-        return self.modified_date.date()
-
-    @property
-    def ancestor_editions(self) -> list["Book"]:
-        return (
-            [self.parent_edition, *self.parent_edition.ancestor_editions]
-            if self.parent_edition
-            else []
-        )
-
-    @property
-    def review_url(self) -> str:
-        if self.review.startswith("http://") or self.review.startswith("https://"):
-            return self.review.split()[0]
-        return ""
-
-    @property
-    def tags_list(self) -> set[str]:
-        return {tag.name for tag in self.tags.all()}
 
 
 class BookAuthor(TimestampedModel):
