@@ -14,6 +14,7 @@ from django.db.models.functions import Concat, Lower
 from django.db.models.indexes import Index
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.functional import cached_property
 
 from library.models.abc import SluggableModel, TimestampedModel
 from library.models.book_with_editions import BookWithEditions
@@ -356,7 +357,7 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
 
     # derived properties
 
-    @property
+    @cached_property
     def authors(self) -> list[Author]:
         additional_authors = list(
             self.additional_authors.filter(
@@ -367,14 +368,14 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
             return [self.first_author, *additional_authors]
         return additional_authors
 
-    @property
+    @cached_property
     def all_authors(self) -> list[Author]:
         additional_authors = list(self.additional_authors.order_by("bookauthor__order"))
         if self.first_author:
             return [self.first_author, *additional_authors]
         return additional_authors
 
-    @property
+    @cached_property
     def all_authors_editors(self) -> bool:
         return len(self.authors) > 1 and all(
             author.is_editor_of(self) for author in self.all_authors
@@ -435,12 +436,11 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
 
         if self.has_editors:
             result += ", ed. by "
-            editors = self.editors
 
-            if len(editors) > 3:
-                result += str(editors[0]) + " and others"
+            if len(self.editors) > 3:
+                result += str(self.editors[0]) + " and others"
             else:
-                result += oxford_comma(editors)
+                result += oxford_comma(self.editors)
 
         if (
             self.alternate_editions.count()
@@ -455,7 +455,7 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
 
         return result
 
-    @property
+    @cached_property
     def display_series(self) -> str:
         if not self.series:
             return ""
@@ -469,7 +469,7 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
             return f"{self.series}, #{str(self.series_order).replace('.0', '')}"
         return self.series
 
-    @property
+    @cached_property
     def display_title(self) -> str:
         if self.edition_title:
             return self.edition_title + (
@@ -481,7 +481,7 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
     def ebook_url(self) -> str:
         return f"https://amazon.co.uk/dp/{self.ebook_asin}" if self.ebook_asin else ""
 
-    @property
+    @cached_property
     def editors(self) -> list[Author]:
         return [author for author in self.all_authors if author.is_editor_of(self)]
 
@@ -596,6 +596,8 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
                 )
                 authorship.save()
 
+            del self.authors
+
     def finish_reading(self) -> None:
         entry = self.log_entries.get(end_date=None)
         self.update_progress(percentage=100, page=self.page_count)
@@ -679,7 +681,9 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
         fields = []
         if self.first_author:
             fields.append(self.first_author.surname)
-        title = self.display_title.split(":")[0]
+
+        title = self.edition_title or self.title
+        title = title.split(":")[0]
 
         title = remove_stopwords(title)
 
