@@ -433,11 +433,9 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
             "_" + self.display_title.replace("_ ", r"\_ ").replace("*", r"\*") + "_"
         )
 
-        if any(author.is_editor_of(self) for author in self.all_authors):
+        if self.has_editors:
             result += ", ed. by "
-            editors = [
-                str(author) for author in self.all_authors if author.is_editor_of(self)
-            ]
+            editors = self.editors
 
             if len(editors) > 3:
                 result += str(editors[0]) + " and others"
@@ -482,6 +480,14 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
     @property
     def ebook_url(self) -> str:
         return f"https://amazon.co.uk/dp/{self.ebook_asin}" if self.ebook_asin else ""
+
+    @property
+    def editors(self) -> list[Author]:
+        return [author for author in self.all_authors if author.is_editor_of(self)]
+
+    @property
+    def has_editors(self) -> bool:
+        return len(self.editors) > 0
 
     @property
     def has_full_authors(self) -> bool:

@@ -82,7 +82,8 @@ def isbn10_to_isbn(isbn: str) -> str:
     return "".join([str(c) for c in ints] + [str(checksum)])
 
 
-def oxford_comma(items: Sequence[str]) -> str:
+def oxford_comma(seq: Sequence[Any]) -> str:
+    items = [str(item) for item in seq]
     return (
         ", ".join(items[0:-1]) + ", and " + items[-1]
         if len(items) > 2
