@@ -30,7 +30,8 @@
         <button class="btn btn-primary" type="submit">Update</button>
       </form>
       <hr />
-      <form class="inline-form col-4"
+      <form class="inline-form finish col-4"
+            data-book="{{ book.id }}"
             action="{{ url('library:book_finish_reading', args=[book.slug]) }}"
             method="post">
         <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">

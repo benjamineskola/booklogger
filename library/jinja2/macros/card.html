@@ -152,34 +152,34 @@
           </span>
           {%- if entry.currently_reading -%}
             {%- if entry.progress_percentage -%}
-              ; <span class="progress-date">
-              {%- if entry.progress_page and book.page_count -%}
-                on page {{ entry.progress_page }} of {{ book.page_count }} ({{ entry.progress_percentage | round_trunc(2) }}% done)
-              {%- else -%}
-                {{ entry.progress_percentage | round_trunc(2) }}% done
-              {%- endif %}
-            on {{ format_date(entry.progress_date, 0) }}</span>
+              <span class="progress-date">;&nbsp;
+                {%- if entry.progress_page and book.page_count -%}
+                  on page {{ entry.progress_page }} of {{ book.page_count }} ({{ entry.progress_percentage | round_trunc(2) }}% done)
+                {%- else -%}
+                  {{ entry.progress_percentage | round_trunc(2) }}% done
+                {%- endif %}
+              on {{ format_date(entry.progress_date, 0) }}</span>
+            {% endif %}
+            <div class="progress">
+              <div class="progress-bar"
+                role="progressbar"
+                {# djlint:off #} style="width: {{ entry.progress_percentage }}%" {# djlint:on #}
+                aria-valuenow="{{ entry.progress }}"
+                aria-valuemin="0"
+                aria-valuemax="100"></div>
+            </div>
           {% endif %}
-          <div class="progress">
-            <div class="progress-bar"
-              role="progressbar"
-              {# djlint:off #} style="width: {{ entry.progress_percentage }}%" {# djlint:on #}
-              aria-valuenow="{{ entry.progress }}"
-              aria-valuemin="0"
-              aria-valuemax="100"></div>
+        {% endif %}
+        {% if user.is_authenticated %}
+          <a class="small dropdown-toggle"
+             data-bs-toggle="collapse"
+             data-bs-target="#collapse-logupdate-{{ book.id }}{%- if entry and entry.start_date -%}-{{- entry.start_date.date() -}}{%- endif -%}"
+             role="button">Update</a>
+          <div class="collapse"
+               id="collapse-logupdate-{{ book.id }}{%- if entry and entry.start_date -%}-{{- entry.start_date.date() -}}{%- endif -%}">
+            {% include "books/update_form_snippet.html" %}
           </div>
         {% endif %}
-      {% endif %}
-      {% if user.is_authenticated %}
-        <a class="small dropdown-toggle"
-           data-bs-toggle="collapse"
-           data-bs-target="#collapse-logupdate-{{ book.id }}{%- if entry and entry.start_date -%}-{{- entry.start_date.date() -}}{%- endif -%}"
-           role="button">Update</a>
-        <div class="collapse"
-             id="collapse-logupdate-{{ book.id }}{%- if entry and entry.start_date -%}-{{- entry.start_date.date() -}}{%- endif -%}">
-          {% include "books/update_form_snippet.html" %}
-        </div>
-      {% endif %}
+      </div>
     </div>
-  </div>
-{% endmacro %}
+  {% endmacro %}
