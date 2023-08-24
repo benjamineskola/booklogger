@@ -5,7 +5,7 @@ set -e
 . ./.env
 
 node_modules/.bin/tsc
-npm run build
+npm run build:min
 
 .venv/bin/python manage.py collectstatic --noinput
 .venv/bin/python manage.py migrate

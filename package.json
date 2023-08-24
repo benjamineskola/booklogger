@@ -11,7 +11,8 @@
     "esbuild": "^0.19.2"
   },
   "scripts": {
-    "build": "esbuild library/javascript/*.* --bundle --sourcemap --minify --outdir=library/static --public-path=.",
+    "build": "esbuild library/javascript/*.* --bundle --sourcemap --outdir=library/static --public-path=.",
+    "build:min": "npm run build -- --minify",
     "watch": "npm run build -- --watch"
   }
 }
