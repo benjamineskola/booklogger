@@ -1,5 +1,4 @@
 import { ProgressBar } from './progress_bar.js';
-import { RateBook } from './rate_book.js';
 import { TagBook } from './tag_book.js';
 
 function InfiniteScroll(): any {
@@ -17,8 +16,6 @@ function InfiniteScroll(): any {
 
       const progressBar = ProgressBar();
       progressBar.init(body);
-      const rateBook = RateBook();
-      rateBook.init(body);
       const tagBook = TagBook();
       tagBook.init(body);
 

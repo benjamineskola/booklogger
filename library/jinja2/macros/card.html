@@ -18,7 +18,8 @@
   {% endif %}
   <div class="book card mb-4"
        id="book-{{ book.id }}"
-       data-book="{{ book.slug }}">
+       data-book="{{ book.slug }}"
+       data-controller="book">
     <div class="row no-gutters">
       {% if book.image_url %}
         <div class="col-4">
@@ -47,9 +48,11 @@
             <span class="rating inline-block"
                   data-rating="{{ book.rating }}"
                   data-max-rating="5"
-                  data-book="{{ book.slug }}">
+                  data-book-target="ratings">
               {%- for i in range(5) -%}
-                <span data-rating="{{ i + 1 }}" class="rating-star">
+                <span data-rating="{{ i + 1 }}"
+                      class="rating-star"
+                      data-action="click->book#rate">
                   {%- if i+1 <= book.rating -%} ★ {%- elif book.rating - i == 0.5 -%} ½ {%- else -%} ☆ {%- endif -%}
                   </span>
                 {%- endfor -%}
