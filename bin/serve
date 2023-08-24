@@ -1,8 +1,12 @@
 #!/bin/sh
 set -e
 
-test "$(whoami)" = www
-
+# shellcheck disable=SC1091
 . ./.env
 
-.venv/bin/python .venv/bin/gunicorn --bind 127.0.0.1:3000 --workers 2 booklogger.wsgi
+node_modules/.bin/tsc
+
+.venv/bin/python manage.py collectstatic --noinput
+.venv/bin/python manage.py migrate
+
+HIVEMIND_PROCESSES=web,worker exec /home/ben/.local/share/go/bin/hivemind --title booklogger >/home/ben/src/booklogger/logs/booklogger.log 2>/home/ben/src/booklogger/logs/booklogger.err
