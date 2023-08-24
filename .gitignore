@@ -9,3 +9,4 @@ node_modules
 .env
 /static/
 library/static/*.js
+library/static/*.js.map

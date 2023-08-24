@@ -5,5 +5,12 @@
     "prettier": "^2.8.3",
     "rome": "^10.0.1",
     "typescript": "^4.7.2"
+  },
+  "dependencies": {
+    "@hotwired/stimulus": "^3.2.2",
+    "esbuild": "^0.19.2"
+  },
+  "scripts": {
+    "build": "esbuild library/javascript/*.* --bundle --sourcemap --minify --outdir=library/static --public-path=."
   }
 }
