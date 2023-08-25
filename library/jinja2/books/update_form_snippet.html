@@ -3,7 +3,7 @@
     <div class="row">
       <form class="inline-form update-progress col-8"
             data-page-count="{{ book.page_count }}"
-            data-book="{{ book.id }}"
+            data-book-target="updateForm"
             action="{{ url('library:book_update_progress', args=[book.slug]) }}"
             method="post">
         <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
@@ -27,7 +27,9 @@
                  {% if (not book.page_count) or (book.log_entries.last().progress_percentage and not book.log_entries.last().progress_page) %} checked="checked"{% endif %}>
           <label class="form-check-label">%</label>
         </div>
-        <button class="btn btn-primary" type="submit">Update</button>
+        <button class="btn btn-primary"
+                type="submit"
+                data-action="book#updateProgress">Update</button>
       </form>
       <hr />
       <form class="inline-form finish col-4"
