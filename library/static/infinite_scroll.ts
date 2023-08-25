@@ -1,4 +1,3 @@
-import { ProgressBar } from './progress_bar.js';
 import { TagBook } from './tag_book.js';
 
 function InfiniteScroll(): any {
@@ -14,8 +13,6 @@ function InfiniteScroll(): any {
       placeholder.parentElement?.insertAdjacentElement('afterend', body);
       placeholder.remove();
 
-      const progressBar = ProgressBar();
-      progressBar.init(body);
       const tagBook = TagBook();
       tagBook.init(body);
 

@@ -1,7 +1,7 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-  static targets = ['ratings', 'updateForm'];
+  static targets = ['ratings', 'updateForm', 'finishForm'];
 
   displayRating(value) {
     this.ratingsTarget.dataset.rating = String(value);
@@ -14,6 +14,37 @@ export default class extends Controller {
         star.textContent = '☆';
       }
     });
+  }
+
+  async markFinished(event) {
+    event.preventDefault();
+    const url = this.finishFormTarget.getAttribute('action');
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams(new FormData(this.finishFormTarget)).toString()
+    });
+
+    if (response.ok) {
+      const progressText = this.element.querySelector(
+        '.card-footer .progress-date'
+      );
+
+      const startField = this.element.querySelector('.read-dates');
+      const startDate = startField.querySelector('time');
+      startField.textContent = 'Read ';
+      startField.appendChild(startDate);
+      progressText.textContent = ' – now';
+
+      const progressBar = this.element.querySelector('.progress');
+      progressBar.remove();
+      event.target.remove();
+      const toggle = this.element.querySelector('.dropdown-toggle');
+      toggle.click();
+    }
   }
 
   async rate(event) {

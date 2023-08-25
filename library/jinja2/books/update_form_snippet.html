@@ -33,11 +33,11 @@
       </form>
       <hr />
       <form class="inline-form finish col-4"
-            data-book="{{ book.id }}"
+            data-book-target="finishForm"
             action="{{ url('library:book_finish_reading', args=[book.slug]) }}"
             method="post">
         <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-        <button class="btn btn-primary" type="submit">Finish</button>
+        <button class="btn btn-primary" type="submit" data-action="book#markFinished">Finish</button>
       </form>
     </div>
   {% else %}
