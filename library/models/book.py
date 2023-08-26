@@ -822,7 +822,7 @@ class BookAuthor(TimestampedModel):
 
 class TagManager(models.Manager["Tag"]):
     def get(self, name: str) -> "Tag":
-        tag, _ = Tag.objects.get_or_create(name=name.lower())
+        tag, _ = Tag.objects.get_or_create(name=name.lower().strip())
         return tag
 
 
