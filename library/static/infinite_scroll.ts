@@ -1,46 +1,4 @@
 function InfiniteScroll(): any {
-  async function loadNextPage(year: string, url: string): Promise<void> {
-    const placeholder = document.querySelector('.loader')!;
-    const response = await fetch(url);
-
-    if (response.ok) {
-      const data = await response.text();
-      const elem = document.createElement('div');
-      elem.innerHTML = data.trim();
-      const body = elem.querySelector('main')!;
-      placeholder.parentElement?.insertAdjacentElement('afterend', body);
-      placeholder.remove();
-
-      if (year !== 'sometime') {
-        let nextYear = year;
-        if (Number(year) > 2010) {
-          nextYear = String(Number(year) - 1);
-        } else if (year === '2010') {
-          nextYear = '2007';
-        } else if (year === '2007') {
-          nextYear = '2004';
-        } else if (year === '2004') {
-          nextYear = 'sometime';
-        }
-        const nextUrl = url.replace(year, String(nextYear));
-        void loadNextPage(nextYear, nextUrl);
-      } else {
-        // any left-behind loaders
-        const ps = document.querySelectorAll('.loader');
-        for (const [_, p] of Object.entries(ps)) {
-          p.remove();
-        }
-      }
-    } else {
-      (
-        placeholder.querySelector('.spinner-grow') as HTMLElement
-      ).style.display = 'none';
-      (
-        placeholder.querySelector('.alert-danger') as HTMLElement
-      ).style.display = '';
-    }
-  }
-
   function updateScrollPosition(this: HTMLElement): void {
     Array.from(document.querySelectorAll('h2')).forEach(function (el) {
       const height = window.innerHeight;
@@ -80,7 +38,7 @@ function InfiniteScroll(): any {
     });
   }
 
-  return { loadNextPage, updateScrollPosition };
+  return { updateScrollPosition };
 }
 
 export default InfiniteScroll;

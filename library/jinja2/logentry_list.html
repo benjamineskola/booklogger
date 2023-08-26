@@ -45,10 +45,13 @@
       {% elif display_year == 2007 %}
         {% set next_year = 2004 %}
       {% else %}
-        {% set next_year = "sometime" %}
+        {% set next_year = 1 %}
       {% endif %}
       {% if display_year > 1 %}
-        <div class="loader">
+        <div class="loader"
+             data-controller="infinite-scroll"
+             data-infinite-scroll-year-value="{{ next_year }}"
+             data-infinite-scroll-url-value="{{ url('library:books_read', kwargs={'year': next_year}) }}?infinite=true&{{ request.GET.urlencode() }}">
           <div class="d-flex justify-content-center" id="loading-{{ next_year }}">
             <div id="loading-stats" class="spinner-grow mb-4" role="status">
               <span class="sr-only">Loading...</span>
@@ -76,7 +79,6 @@
         InfiniteScroll
       } from '/static/infinite_scroll.js';
       let infiniteScroll = new InfiniteScroll();
-      infiniteScroll.loadNextPage('{{ display_year - 1 }}', '{{ url("library:books_read", kwargs={"year": display_year - 1}) }}?infinite=true&{{request.GET.urlencode()}}')
 
       document.addEventListener('scroll', infiniteScroll.updateScrollPosition)
     </script>
