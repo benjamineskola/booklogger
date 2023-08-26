@@ -318,8 +318,11 @@ def add_tags(request: HttpRequest, slug: str) -> HttpResponse:
 def remove_tags(request: HttpRequest, slug: str) -> HttpResponse:
     book = get_object_or_404(Book, slug=slug)
     tags = request.POST.get("tags", "").split(",")
-    for tag in tags:
-        book.tags.remove(Tag.objects.get(name=tag))
+    for tag_name in tags:
+        tag = Tag.objects.get(name=tag_name)
+        book.tags.remove(tag)
+        if not tag.books.count() and not tag.children.count():
+            tag.delete()
     book.save()
 
     return redirect("library:book_details", slug=slug)
