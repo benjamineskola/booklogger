@@ -1,7 +1,0 @@
-{
-  "compilerOptions": {
-    "strict": true,
-    "lib": ["dom", "es2019"],
-    "target": "es2019"
-  }
-}

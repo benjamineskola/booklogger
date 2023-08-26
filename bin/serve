@@ -7,7 +7,6 @@ set -e
 .venv/bin/python -m pip install -r requirements.txt
 yarn install
 
-node_modules/.bin/tsc
 npm run build:min
 
 .venv/bin/python manage.py collectstatic --noinput
