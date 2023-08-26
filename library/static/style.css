@@ -142,12 +142,13 @@ a.fas:visited {
 }
 .card .row {
   margin-bottom: 0;
+  gap: 0;
 }
 
-.card .col-4 {
+.card > :not(.card-footer) .col-4 {
   padding-right: 0;
 }
-.card .col-8 {
+.card > :not(.card-footer) .col-8 {
   padding-left: 0;
 }
 
@@ -163,6 +164,7 @@ a.fas:visited {
 .inline-form {
   margin-top: 1rem;
 }
+
 .inline-form .form-control {
   display: inline-block;
 }
