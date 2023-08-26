@@ -71,16 +71,3 @@
     {% endif %}
   {% endif %}
 {% endblock content %}
-
-{% block footer %}
-  {% if display_year %}
-    <script type="module">
-      import {
-        InfiniteScroll
-      } from '/static/infinite_scroll.js';
-      let infiniteScroll = new InfiniteScroll();
-
-      document.addEventListener('scroll', infiniteScroll.updateScrollPosition)
-    </script>
-  {% endif %}
-{% endblock footer %}
