@@ -127,10 +127,17 @@ a.fas:visited {
   margin-top: 2rem;
 }
 
-input.4chars {
-  max-width: 4em;
+.btn {
+  vertical-align: baseline;
 }
 
-.inline-block {
+.inline-form {
+  margin-top: 1rem;
+}
+.inline-form .form-control {
   display: inline-block;
+}
+
+input[inputmode='numeric'] {
+  max-width: 4em;
 }
