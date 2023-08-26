@@ -15,7 +15,7 @@
       {% else %}
         {% set url_base = url("library:books_read", kwargs={"year": ("sometime" if year == 1 else year)}) %}
       {% endif %}
-      <div class="card mb-4">
+      <div class="card">
         <div class="card-body">
           <p>
             {% if year == 1 %}

@@ -15,7 +15,7 @@
     {{ book_list(entries) }}
   {% else %}
     {% if request.GET.get("infinite") != "true" %}
-      <div class="card mb-4">
+      <div class="card">
         <div class="card-body">
           {{ filter_list('Gender', 'gender', {'male': 'male', 'female': 'female', 'nonbinary': 'nonbinary', 'multiple': 'multiple', 'non-male': 'nonmale', 'groups/organisations': 'organization'}) }}
           <br>
@@ -53,7 +53,7 @@
              data-infinite-scroll-year-value="{{ next_year }}"
              data-infinite-scroll-url-value="{{ url('library:books_read', kwargs={'year': next_year}) }}?infinite=true&{{ request.GET.urlencode() }}">
           <div class="d-flex justify-content-center" id="loading-{{ next_year }}">
-            <div id="loading-stats" class="spinner-grow mb-4" role="status">
+            <div id="loading-stats" class="spinner-grow" role="status">
               <span class="sr-only">Loading...</span>
             </div>
           </div>

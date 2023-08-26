@@ -10,7 +10,7 @@
 
 {% block content %}
   {% if form.errors %}
-    <div class="alert alert-danger mb-2">
+    <div class="alert alert-danger">
       {% for error in form.errors %}
         <p>
           <strong>{{ error }}:</strong> {{ form.errors[error] | join("; ") }}
@@ -20,7 +20,7 @@
   {% endif %}
   <form method="post">
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-    <div class="card mb-2">
+    <div class="card">
       <div class="card-body">
         {{ form["title"] | crispy }}
         {% for error in form["title"].errors %}

@@ -4,7 +4,7 @@
 
 {% block content %}
   {% if format %}<h2>{{ format }}</h2>{% endif %}
-  <div class="card mb-4">
+  <div class="card">
     <div class="card-body">
       {% if show_format_filters %}
         {% set qs = '?' + request.GET.urlencode() %}

@@ -20,7 +20,7 @@
   {% endif %}
   <form method="post">
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-    <div class="card mb-2">
+    <div class="card">
       <div class="card-body">
         {% for field in form %}
           {{ field | crispy }}
@@ -30,7 +30,7 @@
         {% endfor %}
       </div>
     </div>
-    <div class="card mb-2">
+    <div class="card">
       <div class="card-body">
         <input type="submit" value="Submit" class="btn btn-primary">
         {% if form.instance.id %}

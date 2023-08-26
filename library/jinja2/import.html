@@ -6,7 +6,7 @@
     {% if goodreads_results %}
       <p>This might be the following books on Goodreads:</p>
       {% for goodreads_result in goodreads_results %}
-        <form class="mb-4" action="{{ url("library:book_import") }}" method="post">
+        <form action="{{ url("library:book_import") }}" method="post">
           <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
           <input type="hidden" name="query" value="{{ query }}">
           <input type="hidden" name="data" value="{{ goodreads_result | json }}">
@@ -25,7 +25,7 @@
       <p class="alert alert-warning">No result for “{{ query }}”.</p>
     {% endif %}
   {% endif %}
-  <form class="form-inline mt-4"
+  <form class="form-inline"
         action="{{ url("library:book_import") }}"
         method="get">
     <input class="form-control mr-sm-2"

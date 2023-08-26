@@ -16,7 +16,7 @@
   {% if not entry and book.log_entries and book.log_entries.count() > 0 %}
     {% set entry = book.log_entries.exclude(abandoned=True).order_by('end_date').last() %}
   {% endif %}
-  <div class="book card mb-4"
+  <div class="book card"
        id="book-{{ book.id }}"
        data-book="{{ book.slug }}"
        data-book-id="{{ book.id }}"
@@ -41,7 +41,7 @@
           <h6 class="card-subtitle">by {{ author_list(book.authors, book=book) }}</h6>
         </div>
         <div class="card-body">
-          <p class="card-text mb-0">
+          <p class="card-text">
             ({{ book.display_date }})
             {% if book.edition_number and book.edition_number > 1 %}{{ book.edition_number | ordinal }} edn.&#x20;{% endif %}
             {% if book.publisher %}{{ book.publisher }}.&#x20;{% endif %}

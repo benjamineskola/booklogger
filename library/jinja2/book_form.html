@@ -18,7 +18,7 @@
     <div class="row row-cols-1 row-cols-md-2">
       <div class="col">{{ book_card(form.instance) }}</div>
       <div class="col">
-        <div class="card mb-2">
+        <div class="card">
           <div class="card-body">
             <strong>Amazon</strong> {{ link_amazon(book) }}
             <br />
@@ -31,7 +31,7 @@
     </div>
   {% endif %}
   {% if form.errors %}
-    <div class="alert alert-danger mb-2">
+    <div class="alert alert-danger">
       {% for error in form.errors %}
         <p>
           <strong>{{ error }}:</strong> {{ form.errors[error] | join("; ") }}
@@ -53,7 +53,7 @@
         ] %}
         {% if 'editions' not in field_names or ('editions' in form.fields or 'parent_edition' in form.fields) %}
           <div class="col">
-            <div class="card mb-2">
+            <div class="card">
               <div class="card-body">
                 {% for field_name in field_names %}
                   {% set field = form[field_name] %}
@@ -74,42 +74,46 @@
       {% endfor %}
     </div>
     {# row #}
-    {% for inline_formset in inline_formsets %}
-      <div class="card mb-2" id="card-{{ inline_formset.prefix }}">
-        <div class="card-body" id="formset-{{ inline_formset.prefix }}">
-          {% if inline_formset.errors %}
-            {% for error in inline_formset.errors %}
-              {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
-            {% endfor %}
-          {% endif %}
-          {{ inline_formset.management_form }}
-          {% for form in inline_formset %}
-            <div class="form-inline">
-              {{ form.id }}
-              {% for field in form %}
-                {% if field.name not in ["id", "book"] %}
-                  {{ field | crispy(field_class="mr-2 mt-2", label_class="mr-2") }}
-                  {% for error in field.errors %}
-                    <label for="{{ field.id_for_label }}" class="alert alert-warning">{{ error|escape }}</label>
+    <div class="row row-cols-1">
+      <div class="col">
+        {% for inline_formset in inline_formsets %}
+          <div class="card" id="card-{{ inline_formset.prefix }}">
+            <div class="card-body" id="formset-{{ inline_formset.prefix }}">
+              {% if inline_formset.errors %}
+                {% for error in inline_formset.errors %}
+                  {% if error %}<div class="alert alert-danger">{{ error }}</div>{% endif %}
+                {% endfor %}
+              {% endif %}
+              {{ inline_formset.management_form }}
+              {% for form in inline_formset %}
+                <div class="form-inline">
+                  {{ form.id }}
+                  {% for field in form %}
+                    {% if field.name not in ["id", "book"] %}
+                      {{ field | crispy(field_class=" ", label_class=" ") }}
+                      {% for error in field.errors %}
+                        <label for="{{ field.id_for_label }}" class="alert alert-warning">{{ error|escape }}</label>
+                      {% endfor %}
+                    {% endif %}
                   {% endfor %}
-                {% endif %}
+                </div>
               {% endfor %}
             </div>
-          {% endfor %}
-        </div>
-        {# card-body #}
-        {% if inline_formset.prefix == "bookauthor_set" %}
-          <div class="card-footer">
-            <a href="#">Add author</a>
+            {# card-body #}
+            {% if inline_formset.prefix == "bookauthor_set" %}
+              <div class="card-footer">
+                <a href="#">Add author</a>
+              </div>
+            {% elif inline_formset.prefix == "readinglistentry_set" %}
+              <div class="card-footer">
+                <a href="#">Add list</a>
+              </div>
+            {% endif %}
           </div>
-        {% elif inline_formset.prefix == "readinglistentry_set" %}
-          <div class="card-footer">
-            <a href="#">Add list</a>
-          </div>
-        {% endif %}
+          {# card #}
+        {% endfor %}
       </div>
-      {# card #}
-    {% endfor %}
+    </div>
     <div class="row">
       <div class="col">
         <div class="card">

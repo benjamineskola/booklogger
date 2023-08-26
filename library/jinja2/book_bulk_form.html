@@ -29,7 +29,7 @@
         {{ form.id }}
         {% for field in form %}
           {% if field.name not in ["id", "book"] %}
-            {{ field | crispy(field_class="mr-2 mt-2", label_class="mr-2") }}
+            {{ field | crispy(field_class=" ", label_class=" ") }}
             {% for error in field.errors %}
               <label for="{{ field.id_for_label }}" class="alert alert-warning">{{ error|escape }}</label>
             {% endfor %}

@@ -54,7 +54,7 @@
         </button>
         <div class="collapse navbar-collapse" id="navbar-toggle">
           <a class="navbar-brand" href="{{ url("library:index") }}">Booklogger</a>
-          <ul class="navbar-nav me-auto mt-2 mt-lg-0">
+          <ul class="navbar-nav me-auto">
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle"
                  href="#"
@@ -80,15 +80,14 @@
               </div>
             </li>
           </ul>
-          <form class="form-inline my-2 my-lg-0"
-                action="{{ url("library:basic_search") }}">
+          <form class="form-inline" action="{{ url("library:basic_search") }}">
             <input class="form-control mr-sm-2"
                    type="search"
                    placeholder="Search"
                    aria-label="Search"
                    name="query">
           </form>
-          <ul class="navbar-nav mt-2 mt-lg-0">
+          <ul class="navbar-nav">
             {% if user.is_authenticated %}
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle"
@@ -136,7 +135,7 @@
         </div>
       </div>
     </nav>
-    <main class="container my-2">
+    <main class="container">
       {% if page_title and request.resolver_match.url_name != 'book_details' %}<h1>{{ page_title }}</h1>{% endif %}
 
       {% block content %}
