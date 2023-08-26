@@ -170,3 +170,7 @@ a.fas:visited {
 input[inputmode='numeric'] {
   max-width: 4em;
 }
+
+.card:not(:has(label, a)) {
+  display: none;
+}
