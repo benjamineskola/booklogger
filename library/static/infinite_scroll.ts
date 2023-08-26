@@ -1,5 +1,3 @@
-import { TagBook } from './tag_book.js';
-
 function InfiniteScroll(): any {
   async function loadNextPage(year: string, url: string): Promise<void> {
     const placeholder = document.querySelector('.loader')!;
@@ -12,9 +10,6 @@ function InfiniteScroll(): any {
       const body = elem.querySelector('main')!;
       placeholder.parentElement?.insertAdjacentElement('afterend', body);
       placeholder.remove();
-
-      const tagBook = TagBook();
-      tagBook.init(body);
 
       if (year !== 'sometime') {
         let nextYear = year;

@@ -1,7 +1,44 @@
 import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
-  static targets = ['ratings', 'updateForm', 'finishForm'];
+  static targets = ['ratings', 'updateForm', 'finishForm', 'tags'];
+
+  async addTag(event) {
+    event.preventDefault();
+    const url = event.target.getAttribute('action');
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams(new FormData(event.target)).toString()
+    });
+
+    if (response.ok) {
+      const inputField = this.tagsTarget.querySelector('input[name="tags"]');
+      const data = await response.json();
+
+      for (const [_, tag] of Object.entries(data.tags)) {
+        const template = document.createElement('template');
+        template.innerHTML = `<span class="badge bg-secondary">
+  <a href="/tag/${tag}">${tag}</a>
+  <a class="remove-tag" data-tag="${tag}" data-action="book#removeTag">✖</a>
+</span> `;
+        this.tagsTarget.prepend(template.content);
+      }
+
+      for (const [_, tag] of Object.entries(this.tagsTarget.children)) {
+        if (tag.textContent && tag.textContent.trim() === 'untagged') {
+          tag.remove();
+          break;
+        }
+      }
+
+      inputField.value = '';
+      event.target.classList.remove('show');
+    }
+  }
 
   displayRating(value) {
     this.ratingsTarget.dataset.rating = String(value);
@@ -71,6 +108,31 @@ export default class extends Controller {
 
     if (!response.ok) {
       this.displayRating(oldRating);
+    }
+  }
+
+  async removeTag(event) {
+    const tag = event.target.dataset.tag;
+    const label = event.target.parentElement;
+
+    const book = this.element.dataset.book;
+    const token = document.querySelector('[name=csrfmiddlewaretoken]');
+
+    if (!confirm(`Remove tag ${tag}?`)) {
+      return null;
+    }
+
+    const response = await fetch(`/book/${book}/remove_tags/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': token.value
+      },
+      body: new URLSearchParams({ tags: String(tag) }).toString()
+    });
+
+    if (response.ok) {
+      label.remove();
     }
   }
 

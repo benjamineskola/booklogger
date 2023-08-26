@@ -28,7 +28,11 @@
 {% macro book_label(label, link, highlight=False, removable=False) %}
   <span class="badge {% if highlight is true %}bg-info{% elif highlight %}bg-{{ highlight }}{% else %}bg-secondary{% endif %}">
     <a href="{{ link }}">{{ label }}</a>
-    {% if removable %}<a class="remove-tag" data-tag="{{ label }}">✖</a>{% endif %}
+    {% if removable %}
+      <a class="remove-tag"
+         data-tag="{{ label }}"
+         data-action="book#removeTag">✖</a>
+    {% endif %}
   </span>
 {% endmacro %}
 {% macro book_link(book) -%}

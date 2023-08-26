@@ -62,7 +62,7 @@
                    class="fas fa-edit"></a>
               {% endif %}
             </p>
-            <span class="tags" id="tags-{{ book.id }}" data-book="{{ book.slug }}">
+            <span class="tags" id="tags-{{ book.id }}" data-book-target="tags">
               {% for tag in book.tags_list | sort %}
                 {{ book_label(tag, url("library:tag_details", args=[tag]) , removable=True) }}
               {% else %}
@@ -102,6 +102,7 @@
                 <form class="add-tag collapse"
                       id="collapse-addtag-{{ book.id }}"
                       action="{{ url('library:book_add_tags', args=[book.slug]) }}?next={{ request.get_full_path() }}#{{ book.slug }}"
+                      data-action="book#addTag"
                       method="post">
                   <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
                   <input class="form-control-sm m-1" name="tags">
