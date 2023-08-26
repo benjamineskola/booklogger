@@ -680,7 +680,13 @@ class Book(TimestampedModel, SluggableModel, BookWithEditions):
 
     def start_reading(self) -> None:
         if not self.log_entries.filter(end_date=None):
-            self.log_entries.create()
+            exclude_from_stats = False
+            if self.parent_edition and self.parent_edition.currently_reading:
+                parent_edition_excluded = self.parent_edition.log_entries.get(
+                    end_date__isnull=True
+                ).exclude_from_stats
+                exclude_from_stats = not parent_edition_excluded
+            self.log_entries.create(exclude_from_stats=exclude_from_stats)
             self.want_to_read = False
             self.save()
 
