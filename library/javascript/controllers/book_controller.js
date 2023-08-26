@@ -66,21 +66,25 @@ export default class extends Controller {
     });
 
     if (response.ok) {
-      const progressText = this.element.querySelector(
-        '.card-footer .progress-date'
+      const card = document.querySelector(
+        `#book-${this.element.dataset.bookId}`
       );
+      const progressText = card.querySelector('.card-footer .progress-date');
 
-      const startField = this.element.querySelector('.read-dates');
+      const startField = card.querySelector('.read-dates');
       const startDate = startField.querySelector('time');
       startField.textContent = 'Read ';
       startField.appendChild(startDate);
       progressText.textContent = ' – now';
 
-      const progressBar = this.element.querySelector('.progress');
+      const progressBar = card.querySelector('.progress');
       progressBar.remove();
       event.target.remove();
-      const toggle = this.element.querySelector('.dropdown-toggle');
-      toggle.click();
+
+      if (card.querySelector('.collapse.show') !== null) {
+        const toggle = card.querySelector('.dropdown-toggle');
+        toggle.click();
+      }
     }
   }
 
@@ -151,17 +155,18 @@ export default class extends Controller {
 
     if (response.ok) {
       const data = await response.json();
-      const progressBar = this.element.querySelector('.progress-bar');
+      const card = document.querySelector(
+        `#book-${this.element.dataset.bookId}`
+      );
+      const progressBar = card.querySelector('.progress-bar');
       progressBar.style.width = `${data.percentage}%`;
 
-      let progressText = this.element.querySelector(
-        '.card-footer .progress-date'
-      );
+      let progressText = card.querySelector('.card-footer .progress-date');
       if (
         progressText.textContent === null ||
         progressText.textContent?.length === 0
       ) {
-        progressText = this.element.querySelector('.card-footer .read-dates');
+        progressText = card.querySelector('.card-footer .read-dates');
         progressText.textContent = `${progressText.textContent}; ${data.progress_text}`;
       } else {
         progressText.textContent = `; ${data.progress_text}`;

@@ -195,7 +195,10 @@
         </div>
       </div>
       <div class="col">
-        <div class="card mt-4">
+        <div class="card mt-4"
+             data-book="{{ book.slug }}"
+             data-book-id="{{ book.id }}"
+             data-controller="book">
           <div class="card-body">{% include "books/update_form_snippet.html" %}</div>
         </div>
       </div>
