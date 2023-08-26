@@ -39,7 +39,7 @@
       {% endfor %}
     </div>
   {% endif %}
-  <form method="post">
+  <form method="post" data-controller="book-form">
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
     <div class="row row-cols-1 row-cols-md-2">
       {% for field_names in [
@@ -149,9 +149,5 @@
     document.listentry_formset_template = `{{ inline_formsets[2].empty_form }}`
     document.formTags = {% if form.instance and form.instance.id %}{{ form.instance.tags_list | list | json | safe }}{% else %}null{% endif %}
   </script>
-  <script type="module">
-    import BookForm from '/static/book_form.js';
-    let bookForm = new BookForm();
-    bookForm.init();
-  </script>
+  <script src="{{ static('book_form.js') }}"></script>
 {% endblock footer %}

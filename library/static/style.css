@@ -174,3 +174,25 @@ input[inputmode='numeric'] {
 .card:not(:has(label, a)) {
   display: none;
 }
+
+/* book edit form */
+
+select[name$='_date_month'] {
+  width: 9em;
+  margin-right: 1em;
+}
+select[name$='_date_day'] {
+  width: 5em;
+  margin-right: 1em;
+}
+select[name$='_date_year'] {
+  width: 6em;
+}
+
+select[name*='_date_'] {
+  display: inline-block;
+}
+
+label[for*='_date_'] {
+  display: block;
+}
