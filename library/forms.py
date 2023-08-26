@@ -96,6 +96,12 @@ class BookForm(ModelForm[Book]):
             del self.fields["alternate_editions"]
             del self.fields["parent_edition"]
 
+        for field in self.fields.values():
+            if getattr(field.widget, "input_type", None) == "number":
+                field.widget.input_type = "text"
+                field.widget.attrs["inputmode"] = "numeric"
+                field.widget.attrs["pattern"] = "[0-9]*"
+
     def _clean_asin(self, asin: str) -> str:
         if not asin:
             return ""
