@@ -20,12 +20,11 @@ export default class extends Controller {
     this.isbnFieldPasteFilter('#id_isbn');
     this.isbnFieldPasteFilter('#id_ebook_isbn');
 
-    const deleteButton = document.querySelector(
-      `.form-check-input[name$="DELETE"]`
-    );
-    deleteButton.addEventListener('click', function (event) {
-      deleteButton.closest('.form-inline').style.display = 'none';
-    });
+    document
+      .querySelectorAll(`.form-check-input[name$="DELETE"]`)
+      .forEach((deleteButton) => {
+        deleteButton.addEventListener('click', this.removeInlineForm);
+      });
 
     if (document.formTags !== null) {
       const el = document.querySelector('#id_tags');
@@ -73,7 +72,7 @@ export default class extends Controller {
     );
     inlineForm.append(
       this.createElements(
-        `<div class="form-group"><div class="mr-2 mt-2"><div class="form-check"><input type="checkbox" name="bookauthor_set-${index}-DELETE" class="checkboxinput form-check-input" id="id_bookauthor_set-${index}-DELETE"><label for="id_bookauthor_set-${index}-DELETE" class="form-check-label">Delete </label></div></div></div>`
+        `<div class="form-group"><div class="mr-2 mt-2"><div class="form-check"><input type="checkbox" name="bookauthor_set-${index}-DELETE" class="checkboxinput form-check-input" id="id_bookauthor_set-${index}-DELETE" data-action="click->book-form#removeInlineForm"><label for="id_bookauthor_set-${index}-DELETE" class="form-check-label">Delete </label></div></div></div>`
       )
     );
 
@@ -81,11 +80,6 @@ export default class extends Controller {
     totalForms.value = String(parseInt(index) + 1);
 
     $(selectField).select2({ theme: 'bootstrap', tags: true });
-    const checkbox = inlineForm.querySelector('.form-check-input');
-    checkbox.addEventListener('click', function (event) {
-      const form = checkbox.closest('.form-inline');
-      form.style.display = 'none';
-    });
   }
 
   addListEntryField(event, template) {
@@ -122,7 +116,7 @@ export default class extends Controller {
     );
     inlineForm.append(
       this.createElements(
-        `<div class="form-group"><div class="mr-2 mt-2"><div class="form-check"><input type="checkbox" name="readinglistentry_set-${index}-DELETE" class="checkboxinput form-check-input" id="id_readinglistentry_set-${index}-DELETE"><label for="id_readinglistentry_set-${index}-DELETE" class="form-check-label">Delete </label></div></div></div>`
+        `<div class="form-group"><div class="mr-2 mt-2"><div class="form-check"><input type="checkbox" name="readinglistentry_set-${index}-DELETE" class="checkboxinput form-check-input" id="id_readinglistentry_set-${index}-DELETE" data-action="click->book-form#removeInlineForm"><label for="id_readinglistentry_set-${index}-DELETE" class="form-check-label">Delete </label></div></div></div>`
       )
     );
 
@@ -130,11 +124,6 @@ export default class extends Controller {
     totalForms.value = index + 1;
 
     $(selectField).select2({ theme: 'bootstrap' });
-    const checkbox = inlineForm.querySelector('.form-check-input');
-    checkbox.addEventListener('click', function (event) {
-      const form = checkbox.closest('.form-inline');
-      form.style.display = 'none';
-    });
   }
 
   addSetDateTodayButton(elementId) {
@@ -164,6 +153,12 @@ export default class extends Controller {
       ev.preventDefault();
       this.value = this.value.replace(/\D/g, '');
     });
+  }
+
+  removeInlineForm(event) {
+    const form = event.target.closest('.form-inline');
+    form.style.display = 'none';
+    console.log(event, form);
   }
 
   setDateToday(event) {
