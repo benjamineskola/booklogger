@@ -173,7 +173,7 @@ input[inputmode='numeric'] {
   max-width: 4em;
 }
 
-.card:not(:has(label, a)) {
+form .card:not(:has(label, a)) {
   display: none;
 }
 
