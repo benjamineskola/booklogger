@@ -4,6 +4,7 @@ from typing import Any
 from django.forms import (
     ModelChoiceField,
     ModelForm,
+    NumberInput,
     Select,
     SelectDateWidget,
     ValidationError,
@@ -22,6 +23,31 @@ from library.models import (
     Tag,
 )
 from library.utils import isbn10_to_isbn
+
+
+class DateWidget(SelectDateWidget):
+    def get_context(self, name: Any, value: Any, attrs: Any) -> dict[str, Any]:
+        context = super().get_context(name, value, attrs)
+        year_name = self.year_field % name
+        year_widget = NumberInput(attrs).get_context(
+            name=year_name,
+            value=context["widget"]["value"]["year"],
+            attrs={**context["widget"]["attrs"], "id": "id_%s" % year_name},
+        )
+        day_name = self.day_field % name
+        day_widget = NumberInput(
+            attrs,
+        ).get_context(
+            name=day_name,
+            value=context["widget"]["value"]["day"],
+            attrs={**context["widget"]["attrs"], "id": "id_%s" % day_name},
+        )
+        for i, subwidget in enumerate(context["widget"]["subwidgets"]):
+            if subwidget["name"].endswith("_day"):
+                context["widget"]["subwidgets"][i] = day_widget["widget"]
+            if subwidget["name"].endswith("_year"):
+                context["widget"]["subwidgets"][i] = year_widget["widget"]
+        return context
 
 
 class AuthorForm(ModelForm[Author]):
@@ -51,13 +77,11 @@ class BookForm(ModelForm[Book]):
         field_classes = {"first_author": AuthorField}
 
         widgets = {
-            "acquired_date": SelectDateWidget(
+            "acquired_date": DateWidget(years=range(timezone.now().year + 1, 1986, -1)),
+            "alienated_date": DateWidget(
                 years=range(timezone.now().year + 1, 1986, -1)
             ),
-            "alienated_date": SelectDateWidget(
-                years=range(timezone.now().year + 1, 1986, -1)
-            ),
-            "ebook_acquired_date": SelectDateWidget(
+            "ebook_acquired_date": DateWidget(
                 years=range(timezone.now().year + 1, 2011, -1)
             ),
             "publisher": Select(choices=[("", "---------")]),

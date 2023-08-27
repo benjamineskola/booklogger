@@ -17,6 +17,7 @@ export default class extends Controller {
     for (const elementId of ['acquired', 'alienated', 'ebook_acquired']) {
       this.addSetDateTodayButton(elementId);
     }
+
     this.isbnFieldPasteFilter('#id_isbn');
     this.isbnFieldPasteFilter('#id_ebook_isbn');
 
@@ -32,6 +33,7 @@ export default class extends Controller {
       el.dispatchEvent(new Event('change', { bubbles: true }));
     }
   }
+
   addAuthorField(event, template) {
     event.preventDefault();
 
