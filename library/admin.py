@@ -6,7 +6,6 @@ from .models import (
     Book,
     BookAuthor,
     LogEntry,
-    Queue,
     ReadingList,
     ReadingListEntry,
     Tag,
@@ -87,4 +86,3 @@ admin.site.register(BookAuthor)
 admin.site.register(LogEntry, LogEntryAdmin)
 admin.site.register(Tag)
 admin.site.register(ReadingList, ReadingListAdmin)
-admin.site.register(Queue)

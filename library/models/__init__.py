@@ -6,7 +6,6 @@ from .api_key import ApiKey
 from .author import Author, AuthorManager
 from .book import Book, BookAuthor, BookQuerySet, Tag
 from .log_entry import LogEntry, LogEntryQuerySet
-from .queue import Queue
 from .reading_list import ReadingList, ReadingListEntry
 from .statistics_report import StatisticsReport
 
@@ -19,7 +18,6 @@ __all__ = [
     "BookQuerySet",
     "LogEntry",
     "LogEntryQuerySet",
-    "Queue",
     "ReadingList",
     "ReadingListEntry",
     "StatisticsReport",

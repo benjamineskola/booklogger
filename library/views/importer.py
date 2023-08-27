@@ -10,8 +10,8 @@ from django.shortcuts import redirect
 from django.template.response import TemplateResponse
 from django.utils import timezone
 
-from library.models import Book, Queue
-from library.utils import create, flatten, goodreads
+from library.models import Book
+from library.utils import create, flatten, goodreads, importer
 
 logger = logging.getLogger(__name__)
 
@@ -67,9 +67,9 @@ def bulk_import(request: HttpRequest) -> HttpResponse:
             reader = csv.DictReader(
                 lines[1:], fieldnames=[n.lower() for n in lines[0].split(",")]
             )
-            for entry in reader:
-                queue_item = Queue(
-                    data={
+            importer.process(
+                [
+                    {
                         "title": entry["title"].strip().split(":")[0],
                         "authors": [(entry["author"], "")]
                         + (
@@ -102,9 +102,12 @@ def bulk_import(request: HttpRequest) -> HttpResponse:
                         "image_url": entry["image url"] if "image url" in entry else "",
                         "publisher": entry["publisher"] if "publisher" in entry else "",
                     }
-                )
-                queue_item.save()
+                    for entry in reader
+                ]
+            )
+
         elif request.POST["input_format"] == "verso":
+            records = []
             for line in lines:
                 if not line:
                     continue
@@ -114,9 +117,10 @@ def bulk_import(request: HttpRequest) -> HttpResponse:
                 book["edition_format"] = Book.Format.EBOOK
                 book["publisher"] = "Verso"
                 book["owned"] = True
-                queue_item = Queue(data=book)
-                queue_item.save()
+                records.append(book)
+            importer.process(records)
         else:
+            records = []
             for line in lines:
                 title, *author_names = line.strip("\r\n").split(";")
 
@@ -129,8 +133,8 @@ def bulk_import(request: HttpRequest) -> HttpResponse:
                 if not title.strip():
                     continue
 
-                queue_item = Queue(data={"title": title.strip(), "authors": authors})
-                queue_item.save()
+                records.append({"title": title.strip(), "authors": authors})
+            importer.process(records)
 
         return TemplateResponse(
             request,

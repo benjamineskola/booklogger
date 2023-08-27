@@ -12,4 +12,4 @@ npm run build:min
 .venv/bin/python manage.py collectstatic --noinput
 .venv/bin/python manage.py migrate
 
-HIVEMIND_PROCESSES=web,worker exec /home/ben/.local/share/go/bin/hivemind --title booklogger >/home/ben/src/booklogger/logs/booklogger.log 2>/home/ben/src/booklogger/logs/booklogger.err
+HIVEMIND_PROCESSES=web exec /home/ben/.local/share/go/bin/hivemind --title booklogger >/home/ben/src/booklogger/logs/booklogger.log 2>/home/ben/src/booklogger/logs/booklogger.err
