@@ -52,27 +52,27 @@ export default class extends Controller {
     );
     authorFormGroup.append(
       this.createElements(
-        `<label for="id_bookauthor_set-${index}-author" class="mr-2 requiredField">Author*</label>`
+        `<label for="id_bookauthor_set-${index}-author" class=" requiredField">Author*</label>`
       )
     );
-    const selectDiv = this.createElements('<div class="mr-2 mt-2"></div>');
+    const selectDiv = this.createElements('<div></div>');
     selectDiv.append(selectField);
     authorFormGroup.append(selectDiv);
     inlineForm.append(authorFormGroup);
 
     inlineForm.append(
       this.createElements(
-        `<div class="form-group"><label for="bookauthor_set-${index}-role" class="mr-2">Role</label><div class="mr-2 mt-2"><input type="text" name="bookauthor_set-${index}-role" maxlength="255" class="textinput textInput form-control" id="id_bookauthor_set-${index}-role"></div></div>`
+        `<div class="form-group"><label for="bookauthor_set-${index}-role">Role</label><div><input type="text" name="bookauthor_set-${index}-role" maxlength="255" class="textinput textInput form-control" id="id_bookauthor_set-${index}-role"></div></div>`
       )
     );
     inlineForm.append(
       this.createElements(
-        `<div class="form-group"><label for="bookauthor_set-${index}-order" class="mr-2">Order</label><div class="mr-2 mt-2"><input type="number" name="bookauthor_set-${index}-order" maxlength="255" class="textinput textInput form-control" id="id_bookauthor_set-${index}-role"></div></div>`
+        `<div class="form-group"><label for="bookauthor_set-${index}-order">Order</label><div><input type="number" name="bookauthor_set-${index}-order" maxlength="255" class="textinput textInput form-control" id="id_bookauthor_set-${index}-role"></div></div>`
       )
     );
     inlineForm.append(
       this.createElements(
-        `<div class="form-group"><div class="mr-2 mt-2"><div class="form-check"><input type="checkbox" name="bookauthor_set-${index}-DELETE" class="checkboxinput form-check-input" id="id_bookauthor_set-${index}-DELETE" data-action="click->book-form#removeInlineForm"><label for="id_bookauthor_set-${index}-DELETE" class="form-check-label">Delete </label></div></div></div>`
+        `<div class="form-group"><div><div class="form-check"><input type="checkbox" name="bookauthor_set-${index}-DELETE" class="checkboxinput form-check-input" id="id_bookauthor_set-${index}-DELETE" data-action="click->book-form#removeInlineForm"><label for="id_bookauthor_set-${index}-DELETE" class="form-check-label">Delete </label></div></div></div>`
       )
     );
 
@@ -102,21 +102,21 @@ export default class extends Controller {
       '<div class="form-group"></div>'
     );
     authorFormGroup.append(
-      `<label for="id_readinglistentry_set-${index}-reading_list}" class="mr-2 requiredField">Reading list*</label>`
+      `<label for="id_readinglistentry_set-${index}-reading_list}" class="requiredField">Reading list*</label>`
     );
-    const selectDiv = this.createElements('<div class="mr-2 mt-2"></div>');
+    const selectDiv = this.createElements('<div></div>');
     selectDiv.append(selectField);
     authorFormGroup.append(selectDiv);
     inlineForm.append(authorFormGroup);
 
     inlineForm.append(
       this.createElements(
-        `<div class="form-group"><label for="readinglistentry_set-${index}-order" class="mr-2">Order</label><div class="mr-2 mt-2"><input type="number" name="readinglistentry_set-${index}-order" maxlength="255" class="textinput textInput form-control" id="id_readinglistentry_set-${index}-role"></div></div>`
+        `<div class="form-group"><label for="readinglistentry_set-${index}-order">Order</label><div><input type="number" name="readinglistentry_set-${index}-order" maxlength="255" class="textinput textInput form-control" id="id_readinglistentry_set-${index}-role"></div></div>`
       )
     );
     inlineForm.append(
       this.createElements(
-        `<div class="form-group"><div class="mr-2 mt-2"><div class="form-check"><input type="checkbox" name="readinglistentry_set-${index}-DELETE" class="checkboxinput form-check-input" id="id_readinglistentry_set-${index}-DELETE" data-action="click->book-form#removeInlineForm"><label for="id_readinglistentry_set-${index}-DELETE" class="form-check-label">Delete </label></div></div></div>`
+        `<div class="form-group"><div><div class="form-check"><input type="checkbox" name="readinglistentry_set-${index}-DELETE" class="checkboxinput form-check-input" id="id_readinglistentry_set-${index}-DELETE" data-action="click->book-form#removeInlineForm"><label for="id_readinglistentry_set-${index}-DELETE" class="form-check-label">Delete </label></div></div></div>`
       )
     );
 

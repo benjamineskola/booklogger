@@ -198,3 +198,7 @@ select[name*='_date_'] {
 label[for*='_date_'] {
   display: block;
 }
+
+.form-group {
+  margin-top: 0.5rem;
+}
