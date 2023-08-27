@@ -165,12 +165,22 @@ a.fas:visited {
   margin-top: 1rem;
 }
 
-.inline-form .form-control {
+.inline-form .form-control,
+.inline-form .select2-container--bootstrap {
   display: inline-block;
 }
 
+.inline-form input {
+  max-width: calc(25% - 1em);
+}
+
+.inline-form label:not(:first-child) {
+  margin-left: 1em;
+}
+
+input[type='number'],
 input[inputmode='numeric'] {
-  max-width: 4em;
+  max-width: 5em;
 }
 
 form .card:not(:has(label, a)) {
@@ -185,10 +195,12 @@ select[name$='_date_month'] {
 }
 input[name$='_date_day'] {
   width: 5em;
+  max-width: none;
   margin-right: 1em;
 }
 input[name$='_date_year'] {
   width: 6em;
+  max-width: none;
   margin-right: 1em;
 }
 

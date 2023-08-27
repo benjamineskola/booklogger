@@ -86,7 +86,7 @@
               {% endif %}
               {{ inline_formset.management_form }}
               {% for form in inline_formset %}
-                <div class="form-inline">
+                <div class="inline-form">
                   {{ form.id }}
                   {% for field in form %}
                     {% if field.name not in ["id", "book"] %}

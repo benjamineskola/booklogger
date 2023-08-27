@@ -5,13 +5,21 @@ export default class extends Controller {
     document
       ?.querySelector('#card-bookauthor_set .card-footer a')
       ?.addEventListener('click', (ev) => {
-        this.addAuthorField(ev, document.bookauthor_formset_template);
+        this.addInlineForm(
+          ev,
+          document.bookauthor_formset_template,
+          'bookauthor_set'
+        );
       });
 
     document
       ?.querySelector('#card-readinglistentry_set .card-footer a')
       ?.addEventListener('click', (ev) => {
-        this.addListEntryField(ev, document.listentry_formset_template);
+        this.addInlineForm(
+          ev,
+          document.listentry_formset_template,
+          'readinglistentry_set'
+        );
       });
 
     for (const elementId of ['acquired', 'alienated', 'ebook_acquired']) {
@@ -22,7 +30,7 @@ export default class extends Controller {
     this.isbnFieldPasteFilter('#id_ebook_isbn');
 
     document
-      .querySelectorAll(`.form-check-input[name$="DELETE"]`)
+      .querySelectorAll('input[type="checkbox"][name$="DELETE"]')
       .forEach((deleteButton) => {
         deleteButton.addEventListener('click', this.removeInlineForm);
       });
@@ -34,100 +42,35 @@ export default class extends Controller {
     }
   }
 
-  addAuthorField(event, template) {
+  addInlineForm(event, template, identifier) {
     event.preventDefault();
 
-    const parent = document.querySelector('#formset-bookauthor_set');
+    const parent = document.querySelector(`#formset-${identifier}`);
     const totalForms = document.querySelector(
-      'input[name="bookauthor_set-TOTAL_FORMS"]'
+      `input[name="${identifier}-TOTAL_FORMS"]`
     );
-    const index = totalForms?.value;
+    const index = Number(totalForms.value);
 
-    const inlineForm = this.createElements('<div class="form-inline"></div>');
-    const selectForm = this.createElements(
-      template.replace(/__prefix__/g, index)
+    const inlineForm = this.createElements(
+      `<div class="inline-form">${template.replace(/__prefix__/g, index)}</div>`
     );
-    const selectField = selectForm.querySelector('select');
-
-    const authorFormGroup = this.createElements(
-      '<div class="form-group"></div>'
-    );
-    authorFormGroup.append(
-      this.createElements(
-        `<label for="id_bookauthor_set-${index}-author" class=" requiredField">Author*</label>`
-      )
-    );
-    const selectDiv = this.createElements('<div></div>');
-    selectDiv.append(selectField);
-    authorFormGroup.append(selectDiv);
-    inlineForm.append(authorFormGroup);
-
-    inlineForm.append(
-      this.createElements(
-        `<div class="form-group"><label for="bookauthor_set-${index}-role">Role</label><div><input type="text" name="bookauthor_set-${index}-role" maxlength="255" class="textinput textInput form-control" id="id_bookauthor_set-${index}-role"></div></div>`
-      )
-    );
-    inlineForm.append(
-      this.createElements(
-        `<div class="form-group"><label for="bookauthor_set-${index}-order">Order</label><div><input type="number" name="bookauthor_set-${index}-order" maxlength="255" class="textinput textInput form-control" id="id_bookauthor_set-${index}-role"></div></div>`
-      )
-    );
-    inlineForm.append(
-      this.createElements(
-        `<div class="form-group"><div><div class="form-check"><input type="checkbox" name="bookauthor_set-${index}-DELETE" class="checkboxinput form-check-input" id="id_bookauthor_set-${index}-DELETE" data-action="click->book-form#removeInlineForm"><label for="id_bookauthor_set-${index}-DELETE" class="form-check-label">Delete </label></div></div></div>`
-      )
-    );
-
-    parent.append(inlineForm);
-    totalForms.value = String(parseInt(index) + 1);
-
-    $(selectField).select2({ theme: 'bootstrap', tags: true });
-  }
-
-  addListEntryField(event, template) {
-    event.preventDefault();
-
-    const parent = document.querySelector('#formset-readinglistentry_set');
-    const totalForms = document.querySelector(
-      'input[name="readinglistentry_set-TOTAL_FORMS"]'
-    );
-    const index = totalForms.value;
-
-    const inlineForm = this.createElements('<div class="form-inline"></div>');
-
-    const selectForm = this.createElements(
-      template.replace(/__prefix__/g, index)
-    );
-    const selectField = selectForm.querySelector('select');
-
-    const authorFormGroup = this.createElements(
-      '<div class="form-group"></div>'
-    );
-    authorFormGroup.append(
-      this.createElements(
-        `<label for="id_readinglistentry_set-${index}-reading_list}" class="requiredField">Reading list*</label>`
-      )
-    );
-    const selectDiv = this.createElements('<div></div>');
-    selectDiv.append(selectField);
-    authorFormGroup.append(selectDiv);
-    inlineForm.append(authorFormGroup);
-
-    inlineForm.append(
-      this.createElements(
-        `<div class="form-group"><label for="readinglistentry_set-${index}-order">Order</label><div><input type="number" name="readinglistentry_set-${index}-order" maxlength="255" class="textinput textInput form-control" id="id_readinglistentry_set-${index}-role"></div></div>`
-      )
-    );
-    inlineForm.append(
-      this.createElements(
-        `<div class="form-group"><div><div class="form-check"><input type="checkbox" name="readinglistentry_set-${index}-DELETE" class="checkboxinput form-check-input" id="id_readinglistentry_set-${index}-DELETE" data-action="click->book-form#removeInlineForm"><label for="id_readinglistentry_set-${index}-DELETE" class="form-check-label">Delete </label></div></div></div>`
-      )
-    );
-
     parent.append(inlineForm);
     totalForms.value = index + 1;
 
-    $(selectField).select2({ theme: 'bootstrap' });
+    inlineForm
+      .querySelectorAll('input[type="checkbox"][name$="DELETE"]')
+      .forEach((deleteButton) => {
+        deleteButton.addEventListener('click', this.removeInlineForm);
+      });
+
+    inlineForm
+      .querySelectorAll('input[type="text"], input[type="number"]')
+      .forEach((inputField) => {
+        inputField.classList.add('form-control');
+      });
+    inlineForm.querySelectorAll('select').forEach((selectField) => {
+      $(selectField).select2({ theme: 'bootstrap', tags: true });
+    });
   }
 
   addSetDateTodayButton(elementId) {
@@ -160,9 +103,7 @@ export default class extends Controller {
   }
 
   removeInlineForm(event) {
-    const form = event.target.closest('.form-inline');
-    form.style.display = 'none';
-    console.log(event, form);
+    event.target.closest('.inline-form').remove();
   }
 
   setDateToday(event) {
