@@ -4,4 +4,4 @@ set -e
 # shellcheck disable=SC1091
 . ./.env
 
-HIVEMIND_PROCESSES=dev_web,jsbuild exec hivemind
+HIVEMIND_PROCESSES=web,js exec hivemind
