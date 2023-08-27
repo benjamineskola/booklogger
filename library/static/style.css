@@ -166,15 +166,19 @@ a.fas:visited {
 }
 
 .inline-form .form-control,
-.inline-form .select2-container--bootstrap {
+.inline-form .select2-container--bootstrap,
+.inline-form > div {
   display: inline-block;
 }
 
-.inline-form input {
+.inline-form > input,
+.inline-form > select,
+.inline-form > div {
   max-width: calc(25% - 1em);
 }
 
-.inline-form label:not(:first-child) {
+.inline-form label:not(:first-child),
+.inline-form > div:not(:first-child) {
   margin-left: 1em;
 }
 
