@@ -102,7 +102,9 @@ export default class extends Controller {
       '<div class="form-group"></div>'
     );
     authorFormGroup.append(
-      `<label for="id_readinglistentry_set-${index}-reading_list}" class="requiredField">Reading list*</label>`
+      this.createElements(
+        `<label for="id_readinglistentry_set-${index}-reading_list}" class="requiredField">Reading list*</label>`
+      )
     );
     const selectDiv = this.createElements('<div></div>');
     selectDiv.append(selectField);
