@@ -77,16 +77,6 @@ urlpatterns = [
         "books/",
         include(
             [
-                re_path(
-                    r"^(?P<query>author/.+)/edit/?$",
-                    views.book.BulkEditView.as_view(),
-                    name="books_bulk_edit",
-                ),
-                re_path(
-                    r"(?P<query>.+)/edit/?$",
-                    views.book.BulkEditView.as_view(),
-                    name="books_bulk_edit",
-                ),
                 path(
                     "reading/",
                     views.log_entry.CurrentlyReadingView.as_view(),
@@ -185,11 +175,6 @@ urlpatterns = [
         name="publisher_details",
     ),
     path("stats/", views.stats.stats_index, name="stats"),
-    re_path(
-        r"^(?P<query>tag/.+)/edit/?$",
-        views.book.BulkEditView.as_view(),
-        name="books_bulk_edit",
-    ),
     re_path(
         r"^tag(?:/(?P<tag_name>[^/]+))?(?:/(?P<page>\d+))?/",
         views.book.TagIndexView.as_view(),

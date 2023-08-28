@@ -5,8 +5,7 @@ from typing import Any
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import F, Q
-from django.forms import Form
+from django.db.models import F
 from django.http import HttpRequest, HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
@@ -17,7 +16,6 @@ from django.views.decorators.http import require_POST
 from library.forms import (
     BookAuthorFormSet,
     BookForm,
-    BulkBookFormSet,
     LogEntryFormSet,
     ReadingListEntryFormSet,
 )
@@ -430,60 +428,6 @@ class DeleteView(LoginRequiredMixin, generic.edit.DeleteView[Book, BookForm]):
     object: Book  # noqa: A003
     success_url = reverse_lazy("library:books_all")
     template_name = "confirm_delete.html"
-
-
-class BulkEditView(
-    LoginRequiredMixin,
-    generic.base.TemplateResponseMixin,
-    generic.edit.FormMixin[Form],
-    generic.edit.ProcessFormView,
-):
-    model = Book
-    form_class = Form
-    template_name = "book_bulk_form.html"
-    success_url = "/books/"
-
-    def form_valid(self, form: Form) -> HttpResponse:
-        context = self.get_context_data()
-
-        formset = context["formset"]
-        if formset.is_valid():
-            formset.save()
-            return super().form_valid(form)
-        return super().form_invalid(form)
-
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs)
-
-        queryset = Book.objects.all()
-        if query := self.kwargs.get("query"):
-            query, query_arg = query.split("/", 1)
-            match query:
-                case "read" | "unread" | "owned" | "borrowed" | "unowned":
-                    queryset = getattr(queryset, query)()
-                case "tag":
-                    if query_arg == "untagged":
-                        queryset = queryset.filter(tags=[])
-                    else:
-                        queryset = queryset.filter(
-                            tags__name=query_arg.strip("!").split(",")
-                        )
-                case "author":
-                    queryset = queryset.filter(
-                        Q(first_author__slug=query_arg)
-                        | Q(additional_authors__slug=query_arg)
-                    )
-
-        queryset = queryset.filter_by_request(self.request).distinct()
-
-        if self.request.POST:
-            context["formset"] = BulkBookFormSet(self.request.POST, queryset=queryset)
-        else:
-            context["formset"] = BulkBookFormSet(queryset=queryset)
-
-        context["page_title"] = f"Editing {self.kwargs.get('query')} books"
-
-        return context
 
 
 def export_books(request: HttpRequest) -> JsonResponse:
