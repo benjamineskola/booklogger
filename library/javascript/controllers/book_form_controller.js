@@ -40,7 +40,7 @@ export default class extends Controller {
 
     if (document.formTags !== null) {
       const el = document.querySelector('#id_tags');
-      el.value = document.formTags;
+      el.attributes.value = document.formTags;
       el.dispatchEvent(new Event('change', { bubbles: true }));
     }
   }
