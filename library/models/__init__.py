@@ -4,10 +4,11 @@ from django.db.models import Field, Lookup
 
 from .api_key import ApiKey
 from .author import Author, AuthorManager
-from .book import Book, BookAuthor, BookQuerySet, Tag
+from .book import Book, BookAuthor, BookQuerySet
 from .log_entry import LogEntry, LogEntryQuerySet
 from .reading_list import ReadingList, ReadingListEntry
 from .statistics_report import StatisticsReport
+from .tag import Tag
 
 __all__ = [
     "ApiKey",
