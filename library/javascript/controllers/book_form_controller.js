@@ -35,6 +35,9 @@ export default class extends Controller {
         deleteButton.addEventListener('click', this.removeInlineForm);
       });
 
+    $('select').select2({ theme: 'bootstrap' });
+    $('#id_tags').select2({ theme: 'bootstrap', tags: true });
+
     if (document.formTags !== null) {
       const el = document.querySelector('#id_tags');
       el.value = document.formTags;
