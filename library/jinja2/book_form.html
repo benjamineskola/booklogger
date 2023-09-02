@@ -15,17 +15,15 @@
 
 {% block content %}
   {% if form.instance.id %}
-    <div class="row row-cols-1 row-cols-md-2">
-      <div class="col">{{ book_card(form.instance) }}</div>
-      <div class="col">
-        <div class="card">
-          <div class="card-body">
-            <strong>Amazon</strong> {{ link_amazon(book) }}
-            <br />
-            <strong>Goodreads</strong> {{ link_goodreads(book) }}
-            <br />
-            <strong>Google</strong> {{ link_google(book) }}
-          </div>
+    <div class="card-columns">
+      {{ book_card(form.instance) }}
+      <div class="card">
+        <div class="card-body">
+          <strong>Amazon</strong> {{ link_amazon(book) }}
+          <br />
+          <strong>Goodreads</strong> {{ link_goodreads(book) }}
+          <br />
+          <strong>Google</strong> {{ link_google(book) }}
         </div>
       </div>
     </div>
@@ -41,7 +39,7 @@
   {% endif %}
   <form method="post" data-controller="book-form">
     <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-    <div class="row row-cols-1 row-cols-md-2">
+    <div class="card-columns">
       {% for field_names in [
         ["title", "subtitle", "first_author", "first_author_role", "first_published", "language", "series", "series_order", "slug"],
         ["edition_title", "edition_subtitle", "publisher", "edition_published", "edition_format", "edition_language", "edition_number", "page_count"],
@@ -52,24 +50,21 @@
         ["alternate_editions", "parent_edition"],
         ] %}
         {% if 'editions' not in field_names or ('editions' in form.fields or 'parent_edition' in form.fields) %}
-          <div class="col">
-            <div class="card">
-              <div class="card-body">
-                {% for field_name in field_names %}
-                  {% set field = form[field_name] %}
-                  {% if field %}
-                    {{ field | crispy }}
-                    {% for error in field.errors %}
-                      <label for="{{ field.id_for_label }}" class="alert alert-warning">{{ error|escape }}</label>
-                    {% endfor %}
-                  {% endif %}
-                {% endfor %}
-              </div>
-              {# card-body #}
+          <div class="card">
+            <div class="card-body">
+              {% for field_name in field_names %}
+                {% set field = form[field_name] %}
+                {% if field %}
+                  {{ field | crispy }}
+                  {% for error in field.errors %}
+                    <label for="{{ field.id_for_label }}" class="alert alert-warning">{{ error|escape }}</label>
+                  {% endfor %}
+                {% endif %}
+              {% endfor %}
             </div>
-            {# card #}
+            {# card-body #}
           </div>
-          {# column #}
+          {# card #}
         {% endif %}
       {% endfor %}
     </div>

@@ -219,3 +219,18 @@ label[for*='_date_'] {
 .form-group {
   margin-top: 0.5rem;
 }
+
+.card-columns {
+  columns: 1;
+  margin-bottom: 2rem;
+}
+
+.card-columns .card {
+  -webkit-column-break-inside: avoid;
+}
+
+@media (min-width: 768px) {
+  .card-columns {
+    columns: 2;
+  }
+}
