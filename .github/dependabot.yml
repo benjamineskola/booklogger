@@ -14,5 +14,12 @@ updates:
     ignore:
       - dependency-name: '*'
         update-types: ['version-update:semver-patch']
-    assignees:
-      - benjamineskola
+  - package-ecosystem: 'npm' # See documentation for possible values
+    directory: '/' # Location of package manifests
+    schedule:
+      interval: 'daily'
+    allow:
+      - dependency-type: 'direct'
+    ignore:
+      - dependency-name: '*'
+        update-types: ['version-update:semver-patch']
