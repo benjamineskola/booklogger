@@ -9,11 +9,11 @@ repos:
       - id: requirements-txt-fixer
       - id: trailing-whitespace
   - repo: https://github.com/benjamineskola/pre-commit-hooks.git
-    rev: af9758ce9c3d144b9fb589f8f35c1a52a3580efc
+    rev: 4761ba6944c20d3bdaed5d3e60d28addc9c8f9b0
     hooks:
       - id: shellcheck
       - id: shfmt
-      - id: rome
+      - id: biome
       - id: prettier
   - repo: local
     hooks:
@@ -78,7 +78,7 @@ repos:
             types-requests,
           ]
   - repo: https://github.com/benjamineskola/pre-commit-hooks.git
-    rev: af9758ce9c3d144b9fb589f8f35c1a52a3580efc
+    rev: 4761ba6944c20d3bdaed5d3e60d28addc9c8f9b0
     hooks:
       - id: pytest
         types: [python]
