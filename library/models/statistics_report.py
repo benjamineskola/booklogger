@@ -46,6 +46,7 @@ class StatisticsReport(TimestampedModel):
             logs = LogEntry.objects.filter(end_date__year=self.year)
         else:
             logs = LogEntry.objects.filter(end_date__isnull=False)
+        logs = logs.filter(exclude_from_stats=False)
         books = Book.objects.filter(id__in=logs.values_list("book_id", flat=True))
 
         self.count = books.count()
