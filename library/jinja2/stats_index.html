@@ -97,8 +97,8 @@
             {% for gender, gender_breakdown in report.gender_breakdowns.items() %}
               {% if (gender_breakdown["fiction"]["count"] + gender_breakdown["non-fiction"]["count"]) > 0 %}
                 By {{ gender_labels[gender] }}:
-                {{ gender_breakdown["fiction"]["count"] }} ({{ gender_breakdown["fiction"]["percent"] | round_trunc(2) }}%) <a href="{{ url_base }}?tags=fiction&gender={{ gender_breakdown["key"] }}">fiction</a>,
-                {{ gender_breakdown["non-fiction"]["count"] }} ({{ gender_breakdown["non-fiction"]["percent"] | round_trunc(2) }}%) <a href="{{ url_base }}?tags=non-fiction&gender={{ gender_breakdown["key"] }}">non-fiction</a>.
+                {{ gender_breakdown["fiction"]["count"] }} ({{ gender_breakdown["fiction"]["percent"] | round_trunc(2) }}%) <a href="{{ url_base }}?tags=fiction&gender={{ gender }}">fiction</a>,
+                {{ gender_breakdown["non-fiction"]["count"] }} ({{ gender_breakdown["non-fiction"]["percent"] | round_trunc(2) }}%) <a href="{{ url_base }}?tags=non-fiction&gender={{ gender }}">non-fiction</a>.
                 <br>
               {% endif %}
             {% endfor %}

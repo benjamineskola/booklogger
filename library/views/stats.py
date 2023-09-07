@@ -31,6 +31,7 @@ def stats_index(request: HttpRequest) -> HttpResponse:
         1, read_books.exclude(page_count=0).count()
     )
     gender_labels = {
+        "0": "unknown",
         "1": "men",
         "2": "women",
         "3": "organisations",
