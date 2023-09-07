@@ -1,5 +1,6 @@
 from typing import Any
 
+from django.db.models import Q
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
@@ -106,11 +107,11 @@ def _get_stats_object(year: int, current_year: int) -> dict[str, Any]:
     )
     current_year = timezone.now().year
 
-    log_entries = LogEntry.objects.filter(exclude_from_stats=False, abandoned=False)
+    all_log_entries = LogEntry.objects.filter(exclude_from_stats=False, abandoned=False)
 
     if year > 0:
         result["acquired"] = Book.objects.filter(acquired_date__year=year).count()
-        log_entries = log_entries.filter(end_date__year=year)
+        log_entries = all_log_entries.filter(end_date__year=year)
 
     result["longest"] = Book.objects.get(id=result["longest_id"])
     result["shortest"] = Book.objects.get(id=result["shortest_id"])
@@ -121,6 +122,26 @@ def _get_stats_object(year: int, current_year: int) -> dict[str, Any]:
         )
 
         current_day, year_days = calculate_year_progress(current_year)
+
+        # calculate approximate counts for unfinished books
+        # only if started this year: multi-year books too complex to calculate
+        unfinished_entries = all_log_entries.filter(
+            end_date__isnull=True,
+            start_date__year=current_year,
+        )
+        unfinished_entries = unfinished_entries.filter(
+            Q(progress_page__gt=0) | Q(progress_percentage__gt=0)
+        )
+        unfinished_counts = [
+            (
+                entry.progress_page
+                if entry.progress_page
+                else (entry.book.page_count * entry.progress_percentage / 100)
+            )
+            for entry in unfinished_entries
+        ]
+        result["page_count"] += sum(unfinished_counts)
+
         result["pages_per_day"] = result["page_count"] / current_day
         result["predicted_pages"] = result["pages_per_day"] * year_days
     elif year > 1:
