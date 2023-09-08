@@ -6,7 +6,6 @@ app_name = "library"
 urlpatterns = [
     path("", views.log_entry.CurrentlyReadingView.as_view(), name="index"),
     path("robots.txt", views.robots_txt),
-    re_path(r".*/[^./]+[^/]$", views.add_slash),
     path("author/new/", views.author.NewView.as_view(), name="author_new"),
     path(
         "author/<slug:slug>/",
