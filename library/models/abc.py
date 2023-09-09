@@ -29,14 +29,16 @@ class SluggableModel(models.Model):
         slug = unidecode(slug)
         slug = re.sub(r"[^\w-]+", "", slug)
 
+        objects = self.__class__.objects  # type: ignore[attr-defined]
+
         slug = slug[0:50].strip("-")
-        matches = self.__class__.objects.filter(slug=slug).exclude(pk=self.id)
+        matches = objects.filter(slug=slug).exclude(pk=self.id)
         if (not matches) or (matches.count() == 1 and matches.first() == self):
             return slug
 
         for idx in range(1, 10):
             new_slug = slug[0:48].strip("-") + "-" + str(idx)
-            matches = self.__class__.objects.filter(slug=new_slug).exclude(pk=self.id)
+            matches = objects.filter(slug=new_slug).exclude(pk=self.id)
             if not matches:
                 return new_slug
 
