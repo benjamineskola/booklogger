@@ -76,6 +76,7 @@ repos:
             xmltodict,
             bs4,
             types-requests,
+            python-dotenv,
           ]
   - repo: https://github.com/benjamineskola/pre-commit-hooks.git
     rev: 4761ba6944c20d3bdaed5d3e60d28addc9c8f9b0
