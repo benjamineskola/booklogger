@@ -1,3 +1,4 @@
+from statistics import median
 from typing import Any
 
 from django.db import models
@@ -51,8 +52,12 @@ class StatisticsReport(TimestampedModel):
 
         self.count = books.count()
         self.page_count = books.page_count
-        self.average_pages = self.page_count / max(
-            1, books.exclude(page_count=0).count()
+
+        books_with_page_count = books.exclude(page_count=0)
+        self.average_pages = (
+            median(b.page_count for b in books_with_page_count)
+            if books_with_page_count.count()
+            else 0
         )
 
         if self.count:

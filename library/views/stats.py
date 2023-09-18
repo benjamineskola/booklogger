@@ -1,3 +1,4 @@
+from statistics import median
 from typing import Any
 
 from django.db.models import Q
@@ -27,9 +28,13 @@ def stats_index(request: HttpRequest) -> HttpResponse:
     current_day, year_days = calculate_year_progress(current_year)
     current_week = (current_day // 7) + 1
 
-    all_time_average_pages = read_books.page_count / max(
-        1, read_books.exclude(page_count=0).count()
+    books_with_page_count = read_books.exclude(page_count=0)
+    all_time_median_pages = (
+        median(b.page_count for b in books_with_page_count)
+        if books_with_page_count.count()
+        else 0
     )
+
     gender_labels = {
         "0": "unknown",
         "1": "men",
@@ -63,7 +68,7 @@ def stats_index(request: HttpRequest) -> HttpResponse:
             "reread": reread,
             "reread_pct": reread / read_books.count() * 100,
             "reports": reports,
-            "all_time_average_pages": all_time_average_pages,
+            "all_time_median_pages": all_time_median_pages,
             "current_year": current_year,
             "current_week": current_week,
             "gender_labels": gender_labels,

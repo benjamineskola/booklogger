@@ -69,18 +69,15 @@
             {% endif %}
             {{ report.fiction["page_count"] | intcomma }} ({{ report.fiction["pages_percent"] | round_trunc(2) }}%) were fiction;
             {{ report.nonfiction["page_count"] | intcomma }} ({{ report.nonfiction["pages_percent"] | round_trunc(2) }}%) were non-fiction.
-            The average pagecount was {{ report.average_pages | round_trunc(2) }}.
+            The median pagecount was {{ report.average_pages | round_trunc(2) }}.
             {% if year > 1 %}
               That's
-              {% if report.average_pages > all_time_average_pages %}
+              {% if report.average_pages > all_time_median_pages %}
                 more
               {% else %}
                 less
               {% endif %}
-              than the all-time average ({{ all_time_average_pages | round_trunc(2) }}).
-              {% if year == current_year %}
-                Need to read books of at least {{ (all_time_average_pages - ((report.average_pages - all_time_average_pages) * report.count)) | round_trunc(2) }} pages to beat the average.
-              {% endif %}
+              than the all-time median ({{ all_time_median_pages | round_trunc(2) }}).
             {% endif %}
             The <a href="{{ report.longest.get_absolute_url() }}">longest book had {{ report.longest.page_count }} pages</a> and the <a href="{{ report.shortest.get_absolute_url() }}">shortest book had {{ report.shortest.page_count }} pages</a>.
             {% if year > 1 %}
