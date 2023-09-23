@@ -1,5 +1,5 @@
 {% from "macros.html" import author_list, book_link, book_label with context %}
-{% extends "base.html" %}
+{% extends "old-base.html" %}
 
 {% block content %}
   {% set to_read_count = object.books.filter(want_to_read=True).count() %}

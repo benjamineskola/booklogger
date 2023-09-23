@@ -1,6 +1,6 @@
 {% from "macros.html" import filter_list with context %}
 {% from "macros/card.html" import book_list with context %}
-{% extends "base.html" %}
+{% extends "old-base.html" %}
 {% if entries and entries.first().end_date %}
   {% set display_year = entries.first().end_date.year %}
 {% else %}
