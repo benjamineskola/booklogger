@@ -60,6 +60,7 @@ indent_size = 2
 profile = "black"
 
 [tool.ruff]
+target-version = "py310"
 extend-exclude = ["library/migrations/*", "manage.py"]
 select = ["ALL"]
 ignore = [
@@ -68,8 +69,6 @@ ignore = [
   "ANN101", # type annotations on self seem useless
   "ANN401", # allow Any in kwargs
   "COM812", # seems to conflict with black
-
-  "FA102", # futures seem unnecessary for this
 
   "PLR2004", # TODO Magic value used in comparison
   "RUF001",  # TODO String contains ambiguous unicode character
